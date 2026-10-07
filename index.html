@@ -1,0 +1,572 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>DC Standards Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --ground:#F4F6F8; --surface:#FFFFFF; --surface-2:#EEF1F5;
+  --ink:#16202B; --muted:#5A6B7B; --faint:#8695A4;
+  --accent:#0F6FB8; --accent-soft:#E4F0F9;
+  --border:#DBE1E9; --border-strong:#C4CDD8;
+  --verify:#9A5B00; --verify-bg:#FBEFDC; --verify-line:#E8C88A;
+  --ok:#1F7A4D; --ok-bg:#E4F1E9;
+  --new:#7A1FA2; --new-bg:#F3E6FA;
+  --shadow:0 1px 2px rgba(22,32,43,.06),0 3px 10px rgba(22,32,43,.05);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;
+  --disp:"Barlow Semi Condensed","IBM Plex Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0D1319; --surface:#151E27; --surface-2:#1D2833;
+  --ink:#E7ECF2; --muted:#93A2B2; --faint:#6E7E8E;
+  --accent:#4EA6E2; --accent-soft:#12283A;
+  --border:#26323F; --border-strong:#324150;
+  --verify:#E7B562; --verify-bg:#2C2415; --verify-line:#5A4620;
+  --ok:#5FC08C; --ok-bg:#16281E;
+  --new:#C08CE0; --new-bg:#241631;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 3px 12px rgba(0,0,0,.28);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#0D1319; --surface:#151E27; --surface-2:#1D2833;
+  --ink:#E7ECF2; --muted:#93A2B2; --faint:#6E7E8E;
+  --accent:#4EA6E2; --accent-soft:#12283A;
+  --border:#26323F; --border-strong:#324150;
+  --verify:#E7B562; --verify-bg:#2C2415; --verify-line:#5A4620;
+  --ok:#5FC08C; --ok-bg:#16281E;
+  --new:#C08CE0; --new-bg:#241631;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 3px 12px rgba(0,0,0,.28);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+a{color:var(--accent)}
+
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.top-in{display:flex;align-items:center;gap:16px;padding-block:14px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px;margin-right:auto;min-width:0}
+.brand .ey{font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.brand h1{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:.01em;margin:0;line-height:1}
+.brand .sub{font-size:12px;color:var(--muted)}
+.search{position:relative;flex:1;min-width:190px;max-width:340px}
+.search input{width:100%;font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--border-strong);border-radius:9px;padding:9px 12px 9px 32px}
+.search input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--faint)}
+.tbtn{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--border-strong);border-radius:9px;padding:8px 11px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tbtn:hover{color:var(--ink);border-color:var(--accent)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:10px;scrollbar-width:thin}
+.tabs::-webkit-scrollbar{height:5px}
+.tab{white-space:nowrap;font-family:var(--disp);font-weight:600;font-size:13.5px;letter-spacing:.02em;color:var(--muted);background:transparent;border:1px solid transparent;border-radius:8px;padding:7px 13px;cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab .n{font-family:var(--mono);font-size:10.5px;font-weight:600;background:var(--surface-2);color:var(--faint);padding:1px 6px;border-radius:20px;min-width:20px;text-align:center}
+.tab .dot{width:6px;height:6px;border-radius:50%;background:var(--new);flex:none}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:#fff;background:var(--accent);box-shadow:var(--shadow)}
+.tab[aria-selected="true"] .n{background:rgba(255,255,255,.22);color:#fff}
+.tab[aria-selected="true"] .dot{background:#fff}
+
+/* Filters */
+.filters{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding-block:4px 16px}
+.fgroup{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.flabel{font-family:var(--disp);font-weight:600;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.chip{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.chip.vtoggle[aria-pressed="true"]{background:var(--verify);border-color:var(--verify);color:#fff}
+
+/* Intro / domain head */
+.dhead{padding:18px 0 6px}
+.dhead h2{font-family:var(--disp);font-weight:700;font-size:26px;margin:0 0 4px;letter-spacing:.01em;text-wrap:balance}
+.dhead .newtag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--new);background:var(--new-bg);border:1px solid color-mix(in srgb,var(--new) 40%,transparent);padding:2px 7px;border-radius:5px;margin-left:8px;vertical-align:middle}
+.dhead p{margin:0;max-width:72ch;color:var(--muted);font-size:13.5px}
+
+/* Table */
+.twrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);margin-bottom:12px}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
+thead th{font-family:var(--disp);font-weight:600;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--faint);text-align:left;padding:11px 14px;border-bottom:1px solid var(--border-strong);background:var(--surface-2);position:sticky;top:0}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface-2)}
+.code{display:inline-flex;align-items:center;gap:7px}
+.code b{font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--ink)}
+.cp{width:22px;height:22px;flex:none;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--faint);cursor:pointer}
+.cp:hover{color:var(--accent);border-color:var(--accent)}
+.cp svg{width:12px;height:12px}
+.ttl{color:var(--muted);font-size:12px;margin-top:2px;max-width:36ch}
+.edtag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--ink);background:var(--surface-2);border:1px solid var(--border);padding:1px 6px;border-radius:5px;margin-top:5px;white-space:nowrap}
+.reg{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.03em;color:var(--accent);background:var(--accent-soft);padding:2px 7px;border-radius:5px;white-space:nowrap;display:inline-block}
+.use{color:var(--ink);font-size:12.5px;max-width:46ch}
+.v{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;white-space:nowrap}
+.v.verify{color:var(--verify);background:var(--verify-bg);border:1px solid var(--verify-line)}
+.v.ok{color:var(--ok);background:var(--ok-bg);border:1px solid transparent}
+.cats{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;color:var(--faint);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+.empty{padding:40px;text-align:center;color:var(--muted);font-size:13px}
+
+/* Matrix (structural) */
+.mnote{display:flex;gap:10px;align-items:flex-start;background:var(--verify-bg);border:1px solid var(--verify-line);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:var(--ink)}
+.mnote svg{width:16px;height:16px;color:var(--verify);flex:none;margin-top:1px}
+.mnote b{font-weight:600}
+.mtable th.fn{width:210px}
+.mtable td.fn{font-weight:500;color:var(--ink);font-size:12.5px}
+.mcell b{font-family:var(--mono);font-weight:600;font-size:12px}
+.mcell .cp{margin-left:5px}
+.mdash{color:var(--faint);font-family:var(--mono)}
+.mcol-ds{background:var(--accent-soft)}
+th.mcol-ds{color:var(--accent)!important}
+
+/* Targets landing */
+.anchors{display:grid;grid-template-columns:1fr;gap:12px;margin:4px 0 20px}
+@media (min-width:720px){.anchors{grid-template-columns:1fr 1fr}}
+.anchor{border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:6px}
+.anchor .lab{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.anchor h3{margin:0;font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink)}
+.anchor p{margin:0;font-size:12.5px;color:var(--muted)}
+.tgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:8px}
+@media (min-width:640px){.tgrid{grid-template-columns:1fr 1fr}}
+@media (min-width:980px){.tgrid{grid-template-columns:1fr 1fr 1fr}}
+.tcard{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;background:var(--surface);box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:8px}
+.tcard .tnum{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.06em;color:var(--faint)}
+.tcard h4{margin:0;font-family:var(--disp);font-weight:700;font-size:16px;color:var(--ink);text-wrap:balance}
+.tcard .req{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--ink);background:var(--surface-2);border-radius:6px;padding:7px 9px}
+.tcard .why{font-size:12px;color:var(--muted)}
+.tcard .refs{display:flex;gap:4px;flex-wrap:wrap}
+.tcard .refs span{font-family:var(--mono);font-size:9.5px;color:var(--faint);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
+.disc{display:flex;gap:10px;align-items:flex-start;background:var(--ok-bg);border:1px solid transparent;border-left:3px solid var(--ok);border-radius:8px;padding:12px 14px;font-size:12.5px;color:var(--ink);margin-top:4px}
+.disc b{color:var(--ok)}
+
+/* Snapshot matrix */
+.lvl{font-family:var(--mono);font-size:11px;font-weight:600;display:inline-block;padding:2px 7px;border-radius:5px;line-height:1.35}
+.lvl.m{color:var(--ok);background:var(--ok-bg)}
+.lvl.o{color:var(--accent);background:var(--accent-soft)}
+.lvl.s{color:var(--faint);background:var(--surface-2)}
+.snap td{font-size:12px}
+.snap td.cty{font-family:var(--disp);font-weight:700;font-size:13px;color:var(--ink);white-space:nowrap}
+.snap td.cty small{display:block;font-family:var(--sans);font-weight:500;font-size:10.5px;color:var(--faint);letter-spacing:.02em;text-transform:uppercase}
+
+/* Legend / footer */
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:14px 0 4px;font-size:11.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.foot{border-top:1px solid var(--border);margin-top:24px;padding:18px 0 40px;font-size:11.5px;color:var(--faint);display:flex;flex-direction:column;gap:6px}
+.foot b{color:var(--muted);font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--ground);font-family:var(--mono);font-size:12px;padding:9px 15px;border-radius:8px;opacity:0;pointer-events:none;transition:.22s;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:640px){
+  .brand h1{font-size:20px}
+  .search{order:3;max-width:none}
+  .dhead h2{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="top">
+  <div class="wrap top-in">
+    <div class="brand">
+      <span class="ey">Knauf Group · APAC Data Center</span>
+      <h1>DC Standards Atlas</h1>
+      <span class="sub">Codes &amp; standards across Drywall · Ceiling · Aquapanel · Insulation</span>
+    </div>
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Search code, title, use…" aria-label="Search standards">
+    </label>
+    <button class="tbtn" id="theme" aria-label="Toggle theme"><span id="themeIco">◐</span></button>
+  </div>
+  <div class="wrap">
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </div>
+</div>
+
+<main class="wrap" id="app">
+  <div class="filters" id="filters">
+    <div class="fgroup"><span class="flabel">Region</span><span id="regChips"></span></div>
+    <div class="fgroup"><span class="flabel">Category</span><span id="catChips"></span></div>
+    <div class="fgroup"><button class="chip vtoggle" id="vOnly" aria-pressed="false">⚑ verify only</button></div>
+  </div>
+  <div id="content"></div>
+  <div class="legend">
+    <span><span class="v ok">baseline</span> framework-level reference</span>
+    <span><span class="v verify">verify</span> confirm edition / clause against official text or datasheet</span>
+    <span><span class="lvl m">mandated</span> national law</span>
+    <span><span class="lvl o">operator</span> spec-referenced</span>
+    <span><span class="lvl s">US/EU-spec</span> imported on those jobs only</span>
+    <span><span class="tab" style="padding:1px 7px"><span class="dot"></span></span> new domain (2026-10-07 deep dive)</span>
+  </div>
+  <div class="foot">
+    <span><b>Fact discipline.</b> This atlas identifies <i>what to source</i> — it does not claim any Knauf / KCS / Armstrong / AMF / Heradesign / USG / Aquapanel system complies with a given standard. Compliance is asserted only from an official datasheet or test report.</span>
+    <span><b>v0.2 · 2026-10-07.</b> Hardened with current editions and extended with five new domains (Plenum/HVAC · Air-tightness · Moisture &amp; liquid cooling · Contamination · Seismic) plus a per-country enforcement snapshot, from the standards deep-dive. Anchor regimes: GB 50174-2017 (China, mandated) and NFPA 75-2024 (operator-imported across APAC).</span>
+    <span id="stamp"></span>
+  </div>
+</main>
+<div class="toast" id="toast">copied</div>
+
+<script>
+/* ---------- DATA ---------- */
+const CATS=["Structural","Drywall","Ceiling","Aquapanel","Insulation"];
+const REGIONS=["INTL","US","EU","AU/NZ","CN","APAC-country"];
+
+/* Structural matrix — from slide 43 (function × US primary / AU-NZ / EU) + DataShield use */
+const MATRIX=[
+ {fn:"CFS stud — product specification", us:"ASTM C955", au:"— (no direct equiv)", eu:"EN 14195", ds:"Manufacturing / product declaration"},
+ {fn:"Steel sheet & metallic coating", us:"ASTM A1003 / A1003M", au:{c:"AS 1397",v:1}, eu:"EN 10346", ds:"Steel grade, coating mass, mech. properties"},
+ {fn:"Cold-formed steel design", us:"AISI S100", au:{c:"AS/NZS 4600",v:1,note:"slide shows AZ/NZS"}, eu:"EN 1993-1-3", ds:"Main engineering verification"},
+ {fn:"Section capacity", us:"AISI S100", au:"AS/NZS 4600", eu:"EN 1993-1-3", ds:"Section capacity"},
+ {fn:"Local / distortional / global buckling", us:"AISI S100", au:"AS/NZS 4600", eu:"EN 1993-1-3", ds:"Lip geometry assessed structurally"},
+ {fn:"Design actions & loads", us:"ASCE/SEI 7 (+ applicable code)", au:"AS/NZS 1170 series", eu:"EN 1991 series", ds:"Determines design pressures / actions"},
+ {fn:"Framing-system standard", us:"AISI S240", au:"AS/NZS framework", eu:"EN 1993-1-3 / 1993-1-1", ds:"Structural framing system compliance"},
+ {fn:"Installation", us:"ASTM C1007", au:"— (jurisdictional basis)", eu:"—", ds:"Installation standard"},
+ {fn:"Fire test — non-loadbearing", us:"ASTM E119 / UL (assemblies)", au:"AS 1530.4 + AS 4072.1", eu:"EN 1364-1", ds:"Non-loadbearing fire test + classification"},
+];
+const MATRIX_NOTE="Two cells on the source slide look like typos and carry a verify flag: the CFS-design rows read <b>“AZ/NZS 4600”</b> (almost certainly <b>AS/NZS 4600</b>, as the same slide writes AS/NZS 1170 correctly), and the material row reads <b>“AS 1367”</b> (the coated-sheet standard matching EN 10346 is <b>AS 1397</b>). Confirm both internally before the slide circulates.";
+
+/* Flat library — S(code, title, region, edition, cats[], use, verify?) */
+const S=(code,ttl,region,ed,cats,use,verify=0)=>({code,ttl,region,ed,cats,use,verify});
+const DATA={
+ fireres:[
+  S("NFPA 75 §6 / room sep.","Fire protection of IT equipment — construction & separation","US","2024",["Drywall","Ceiling"],"Risk-assessment basis; IT room separated by ≥1 h fire-resistant construction; doors ¾ h (in 1 h wall) or 1½ h (in 2 h wall); duct penetrations get automatic fire AND smoke dampers. Imported via hyperscaler / colo specs"),
+  S("GB 50174-2017 §13.2.4","Code for design of data centers — fire separation","CN","2017 (mandatory)",["Drywall","Ceiling","Aquapanel","Structural"],"China law: ≥2.0 h partition walls, ≥1.5 h floors, Class A (甲级) fire doors to the main computer room; fire-resistance grade ≥ II"),
+  S("ISO 834-1","Fire resistance tests — standard time/temperature curve","INTL","1999 (+Amd)",["Drywall","Ceiling","Aquapanel"],"International reference heating curve underlying most national fire-resistance tests"),
+  S("EN 1363-1","Fire resistance tests — general requirements","EU","2020",["Drywall","Ceiling","Aquapanel"],"Base method the EN 1364 / 1365 test series build on"),
+  S("EN 1364-1","Non-loadbearing walls / partitions","EU","2015",["Drywall","Aquapanel"],"DataShieldDC compartment walls, shaft walls — EI classification"),
+  S("EN 1364-2","Non-loadbearing ceilings","EU","2018",["Ceiling"],"Independent fire-resisting ceiling membranes"),
+  S("EN 1365 series","Loadbearing elements (walls, floors, beams)","EU","2012+",["Structural","Drywall"],"Where the partition also carries load"),
+  S("EN 13501-2","Fire-resistance classification (EI / REI + minutes)","EU","2016 (+A1 verify)",["Drywall","Ceiling","Aquapanel","Structural"],"Turns EN 1364/1365 test data into the EI / REI class specified",1),
+  S("ASTM E119 / UL 263","Fire tests of building construction & materials","US","E119-24 (verify UL ed.)",["Drywall","Structural"],"US-spec hyperscale projects; hourly ratings",1),
+  S("BS 476-20/21/22","Fire resistance of building elements","EU","1987 (legacy)",["Drywall","Ceiling"],"UK-origin — fire-resistance periods in Malaysia UBBL (Ninth Schedule) & Singapore, plus legacy specs",1),
+  S("AS 1530.4","Fire-resistance test of elements of construction","AU/NZ","2014 (verify)",["Drywall","Ceiling","Structural"],"Australia mandatory fire-resistance test",1),
+  S("KS F 2257-1","Methods of fire resistance test for elements of building construction","APAC-country","(KR) verify ed.",["Drywall","Ceiling"],"Korea fire-resistance test behind MOLIT compartment ratings",1),
+  S("AS 4072.1","Service penetrations & control joints","AU/NZ","2005 (verify)",["Drywall","Aquapanel"],"AU penetration / joint sealing systems",1),
+  S("ASTM E814 / UL 1479","Fire tests of penetration firestop systems","US","UL 1479:2021",["Drywall","Ceiling"],"Firestop at DC-grade barriers — F & T ratings; NFPA 75 requires penetrations not to reduce the barrier rating"),
+  S("EN 1366-3 / EN 1366-4","Penetration seals / linear joint seals","EU","(verify ed.)",["Drywall","Aquapanel"],"EU penetration & joint firestop test",1),
+  S("UL 2079 / ASTM E1966 / E2307","Fire resistance of joint / perimeter fire-barrier systems","US","(verify ed.)",["Drywall"],"Head-of-wall and perimeter joint systems",1),
+  S("NFPA 92 / EN 12101","Smoke control systems / smoke & heat control","US","(verify ed.)",["Drywall","Ceiling"],"Smoke-control context where DC compartmentation interfaces with dampers & shafts",1),
+ ],
+ firereact:[
+  S("EN 13501-1","Reaction to fire classification — Euroclass A1/A2/B–F","EU","2018 (+A1 verify)",["Drywall","Ceiling","Aquapanel","Insulation"],"Dominant APAC combustibility classification; DC envelope target is A1 or A2-s1,d0",1),
+  S("EN ISO 1182","Non-combustibility test","EU","2020",["Ceiling","Insulation","Aquapanel"],"Feeds A1 / A2 classification"),
+  S("EN ISO 1716","Gross heat of combustion (calorific value)","EU","2018",["Insulation","Ceiling"],"Feeds A1 / A2 classification"),
+  S("EN 13823","Single Burning Item (SBI)","EU","2020",["Drywall","Ceiling","Insulation"],"Feeds B–D classification & smoke (s) / droplet (d) sub-class"),
+  S("ASTM E84 / UL 723","Surface burning characteristics (flame spread / smoke)","US","E84-23",["Drywall","Ceiling","Insulation"],"US Class A/B/C; also the 25/50 plenum test"),
+  S("ASTM E136","Behaviour of materials in a vertical tube furnace at 750 °C","US","(verify ed.)",["Ceiling","Insulation","Drywall"],"US route to a 'non-combustible' classification — pairs with A1/A2 as the DC target",1),
+  S("AS 5637.1","Determination of fire hazard properties (group number)","AU/NZ","2015",["Ceiling","Drywall"],"AU Group 1–4 numbers used in NCC"),
+  S("AS/NZS 1530.3","Ignitability, flame propagation, heat & smoke release","AU/NZ","1999 (legacy)",["Ceiling","Insulation"],"Older AU reaction-to-fire indices, still referenced",1),
+  S("GB 8624","Classification of burning behaviour — building materials","CN","2012 current; 2025 → eff 2027-01-01",["Drywall","Ceiling","Insulation"],"China combustibility classes (A / B1 / B2 / B3) — Phase 2 China; GB 8624-2025 published, takes effect 2027-01-01"),
+  S("KS F ISO 1182 + KS F 2271","Non-combustibility + gas toxicity (불연재료)","APAC-country","(KR)",["Ceiling","Drywall","Insulation"],"Korea non-combustible: ΔT ≤20 K & mass loss ≤30% (ISO 1182) plus toxicity survival ≥9 min (KS F 2271)"),
+  S("KS F ISO 5660-1","Cone calorimeter — heat release (준불연재료)","APAC-country","(KR)",["Ceiling","Drywall"],"Korea quasi-non-combustible: ≤8 MJ/m² total heat release in 10 min; peak HRR not >200 kW/m² beyond 10 s"),
+ ],
+ plenum:[
+  S("IMC 602.2.1","International Mechanical Code — plenums","US","2021 / 2024 IMC",["Ceiling","Insulation","Drywall"],"Materials exposed in plenums must be non-combustible or listed FSI ≤25 / SDI ≤50 (ASTM E84 / UL 723). Combustibles may be enclosed in approved gypsum board assemblies — a drywall-enclosure opening"),
+  S("NFPA 90A §4.3.10.2","Air-conditioning & ventilating systems","US","2024",["Ceiling","Insulation"],"Materials exposed in a ceiling-cavity return plenum must be non-combustible, limited-combustible, or 25/50. Referenced by NFPA 75"),
+  S("UL 723 / ASTM E84","Surface burning (flame-spread / smoke-developed)","US","UL 723:2018 / E84-23",["Ceiling","Insulation","Drywall"],"The test behind the 25/50 limit; hyperscalers request it alongside EN 13501-1"),
+  S("NEC Art. 300.22 / NFPA 262","Wiring & cabling in ducts & plenums","US","NEC 2023",["Ceiling"],"Plenum wiring limits (NFPA 262): ≤1.52 m flame spread, smoke density caps — coordination item for the ceiling void"),
+  S("ANSI/ASHRAE 90.4","Energy Standard for Data Centers","US","2025",["Insulation","Drywall"],"MLC/ELC compliance (envelope via ASHRAE 90.1). Envelope & air-tightness affect MLC indirectly through cooling load and containment integrity; 2025 scope adds water & GHG. No APAC adoption found"),
+  S("UL 555 / UL 555S","Fire dampers / smoke dampers","US","(verify ed.)",["Drywall","Ceiling"],"Fire dampers 1½ h (barriers <3 h) or 3 h; smoke-damper leakage Class I ≤40.6 L/s·m² or II ≤101.6 at ~1 kPa; ≥121 °C elevated-temp rating. Korea Art.14 requires automatic dampers",1),
+  S("EN 1366-2 / EN 15650 / EN 12101-8","Fire-damper test / damper product / smoke-control dampers","EU","(verify ed.)",["Drywall","Ceiling"],"EU fire- & smoke-damper equivalents at partition/shaft penetrations",1),
+  S("AS 1682.1 / .2","Fire dampers — spec & installation","AU/NZ","(verify ed.)",["Drywall"],"Australia NCC damper route",1),
+  S("GB 50174-2017 §7.4.2","DC code — HVAC materials","CN","2017 (mandatory)",["Insulation"],"China law: duct insulation & acoustic linings non-combustible or B1; vapour barrier on cold surfaces"),
+ ],
+ airtight:[
+  S("ASTM E2178","Air permeance of building materials","US","E2178-21a",["Drywall","Aquapanel"],"Air-barrier MATERIAL ≤0.02 L/s·m² at 75 Pa (0.004 cfm/ft²)"),
+  S("ASTM E2357 / E283","Air leakage of air-barrier assemblies / through assemblies","US","(verify ed.)",["Drywall","Ceiling"],"Air-barrier ASSEMBLY ≤0.2 L/s·m² at 75 Pa (0.04 cfm/ft²)"),
+  S("ASTM E779 / E1827 / E3158 · ISO 9972","Enclosure air-leakage (blower-door) tests","INTL","(verify ed.)",["Drywall","Ceiling"],"Whole-room pressurisation — used to commission clean-agent room integrity and positive-pressure rooms"),
+  S("NFPA 2001 / NFPA 75 room integrity","Clean-agent extinguishing — room integrity","US","2022 / 2024",["Drywall","Ceiling"],"Clean-agent rooms must hold the design concentration → sealed ceilings, partitions and penetrations. Operator-driven across APAC"),
+  S("GB 50174-2017 §7.4.4","DC code — room pressurisation","CN","2017 (mandatory)",["Drywall","Ceiling"],"China law: computer room positive pressure ≥5 Pa to adjacent rooms, ≥10 Pa to outdoors — air-tight partitions & ceilings required"),
+ ],
+ acoustic:[
+  S("ISO 717-1","Airborne sound insulation rating — Rw","INTL","2020",["Drywall","Aquapanel"],"Single-number Rw for partition / wall privacy between DC zones"),
+  S("ISO 717-2","Impact sound insulation rating — Ln,w","INTL","2020",["Ceiling"],"Impact rating (floor/ceiling) where relevant"),
+  S("ISO 10140 series","Lab measurement of sound insulation of building elements","INTL","2021",["Drywall","Ceiling"],"Current lab test method feeding ISO 717 (supersedes much of ISO 140)"),
+  S("ASTM E90 / E413","Airborne sound transmission loss / STC","US","E90-09(R2016)",["Drywall","Aquapanel"],"US STC rating for partitions on US-spec projects"),
+  S("ISO 354","Sound absorption in a reverberation room","INTL","2003",["Ceiling"],"Absorption test → αw for acoustic ceiling tiles"),
+  S("ISO 11654","Rating of sound absorption — αw / absorption classes","INTL","1997",["Ceiling","Insulation"],"Class A–E absorption rating for ceilings"),
+  S("ASTM C423","Sound absorption — NRC / SAA","US","C423-23",["Ceiling","Insulation"],"US NRC for acoustic ceilings & mineral-wool infill"),
+  S("ASTM E1414","Airborne sound attenuation through ceiling plenums — CAC","US","E1414-21",["Ceiling"],"CAC — plenum crosstalk between rooms sharing a ceiling void"),
+  S("ISO 3382 series","Reverberation time & room acoustic parameters","INTL","2008+",["Ceiling","Insulation"],"RT60 in large server halls (high fan-noise environment)",1),
+ ],
+ thermal:[
+  S("ISO 6946","Building components — thermal resistance & U-value","INTL","2017",["Aquapanel","Insulation"],"Assembly-level U-value calculation for envelope build-ups"),
+  S("EN 12667","Thermal resistance — guarded hot plate / heat flow meter","EU","2001",["Insulation","Aquapanel"],"Material-level λ (declared thermal conductivity)"),
+  S("EN 12664","Thermal resistance — low & medium resistance (hot plate)","EU","2001",["Insulation"],"λ for higher-conductivity materials"),
+  S("ASTM C518","Steady-state heat flux — heat flow meter","US","C518-21",["Insulation"],"US material-level λ measurement"),
+  S("ASTM C177","Steady-state heat flux — guarded hot plate","US","C177-19",["Insulation"],"US reference λ method"),
+ ],
+ moisture:[
+  S("ASHRAE Thermal Guidelines, 5th ed.","Thermal guidelines for data processing environments","US","2021",["Insulation"],"Recommended 18–27 °C; dew point −9 to 15 °C; RH ≤70%, or <50% where corrosive gases present (H1 class 18–22 °C). Sets the condensation / vapour-control envelope"),
+  S("SS 697:2023","Methodology for optimising DC air temperature (Singapore)","APAC-country","2023 (SG)",["Insulation","Drywall","Ceiling"],"Raises hall operating temp to ≥26 °C in the tropics (~2–5% cooling saving per +1 °C). Higher hall RH raises condensation & mould exposure for boards (vendor ranges 26–35 °C / 60–90% RH unverified)",1),
+  S("ISO 13788","Hygrothermal performance — interstitial condensation (Glaser)","INTL","(verify ed.)",["Insulation","Drywall","Aquapanel"],"Interstitial condensation risk for chilled-hall walls & ceilings against hot-humid exteriors — a tropical-APAC design item",1),
+  S("ASTM E96","Water-vapour transmission of materials (perm)","US","(verify ed.)",["Drywall","Aquapanel","Insulation"],"Perm rating of boards & facings for vapour-barrier design",1),
+  S("ASTM C1338 / D3273 / G21","Fungal / mould resistance of insulation, boards & coatings","US","(verify ed.)",["Insulation","Ceiling","Drywall"],"Mould resistance under high-RH tropical halls — request per datasheet",1),
+  S("GB 50174-2017 §7.4.2","DC code — cold-surface vapour barrier","CN","2017 (mandatory)",["Insulation"],"China law: cold surfaces must be vapour-barriered and insulated"),
+  S("NFPA 75-2024 (immersion / leak)","Fire protection of IT equipment — Ch.8 cooling","US","2024",["Ceiling","Insulation"],"New edition adds immersion-cooling requirements and defines a 'leak detection system'"),
+  S("ASHRAE TC 9.9 liquid-cooling guidance","Liquid-cooling white paper + bulletins","US","2021 WP; 2024 / 2026 bulletins",["Ceiling","Insulation"],"Drip pans with leak detection and piped drains for critical equipment; 2024 cold-plate resiliency bulletin; 2026 TCS coolant-integrity bulletin"),
+  S("OCP Modular TCS / Leak Detection","Open Compute Project — technology cooling system","INTL","2025",["Ceiling"],"Drip trays, leak detection and secondary containment for overhead/underfloor distribution → ceiling moisture tolerance + drip-tray coordination become spec items. No standard mandates a board water-resistance class — it is a specification choice (e.g. EN 520 Type H / ASTM C1178 / C1396 water-resistant grades, verify per datasheet)"),
+ ],
+ contam:[
+  S("ANSI/ISA-71.04","Environmental conditions — airborne contaminants & corrosion","US","2013",["Drywall","Ceiling","Insulation","Aquapanel"],"G1 'mild': Cu <300 Å & Ag <200 Å per 30-day coupon; G2 <1000 Å; G3 <2000 Å; GX >2000 Å. Server OEM warranties (e.g. Supermicro) write G1 — avoid chloride/sulfur-emitting materials in sealed halls"),
+  S("ASHRAE TC 9.9 contamination","Gaseous & particulate contamination guidance","US","2021 (5th ed.)",["Drywall","Ceiling","Insulation"],"Ties allowable RH to corrosivity — the 70% RH ceiling holds only where corrosive gases are low"),
+  S("ISO 14644-1","Cleanrooms — air cleanliness by particle concentration","INTL","2015",["Ceiling"],"Class 8 (≤3,520,000 particles ≥0.5 µm/m³) is the data-hall benchmark (reached by filtration, not cleanroom build) — favours non-shedding, sealed/coated, cleanable ceiling tiles"),
+  S("ISO 16000 · UL 2818 · CDPH 01350 · French A+","Low-VOC emissions labels","INTL","(verify limits)",["Ceiling","Drywall"],"VOC emission limits for boards, tiles, adhesives & joint compounds — also functions as corrosion control, not only occupant health",1),
+  S("ASTM C795","Thermal insulation for use over austenitic stainless steel","US","(verify ed.)",["Insulation"],"Low-chloride insulation where stainless pipework (CDU skids, liquid-cooling) risks chloride stress-corrosion",1),
+ ],
+ seismic:[
+  S("ASTM E580/E580M","Seismic installation of suspended acoustical ceilings","US","E580/E580M-22",["Ceiling"],"SDC D–F: 2″ (50 mm) wall molding, grid fixed on two adjacent walls; >1,000 ft² (93 m²) 45° splay or rigid bracing at 12 ft (3.66 m) centres; >2,500 ft² (232 m²) seismic separation joints. Exempt ≤144 ft² (13.4 m²)"),
+  S("ASCE 7 (Ch. 13)","Minimum design loads — nonstructural components","US","7-22 (US); 7-16 → SNI",["Ceiling","Structural"],"Component force / anchorage; importance factor Ip for nonstructural components (verify Ip=1.5 for critical DC)",1),
+  S("SNI 1726:2019","Earthquake resistance design (Indonesia)","APAC-country","2019 (ID)",["Ceiling","Structural"],"Based on ASCE 7-16 with Indonesian hazard maps; design seismic load rose ~27–30% over the 2012 edition. Seismic-first market for KCS/AMF grids (nonstructural clause verify)",1),
+  S("NSCP 2015 §208","National Structural Code of the Philippines","APAC-country","2015, 7th ed. (PH)",["Ceiling"],"Zones 2 & 4 (Metro Manila is Zone 4); Ip for nonstructural components. Seismic-first market (verify newer NSCP edition)",1),
+  S("AS 1170.4 / AS/NZS 2785","Earthquake actions / suspended-ceiling design & install","AU/NZ","(verify ed.)",["Ceiling","Structural"],"Australian structural-ceiling seismic route, NCC-referenced",1),
+  S("EN 1998-1 (Eurocode 8)","Design of structures for earthquake resistance","EU","(2nd-gen in progress)",["Ceiling"],"Nonstructural element provisions on EU-spec jobs",1),
+  S("GB 50011 / KDS 41 17 00","National seismic design (China / Korea)","CN","(verify ed.)",["Ceiling","Structural"],"China & Korea national seismic codes incl. nonstructural elements",1),
+ ],
+ product:[
+  S("ASTM C1396","Standard specification for gypsum board","US","C1396-17",["Drywall"],"US gypsum board product standard"),
+  S("ASTM C1178","Glass-mat water-resistant gypsum backing panel","US","C1178-21",["Drywall","Aquapanel"],"Glass-mat sheathing for wet / exterior conditions"),
+  S("EN 520","Gypsum plasterboard — definitions, requirements, tests","EU","2004+A1:2009",["Drywall"],"EU plasterboard product standard (Type H = water-resistant)"),
+  S("EN 15283","Gypsum boards with fibrous reinforcement","EU","2008+A1:2009",["Drywall"],"Fibre / mat-reinforced gypsum boards"),
+  S("ASTM C645 / C754","Non-structural steel framing / installation","US","C645-18 / C754-18",["Drywall","Structural"],"Non-structural drywall framing members & install (vs. AISI for structural CFS)"),
+  S("EN 14195","Metal framing components for gypsum board systems","EU","2014",["Drywall","Structural"],"EU framing-component product spec (also in structural matrix)"),
+  S("EN 13964","Suspended ceilings — requirements & test methods","EU","2014",["Ceiling"],"EU product standard for suspended ceiling systems & grid"),
+  S("ASTM C635 / C636","Metal suspension systems for ceilings — spec & installation","US","C635-17 / C636-19",["Ceiling"],"US grid product & installation standard"),
+  S("ASTM E1264","Classification of acoustical ceiling products","US","E1264-19",["Ceiling"],"US ceiling panel classification"),
+  S("EN 12467","Fibre-cement flat sheets — product spec","EU","2012+A2:2018",["Aquapanel"],"Candidate product standard for cement board — confirm vs. Aquapanel ETA",1),
+  S("ETA (Aquapanel)","European Technical Assessment — Aquapanel Cement Board","EU","per SKU",["Aquapanel"],"Aquapanel is typically covered by an ETA rather than EN 12467 — confirm per SKU",1),
+  S("ASTM C1325","Non-asbestos fibre-mat reinforced cement backer units","US","C1325-18",["Aquapanel"],"US cement board standard"),
+  S("EN 13162","Factory-made mineral wool (MW) products","EU","2012+A1:2015",["Insulation"],"EU product standard — declares λ, Euroclass, dimensions"),
+  S("ASTM C665 / C553","Mineral-fibre blanket / blanket thermal insulation","US","C665-17 / C553-13",["Insulation"],"US mineral-wool product standards"),
+  S("ASTM C795","Thermal insulation for use over austenitic stainless steel","US","(verify ed.)",["Insulation"],"Low-chloride insulation where corrosion is a concern",1),
+ ],
+ infra:[
+  S("ANSI/TIA-942-C","Telecommunications infrastructure standard for data centers","US","C (2024)",["Structural","Drywall","Ceiling"],"Rev C (May 2024) makes space / site-design / rating annexes NORMATIVE and requires the ASHRAE 5th-ed. recommended envelope incl. new H1 class. Certification-referenced, not national law"),
+  S("ISO/IEC 22237 series","Data centre facilities & infrastructures (Parts 1–7)","INTL","parts migrating TS → IS",["Structural","Drywall","Ceiling","Insulation"],"International consensus DC facility standard — increasingly cited in APAC tenders (part numbers/years verify)",1),
+  S("EN 50600 series","IT — data centre facilities & infrastructures","EU","50600-1:2026",["Structural","Drywall","Ceiling"],"EN 50600-1:2026 supersedes 2019 (national implementation by 2027-08; conflicting standards withdrawn by 2029-08); harmonising with ISO/IEC 22237"),
+  S("Uptime Tier Standard","Tier I–IV — Topology & Operational Sustainability","US","current",["Structural"],"Reliability tier referenced by hyperscale & colo — not a material standard"),
+  S("ASHRAE TC 9.9","Thermal guidelines for data processing environments","US","5th ed. (2021)",["Insulation","Ceiling"],"Server-hall temperature / humidity envelopes — informs vapour & thermal design"),
+  S("NFPA 75","Fire protection of information technology equipment","US","2024",["Drywall","Ceiling"],"2024 edition adds immersion-cooling & off-gas detection; Li-ion battery provisions moved to NFPA 855. Widely written into APAC operator specs"),
+  S("NFPA 76","Fire protection of telecommunications facilities","US","2024 (verify clauses)",["Drywall"],"US-origin telecom-facility fire protection; referenced edition in NFPA 75-2024",1),
+  S("GB 50174","Code for design of data centers","CN","2017",["Structural","Drywall","Ceiling"],"China DC design code — the only APAC national law with DC-specific fire/non-combustibility rules; priority for Phase 2 China"),
+ ],
+ sustain:[
+  S("LEED v4.1 / v5","Leadership in Energy & Environmental Design","US","v4.1 / v5",["Drywall","Ceiling","Insulation","Aquapanel"],"Global green-building rating — hyperscale DC; drives EPD / low-VOC asks"),
+  S("Green Mark for Data Centres","BCA Green Mark — DC scheme","APAC-country","(SG)",["Ceiling","Insulation"],"Singapore — regional specification-hub influence"),
+  S("NABERS Energy for Data Centres","National Australian Built Environment Rating System","AU/NZ","(AU)",["Insulation","Ceiling"],"Australia — heavily enforced; strong pull on envelope / thermal spec"),
+  S("GRIHA","Green Rating for Integrated Habitat Assessment","APAC-country","(IN)",["Insulation","Ceiling"],"India — government / public DC projects"),
+  S("BREEAM","Building Research Establishment Environmental Assessment","EU","current",["Drywall","Insulation"],"Occasionally referenced on international operator projects"),
+  S("EDGE","Excellence in Design for Greater Efficiencies (IFC)","INTL","current",["Insulation"],"Some SEA developer projects"),
+  S("ISO/IEC 30134 series","Data centre KPIs — PUE, WUE, CUE, REF, ITEE","INTL","current",["Structural"],"Efficiency KPIs — context for the sustainability narrative, not a material spec"),
+ ],
+ country:[
+  S("GB 50174 / 50222 / 8624 / 50011","DC design · interior finish · reaction-to-fire · seismic","CN","2017 / 2017 / 2012 / —",["Drywall","Ceiling","Insulation","Structural"],"China — Phase 2. GB 50174-2017 (DC fire/non-combustibility, mandatory); GB 50222-2017 raises windowless rooms a finish class; GB 8624-2025 effective 2027-01-01; GB 55037 / GB 50016 fire status verify"),
+  S("NBCS 2026 (SP 7:2026)","National Building Construction Standards of India","APAC-country","2026, eff 30 Apr 2026",["Drywall","Ceiling","Insulation"],"India — replaces NBC 2016 but is advisory unless adopted by state byelaws & fire acts; DCs classed 'commercial' (separate category being lobbied). Some byelaws still cite NBC 2016 (2 h service shafts) by edition",1),
+  S("SNI 1726:2019 + SNI fire codes","Indonesian National Standards (BSN)","APAC-country","2019 / (fire verify)",["Drywall","Ceiling","Insulation","Structural"],"Indonesia — primary market (Batam corridor). SNI 1726:2019 seismic mandated; SNI fire-code numbers to confirm",1),
+  S("UBBL 1984 + BS 476 + Act 341","Uniform Building By-Laws · Bomba approval","APAC-country","2021 amend. (MY)",["Drywall","Ceiling"],"Malaysia — highest APAC opportunity. UBBL binding once a state gazettes it; BS 476 fire periods (Ninth Schedule); concealed-cavity ceilings ≥ Class 0 with non-combustible supports; Bomba plan approval under Act 341. No MS DC standard found"),
+  S("MOLIT Ord. 1531 Art.14 + KS F · ICT guideline","Building fire-compartment & finish rules (Korea)","APAC-country","Ord. in force 2025-10-31 (KR)",["Drywall","Ceiling","Insulation"],"Korea — mature hyperscale. Compartments 1,000 m² (3,000 m² sprinklered) & 60-min doors; non-combustible via KS F ISO 1182 + 2271, quasi via ISO 5660-1; ICT data-centre protection guideline (≥500 m² server rooms); KFS 1280 ≥2 h UPS/battery (voluntary)",1),
+  S("MR 6/33/39/47 + EIT","Building Control Act regulations + EIT fire standard","APAC-country","(TH)",["Drywall","Ceiling"],"Thailand — primary market. Ministerial Regulations mandatory; EIT fire standard voluntary unless referenced (1 h non-load-bearing partitions in Type 1; Table 2.4.2 values to retrieve)",1),
+  S("QCVN 06:2022/BXD + TCVN","National technical regulation on fire safety","APAC-country","2022 (VN)",["Drywall","Ceiling","Insulation"],"Vietnam — secondary market; TCVN for drywall products"),
+  S("PNS / NBC + NSCP 2015","Philippine National Standards · building & structural codes","APAC-country","2015 (PH)",["Drywall","Ceiling"],"Philippines — secondary market; NSCP 2015 seismic Zone 4 for most of the country"),
+  S("SS 697:2023 + SCDF FC2023 + BCA","Singapore Standards · fire code · building authority","APAC-country","2023 (SG)",["Drywall","Ceiling","Insulation"],"Singapore — regional specifications hub. SCDF Fire Code 2023 cl.3.7 non-combustible compartment walls (4th-batch amendments Sep 2025 incl. ESS / UL 9540A); SS 697:2023 thermal methodology; Green Mark for DC"),
+  S("NCC + AS/NZS suite","National Construction Code + AS/NZS standards","AU/NZ","current (AU)",["Ceiling","Structural"],"Australia — structural-ceilings scope (RONDO incumbent for metal framing); AS 1530.4, AS 4072.1, AS 1682, AS 1170.4 (editions verify)"),
+ ],
+};
+
+/* Per-country enforcement snapshot */
+const SNAP=[
+ {cty:"India",tier:"Primary",m:"NBCS 2026 (SP 7:2026, eff 30 Apr 2026) — advisory; binds via state byelaws & fire acts",o:"NFPA 75/76 · TIA-942-C · Uptime · ASHRAE TC 9.9",s:"IMC plenum · ASTM E580"},
+ {cty:"Indonesia",tier:"Primary",m:"SNI 1726:2019 seismic · SNI fire codes (numbers verify)",o:"NFPA 75 · TIA-942-C · Uptime · ISA 71.04",s:"ASTM E580 (used as method) · IMC"},
+ {cty:"Malaysia",tier:"Primary",m:"UBBL 1984 (2021) · BS 476 periods · Class 0 cavity ceilings · Bomba (Act 341)",o:"NFPA 75 · TIA-942-C · EN 50600 · Green-Mark-style",s:"IMC · ASTM E580"},
+ {cty:"Korea",tier:"Primary",m:"MOLIT Ord. 1531 Art.14/24 · KS F ISO 1182 / 5660-1 / 2271 / 2257-1 · ICT DC guideline",o:"KFS 1280 (≥2 h UPS, voluntary) · NFPA 75",s:"IMC"},
+ {cty:"Thailand",tier:"Primary",m:"MR 6/33/39/47 (Building Control Act)",o:"EIT fire standard (voluntary) · NFPA 75",s:"IMC · ASTM E580"},
+ {cty:"Australia",tier:"Structural ceilings",m:"NCC · AS 1530.4 · AS 4072.1 · AS 1682 · AS 1170.4 (editions verify)",o:"NABERS DC · TIA-942-C",s:"IMC"},
+ {cty:"China",tier:"Phase 2",m:"GB 50174-2017 · GB 50222-2017 · GB 8624 (2025 → 2027) · GB 50016 / GB 55037 (verify) · GB 50011",o:"Uptime · TIA-942",s:"US/EU specs only for foreign hyperscalers"},
+ {cty:"Singapore",tier:"Spec hub",m:"SCDF Fire Code 2023 (cl.3.7 non-combustible compartment walls; 4th-batch Sep 2025)",o:"SS 697:2023 · Green Mark for DC",s:"IMC"},
+];
+
+/* DC envelope targets */
+const TARGETS=[
+ {n:"Target 1",h:"Non-combustible envelope",req:"A1 / A2-s1,d0 (EN 13501-1) or ASTM E136 non-combustible",why:"Meets the strictest requirement in every regime at once — GB 50174 non-combustible computer-room finishes, SCDF cl.3.7, NFPA 75 interior construction, and the plenum 'non-combustible = automatic pass' route.",refs:["EN 13501-1","ASTM E136","GB 50174 §13.2.6"]},
+ {n:"Target 2",h:"Plenum-rated surfaces",req:"Non-combustible, or FSI ≤25 / SDI ≤50 (ASTM E84 / UL 723)",why:"Where the ceiling void is a return-air plenum (hot-aisle chimney returns), every exposed ceiling, insulation and facing product needs this. A gypsum enclosure can legitimise combustible services in the void.",refs:["IMC 602.2.1","NFPA 90A","UL 723"]},
+ {n:"Target 3",h:"Air-tight, sealed joints",req:"Material ≤0.02 · assembly ≤0.2 L/s·m² @75 Pa; hold clean-agent integrity & positive pressure",why:"Leakage is a fire, energy AND corrosion issue at once: it breaks clean-agent concentration, breaks GB 50174 positive pressurisation (≥5 Pa / ≥10 Pa), short-circuits containment (raises PUE), and lets unfiltered corrosive air in.",refs:["ASTM E2178","NFPA 2001","GB 50174 §7.4.4"]},
+ {n:"Target 4",h:"Clean, non-shedding, corrosion-neutral",req:"ISA 71.04 G1 · low-VOC · non-fibre-shedding · ISO 14644-1 Class 8",why:"IT-hardware warranties depend on G1 corrosion and Class 8 cleanliness. Avoid chloride- and sulfur-emitting components in sealed halls; treat low-VOC as corrosion control, not just occupant health.",refs:["ISA 71.04","ISO 14644-1","ASTM C795"]},
+ {n:"Target 5",h:"Seismic-braced grids",req:"ASTM E580 SDC D–F detailing where required",why:"Indonesia and the Philippines are seismic-first markets for KCS/AMF grids. Request E580 SDC D–F system documentation and confirm nonstructural Ip with local structural engineers.",refs:["ASTM E580","SNI 1726:2019","NSCP 2015"]},
+];
+
+const TABS=[
+ {id:"targets",label:"DC Targets",special:true},
+ {id:"structural",label:"Structural / CFS",matrix:true},
+ {id:"fireres",label:"Fire — resistance"},
+ {id:"firereact",label:"Fire — reaction"},
+ {id:"plenum",label:"Plenum / HVAC",isnew:true},
+ {id:"airtight",label:"Air-tightness",isnew:true},
+ {id:"acoustic",label:"Acoustic"},
+ {id:"thermal",label:"Thermal"},
+ {id:"moisture",label:"Moisture / liquid cooling",isnew:true},
+ {id:"contam",label:"Contamination",isnew:true},
+ {id:"seismic",label:"Seismic",isnew:true},
+ {id:"product",label:"Product & system"},
+ {id:"infra",label:"DC infrastructure"},
+ {id:"sustain",label:"Sustainability"},
+ {id:"country",label:"Country codes"},
+ {id:"snapshot",label:"Country snapshot",special:true},
+];
+const DHEAD={
+ targets:["The DC envelope targets",0,"Five performance targets that satisfy the strictest requirement across all APAC regimes at once — the spec shortcut behind the detailed tables. Each is proven only by an official datasheet or test report."],
+ structural:["Structural / CFS design",0,"Cold-formed steel framing for DataShieldDC — mapped from the APAC team's framework slide across the three primary code families (US · AU/NZ · EU)."],
+ fireres:["Fire — resistance (compartmentation)",0,"How long an assembly holds a fire barrier. EI / REI ratings plus the firestop & smoke-control detail — the core proof point for IT, electrical, UPS and battery rooms. The 2 h rating often quoted for UPS / battery / generator rooms is practitioner convention, not a sourced mandate — verify against the hyperscaler design guide."],
+ firereact:["Fire — reaction to fire",0,"How a material itself contributes to a fire. Euroclass / group-number / class ratings — DC specs typically demand non-combustible A1/A2 (or ASTM E136) in the envelope, plus Korea's 불연 / 준불연 test routes."],
+ plenum:["Plenum / HVAC — the ceiling-leakage domain",1,"When the ceiling void is a return-air plenum, air leakage becomes an HVAC and fire problem. Every exposed ceiling, insulation and facing product then needs a 25/50 listing or non-combustible status; dampers seal the penetrations."],
+ airtight:["Air-tightness, air barriers & containment",1,"Air-tightness of fire compartments and of hot/cold-aisle containment. Leakage breaks clean-agent room integrity and positive pressurisation and short-circuits containment — raising cooling energy."],
+ acoustic:["Acoustic performance",0,"Sound insulation (Rw / STC), absorption (NRC / αw) and plenum attenuation (CAC) — increasingly critical in high-fan-noise ML / GPU server halls and CDU / fan rooms."],
+ thermal:["Thermal performance",0,"Declared conductivity λ (material) and U-value (assembly) for envelope, plenum barriers and HVAC insulation."],
+ moisture:["Moisture, vapour & liquid cooling",1,"Tight server-hall humidity, tropical exteriors and the shift to liquid / immersion cooling move the 'leakage' risk from air to water — drip trays, leak detection and moisture-tolerant ceilings become real spec items."],
+ contam:["Contamination, corrosion & cleanliness",1,"Airborne corrosion (ISA 71.04 G1) and particulate cleanliness (ISO 14644-1 Class 8) are warranty conditions for IT hardware — they turn material off-gassing, chloride content and fibre-shedding into selection criteria."],
+ seismic:["Seismic bracing of ceilings & partitions",1,"High relevance for Indonesia and the Philippines. Suspended and structural ceilings and partitions need seismic detailing and bracing in DC data halls."],
+ product:["Product & system standards",0,"The product-declaration standards behind each board, tile, cement panel and mineral-wool product — US and EU families."],
+ infra:["DC infrastructure & reliability",0,"The facility-level frameworks the whole spec must sit inside — tier, topology and IT-room fire protection. Context, with current editions, not Knauf compliance targets."],
+ sustain:["Sustainability certification",0,"Green-building & efficiency schemes that pull EPDs, low-VOC and thermal performance out of the material spec — with the APAC-enforced ones flagged."],
+ country:["Country building & fire codes",0,"The jurisdictional codes each of the 10 APAC markets tests against, ordered by market tier in the DC scope."],
+ snapshot:["Per-country enforcement snapshot",0,"For the 5 primary markets + Australia + China + Singapore: which standards are nationally mandated, which arrive through operator / hyperscaler specs, and which appear only on US/EU-spec jobs."],
+};
+
+/* ---------- STATE ---------- */
+let active="targets", region="ALL", cat="ALL", vOnly=false, query="";
+
+/* ---------- ICONS ---------- */
+const COPY_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+
+/* ---------- RENDER ---------- */
+const el=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function buildTabs(){
+ el("tabs").innerHTML=TABS.map(t=>{
+  let n="";
+  if(t.matrix)n=MATRIX.length; else if(t.id==="snapshot")n=SNAP.length; else if(t.id==="targets")n=TARGETS.length; else n=DATA[t.id].length;
+  const dot=t.isnew?'<span class="dot" aria-hidden="true"></span>':"";
+  return `<button class="tab" role="tab" data-id="${t.id}" aria-selected="${t.id===active}">${dot}<span>${t.label}</span><span class="n">${n}</span></button>`;
+ }).join("");
+ el("tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{active=b.dataset.id;render();const t=b.closest(".tabs");if(t)b.scrollIntoView({block:"nearest",inline:"nearest"});});
+}
+function buildChips(){
+ el("regChips").innerHTML=["ALL",...REGIONS].map(r=>`<button class="chip" data-r="${r}" aria-pressed="${r===region}">${r}</button>`).join("");
+ el("catChips").innerHTML=["ALL",...CATS].map(c=>`<button class="chip" data-c="${c}" aria-pressed="${c===cat}">${c}</button>`).join("");
+ el("regChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{region=b.dataset.r;render();});
+ el("catChips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{cat=b.dataset.c;render();});
+}
+function copyBtn(code){return `<button class="cp" data-copy="${esc(code)}" aria-label="Copy ${esc(code)}">${COPY_SVG}</button>`;}
+
+function renderMatrix(){
+ const rows=MATRIX.map(m=>{
+  const cell=(x,ds)=>{
+   if(typeof x==="object"){
+    return `<td class="mcell${ds?' mcol-ds':''}"><span><b>${esc(x.c)}</b>${copyBtn(x.c)}</span><div style="margin-top:5px"><span class="v verify">⚑ verify</span></div>${x.note?`<div class="ttl">slide: “${esc(x.note)}”</div>`:''}</td>`;
+   }
+   const dash=x.trim().startsWith("—");
+   return `<td class="mcell${ds?' mcol-ds':''}">${dash?`<span class="mdash">${esc(x)}</span>`:`<span><b>${esc(x)}</b></span>`}</td>`;
+  };
+  return `<tr><td class="fn">${esc(m.fn)}</td>${cell(m.us)}${cell(m.au)}${cell(m.eu)}${cell(m.ds,true)}</tr>`;
+ }).join("");
+ return `
+  <div class="mnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><div>${MATRIX_NOTE}</div></div>
+  <div class="twrap"><table class="mtable"><thead><tr>
+    <th class="fn">Engineering function</th><th>US · primary</th><th>AU / NZ</th><th>European</th><th class="mcol-ds">DataShieldDC use</th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderTargets(){
+ const cards=TARGETS.map(t=>`
+  <div class="tcard">
+   <div class="tnum">${esc(t.n)}</div>
+   <h4>${esc(t.h)}</h4>
+   <div class="req">${esc(t.req)}</div>
+   <div class="why">${esc(t.why)}</div>
+   <div class="refs">${t.refs.map(r=>`<span>${esc(r)}</span>`).join("")}</div>
+  </div>`).join("");
+ return `
+  <div class="anchors">
+   <div class="anchor"><span class="lab">Anchor regime · mandated</span><h3>GB 50174-2017</h3><p>China is the only APAC market with data-center-specific fire rules in national law: ≥2.0 h partitions, ≥1.5 h floors, Class A (甲级) doors, non-combustible computer-room ceilings, wall panels (incl. core) and partitions, positive pressurisation.</p></div>
+   <div class="anchor"><span class="lab">Anchor regime · operator-imported</span><h3>NFPA 75-2024</h3><p>Everywhere else, the numbers that reach Knauf products arrive through hyperscaler & colocation specifications, not law — chiefly the ≥1 h IT-room separation, rated doors, and fire + smoke dampers at duct penetrations.</p></div>
+  </div>
+  <div class="tgrid">${cards}</div>
+  <div class="disc"><div><b>Prove, don't claim.</b> Each target states what the market requires. Whether a specific Knauf / KCS / Armstrong / AMF / Heradesign / USG / Aquapanel system meets it is shown only from an official datasheet or test report — never asserted from this atlas.</div></div>`;
+}
+
+function renderSnapshot(){
+ const body=SNAP.map(r=>`
+  <tr>
+   <td class="cty">${esc(r.cty)}<small>${esc(r.tier)}</small></td>
+   <td><span class="lvl m">${esc(r.m)}</span></td>
+   <td><span class="lvl o">${esc(r.o)}</span></td>
+   <td><span class="lvl s">${esc(r.s)}</span></td>
+  </tr>`).join("");
+ return `<div class="twrap"><table class="snap"><thead><tr>
+   <th style="width:150px">Market</th><th>Nationally mandated</th><th>Operator-referenced</th><th>US/EU-spec only</th>
+  </tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function renderTable(){
+ let rows=DATA[active].slice();
+ if(region!=="ALL")rows=rows.filter(r=>r.region===region);
+ if(cat!=="ALL")rows=rows.filter(r=>r.cats.includes(cat));
+ if(vOnly)rows=rows.filter(r=>r.verify);
+ if(query){const q=query.toLowerCase();rows=rows.filter(r=>(r.code+" "+r.ttl+" "+r.use+" "+r.ed).toLowerCase().includes(q));}
+ if(!rows.length)return `<div class="twrap"><div class="empty">No standards match these filters in this domain.</div></div>`;
+ const body=rows.map(r=>`
+  <tr>
+   <td><span class="code"><b>${esc(r.code)}</b>${copyBtn(r.code)}</span><div class="ttl">${esc(r.ttl)}</div>
+     <div class="cats">${r.cats.map(c=>`<span class="cat">${esc(c)}</span>`).join("")}</div></td>
+   <td><span class="reg">${esc(r.region)}</span>${r.ed?`<div class="edtag">${esc(r.ed)}</div>`:""}</td>
+   <td><div class="use">${esc(r.use)}</div></td>
+   <td>${r.verify?'<span class="v verify">⚑ verify</span>':'<span class="v ok">baseline</span>'}</td>
+  </tr>`).join("");
+ return `<div class="twrap"><table><thead><tr>
+   <th style="width:30%">Standard</th><th>Region · edition</th><th>Use in DC spec</th><th>Status</th>
+  </tr></thead><tbody>${body}</tbody></table></div>`;
+}
+
+function render(){
+ buildTabs();
+ el("regChips").querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.r===region));
+ el("catChips").querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.c===cat));
+ el("vOnly").setAttribute("aria-pressed",vOnly);
+ const special=active==="structural"||active==="targets"||active==="snapshot";
+ el("filters").style.display=special?"none":"flex";
+ const h=DHEAD[active];
+ const newtag=h[1]?'<span class="newtag">New · deep dive</span>':"";
+ let bodyHtml;
+ if(active==="structural")bodyHtml=renderMatrix();
+ else if(active==="targets")bodyHtml=renderTargets();
+ else if(active==="snapshot")bodyHtml=renderSnapshot();
+ else bodyHtml=renderTable();
+ el("content").innerHTML=`<div class="dhead"><h2>${esc(h[0])}${newtag}</h2><p>${h[2]}</p></div>`+bodyHtml;
+ bindCopy();
+}
+
+function bindCopy(){
+ document.querySelectorAll(".cp").forEach(b=>b.onclick=()=>{
+  const t=b.dataset.copy;
+  const done=()=>toast("copied  "+t);
+  try{navigator.clipboard.writeText(t).then(done,()=>fallback(t,done));}catch(e){fallback(t,done);}
+ });
+}
+function fallback(t,cb){try{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();cb();}catch(e){}}
+let tt;
+function toast(m){const e=el("toast");e.textContent=m;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),1300);}
+
+/* search + verify + theme */
+el("q").addEventListener("input",e=>{query=e.target.value;if(active==="structural"||active==="targets"||active==="snapshot"){active="fireres";}render();});
+el("vOnly").onclick=()=>{vOnly=!vOnly;if(active==="structural"||active==="targets"||active==="snapshot")active="fireres";render();};
+el("theme").onclick=()=>{
+ const root=document.documentElement;
+ const cur=root.getAttribute("data-theme");
+ const dark=cur?cur==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+ root.setAttribute("data-theme",dark?"light":"dark");
+};
+el("stamp").textContent="Atlas v0.2 · built "+new Date().toISOString().slice(0,10)+" · APAC DC · Ha Le to confirm the official subset per market";
+
+buildChips();
+render();
+</script>
+
+</body></html>
