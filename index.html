@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — Interactive Potential Map
+  Revision history:
+    Rev 0.01  (2026-10-07)  Initial map: OSM basemap, solar/wind/hydro potential zones,
+                            reference projects, legend, layer toggles, optional API key.
+    Rev 0.02  (2026-10-07)  OSM tile server unreachable on this network — switched default to
+                            CARTO; added base-map switcher, automatic basemap fallback, and
+                            bundled Leaflet locally.
+    Rev 0.03  (2026-10-07)  CARTO now returns blank tiles behind an API key — removed it.
+                            Default is now the key-free OpenStreetMap (FOSSGIS) mirror; switcher
+                            rebuilt from providers verified to serve real tiles without a key
+                            (OSM .de/.fr/HOT, Esri Streets/Topo/Satellite, OpenTopoMap).
+    Rev 0.04  (2026-10-07)  Added companies & projects panel: 13 companies / 26 projects with
+                            searchable list, multi-select, and map pins that appear on selection.
+    Rev 0.05  (2026-10-07)  Moved companies panel to top; basemap box is now collapsible; added
+                            "Add project" (company/name/type/size/province/coords or map pick),
+                            delete-your-own, localStorage persistence, and JSON export/import.
+    Rev 0.06  (2026-10-07)  Basemap trimmed to OpenStreetMap (France) + Esri satellite. Added two
+                            resources: LNG terminals / gas-to-power zones, and nuclear plant areas
+                            (Ninh Thuan 1 & 2), with toggles, legend entries and popups.
+    Rev 0.07  (2026-10-07)  Translated disclaimer banner, smaller UI text, and an explicit
+                            study / non-commercial notice (banner, on-map note and footer).
+    Rev 0.08  (2026-10-07)  Map locked to Viet Nam only (panning bounds + min zoom). Adjustable
+                            layout: draggable sidebar resizer and a show/hide panel toggle, both
+                            remembered in the browser. Each revision now ships as its own file.
+    Rev 0.09  (2026-10-07)  Headline renamed to "Renewable Energy in Viet Nam" (brand, sidebar
+                            heading, page title and footer).
+    Rev 0.10  (2026-10-07)  Moved the Zones panel above the Companies & projects panel. Removed a
+                            duplicate (stale) Companies & projects panel left over from Rev 0.05.
+    Rev 0.11  (2026-10-07)  New logo (teal swirl + green leaves + gold star) in the header and as the
+                            favicon. Theme retuned to the logo palette: greens #4caf50/#2e7d32,
+                            teal #009688, gold #f9a825, charcoal #212121, off-white #f2f2f0; the
+                            header now runs a green-to-teal gradient.
+
+  Single self-contained file. No build step, no server. Open directly in a browser.
+  Leaflet is bundled in vendor/leaflet/; map tiles load over the internet.
+-->
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Renewable Energy in Viet Nam — Energy Potential Map</title>
+<meta name="description" content="Interactive map of Viet Nam showing potential areas for solar, wind, hydropower, LNG and nuclear, with layer toggles, a legend and company projects." />
+
+<!-- Favicon: same emblem as the header logo -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffffff'/%3E%3Cpath d='M50 25c3 14-7 26-22 27-8 .5-15-3-19-9' fill='none' stroke='%23009688' stroke-width='5.5' stroke-linecap='round'/%3E%3Cpath d='M31 47C19 47 12.5 39 13.5 26.5 25 26.5 32 35 31 47z' fill='%234caf50'/%3E%3Cpath d='M27 49C18 49 13 42.5 14 33c9 1.2 14 7.5 13 16z' fill='%232e7d32'/%3E%3Cpath d='M32 5l2.5 5.4 5.9.6-4.4 4 1.3 5.8-5.3-3-5.3 3 1.3-5.8-4.4-4 5.9-.6z' fill='%23f9a825'/%3E%3C/svg%3E" />
+
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+
+<style>
+  :root {
+    /* Palette matched to the logo: green leaves, teal swirl, gold star, charcoal text */
+    --green-900:#10401c; --green-700:#2e7d32; --green-500:#4caf50; --green-100:#e8f5e9;
+    --teal:#009688; --teal-100:#e0f2f1;
+    --ink:#212121; --muted:#5f6b63; --line:#dfe6df; --gold:#f9a825; --white:#ffffff; --bg:#f2f2f0;
+    --solar:#f5a623; --wind:#2b8cbe; --hydro:#1f6feb; --lng:#8e44ad; --nuclear:#d0021b;
+    --radius:12px; --shadow:0 6px 22px rgba(16,64,28,.12);
+  }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin:0; color:var(--ink); background:var(--bg); line-height:1.5;
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; height:100vh; overflow:hidden;
+  }
+  a { color:var(--green-700); }
+
+  /* ---------- Top bar ---------- */
+  header.site {
+    background:linear-gradient(120deg, var(--green-900) 0%, var(--green-700) 55%, var(--teal) 100%);
+    color:var(--white); flex:0 0 auto;
+  }
+  .nav {
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:10px 18px; min-height:58px; flex-wrap:wrap;
+  }
+  .brand { display:flex; align-items:center; gap:11px; text-decoration:none; color:var(--white); font-weight:800; }
+  .brand .mark {
+    width:42px; height:42px; border-radius:50%; display:grid; place-items:center; flex:0 0 auto;
+    background:#ffffff; box-shadow:0 1px 5px rgba(0,0,0,.18);
+  }
+  .brand .mark svg { width:32px; height:32px; display:block; }
+  .brand small { display:block; font-weight:500; font-size:11.5px; color:#cfe6da; letter-spacing:.02em; }
+  .nav .tools { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn {
+    text-decoration:none; font-weight:700; font-size:13px; padding:8px 14px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.45); color:var(--white); background:transparent; cursor:pointer;
+  }
+  .btn:hover { background:rgba(255,255,255,.14); }
+  .btn.solid { background:var(--gold); color:#3a2f00; border-color:transparent; }
+  .btn.solid:hover { background:#ffbd45; }
+
+  /* ---------- Disclaimer banner ---------- */
+  .disclaimer {
+    background:rgba(249,168,37,.12);
+    -webkit-backdrop-filter:blur(6px) saturate(140%);
+    backdrop-filter:blur(6px) saturate(140%);
+    border-bottom:1px solid rgba(249,168,37,.35);
+    color:#6d5310; font-size:10.5px; line-height:1.45; padding:6px 18px; flex:0 0 auto;
+  }
+  .disclaimer strong { color:#4a3806; }
+
+  /* ---------- Layout ---------- */
+  .app { flex:1 1 auto; display:flex; min-height:0; }
+  .side {
+    width:340px; flex:0 0 340px; background:var(--white); border-right:1px solid var(--line);
+    overflow-y:auto; padding:16px;
+  }
+  /* Draggable divider between the sidebar and the map */
+  .resizer {
+    flex:0 0 6px; position:relative; cursor:col-resize; background:var(--white); z-index:5;
+    touch-action:none;
+  }
+  .resizer::after {
+    content:""; position:absolute; top:0; bottom:0; left:2px; width:2px;
+    background:var(--line); transition:background .12s ease;
+  }
+  .resizer:hover::after, .resizer.active::after { background:var(--green-500); left:1px; width:4px; }
+  body.panel-hidden .side, body.panel-hidden .resizer { display:none; }
+  .map-wrap { position:relative; flex:1 1 auto; min-width:0; }
+  #map { position:absolute; inset:0; background:#e8eef0; }
+  .map-fallback {
+    position:absolute; inset:0; display:none; place-items:center; text-align:center; padding:30px;
+    font-size:14px; color:var(--muted);
+  }
+
+  /* ---------- Sidebar content ---------- */
+  .side h2 { font-size:14.5px; margin:0 0 4px; letter-spacing:-.01em; }
+  .side p.sub { color:var(--muted); font-size:11.8px; margin:0 0 12px; }
+  .card {
+    border:1px solid var(--line); border-radius:var(--radius); padding:12px 13px; margin-bottom:12px;
+    background:var(--white);
+  }
+  .card h3 {
+    font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+    margin:0 0 10px; font-weight:700;
+  }
+  .row { display:flex; align-items:center; gap:10px; padding:5px 0; }
+  .row label { flex:1 1 auto; font-size:12.6px; cursor:pointer; }
+  .swatch {
+    width:16px; height:16px; border-radius:4px; border:1px solid rgba(0,0,0,.18); flex:0 0 auto;
+  }
+  .sw.solar { background:var(--solar); }
+  .sw.wind  { background:var(--wind); }
+  .sw.hydro { background:var(--hydro); }
+  .sw.lng   { background:var(--lng); }
+  .sw.nuclear { background:var(--nuclear); }
+  .count { font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  input[type=checkbox] { width:16px; height:16px; accent-color:var(--green-700); cursor:pointer; }
+  #base-list .row { padding:4px 0; }
+  #base-list input[type=radio] { width:16px; height:16px; accent-color:var(--green-700); cursor:pointer; }
+  #base-list .bl { font-size:13.3px; cursor:pointer; flex:1 1 auto; }
+  #base-list .badge {
+    font-size:10px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--green-700);
+    background:var(--green-100); border-radius:999px; padding:2px 7px;
+  }
+  .base-status { font-size:11.5px; color:var(--muted); margin:8px 0 0; }
+
+  .zone-list { list-style:none; margin:0; padding:0; max-height:260px; overflow:auto; }
+  .zone-list li { margin-bottom:2px; }
+  .zone-list button {
+    display:flex; align-items:flex-start; gap:9px; width:100%; text-align:left; cursor:pointer;
+    border:1px solid transparent; background:transparent; border-radius:9px; padding:7px 8px; font:inherit;
+  }
+  .zone-list button:hover { background:var(--green-100); border-color:var(--line); }
+  .dot { width:10px; height:10px; border-radius:50%; margin-top:4px; flex:0 0 auto; }
+  .dot.solar { background:var(--solar); } .dot.wind { background:var(--wind); } .dot.hydro { background:var(--hydro); }
+  .dot.lng { background:var(--lng); } .dot.nuclear { background:var(--nuclear); }
+  .zone-list .zt { font-size:12.2px; font-weight:650; }
+  .zone-list .zm { font-size:10.8px; color:var(--muted); }
+
+  /* ---------- Companies panel ---------- */
+  .co-search {
+    width:100%; padding:8px 10px; font:inherit; font-size:13px; border:1px solid var(--line);
+    border-radius:9px; background:var(--bg); color:var(--ink); margin-bottom:8px;
+  }
+  .co-actions { display:flex; gap:7px; margin-bottom:9px; }
+  .btn.mini {
+    font-size:12px; padding:6px 12px; border-radius:999px; border:1px solid var(--line);
+    background:var(--bg); color:var(--green-900); font-weight:700;
+  }
+  .btn.mini:hover { background:var(--green-100); }
+  .co-list { list-style:none; margin:0; padding:0; max-height:300px; overflow:auto; }
+  .co-item { border-bottom:1px solid var(--line); }
+  .co-item:last-child { border-bottom:none; }
+  .co-head {
+    display:flex; align-items:flex-start; gap:9px; width:100%; text-align:left; cursor:pointer;
+    background:transparent; border:1px solid transparent; border-radius:9px; padding:8px; font:inherit;
+  }
+  .co-head:hover { background:var(--green-100); }
+  .co-item.on .co-head { background:var(--green-100); border-color:var(--green-500); }
+  .co-check {
+    flex:0 0 auto; width:16px; height:16px; margin-top:3px; border:1.5px solid var(--muted);
+    border-radius:5px; display:grid; place-items:center; font-size:11px; color:#fff; line-height:1;
+  }
+  .co-item.on .co-check { background:var(--green-700); border-color:var(--green-700); }
+  .co-body { flex:1 1 auto; min-width:0; }
+  .co-name { font-size:12.4px; font-weight:650; display:block; }
+  .co-meta { font-size:10.6px; color:var(--muted); }
+  .co-tags { margin-top:4px; display:flex; gap:4px; flex-wrap:wrap; }
+  .co-tag {
+    font-size:9.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    padding:1px 6px; border-radius:999px; color:#fff;
+  }
+  .co-tag.solar { background:var(--solar); } .co-tag.wind { background:var(--wind); } .co-tag.hydro { background:var(--hydro); }
+  .co-tag.lng { background:var(--lng); } .co-tag.nuclear { background:var(--nuclear); }
+  .co-proj { display:none; padding:0 8px 9px 33px; }
+  .co-item.on .co-proj, .co-item.match .co-proj { display:block; }
+  .co-proj ul { list-style:none; margin:0; padding:0; }
+  .co-proj li { margin:3px 0; }
+  .co-proj button {
+    display:flex; align-items:center; gap:7px; width:100%; text-align:left; cursor:pointer;
+    background:transparent; border:none; padding:2px 0; font:inherit; font-size:12.3px; color:var(--ink);
+  }
+  .co-proj button:hover { color:var(--green-700); text-decoration:underline; }
+  .co-proj .pdot { width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+  .co-proj .pdot.solar { background:var(--solar); } .co-proj .pdot.wind { background:var(--wind); } .co-proj .pdot.hydro { background:var(--hydro); }
+  .co-proj .pdot.lng { background:var(--lng); } .co-proj .pdot.nuclear { background:var(--nuclear); }
+  .co-proj .pcap { margin-left:auto; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+  .co-hint { font-size:11.5px; color:var(--muted); margin:9px 0 0; }
+  .btn.mini.accent { background:var(--green-700); color:#fff; border-color:transparent; }
+  .btn.mini.accent:hover { background:var(--green-900); }
+  .btn.mini.primary { background:var(--green-700); color:#fff; border-color:transparent; flex:1 1 auto; }
+  .btn.mini.primary:hover { background:var(--green-900); }
+
+  .add-form {
+    border:1px solid var(--line); border-radius:10px; background:var(--bg);
+    padding:11px 11px 12px; margin-bottom:10px;
+  }
+  .add-form label { display:block; font-size:11px; font-weight:700; letter-spacing:.03em; color:var(--muted); margin:8px 0 3px; text-transform:uppercase; }
+  .add-form input, .add-form select {
+    width:100%; padding:7px 9px; font:inherit; font-size:13px; border:1px solid var(--line);
+    border-radius:8px; background:#fff; color:var(--ink);
+  }
+  .add-form .add-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .add-form .add-actions { display:flex; gap:8px; margin-top:12px; }
+  #np-pick { margin-top:8px; }
+  #np-pick.armed { background:var(--gold); border-color:transparent; color:#3a2f00; }
+
+  .co-item.custom .co-name::after {
+    content:"CUSTOM"; font-size:9px; font-weight:700; letter-spacing:.05em; color:var(--green-700);
+    background:var(--green-100); border-radius:999px; padding:1px 6px; margin-left:6px; vertical-align:1px;
+  }
+  .co-del {
+    border:none; background:transparent; color:var(--muted); cursor:pointer; font-size:14px;
+    line-height:1; padding:2px 4px; border-radius:6px; flex:0 0 auto;
+  }
+  .co-del:hover { background:#fde8e8; color:#c0392b; }
+
+  /* Map pins for company projects */
+  .company-pin { background:none; border:none; }
+  .company-pin svg { display:block; filter:drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+  .company-pin.hi svg { transform:scale(1.25); transform-origin:50% 100%; }
+
+  details.adv { border:1px solid var(--line); border-radius:var(--radius); padding:0 13px; margin-bottom:12px; }
+  details.adv > summary {
+    cursor:pointer; font-size:12.5px; font-weight:700; padding:11px 0; list-style:none;
+    display:flex; align-items:center; gap:8px;
+  }
+  details.adv > summary::-webkit-details-marker { display:none; }
+  details.adv > summary::before { content:"▸"; color:var(--green-700); font-size:12px; }
+  details.adv[open] > summary::before { content:"▾"; }
+  .adv-body { padding:0 0 14px; }
+  .adv-body > label { display:block; font-size:12px; color:var(--muted); margin:9px 0 4px; }
+  .adv-body > label:first-child { margin-top:0; }
+  .adv-body select, .adv-body input[type=text] {
+    width:100%; padding:8px 9px; font:inherit; font-size:13px; border:1px solid var(--line);
+    border-radius:8px; background:var(--bg); color:var(--ink);
+  }
+  .adv-body .hint { font-size:11.5px; color:var(--muted); margin:8px 0 0; }
+  .adv-actions { display:flex; gap:8px; margin-top:11px; }
+  .adv-actions .btn { border-color:var(--line); color:var(--green-900); background:var(--bg); font-size:12.5px; }
+  .adv-actions .btn.primary { background:var(--green-700); color:#fff; border-color:transparent; }
+
+  /* ---------- Legend on map ---------- */
+  .leaflet-control.iso-legend {
+    background:rgba(255,255,255,.95); padding:10px 12px; border-radius:10px;
+    box-shadow:var(--shadow); font-size:12px; color:var(--ink); max-width:200px;
+  }
+  .iso-legend h4 { margin:0 0 7px; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); }
+  .iso-legend .lr { display:flex; align-items:center; gap:7px; margin:4px 0; }
+  .iso-legend .lr .swatch { width:14px; height:14px; }
+  .iso-legend .lr.proj { font-style:italic; }
+
+  .scale-note {
+    background:rgba(16,64,28,.82); color:#fff; font-size:10px; padding:5px 9px;
+    border-radius:9px; box-shadow:var(--shadow);
+  }
+
+  footer.site {
+    flex:0 0 auto; background:#0e3418; color:#9dc4a6; font-size:10.5px;
+    padding:9px 18px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  }
+  footer.site a { color:#bcd6c9; }
+  .rev { font-variant-numeric:tabular-nums; }
+
+  @media (max-width:820px) {
+    body { overflow:auto; height:auto; }
+    .app { flex-direction:column; }
+    .side { width:auto !important; flex:0 0 auto !important; border-right:none; border-bottom:1px solid var(--line); }
+    .resizer { display:none !important; }
+    .map-wrap { height:64vh; min-height:420px; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="nav">
+      <a class="brand" href="index.html">
+        <span class="mark" aria-hidden="true">
+          <!-- Logo emblem: teal swirl + green leaves + gold star -->
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 25c3 14-7 26-22 27-8 .5-15-3-19-9" fill="none" stroke="#009688" stroke-width="5.5" stroke-linecap="round"/>
+            <path d="M31 47C19 47 12.5 39 13.5 26.5 25 26.5 32 35 31 47z" fill="#4caf50"/>
+            <path d="M27 49C18 49 13 42.5 14 33c9 1.2 14 7.5 13 16z" fill="#2e7d32"/>
+            <path d="M32 5l2.5 5.4 5.9.6-4.4 4 1.3 5.8-5.3-3-5.3 3 1.3-5.8-4.4-4 5.9-.6z" fill="#f9a825"/>
+          </svg>
+        </span>
+        <span>Renewable Energy in Viet Nam<small>Energy potential map</small></span>
+      </a>
+      <div class="tools">
+        <button class="btn" id="btn-panel" type="button">Hide panel</button>
+        <button class="btn" id="btn-reset" type="button">Fit Viet Nam</button>
+        <button class="btn solid" id="btn-all" type="button">Toggle all layers</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="disclaimer">
+    <strong>For study &amp; research only — non-commercial. Not for investment, engineering or siting decisions.</strong>
+    This map is a free, non-commercial educational aid. Zones are indicative, low-resolution approximations
+    of areas favourable for solar, wind, hydro, LNG/gas-to-power and nuclear siting; the company/project list
+    is a reference compilation (some entries are joint ventures or proposals) and is not an endorsement.
+    Nuclear and LNG layers are early-stage and change with policy. All data must be independently verified
+    against official sources before any use.
+  </div>
+
+  <div class="app">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="side">
+      <h2>Renewable Energy in Viet Nam</h2>
+      <p class="sub">Toggle a resource to show its potential zones, then pick a company to pin its projects — or add your own.</p>
+
+      <!-- ===== Zones (top) ===== -->
+      <div class="card">
+        <h3>Zones</h3>
+        <ul class="zone-list" id="zone-list"></ul>
+      </div>
+
+      <!-- ===== Companies & projects ===== -->
+      <div class="card">
+        <h3>Companies &amp; projects</h3>
+        <input type="text" id="company-search" class="co-search" placeholder="Search company or project…" autocomplete="off" />
+        <div class="co-actions">
+          <button class="btn mini" id="co-all" type="button">Show all</button>
+          <button class="btn mini" id="co-clear" type="button">Clear</button>
+          <button class="btn mini accent" id="co-add" type="button">＋ Add project</button>
+        </div>
+
+        <!-- Add / edit a project -->
+        <form class="add-form" id="add-form" hidden>
+          <label for="np-company">Company</label>
+          <input type="text" id="np-company" list="company-names" placeholder="e.g. Trung Nam Group" required />
+          <datalist id="company-names"></datalist>
+
+          <label for="np-name">Project name</label>
+          <input type="text" id="np-name" placeholder="e.g. Ninh Thuan Solar 3" required />
+
+          <div class="add-grid">
+            <div>
+              <label for="np-type">Type</label>
+              <select id="np-type">
+                <option value="solar">Solar</option>
+                <option value="wind">Wind</option>
+                <option value="hydro">Hydropower</option>
+                <option value="lng">LNG / gas-to-power</option>
+                <option value="nuclear">Nuclear</option>
+              </select>
+            </div>
+            <div>
+              <label for="np-size">Size (MW)</label>
+              <input type="number" id="np-size" min="0" step="0.1" placeholder="150" />
+            </div>
+          </div>
+
+          <label for="np-loc">Province / location</label>
+          <input type="text" id="np-loc" placeholder="e.g. Ninh Thuan" />
+
+          <div class="add-grid">
+            <div>
+              <label for="np-lat">Latitude</label>
+              <input type="number" id="np-lat" step="0.0001" placeholder="11.35" required />
+            </div>
+            <div>
+              <label for="np-lon">Longitude</label>
+              <input type="number" id="np-lon" step="0.0001" placeholder="108.90" required />
+            </div>
+          </div>
+          <button type="button" class="btn mini" id="np-pick">Pick point on map</button>
+
+          <div class="add-actions">
+            <button type="submit" class="btn mini primary" id="np-save">Save project</button>
+            <button type="button" class="btn mini" id="np-cancel">Cancel</button>
+          </div>
+          <p class="co-hint" id="np-hint">Tip: click “Pick point on map”, then click the map to fill the coordinates.</p>
+        </form>
+
+        <ul class="co-list" id="company-list"></ul>
+        <p class="co-hint" id="co-hint">Select a company (or a project) to mark it on the map.</p>
+        <div class="co-actions" style="margin-top:9px;">
+          <button class="btn mini" id="co-export" type="button">Export my projects</button>
+          <button class="btn mini" id="co-import" type="button">Import</button>
+          <input type="file" id="co-file" accept="application/json,.json" hidden />
+        </div>
+      </div>
+
+      <details class="adv">
+        <summary>Base map</summary>
+        <div class="adv-body">
+          <div id="base-list"></div>
+        </div>
+      </details>
+
+      <div class="card">
+        <h3>Resources</h3>
+        <div class="row">
+          <span class="swatch sw solar"></span>
+          <label for="t-solar">Solar potential</label>
+          <span class="count" id="c-solar"></span>
+          <input type="checkbox" id="t-solar" checked />
+        </div>
+        <div class="row">
+          <span class="swatch sw wind"></span>
+          <label for="t-wind">Wind potential</label>
+          <span class="count" id="c-wind"></span>
+          <input type="checkbox" id="t-wind" checked />
+        </div>
+        <div class="row">
+          <span class="swatch sw hydro"></span>
+          <label for="t-hydro">Hydropower potential</label>
+          <span class="count" id="c-hydro"></span>
+          <input type="checkbox" id="t-hydro" checked />
+        </div>
+        <div class="row">
+          <span class="swatch sw lng"></span>
+          <label for="t-lng">LNG terminals &amp; gas-to-power</label>
+          <span class="count" id="c-lng"></span>
+          <input type="checkbox" id="t-lng" checked />
+        </div>
+        <div class="row">
+          <span class="swatch sw nuclear"></span>
+          <label for="t-nuclear">Nuclear plant area</label>
+          <span class="count" id="c-nuclear"></span>
+          <input type="checkbox" id="t-nuclear" checked />
+        </div>
+        <div class="row" style="border-top:1px solid var(--line); margin-top:6px; padding-top:9px;">
+          <span class="swatch sw" style="background:#14603f; border-radius:50%;"></span>
+          <label for="t-projects">Company projects</label>
+          <span class="count" id="c-projects"></span>
+          <input type="checkbox" id="t-projects" checked />
+        </div>
+      </div>
+
+      <details class="adv">
+        <summary>Advanced — commercial tile server &amp; API key</summary>
+        <div class="adv-body">
+          <p class="hint" style="margin-top:0;">
+            Every base map in the switcher above is <strong>free and needs no key</strong>. The public
+            openstreetmap.org tile server is filtered on some networks, so it is not used by default.
+            Paste a key below only if you want a paid commercial provider instead.
+          </p>
+          <label for="provider">Tile provider</label>
+          <select id="provider">
+            <option value="maptiler">MapTiler (key required)</option>
+            <option value="thunderforest">Thunderforest (key required)</option>
+            <option value="stadia">Stadia Maps (key required)</option>
+          </select>
+          <label for="apikey">API key</label>
+          <input type="text" id="apikey" placeholder="Paste provider API key…" autocomplete="off" />
+          <div class="adv-actions">
+            <button class="btn primary" id="apply-key" type="button">Apply</button>
+            <button class="btn" id="save-key" type="button">Save locally</button>
+          </div>
+          <p class="hint">Keys are kept in your browser's local storage only — never sent anywhere by this page.</p>
+        </div>
+      </details>
+
+      <div class="card">
+        <h3>How to read the zones</h3>
+        <p class="hint" style="font-size:12.3px; color:var(--muted); margin:0;">
+          Zones blend several public indicators — solar irradiance, average wind speed and terrain/river
+          gradients — into broad, easy-to-see areas. Real project decisions need measured data at the
+          exact site. Always cross-check with the national power development plan and grid capacity.
+        </p>
+      </div>
+    </aside>
+
+    <!-- ===== Resizer (drag to widen/narrow the sidebar) ===== -->
+    <div class="resizer" id="resizer" role="separator" aria-orientation="vertical" title="Drag to resize the panel"></div>
+
+    <!-- ===== Map ===== -->
+    <div class="map-wrap">
+      <div id="map" role="application" aria-label="Map of renewable energy potential in Viet Nam"></div>
+      <div class="map-fallback" id="map-fallback">
+        <p><strong>Map library did not load.</strong><br />
+        This page needs an internet connection to fetch Leaflet and map tiles. Check your connection and reload.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site">
+    <span>For study &amp; research only — non-commercial. Basemaps: OpenStreetMap (France) · Esri satellite · rendered with Leaflet</span>
+    <span class="rev">Renewable Energy in Viet Nam · Rev 0.11</span>
+  </footer>
+
+  <!-- Leaflet is bundled locally so the page works even if CDNs are blocked.
+       If the local copy is missing, fall back to a CDN on the fly. -->
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script>
+    if (typeof L === "undefined") {
+      document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">');
+      document.write('<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
+
+  <script>
+  (function () {
+    "use strict";
+
+    if (typeof L === "undefined") {
+      document.getElementById("map").style.display = "none";
+      document.getElementById("map-fallback").style.display = "grid";
+      return;
+    }
+
+    var VN_BOUNDS = [[8.2, 102.0], [23.5, 110.0]];         // framing for "Fit Viet Nam"
+    var VN_MAX_BOUNDS = [[6.5, 100.5], [25.0, 112.0]];     // hard limit — keep the view over Viet Nam
+    var COLORS = { solar:"#f5a623", wind:"#2b8cbe", hydro:"#1f6feb", lng:"#8e44ad", nuclear:"#d0021b" };
+    var LABELS = { solar:"Solar", wind:"Wind", hydro:"Hydropower", lng:"LNG", nuclear:"Nuclear" };
+
+    /* ---------------- Potential zone data (indicative) ---------------- */
+    var ZONES = [
+      { type:"solar", name:"Ninh Thuan – Binh Thuan coast", rating:"Very high",
+        note:"Viet Nam's highest solar irradiance (~1,800–1,900 kWh/m²/yr). Large utility-scale solar cluster with strong grid build-out.",
+        bounds:[[11.85,107.95],[11.6,108.75],[11.35,109.2],[10.95,109.35],[10.7,108.9],[10.85,108.25],[11.3,107.9],[11.6,107.85]] },
+      { type:"solar", name:"Central Highlands", rating:"Very high",
+        note:"High plateau with excellent sun and cooler temperatures that lift panel efficiency; also strong hydro and wind overlap.",
+        bounds:[[14.6,107.4],[14.4,108.4],[13.5,108.9],[12.4,108.9],[11.9,108.3],[12.5,107.4],[13.5,107.25],[14.2,107.2]] },
+      { type:"solar", name:"Southeast (Tay Ninh – Binh Phuoc – Long An)", rating:"High",
+        note:"Strong irradiance close to Ho Chi Minh City demand and industrial load centres; good for rooftop and utility-scale.",
+        bounds:[[11.9,105.8],[11.7,106.6],[11.2,106.9],[10.7,106.7],[10.6,106.0],[11.1,105.6],[11.6,105.6]] },
+
+      { type:"wind", name:"Ninh Thuan – Binh Thuan coastal wind", rating:"Very high",
+        note:"Viet Nam's premier onshore wind corridor — consistent monsoon winds along the south-central coast.",
+        bounds:[[11.9,108.0],[11.6,108.9],[11.2,109.4],[10.8,109.3],[10.6,108.7],[11.0,108.1],[11.5,107.85]] },
+      { type:"wind", name:"Offshore south (Binh Thuan → Ca Mau)", rating:"Very high",
+        note:"Shallow-water offshore zone with strong, steady winds — the focus of Viet Nam's large offshore wind pipeline.",
+        bounds:[[11.1,109.4],[10.3,109.6],[9.2,108.4],[7.8,107.2],[6.5,105.5],[6.8,104.6],[8.2,105.0],[9.6,106.8],[10.8,108.8]] },
+      { type:"wind", name:"Central Highlands highland wind", rating:"High",
+        note:"Elevated ridges and plateaus channel strong winds; often co-located with solar and hydro in the same province.",
+        bounds:[[14.8,107.5],[14.5,108.5],[13.6,109.0],[12.7,108.9],[12.4,108.2],[13.0,107.5],[13.9,107.3]] },
+      { type:"wind", name:"Gulf of Tonkin (offshore north)", rating:"Moderate",
+        note:"Northern offshore area with good but more seasonal winds; nearer to northern demand and existing transmission.",
+        bounds:[[21.3,107.2],[21.0,108.2],[20.0,108.6],[19.0,108.2],[18.6,107.2],[19.4,106.6],[20.4,106.7]] },
+
+      { type:"hydro", name:"Northern mountains (Son La – Lai Chau – Hoa Binh)", rating:"Very high",
+        note:"Steep terrain and large rivers host Viet Nam's biggest reservoirs and cascade hydropower systems.",
+        bounds:[[22.8,103.0],[22.6,104.4],[21.9,105.2],[21.0,105.0],[20.7,104.2],[21.2,103.2],[22.0,102.6]] },
+      { type:"hydro", name:"North Central (Nghe An – Ha Tinh – Quang Binh)", rating:"High",
+        note:"Short, steep rivers draining the Truong Son range offer strong run-of-river and small-hydro potential.",
+        bounds:[[19.8,104.2],[19.5,105.4],[18.6,106.2],[17.7,106.0],[17.4,105.2],[18.2,104.4],[19.1,104.0]] },
+      { type:"hydro", name:"Central Highlands (Se San – Srepok – Dong Nai)", rating:"Very high",
+        note:"Major river cascades with substantial existing and planned capacity; supports regional grid and exports.",
+        bounds:[[15.0,107.6],[14.7,108.6],[13.8,109.0],[12.9,108.8],[12.6,108.0],[13.4,107.4],[14.3,107.35]] },
+
+      /* --- LNG terminals / gas-to-power zones (indicative) --- */
+      { type:"lng", name:"Thi Vai – Cai Mep LNG hub", rating:"Operating",
+        note:"Viet Nam's first LNG import cluster in Ba Ria – Vung Tau (Thi Vai and Hai Linh terminals), feeding gas-to-power plants in the south.",
+        bounds:[[10.62,106.94],[10.62,107.12],[10.46,107.12],[10.46,106.94]] },
+      { type:"lng", name:"Nhon Trach LNG power", rating:"In development",
+        note:"Nhon Trach 3 & 4 gas-to-power project in Dong Nai, supplied with imported LNG via the southern terminal cluster.",
+        bounds:[[10.72,106.80],[10.72,106.92],[10.60,106.92],[10.60,106.80]] },
+      { type:"lng", name:"Son My LNG", rating:"Planned",
+        note:"Planned LNG import terminal and power complex in Binh Thuan, one of the largest proposed in the south.",
+        bounds:[[10.84,107.70],[10.84,107.86],[10.68,107.86],[10.68,107.70]] },
+      { type:"lng", name:"Ca Na LNG", rating:"Planned",
+        note:"Proposed LNG import terminal in Ninh Thuan, co-located with the Ca Na gas-to-power scheme.",
+        bounds:[[11.40,109.02],[11.40,109.16],[11.24,109.16],[11.24,109.02]] },
+      { type:"lng", name:"Chan May LNG", rating:"Planned",
+        note:"Proposed LNG power project in the Chan May economic zone, Thua Thien Hue.",
+        bounds:[[16.40,107.96],[16.40,108.10],[16.26,108.10],[16.26,107.96]] },
+      { type:"lng", name:"Bac Tien Phong LNG", rating:"Proposed",
+        note:"Proposed northern LNG import and power complex in Quang Ninh, near Cam Pha.",
+        bounds:[[21.28,106.90],[21.28,107.04],[21.12,107.04],[21.12,106.90]] },
+
+      /* --- Nuclear plant areas (indicative) --- */
+      { type:"nuclear", name:"Ninh Thuan 1 (Phuoc Dinh)", rating:"Siting area",
+        note:"Planned nuclear power site at Phuoc Dinh, Thuan Nam district, Ninh Thuan. Approved earlier, paused in 2016, and revived under the national power plan.",
+        bounds:[[11.50,108.86],[11.50,109.02],[11.34,109.02],[11.34,108.86]] },
+      { type:"nuclear", name:"Ninh Thuan 2 (Vinh Hai)", rating:"Siting area",
+        note:"Planned nuclear power site at Vinh Hai, Ninh Hai district, Ninh Thuan — the companion to Ninh Thuan 1.",
+        bounds:[[11.82,109.02],[11.82,109.20],[11.64,109.20],[11.64,109.02]] }
+    ];
+
+    /* ---------------- Companies & their projects (reference list) ----------------
+       Indicative only. Ownership, capacity and status change over time and some
+       entries are joint ventures or proposed schemes — verify before relying on them. */
+    var COMPANIES = [
+      { name:"Trung Nam Group", country:"Viet Nam",
+        projects:[
+          { name:"Trung Nam Thuan Bac Solar", type:"solar", lat:11.60, lon:108.95, cap:"~600 MW", loc:"Ninh Thuan" },
+          { name:"Trung Nam Thuan Nam Solar", type:"solar", lat:11.35, lon:108.90, cap:"~450 MW", loc:"Ninh Thuan" },
+          { name:"Ea Nam Wind",               type:"wind",  lat:13.35, lon:108.05, cap:"~400 MW", loc:"Dak Lak" },
+          { name:"Dak Lak – Dak Nong hydro cascade", type:"hydro", lat:12.55, lon:108.15, cap:"multi", loc:"Dak Lak / Dak Nong" }
+        ]},
+      { name:"BIM Group", country:"Viet Nam",
+        projects:[
+          { name:"BIM Solar Ninh Thuan", type:"solar", lat:11.52, lon:108.97, cap:"~330 MW", loc:"Ninh Thuan" },
+          { name:"BIM Wind Ninh Thuan",  type:"wind",  lat:11.46, lon:108.92, cap:"88 MW",   loc:"Ninh Thuan" }
+        ]},
+      { name:"EVN (Viet Nam Electricity)", country:"Viet Nam · state",
+        projects:[
+          { name:"Son La Dam",   type:"hydro", lat:21.53, lon:103.95, cap:"2,400 MW", loc:"Son La" },
+          { name:"Hoa Binh Dam", type:"hydro", lat:20.81, lon:105.32, cap:"1,920 MW", loc:"Hoa Binh" },
+          { name:"Lai Chau Dam", type:"hydro", lat:22.10, lon:102.79, cap:"1,200 MW", loc:"Lai Chau" },
+          { name:"Yaly",         type:"hydro", lat:14.20, lon:107.72, cap:"720 MW",   loc:"Gia Lai" },
+          { name:"Tri An",       type:"hydro", lat:11.10, lon:107.02, cap:"400 MW",   loc:"Dong Nai" }
+        ]},
+      { name:"The Blue Circle", country:"Singapore",
+        projects:[
+          { name:"Dam Nai Wind",   type:"wind", lat:11.55, lon:109.00, cap:"~40 MW",  loc:"Ninh Thuan" },
+          { name:"Ninh Thuan wind cluster", type:"wind", lat:11.50, lon:109.05, cap:"~60 MW", loc:"Ninh Thuan" }
+        ]},
+      { name:"Super Energy Corporation", country:"Thailand",
+        projects:[
+          { name:"Binh Phuoc Solar", type:"solar", lat:11.90, lon:106.85, cap:"~150 MW", loc:"Binh Phuoc" },
+          { name:"Soc Trang Solar",  type:"solar", lat:9.60,  lon:105.98, cap:"~100 MW", loc:"Soc Trang" }
+        ]},
+      { name:"Bamboo Capital / BCG Energy", country:"Viet Nam",
+        projects:[
+          { name:"Phu My Solar", type:"solar", lat:14.10, lon:109.05, cap:"~330 MW", loc:"Binh Dinh" },
+          { name:"BCG wind projects", type:"wind", lat:9.30, lon:105.90, cap:"~100 MW", loc:"Soc Trang / Ca Mau" }
+        ]},
+      { name:"Xuan Cau / B.Grimm Power", country:"Viet Nam / Thailand",
+        projects:[
+          { name:"Dau Tieng Solar", type:"solar", lat:11.30, lon:106.35, cap:"~500 MW", loc:"Tay Ninh" }
+        ]},
+      { name:"TTC Group (Gia Lai Electricity)", country:"Viet Nam",
+        projects:[
+          { name:"Krong Pa Solar", type:"solar", lat:13.15, lon:108.68, cap:"~50 MW", loc:"Gia Lai" },
+          { name:"TTC / GEC solar & wind", type:"solar", lat:11.40, lon:108.85, cap:"~100 MW", loc:"Ninh Thuan" }
+        ]},
+      { name:"Sao Mai Group", country:"Viet Nam",
+        projects:[
+          { name:"Sao Mai Solar", type:"solar", lat:10.55, lon:104.98, cap:"~210 MW", loc:"An Giang" }
+        ]},
+      { name:"Copenhagen Infrastructure Partners (La Gan)", country:"Denmark",
+        projects:[
+          { name:"La Gan Offshore Wind", type:"wind", lat:10.80, lon:108.40, cap:"~3,500 MW (planned)", loc:"off Binh Thuan" }
+        ]},
+      { name:"Enterprize Energy", country:"United Kingdom",
+        projects:[
+          { name:"Thang Long Offshore Wind", type:"wind", lat:10.60, lon:108.70, cap:"~3,400 MW (planned)", loc:"Ke Ga, Binh Thuan" }
+        ]},
+      { name:"Mainstream Renewable Power", country:"Ireland",
+        projects:[
+          { name:"Phu Cuong Offshore Wind", type:"wind", lat:9.20, lon:106.35, cap:"~1,400 MW (planned)", loc:"off Soc Trang" }
+        ]},
+      { name:"AC Energy / Ayala", country:"Philippines",
+        projects:[
+          { name:"Ninh Thuan Solar", type:"solar", lat:11.42, lon:108.90, cap:"~80 MW", loc:"Ninh Thuan" },
+          { name:"Binh Thuan Solar", type:"solar", lat:11.10, lon:108.20, cap:"~50 MW", loc:"Binh Thuan" }
+        ]}
+    ];
+
+    // Flatten the reference list to individual projects, each carrying its owner.
+    var REF_PROJECTS = [];
+    COMPANIES.forEach(function (c) {
+      c.projects.forEach(function (p) {
+        REF_PROJECTS.push({
+          company:c.name, country:c.country, source:"ref",
+          name:p.name, type:p.type, lat:p.lat, lon:p.lon, cap:p.cap, loc:p.loc
+        });
+      });
+    });
+
+    /* ---- Projects the visitor adds (saved in this browser, exportable) ---- */
+    var STORE_KEY = "rvn_user_projects";
+    var userProjects = (function () {
+      try {
+        var raw = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+        return Array.isArray(raw) ? raw : [];
+      } catch (e) { return []; }
+    })();
+    var pickSeq = 0;
+
+    function saveUserProjects() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(userProjects)); }
+      catch (e) { /* storage may be unavailable; keep working in memory */ }
+    }
+
+    // Merge reference companies and the visitor's own projects into one model.
+    function buildModel() {
+      var model = COMPANIES.map(function (c) {
+        return {
+          name:c.name, country:c.country, custom:false,
+          projects:c.projects.map(function (p) {
+            return { company:c.name, country:c.country, source:"ref",
+                     name:p.name, type:p.type, lat:p.lat, lon:p.lon, cap:p.cap, loc:p.loc };
+          })
+        };
+      });
+
+      userProjects.forEach(function (u) {
+        var name = u.company;
+        var hit = null;
+        for (var i = 0; i < model.length; i++) {
+          if (model[i].name.toLowerCase() === name.toLowerCase()) { hit = model[i]; break; }
+        }
+        if (!hit) {
+          hit = { name:name, country:"Added by you", custom:true, projects:[] };
+          model.push(hit);
+        }
+        hit.custom = true;
+        hit.projects.push({
+          company:hit.name, country:hit.country, source:"user", id:u.id,
+          name:u.name, type:u.type, lat:u.lat, lon:u.lon, cap:u.cap, loc:u.loc || "—"
+        });
+      });
+
+      return model;
+    }
+
+    /* ---------------- Base map ---------------- */
+    var map = L.map("map", {
+      center:[16.0, 106.5],
+      zoom:6,
+      minZoom:5,
+      maxZoom:18,
+      zoomControl:true,
+      preferCanvas:true,
+      maxBounds:VN_MAX_BOUNDS,      // Viet Nam only — cannot pan away from the country
+      maxBoundsViscosity:1.0
+    });
+    map.fitBounds(VN_BOUNDS);
+
+    /* ---------------- Base maps ----------------
+       Every provider below was verified to serve real tiles with NO API key:
+         - the public openstreetmap.org tile server does not resolve here (blocked/filtered)
+         - CARTO now returns blank placeholder tiles behind a key
+       Two providers are offered: the OSM France mirror and Esri satellite — both key-free. */
+    var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+
+    var BASE = {
+      osmfr: {
+        label:"OpenStreetMap (France)", badge:"Default", maxZoom:19, subdomains:"abc",
+        attribution:OSM_ATTR + ' · tiles &copy; <a href="https://openstreetmap.fr" target="_blank" rel="noopener">OSM France</a>',
+        url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
+      },
+      esriSat: {
+        label:"Satellite imagery", maxZoom:19, attribution:"Imagery &copy; Esri, Maxar, Earthstar Geographics",
+        url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      }
+    };
+    var BASE_ORDER = ["osmfr", "esriSat"];
+
+    var currentBase = null;
+    var currentBaseName = null;
+    var baseStatusEl = null;
+
+    function setBaseStatus(msg) {
+      if (!baseStatusEl) return;
+      baseStatusEl.textContent = msg || "";
+    }
+
+    // Build a base layer and, if it fails to load any tiles at all, walk down
+    // BASE_ORDER until one works. This keeps the map usable on filtered networks.
+    function setBase(name, key) {
+      if (currentBase) { map.removeLayer(currentBase); currentBase = null; }
+
+      var cfg = (name in BASE) ? BASE[name] : null;
+      var url, opts, attribution;
+
+      if (cfg) {
+        url = cfg.url;
+        attribution = cfg.attribution;
+        opts = { maxZoom:cfg.maxZoom || 19, attribution:attribution };
+        if (cfg.subdomains) opts.subdomains = cfg.subdomains;
+      } else {
+        // Keyed commercial provider
+        if (!key) { alert("This provider needs an API key."); return; }
+        url = keyedURL(name, key);
+        attribution = keyedAttr(name);
+        opts = { maxZoom:19, attribution:attribution };
+        if (url.indexOf("{s}") > -1) opts.subdomains = "abc";
+      }
+
+      var oks = 0, errs = 0, advancing = false;
+      var layer = L.tileLayer(url, opts);
+
+      layer.on("tileload", function () {
+        oks++;
+        if (oks === 1) setBaseStatus("");
+      });
+      layer.on("tileerror", function () {
+        errs++;
+        if (!cfg || advancing || oks > 0 || errs < 5) return;
+        var idx = BASE_ORDER.indexOf(name);
+        var next = BASE_ORDER[idx + 1];
+        if (!next) {
+          setBaseStatus("All basemaps are unreachable — check your connection.");
+          return;
+        }
+        advancing = true;
+        setBaseStatus("“" + cfg.label + "” unavailable — switched to “" + BASE[next].label + "”.");
+        var radio = document.querySelector('input[name="base"][value="' + next + '"]');
+        if (radio) radio.checked = true;
+        setBase(next);
+      });
+
+      layer.addTo(map);
+      layer.bringToBack();
+      currentBase = layer;
+      currentBaseName = name;
+    }
+
+    /* ---------------- Base-map switcher UI ---------------- */
+    var baseListEl = document.getElementById("base-list");
+    BASE_ORDER.forEach(function (name) {
+      var cfg = BASE[name];
+      var row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML =
+        '<input type="radio" name="base" id="base-' + name + '" value="' + name + '"' +
+          (name === "osmfr" ? " checked" : "") + ' />' +
+        '<label class="bl" for="base-' + name + '">' + cfg.label + '</label>' +
+        (cfg.badge ? '<span class="badge">' + cfg.badge + '</span>' : "");
+      baseListEl.appendChild(row);
+      row.querySelector("input").addEventListener("change", function () {
+        if (this.checked) setBase(this.value, document.getElementById("apikey").value.trim());
+      });
+    });
+    var statusP = document.createElement("p");
+    statusP.className = "base-status";
+    baseListEl.appendChild(statusP);
+    baseStatusEl = statusP;
+
+    // Draw the default basemap.
+    setBase("osmfr");
+
+    /* ---------------- Overlay layers ---------------- */
+    var layers = {
+      solar: L.layerGroup().addTo(map),
+      wind:  L.layerGroup().addTo(map),
+      hydro: L.layerGroup().addTo(map),
+      lng:   L.layerGroup().addTo(map),
+      nuclear: L.layerGroup().addTo(map),
+      projects: L.layerGroup().addTo(map)   // company project pins (selection-driven)
+    };
+
+    function polyStyle(type) {
+      return { color:COLORS[type], weight:1.5, opacity:0.9, fillColor:COLORS[type], fillOpacity:0.28 };
+    }
+
+    function popupHTML(z) {
+      return '<div style="min-width:190px">' +
+        '<strong style="font-size:14px">' + z.name + '</strong><br>' +
+        '<span style="color:' + COLORS[z.type] + ';font-weight:700;font-size:12px">' +
+          LABELS[z.type] + ' · ' + z.rating + ' potential</span>' +
+        '<p style="margin:7px 0 0;font-size:12.5px;color:#333">' + z.note + '</p>' +
+        '<p style="margin:6px 0 0;font-size:11px;color:#777">Indicative zone — verify on site.</p>' +
+      '</div>';
+    }
+
+    var zoneLayers = {};   // name -> layer (for zoom-to from the sidebar)
+    var zoneCounts = { solar:0, wind:0, hydro:0, lng:0, nuclear:0 };
+
+    ZONES.forEach(function (z) {
+      var layer = L.polygon(z.bounds, polyStyle(z.type));
+      layer.bindPopup(popupHTML(z));
+      layer.bindTooltip(z.name, { sticky:true, direction:"top" });
+      layer.on("mouseover", function () { layer.setStyle({ fillOpacity:0.45 }); });
+      layer.on("mouseout",  function () { layer.setStyle({ fillOpacity:0.28 }); });
+      layer.addTo(layers[z.type]);
+      zoneLayers[z.name] = layer;
+      zoneCounts[z.type]++;
+    });
+
+    /* ---------------- Company project pins ---------------- */
+    function pinIcon(type) {
+      var c = COLORS[type];
+      return L.divIcon({
+        className: "company-pin",
+        html:
+          '<svg width="26" height="34" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M13 0C5.8 0 0 5.8 0 13c0 9.2 13 21 13 21s13-11.8 13-21C26 5.8 20.2 0 13 0z" fill="' + c + '"/>' +
+            '<circle cx="13" cy="13" r="5.2" fill="#ffffff"/>' +
+          '</svg>',
+        iconSize: [26, 34], iconAnchor: [13, 34], popupAnchor: [0, -30], tooltipAnchor: [0, -26]
+      });
+    }
+
+    function projectPopup(p) {
+      var foot = p.source === "user"
+        ? '<p style="margin:6px 0 0;font-size:11px;color:#777">Your entry — saved in this browser.</p>'
+        : '<p style="margin:6px 0 0;font-size:11px;color:#777">Reference entry — verify current status.</p>';
+      return '<div style="min-width:200px">' +
+        '<strong style="font-size:14px">' + p.name + '</strong><br>' +
+        '<span style="color:' + COLORS[p.type] + ';font-weight:700;font-size:12px">' +
+          LABELS[p.type] + ' · ' + p.cap + '</span>' +
+        '<p style="margin:8px 0 2px;font-size:12.5px;color:#333">' +
+          '<strong>' + p.company + '</strong> <span style="color:#777">(' + p.country + ')</span></p>' +
+        '<p style="margin:0;font-size:12px;color:#555">' + p.loc + '</p>' +
+        foot +
+      '</div>';
+    }
+
+    var projectMarkers = [];             // rebuilt whenever the project set changes
+    var companyModel = [];               // merged reference + user companies
+
+    function rebuildProjectMarkers() {
+      projectMarkers = [];
+      companyModel.forEach(function (c) {
+        c.projects.forEach(function (p) {
+          var m = L.marker([p.lat, p.lon], { icon: pinIcon(p.type), riseOnHover:true });
+          m.bindPopup(projectPopup(p));
+          m.bindTooltip(p.name, { direction:"top" });
+          projectMarkers.push({ project:p, layer:m });
+        });
+      });
+    }
+
+    var selectedCompanies = new Set();   // company names currently shown
+
+    function renderCompanyMarkers(fit) {
+      // Selecting a company should bring the pins back even if the layer was toggled off.
+      if (selectedCompanies.size > 0 && !map.hasLayer(layers.projects)) {
+        var box = document.getElementById("t-projects");
+        if (box) box.checked = true;
+        map.addLayer(layers.projects);
+      }
+
+      layers.projects.clearLayers();
+      var shown = projectMarkers.filter(function (pm) {
+        return selectedCompanies.size === 0 || selectedCompanies.has(pm.project.company);
+      });
+      shown.forEach(function (pm) { pm.layer.addTo(layers.projects); });
+
+      document.getElementById("c-projects").textContent =
+        selectedCompanies.size === 0 ? "none" : shown.length + " / " + projectMarkers.length + " pinned";
+
+      if (fit && shown.length) {
+        var bounds = L.latLngBounds(shown.map(function (pm) { return [pm.project.lat, pm.project.lon]; }));
+        map.fitBounds(bounds.pad(0.25));
+      }
+    }
+
+    function findMarker(p) {
+      return projectMarkers.filter(function (pm) {
+        return pm.project.name === p.name && pm.project.company === p.company &&
+               pm.project.lat === p.lat && pm.project.lon === p.lon;
+      })[0];
+    }
+
+    function zoomToProject(p) {
+      var hit = findMarker(p);
+      if (!hit) return;
+      if (!map.hasLayer(layers.projects)) {
+        document.getElementById("t-projects").checked = true;
+        map.addLayer(layers.projects);
+      }
+      hit.layer.addTo(layers.projects);
+      map.setView([p.lat, p.lon], Math.max(map.getZoom(), 11));
+      hit.layer.openPopup();
+    }
+
+    /* ---------------- Companies list (selectable, add & delete) ---------------- */
+    var companyListEl = document.getElementById("company-list");
+    var companyRows = [];        // { name, li, company }
+
+    function buildCompanyList() {
+      companyListEl.innerHTML = "";
+      companyRows = [];
+
+      companyModel.forEach(function (c) {
+        var li = document.createElement("li");
+        li.className = "co-item" + (c.custom ? " custom" : "");
+
+        var types = [];
+        c.projects.forEach(function (p) { if (types.indexOf(p.type) === -1) types.push(p.type); });
+        var tags = types.map(function (t) {
+          return '<span class="co-tag ' + t + '">' + LABELS[t] + '</span>';
+        }).join("");
+
+        var head = document.createElement("button");
+        head.type = "button";
+        head.className = "co-head";
+        head.innerHTML =
+          '<span class="co-check">✓</span>' +
+          '<span class="co-body">' +
+            '<span class="co-name">' + c.name + '</span>' +
+            '<span class="co-meta">' + c.country + ' · ' + c.projects.length +
+              ' project' + (c.projects.length > 1 ? 's' : '') + '</span>' +
+            '<span class="co-tags">' + tags + '</span>' +
+          '</span>';
+
+        var proj = document.createElement("div");
+        proj.className = "co-proj";
+        var ul = document.createElement("ul");
+        c.projects.forEach(function (p) {
+          var pli = document.createElement("li");
+          pli.style.display = "flex";
+          pli.style.alignItems = "center";
+
+          var pb = document.createElement("button");
+          pb.type = "button";
+          pb.innerHTML =
+            '<span class="pdot ' + p.type + '"></span>' +
+            '<span>' + p.name + '</span>' +
+            '<span class="pcap">' + p.cap + '</span>';
+          pb.addEventListener("click", function (e) {
+            e.stopPropagation();
+            zoomToProject(p);
+          });
+          pli.appendChild(pb);
+
+          if (p.source === "user") {
+            var del = document.createElement("button");
+            del.type = "button";
+            del.className = "co-del";
+            del.title = "Delete this project";
+            del.innerHTML = "×";
+            del.addEventListener("click", function (e) {
+              e.stopPropagation();
+              if (!confirm('Delete "' + p.name + '"?')) return;
+              userProjects = userProjects.filter(function (u) { return u.id !== p.id; });
+              saveUserProjects();
+              rebuildAll(false);
+            });
+            pli.appendChild(del);
+          }
+
+          ul.appendChild(pli);
+        });
+        proj.appendChild(ul);
+
+        head.addEventListener("click", function () {
+          if (selectedCompanies.has(c.name)) { selectedCompanies.delete(c.name); }
+          else { selectedCompanies.add(c.name); }
+          syncCompanyUI(true);
+        });
+
+        li.appendChild(head);
+        li.appendChild(proj);
+        companyListEl.appendChild(li);
+        companyRows.push({ name:c.name, li:li, company:c });
+      });
+
+      // Keep selections that still exist after an edit.
+      var names = companyModel.map(function (c) { return c.name; });
+      selectedCompanies.forEach(function (n) {
+        if (names.indexOf(n) === -1) selectedCompanies.delete(n);
+      });
+      applySearch();
+    }
+
+    function syncCompanyUI(fit) {
+      companyRows.forEach(function (row) {
+        row.li.classList.toggle("on", selectedCompanies.has(row.name));
+      });
+      var hint = document.getElementById("co-hint");
+      if (selectedCompanies.size === 0) {
+        hint.textContent = "None selected — showing no project pins. Use “Add project” to create your own.";
+      } else if (selectedCompanies.size === companyModel.length) {
+        hint.textContent = "Showing all " + projectMarkers.length + " projects.";
+      } else {
+        hint.textContent = selectedCompanies.size + " of " + companyModel.length +
+          " companies selected — showing their projects.";
+      }
+      renderCompanyMarkers(fit);
+    }
+
+    var searchEl = document.getElementById("company-search");
+    function applySearch() {
+      var q = searchEl.value.trim().toLowerCase();
+      companyRows.forEach(function (row) {
+        var hay = (row.name + " " + row.company.country + " " +
+          row.company.projects.map(function (p) { return p.name + " " + p.loc; }).join(" ")).toLowerCase();
+        var match = q === "" || hay.indexOf(q) > -1;
+        row.li.style.display = match ? "" : "none";
+        row.li.classList.toggle("match", q !== "" && match);
+      });
+    }
+    searchEl.addEventListener("input", applySearch);
+
+    function rebuildAll(fit) {
+      companyModel = buildModel();
+      rebuildProjectMarkers();
+      buildCompanyList();
+      fillCompanyNames();
+      syncCompanyUI(fit);
+    }
+
+    function fillCompanyNames() {
+      var dl = document.getElementById("company-names");
+      dl.innerHTML = companyModel.map(function (c) {
+        return '<option value="' + c.name.replace(/"/g, "&quot;") + '"></option>';
+      }).join("");
+    }
+
+    document.getElementById("co-all").addEventListener("click", function () {
+      companyModel.forEach(function (c) { selectedCompanies.add(c.name); });
+      syncCompanyUI(true);
+    });
+    document.getElementById("co-clear").addEventListener("click", function () {
+      selectedCompanies.clear();
+      syncCompanyUI(false);
+      map.fitBounds(VN_BOUNDS);
+    });
+
+    /* ---------------- Add a project ---------------- */
+    var addForm = document.getElementById("add-form");
+    var pickBtn = document.getElementById("np-pick");
+    var pickMarker = null;
+    var picking = false;
+
+    document.getElementById("co-add").addEventListener("click", function () {
+      addForm.hidden = !addForm.hidden;
+      if (!addForm.hidden) document.getElementById("np-company").focus();
+    });
+
+    document.getElementById("np-cancel").addEventListener("click", function () {
+      stopPicking();
+      addForm.reset();
+      addForm.hidden = true;
+    });
+
+    function stopPicking() {
+      picking = false;
+      pickBtn.classList.remove("armed");
+      pickBtn.textContent = "Pick point on map";
+      map.getContainer().style.cursor = "";
+      if (pickMarker) { map.removeLayer(pickMarker); pickMarker = null; }
+    }
+
+    pickBtn.addEventListener("click", function () {
+      picking = !picking;
+      if (picking) {
+        pickBtn.classList.add("armed");
+        pickBtn.textContent = "Click the map…";
+        map.getContainer().style.cursor = "crosshair";
+      } else {
+        stopPicking();
+      }
+    });
+
+    map.on("click", function (e) {
+      if (!picking) return;
+      document.getElementById("np-lat").value = e.latlng.lat.toFixed(4);
+      document.getElementById("np-lon").value = e.latlng.lng.toFixed(4);
+      if (pickMarker) map.removeLayer(pickMarker);
+      pickMarker = L.marker(e.latlng, { icon: pinIcon(document.getElementById("np-type").value) })
+        .addTo(map).bindPopup("New project point").openPopup();
+      stopPicking();
+    });
+
+    addForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var company = document.getElementById("np-company").value.trim();
+      var name = document.getElementById("np-name").value.trim();
+      var type = document.getElementById("np-type").value;
+      var size = document.getElementById("np-size").value.trim();
+      var loc = document.getElementById("np-loc").value.trim() || "—";
+      var lat = parseFloat(document.getElementById("np-lat").value);
+      var lon = parseFloat(document.getElementById("np-lon").value);
+
+      if (!company || !name) { alert("Please enter a company and project name."); return; }
+      if (!isFinite(lat) || !isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        alert("Please enter valid coordinates (or use “Pick point on map”)."); return;
+      }
+
+      var id = "u" + Date.now() + "_" + (++pickSeq);
+      userProjects.push({
+        id:id, company:company, name:name, type:type,
+        cap:size ? (size + " MW") : "—", loc:loc, lat:lat, lon:lon
+      });
+      saveUserProjects();
+
+      stopPicking();
+      addForm.reset();
+      addForm.hidden = true;
+
+      selectedCompanies.add(company);
+      rebuildAll(true);
+
+      var p = { name:name, type:type, cap:size ? (size + " MW") : "—",
+                loc:loc, lat:lat, lon:lon, company:company };
+      zoomToProject(p);
+    });
+
+    /* ---------------- Export / import my projects ---------------- */
+    document.getElementById("co-export").addEventListener("click", function () {
+      if (!userProjects.length) { alert("No custom projects yet — add one first."); return; }
+      var blob = new Blob([JSON.stringify(userProjects, null, 2)], { type:"application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "renewable-vietnam-my-projects.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    });
+
+    var fileInput = document.getElementById("co-file");
+    document.getElementById("co-import").addEventListener("click", function () { fileInput.click(); });
+    fileInput.addEventListener("change", function () {
+      var file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var data = JSON.parse(reader.result);
+          if (!Array.isArray(data)) throw new Error("not an array");
+          var added = 0;
+          data.forEach(function (u) {
+            if (!u || !u.company || !u.name || !isFinite(u.lat) || !isFinite(u.lon)) return;
+            userProjects.push({
+              id:"u" + Date.now() + "_" + (++pickSeq),
+              company:String(u.company), name:String(u.name),
+              type:["solar","wind","hydro","lng","nuclear"].indexOf(u.type) > -1 ? u.type : "solar",
+              cap:u.cap ? String(u.cap) : "—", loc:u.loc ? String(u.loc) : "—",
+              lat:parseFloat(u.lat), lon:parseFloat(u.lon)
+            });
+            added++;
+          });
+          saveUserProjects();
+          rebuildAll(false);
+          alert("Imported " + added + " project(s).");
+        } catch (err) {
+          alert("Could not read that file — expected a JSON list exported from this page.");
+        }
+        fileInput.value = "";
+      };
+      reader.readAsText(file);
+    });
+
+    /* ---------------- Counts + zone list ---------------- */
+    document.getElementById("c-solar").textContent = zoneCounts.solar + " zones";
+    document.getElementById("c-wind").textContent  = zoneCounts.wind + " zones";
+    document.getElementById("c-hydro").textContent = zoneCounts.hydro + " zones";
+    document.getElementById("c-lng").textContent = zoneCounts.lng + " areas";
+    document.getElementById("c-nuclear").textContent = zoneCounts.nuclear + " areas";
+    rebuildAll(false);
+
+    var listEl = document.getElementById("zone-list");
+    ZONES.forEach(function (z) {
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      b.innerHTML = '<span class="dot ' + z.type + '"></span>' +
+        '<span><span class="zt">' + z.name + '</span><br>' +
+        '<span class="zm">' + LABELS[z.type] + ' · ' + z.rating + '</span></span>';
+      b.addEventListener("click", function () {
+        map.fitBounds(zoneLayers[z.name].getBounds(), { padding:[40,40] });
+        zoneLayers[z.name].openPopup();
+      });
+      li.appendChild(b);
+      listEl.appendChild(li);
+    });
+
+    /* ---------------- Toggles ---------------- */
+    var toggles = {
+      "t-solar":   "solar",
+      "t-wind":    "wind",
+      "t-hydro":   "hydro",
+      "t-lng":     "lng",
+      "t-nuclear": "nuclear",
+      "t-projects":"projects"
+    };
+    Object.keys(toggles).forEach(function (id) {
+      var input = document.getElementById(id);
+      input.addEventListener("change", function () {
+        var key = toggles[id];
+        if (input.checked) { map.addLayer(layers[key]); }
+        else { map.removeLayer(layers[key]); }
+      });
+    });
+
+    document.getElementById("btn-all").addEventListener("click", function () {
+      Object.keys(toggles).forEach(function (id) {
+        var input = document.getElementById(id);
+        input.checked = !input.checked;
+        var key = toggles[id];
+        if (input.checked) { map.addLayer(layers[key]); } else { map.removeLayer(layers[key]); }
+      });
+    });
+
+    document.getElementById("btn-reset").addEventListener("click", function () {
+      map.fitBounds(VN_BOUNDS);
+    });
+
+    /* ---------------- Legend (on map) ---------------- */
+    var legend = L.control({ position:"bottomright" });
+    legend.onAdd = function () {
+      var div = L.DomUtil.create("div", "leaflet-control iso-legend");
+      div.innerHTML =
+        "<h4>Potential zones</h4>" +
+        '<div class="lr"><span class="swatch sw solar"></span>Solar</div>' +
+        '<div class="lr"><span class="swatch sw wind"></span>Wind</div>' +
+        '<div class="lr"><span class="swatch sw hydro"></span>Hydropower</div>' +
+        '<div class="lr"><span class="swatch sw lng"></span>LNG / gas-to-power</div>' +
+        '<div class="lr"><span class="swatch sw nuclear"></span>Nuclear plant area</div>' +
+        '<div class="lr proj"><span style="display:inline-block;width:11px;height:14px;background:linear-gradient(#f5a623,#2b8cbe,#1f6feb);clip-path:polygon(50% 100%,0 40%,0 20%,50% 0,100% 20%,100% 40%)"></span>Company project (pin)</div>';
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    legend.addTo(map);
+
+    var scaleNote = L.control({ position:"bottomleft" });
+    scaleNote.onAdd = function () {
+      var div = L.DomUtil.create("div", "scale-note");
+      div.innerHTML = "Study &amp; research only · non-commercial · indicative areas";
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    scaleNote.addTo(map);
+
+    /* ---------------- Optional keyed providers (Advanced) ---------------- */
+    function keyedURL(provider, key) {
+      switch (provider) {
+        case "maptiler":
+          return "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=" + encodeURIComponent(key);
+        case "thunderforest":
+          return "https://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=" + encodeURIComponent(key);
+        case "stadia":
+          return "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png?api_key=" + encodeURIComponent(key);
+      }
+      return null;
+    }
+    function keyedAttr(provider) {
+      if (provider === "maptiler") return '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; OpenStreetMap contributors';
+      if (provider === "thunderforest") return 'Maps &copy; <a href="https://www.thunderforest.com/" target="_blank" rel="noopener">Thunderforest</a>, data &copy; OpenStreetMap contributors';
+      if (provider === "stadia") return '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> &copy; OpenStreetMap contributors';
+      return OSM_ATTR;
+    }
+
+    var providerSel = document.getElementById("provider");
+    var keyInput = document.getElementById("apikey");
+
+    function clearBaseRadios() {
+      var r = document.querySelector('input[name="base"]:checked');
+      if (r) r.checked = false;
+    }
+
+    function applyKeyed() {
+      var p = providerSel.value, k = keyInput.value.trim();
+      if (!k) { alert("Paste an API key first."); return; }
+      clearBaseRadios();
+      setBase(p, k);
+    }
+
+    // Restore a previously saved key (local only).
+    try {
+      var saved = JSON.parse(localStorage.getItem("rvn_tile") || "null");
+      if (saved && saved.key) {
+        providerSel.value = saved.provider || "maptiler";
+        keyInput.value = saved.key;
+        clearBaseRadios();
+        setBase(saved.provider, saved.key);
+      }
+    } catch (e) { /* ignore */ }
+
+    document.getElementById("apply-key").addEventListener("click", applyKeyed);
+
+    document.getElementById("save-key").addEventListener("click", function () {
+      try {
+        localStorage.setItem("rvn_tile", JSON.stringify({
+          provider: providerSel.value, key: keyInput.value.trim()
+        }));
+        alert("Saved to this browser only.");
+      } catch (e) { alert("Could not save (local storage unavailable)."); }
+    });
+
+    /* ---------------- Adjustable layout: resize panel + hide panel ---------------- */
+    var sideEl = document.querySelector(".side");
+    var resizerEl = document.getElementById("resizer");
+    var panelBtn = document.getElementById("btn-panel");
+    var SIDE_DEFAULT = 340;
+
+    function applySideWidth(w) {
+      w = Math.max(240, Math.min(620, Math.round(w)));
+      sideEl.style.flexBasis = w + "px";
+      sideEl.style.width = w + "px";
+      try { localStorage.setItem("rvn_side_w", String(w)); } catch (e) {}
+      map.invalidateSize();
+    }
+
+    var savedW = parseInt(localStorage.getItem("rvn_side_w") || String(SIDE_DEFAULT), 10);
+    applySideWidth(isFinite(savedW) ? savedW : SIDE_DEFAULT);
+
+    (function () {
+      var dragging = false;
+      resizerEl.addEventListener("pointerdown", function (e) {
+        dragging = true;
+        resizerEl.classList.add("active");
+        document.body.style.userSelect = "none";
+        try { resizerEl.setPointerCapture(e.pointerId); } catch (err) {}
+        e.preventDefault();
+      });
+      resizerEl.addEventListener("pointermove", function (e) {
+        if (!dragging) return;
+        applySideWidth(e.clientX - sideEl.getBoundingClientRect().left);
+      });
+      function endDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        resizerEl.classList.remove("active");
+        document.body.style.userSelect = "";
+        try { resizerEl.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      resizerEl.addEventListener("pointerup", endDrag);
+      resizerEl.addEventListener("pointercancel", endDrag);
+      resizerEl.addEventListener("dblclick", function () { applySideWidth(SIDE_DEFAULT); });
+    })();
+
+    function setPanelHidden(hidden) {
+      document.body.classList.toggle("panel-hidden", hidden);
+      panelBtn.textContent = hidden ? "Show panel" : "Hide panel";
+      try { localStorage.setItem("rvn_panel_hidden", hidden ? "1" : "0"); } catch (e) {}
+      setTimeout(function () { map.invalidateSize(); }, 60);
+    }
+    panelBtn.addEventListener("click", function () {
+      setPanelHidden(!document.body.classList.contains("panel-hidden"));
+    });
+    if (localStorage.getItem("rvn_panel_hidden") === "1") setPanelHidden(true);
+
+    // Keep map sized correctly after layout settles.
+    setTimeout(function () { map.invalidateSize(); }, 200);
+  })();
+  </script>
+</body>
+</html>
