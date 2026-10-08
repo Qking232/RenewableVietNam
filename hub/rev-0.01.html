@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — Hub · Library for Discussion
+  Revision history:
+    Rev 0.01  (2026-10-08)  First release. A browsable library of discussion topics on
+                            Viet Nam's energy transition. Each topic carries context, the
+                            questions worth arguing about, and reference sources. Visitors
+                            can filter/search, open a topic, write their own view (saved in
+                            the browser), add their own topics, and export/import everything
+                            as a JSON file. Light/dark theme, no build step, no dependencies.
+
+  Single self-contained file. No CDN, no server, no tracking. Opens directly in a browser.
+  Study / research only — non-commercial.
+-->
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hub — Library for Discussion · Renewable Viet Nam</title>
+<meta name="description" content="A library of discussion topics on Viet Nam's energy transition — context, key questions and reference sources, plus space to add your own topics." />
+
+<!-- Favicon: the hub node emblem (sky) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230ea5e9'/%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round'%3E%3Ccircle cx='32' cy='32' r='7'/%3E%3Ccircle cx='32' cy='13' r='5'/%3E%3Ccircle cx='49' cy='23' r='5'/%3E%3Ccircle cx='45' cy='45' r='5'/%3E%3Ccircle cx='19' cy='45' r='5'/%3E%3Ccircle cx='15' cy='23' r='5'/%3E%3Cline x1='32' y1='18' x2='32' y2='25'/%3E%3Cline x1='45' y1='25' x2='37' y2='29'/%3E%3Cline x1='42' y1='42' x2='36' y2='36'/%3E%3Cline x1='22' y1='42' x2='28' y2='36'/%3E%3Cline x1='19' y1='25' x2='27' y2='29'/%3E%3C/g%3E%3C/svg%3E" />
+
+<style>
+  :root {
+    --bg:#FAFAFA; --surface:#FFFFFF; --surface-2:#F7F7F8; --chip:#F4F4F5;
+    --text:#18181b; --muted:#71717a; --faint:#a1a1aa;
+    --line:rgba(0,0,0,.07); --line-strong:rgba(0,0,0,.13);
+    --accent:#0284c7; --accent-2:#0ea5e9; --accent-soft:rgba(14,165,233,.10); --accent-border:rgba(14,165,233,.35);
+    --warn-bg:rgba(245,158,11,.12); --warn-border:rgba(245,158,11,.38); --warn-text:#7a5308;
+    --shadow:0 2px 12px rgba(0,0,0,.03);
+    --shadow-hover:0 20px 40px -14px rgba(14,165,233,.20), 0 4px 12px -4px rgba(0,0,0,.05);
+    --radius:16px;
+  }
+  [data-theme="dark"] {
+    --bg:#0A0C10; --surface:#11141A; --surface-2:#0e1116; --chip:#171b22;
+    --text:#F4F4F5; --muted:#A1A1AA; --faint:#71717a;
+    --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.17);
+    --accent:#38bdf8; --accent-2:#7dd3fc; --accent-soft:rgba(56,189,248,.10); --accent-border:rgba(56,189,248,.35);
+    --warn-bg:rgba(245,158,11,.10); --warn-border:rgba(245,158,11,.30); --warn-text:#f2c66b;
+    --shadow:0 2px 12px rgba(0,0,0,.4);
+    --shadow-hover:0 24px 44px -16px rgba(2,132,199,.45), 0 4px 14px -6px rgba(0,0,0,.5);
+  }
+
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; background:var(--bg); color:var(--text); line-height:1.55;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    letter-spacing:-.011em; transition:background-color .4s ease, color .4s ease;
+  }
+  a { color:var(--accent); }
+  button { font:inherit; cursor:pointer; }
+  .mono { font-family:"SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace; }
+  .wrap { width:100%; max-width:1120px; margin:0 auto; padding:0 20px; }
+
+  /* ---------------- Top bar ---------------- */
+  header.top { position:sticky; top:0; z-index:30; background:color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter:blur(10px) saturate(150%); -webkit-backdrop-filter:blur(10px) saturate(150%); border-bottom:1px solid var(--line); }
+  .top-inner { display:flex; align-items:center; justify-content:space-between; gap:14px; min-height:58px; padding:8px 20px; max-width:1120px; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--text); font-weight:600; font-size:12px; letter-spacing:.22em; text-transform:uppercase; }
+  .brand .dot { width:8px; height:8px; border-radius:50%; background:var(--accent-2); box-shadow:0 0 8px var(--accent-2); flex:0 0 auto; }
+  .top-actions { display:flex; align-items:center; gap:8px; }
+  .link-btn { text-decoration:none; color:var(--muted); font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:10px; border:1px solid transparent; }
+  .link-btn:hover { color:var(--text); background:var(--chip); }
+  .icon-btn { display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:var(--surface); border:1px solid var(--line); color:var(--muted); }
+  .icon-btn:hover { color:var(--text); border-color:var(--line-strong); }
+  .icon-btn svg { width:16px; height:16px; }
+
+  /* ---------------- Notice banner ---------------- */
+  .banner { background:var(--warn-bg); backdrop-filter:blur(6px) saturate(140%); -webkit-backdrop-filter:blur(6px) saturate(140%); border-bottom:1px solid var(--warn-border); color:var(--warn-text); font-size:11px; line-height:1.5; }
+  .banner .wrap { padding:7px 20px; }
+  .banner strong { color:var(--warn-text); }
+
+  /* ---------------- Hero ---------------- */
+  main { padding-bottom:40px; }
+  .hero { padding:34px 0 6px; }
+  .eyebrow { font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--faint); font-weight:600; margin:0 0 10px; }
+  .hero h1 { font-size:clamp(28px, 4.4vw, 44px); font-weight:300; letter-spacing:-.03em; margin:0 0 10px; }
+  .hero p.lede { color:var(--muted); font-size:14.5px; max-width:64ch; margin:0 0 16px; font-weight:300; }
+  .stats { display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+  .stats b { color:var(--text); font-weight:650; }
+
+  /* ---------------- Toolbar ---------------- */
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:22px 0 12px; }
+  .search { position:relative; flex:1 1 240px; min-width:200px; }
+  .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--faint); pointer-events:none; }
+  .search input { width:100%; padding:10px 12px 10px 36px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface); border:1px solid var(--line); border-radius:12px; outline:none; }
+  .search input:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+  .btn { font-size:13px; font-weight:600; padding:9px 15px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--text); white-space:nowrap; }
+  .btn:hover { border-color:var(--line-strong); }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primary:hover { background:var(--accent-2); border-color:var(--accent-2); }
+  .btn.ghost { background:transparent; color:var(--muted); }
+  .btn.ghost:hover { color:var(--text); background:var(--chip); }
+
+  /* Theme chips */
+  .chips { display:flex; gap:7px; flex-wrap:wrap; margin:0 0 20px; }
+  .chip { font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--muted); }
+  .chip:hover { color:var(--text); border-color:var(--line-strong); }
+  .chip.on { background:var(--accent-soft); border-color:var(--accent-border); color:var(--accent); }
+  .chip .n { opacity:.6; margin-left:5px; font-variant-numeric:tabular-nums; }
+
+  /* ---------------- Topic grid ---------------- */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(292px, 1fr)); gap:16px; }
+  .topic {
+    position:relative; display:flex; flex-direction:column; text-align:left; gap:10px;
+    padding:18px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--line);
+    box-shadow:var(--shadow); cursor:pointer; overflow:hidden;
+    transition:transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1), border-color .3s ease, background-color .3s ease;
+  }
+  .topic:hover { transform:translateY(-6px); box-shadow:var(--shadow-hover); border-color:var(--tone-border); }
+  .topic::after { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--tone); opacity:0; transition:opacity .3s ease; }
+  .topic:hover::after { opacity:.9; }
+  .topic-top { display:flex; align-items:center; justify-content:space-between; }
+  .topic .idx { font-size:11px; letter-spacing:.14em; font-weight:600; color:var(--faint); font-variant-numeric:tabular-nums; }
+  .topic .tdot { width:7px; height:7px; border-radius:50%; background:var(--tone); }
+  .badge { align-self:flex-start; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:999px; color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); }
+  .topic .tt { display:block; margin:0; font-size:15.5px; font-weight:600; letter-spacing:-.015em; line-height:1.3; color:var(--text); }
+  .topic .ctx { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; margin:0; font-size:12.5px; color:var(--muted); font-weight:300; flex:1 1 auto; }
+  .topic-foot { display:flex; align-items:center; justify-content:space-between; padding-top:11px; border-top:1px solid var(--line); font-size:11px; color:var(--faint); }
+  .topic-foot .meta { display:flex; align-items:center; gap:8px; }
+  .topic .note-flag { color:var(--accent); font-weight:700; }
+  .topic .go { color:var(--tone); font-weight:700; transition:transform .3s ease; }
+  .topic:hover .go { transform:translate(2px,-2px); }
+  .topic.custom .idx::after { content:" · YOURS"; color:var(--accent); letter-spacing:.06em; }
+
+  .empty { text-align:center; color:var(--muted); padding:44px 20px; font-size:14px; border:1px dashed var(--line-strong); border-radius:var(--radius); }
+
+  /* ---------------- Advanced ---------------- */
+  details.adv { margin-top:34px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+  details.adv > summary { cursor:pointer; list-style:none; padding:14px 18px; font-size:12.5px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:9px; }
+  details.adv > summary::-webkit-details-marker { display:none; }
+  details.adv > summary::before { content:"▸"; color:var(--accent); font-size:11px; }
+  details.adv[open] > summary::before { content:"▾"; }
+  .adv-body { padding:0 18px 18px; font-size:12.5px; color:var(--muted); }
+  .adv-body h4 { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin:14px 0 6px; }
+  .adv-body h4:first-child { margin-top:4px; }
+  .adv-body ul { margin:0; padding-left:18px; }
+  .adv-body li { margin:3px 0; }
+  .adv-body .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+
+  /* ---------------- Add form ---------------- */
+  form.add { margin:0 0 20px; padding:18px; border:1px solid var(--accent-border); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); }
+  form.add h3 { margin:0 0 4px; font-size:15px; font-weight:600; }
+  form.add p.hint { margin:0 0 14px; font-size:12px; color:var(--muted); }
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:5px; }
+  .field input, .field select, .field textarea {
+    width:100%; padding:9px 11px; font:inherit; font-size:13px; color:var(--text);
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px; outline:none;
+  }
+  .field textarea { resize:vertical; min-height:64px; line-height:1.5; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+  .field.two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .field.two > div { min-width:0; }
+  .form-actions { display:flex; gap:10px; margin-top:4px; }
+
+  /* ---------------- Modal ---------------- */
+  .modal { position:fixed; inset:0; z-index:60; display:none; align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto; background:rgba(10,12,16,.5); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+  .modal.open { display:flex; }
+  .sheet { width:100%; max-width:720px; margin:auto; background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:0 30px 70px -20px rgba(0,0,0,.45); overflow:hidden; animation:pop .2s ease-out; }
+  @keyframes pop { from { opacity:0; transform:translateY(8px) scale(.99); } to { opacity:1; transform:none; } }
+  .sheet-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); }
+  .sheet-top .left { display:flex; align-items:center; gap:10px; }
+  .sheet-top .idx { font-size:11px; letter-spacing:.14em; color:var(--faint); font-weight:600; }
+  .sheet-body { padding:20px; }
+  .sheet-body h2 { margin:0 0 10px; font-size:23px; font-weight:400; letter-spacing:-.02em; line-height:1.2; }
+  .sheet-body h4 { font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--faint); margin:22px 0 8px; font-weight:700; }
+  .sheet-body p.context { margin:0; font-size:14px; color:var(--muted); font-weight:300; }
+  .qlist { margin:0; padding:0; list-style:none; counter-reset:q; }
+  .qlist li { position:relative; padding:8px 0 8px 30px; font-size:13.5px; border-top:1px solid var(--line); }
+  .qlist li:first-child { border-top:none; }
+  .qlist li::before { counter-increment:q; content:"Q" counter(q); position:absolute; left:0; top:8px; font-size:10px; font-weight:700; color:var(--accent); letter-spacing:.04em; }
+  .reflist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; }
+  .reflist a { display:inline-flex; align-items:center; gap:6px; font-size:13px; text-decoration:none; }
+  .reflist a:hover { text-decoration:underline; }
+  .reflist .src { color:var(--faint); font-size:11.5px; }
+  .notes { width:100%; min-height:96px; padding:11px; font:inherit; font-size:13px; line-height:1.5; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:12px; outline:none; resize:vertical; }
+  .notes:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+  .sheet-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; border-top:1px solid var(--line); }
+  .saved { font-size:11.5px; color:var(--faint); }
+
+  /* ---------------- Footer ---------------- */
+  footer.site { border-top:1px solid var(--line); margin-top:40px; padding:22px 0 30px; font-size:11.5px; color:var(--faint); }
+  .foot-inner { display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:center; }
+  footer.site a { color:var(--muted); text-decoration:none; }
+  footer.site a:hover { color:var(--accent); }
+
+  @media (max-width:560px) {
+    .hero { padding-top:24px; }
+    .field.two { grid-template-columns:1fr; }
+    .toolbar .btn { flex:1 1 auto; text-align:center; }
+    .sheet-body h2 { font-size:20px; }
+  }
+</style>
+
+<script>
+  // Match the homepage: default to light unless the visitor explicitly chose dark.
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+    } catch (e) { /* storage may be unavailable */ }
+  })();
+</script>
+</head>
+<body>
+
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="/"><span class="dot" aria-hidden="true"></span> Hub · Library for Discussion</a>
+      <div class="top-actions">
+        <a class="link-btn" href="/">← Home</a>
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light / dark theme">
+          <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner">
+    <div class="wrap">
+      <strong>For study &amp; discussion only — non-commercial. Not advice.</strong>
+      Topics are an AI-assisted editorial compilation and the views are open questions, not conclusions. Numbers and policies change — verify against official sources before relying on anything here.
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <section class="hero">
+      <p class="eyebrow">The Hub</p>
+      <h1>Library for Discussion</h1>
+      <p class="lede">
+        A shelf of the questions that shape Viet Nam's energy transition. Each topic gives you the
+        context, the arguments worth having, and where to check the facts. Open one, take a position,
+        and keep your own notes — or add a topic of your own.
+      </p>
+      <div class="stats">
+        <span><b id="statTopics">0</b> topics</span>
+        <span><b id="statThemes">0</b> themes</span>
+        <span><b id="statMine">0</b> added by you</span>
+        <span><b id="statNotes">0</b> with your notes</span>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+        <input type="search" id="q" placeholder="Search topics, questions or themes…" autocomplete="off" />
+      </label>
+      <button class="btn primary" id="addBtn" type="button">＋ Add topic</button>
+      <button class="btn" id="exportBtn" type="button">Export</button>
+      <button class="btn" id="importBtn" type="button">Import</button>
+      <input type="file" id="fileInput" accept="application/json,.json" hidden />
+    </div>
+
+    <div class="chips" id="chips"></div>
+
+    <form class="add" id="addForm" hidden>
+      <h3>Add a topic</h3>
+      <p class="hint">Adds a shelf item for discussion. It stays in your browser and travels with your export.</p>
+      <div class="field">
+        <label for="f-title">Title</label>
+        <input type="text" id="f-title" placeholder="e.g. Should rooftop solar be mandatory on new builds?" required />
+      </div>
+      <div class="field two">
+        <div>
+          <label for="f-theme">Theme</label>
+          <select id="f-theme"></select>
+        </div>
+        <div>
+          <label for="f-author">Who is asking (optional)</label>
+          <input type="text" id="f-author" placeholder="Your name or organisation" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-context">Context</label>
+        <textarea id="f-context" placeholder="A few sentences of background so others can weigh in."></textarea>
+      </div>
+      <div class="field">
+        <label for="f-questions">Questions to discuss — one per line</label>
+        <textarea id="f-questions" placeholder="Why does this matter now?&#10;Who wins and who pays?&#10;What would change your mind?"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-refs">References — one per line, as “Label | https://…”</label>
+        <textarea id="f-refs" placeholder="IEA | https://www.iea.org&#10;Ministry of Industry and Trade | https://moit.gov.vn"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" type="submit">Save topic</button>
+        <button class="btn ghost" type="button" id="cancelBtn">Cancel</button>
+      </div>
+    </form>
+
+    <section class="grid" id="grid"></section>
+    <p class="empty" id="empty" hidden>No topics match that search.</p>
+
+    <details class="adv">
+      <summary>Advanced — your data, sources &amp; reset</summary>
+      <div class="adv-body">
+        <h4>Where your work lives</h4>
+        <p style="margin:0">
+          Topics you add and the notes you write are stored only in this browser (local storage).
+          Nothing is uploaded and there is no server. Use <strong>Export</strong> to save everything to a
+          JSON file, and <strong>Import</strong> to bring it back on another device.
+        </p>
+
+        <h4>Reference sources used</h4>
+        <ul>
+          <li>Ministry of Industry and Trade (MOIT) &amp; the National Power Development Plan (PDP8)</li>
+          <li>EVN / EVNNPT — national utility and grid operator disclosures</li>
+          <li>IEA, IRENA, World Bank, ADB, UNDP, ILO — energy, finance and just-transition analysis</li>
+          <li>Global Energy Monitor, Ember, Global Wind Energy Council — asset and generation trackers</li>
+        </ul>
+
+        <h4>Reset</h4>
+        <p style="margin:0 0 4px">Clears the topics and notes you have added in this browser. The built-in library is unaffected.</p>
+        <div class="row">
+          <button class="btn ghost" id="resetBtn" type="button">Clear my topics &amp; notes</button>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <footer class="site">
+    <div class="wrap foot-inner">
+      <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · Hub · Rev 0.01</span>
+    </div>
+  </footer>
+
+  <!-- ---------------- Topic detail ---------------- -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="sheet" id="sheet">
+      <div class="sheet-top">
+        <div class="left">
+          <span class="idx mono" id="mIdx">01</span>
+          <span class="badge" id="mBadge">Theme</span>
+        </div>
+        <button class="icon-btn" id="closeBtn" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body">
+        <h2 id="mTitle">Topic</h2>
+        <p class="context" id="mContext"></p>
+        <h4>Questions to discuss</h4>
+        <ul class="qlist" id="mQuestions"></ul>
+        <h4>References</h4>
+        <ul class="reflist" id="mRefs"></ul>
+        <h4>Your view / notes</h4>
+        <textarea class="notes" id="mNotes" placeholder="Write your position, what you'd need to be convinced, or what to check next. Saved in this browser."></textarea>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn ghost" id="deleteBtn" type="button" style="display:none">Delete this topic</button>
+        <span class="saved" id="mSaved"></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================================
+     THEMES — key, label, and CSS tone variables
+     ========================================================================= */
+  var THEMES = [
+    { key:"solar",     label:"Solar" },
+    { key:"wind",      label:"Wind" },
+    { key:"grid",      label:"Grid & storage" },
+    { key:"policy",    label:"Policy" },
+    { key:"markets",   label:"Markets & tariffs" },
+    { key:"finance",   label:"Finance" },
+    { key:"lng",       label:"LNG & gas" },
+    { key:"nuclear",   label:"Nuclear" },
+    { key:"hydro",     label:"Hydropower" },
+    { key:"society",   label:"People & land" },
+    { key:"demand",    label:"Demand & data" },
+    { key:"transport", label:"Transport" }
+  ];
+  var TONES = {
+    solar:     ["#10b981", "rgba(16,185,129,.12)", "rgba(16,185,129,.35)"],
+    wind:      ["#06b6d4", "rgba(6,182,212,.12)",  "rgba(6,182,212,.35)"],
+    grid:      ["#0ea5e9", "rgba(14,165,233,.12)", "rgba(14,165,233,.35)"],
+    policy:    ["#8b5cf6", "rgba(139,92,246,.12)", "rgba(139,92,246,.35)"],
+    markets:   ["#6366f1", "rgba(99,102,241,.12)", "rgba(99,102,241,.35)"],
+    finance:   ["#f59e0b", "rgba(245,158,11,.14)", "rgba(245,158,11,.38)"],
+    lng:       ["#64748b", "rgba(100,116,139,.14)","rgba(100,116,139,.38)"],
+    nuclear:   ["#f43f5e", "rgba(244,63,94,.12)",  "rgba(244,63,94,.35)"],
+    hydro:     ["#3b82f6", "rgba(59,130,246,.12)", "rgba(59,130,246,.35)"],
+    society:   ["#14b8a6", "rgba(20,184,166,.12)", "rgba(20,184,166,.35)"],
+    demand:    ["#a855f7", "rgba(168,85,247,.12)", "rgba(168,85,247,.35)"],
+    transport: ["#22c55e", "rgba(34,197,94,.12)",  "rgba(34,197,94,.35)"]
+  };
+  function themeLabel(k) { for (var i=0;i<THEMES.length;i++) if (THEMES[i].key===k) return THEMES[i].label; return k; }
+
+  /* =========================================================================
+     BUILD-IN LIBRARY — curated discussion topics
+     Each: theme, title, context, questions[], refs[{label,url}]
+     ========================================================================= */
+  var LIBRARY = [
+    { theme:"solar", n:"01", title:"Solar's boom years — and the curtailment question",
+      context:"Between 2018 and 2021 Viet Nam added well over 16 GW of solar, among the fastest build-outs in the region, pulled along by generous feed-in tariffs. Transmission did not keep pace, and in the following years large volumes of solar output were curtailed in the south-central provinces. What should the next wave learn from the first?",
+      questions:[
+        "Was the feed-in-tariff surge a success, or an expensive rush?",
+        "What would have prevented curtailment — more grid, more storage, or slower build?",
+        "Should the next wave be utility-scale farms, or rooftop self-consumption?"
+      ],
+      refs:[
+        { label:"IEA — Viet Nam energy profile", url:"https://www.iea.org" },
+        { label:"Global Energy Monitor — Global Solar Power Tracker", url:"https://globalenergymonitor.org" },
+        { label:"Ember — electricity data and analysis", url:"https://ember-climate.org" }
+      ]},
+
+    { theme:"wind", n:"02", title:"Offshore wind: from pipeline to steel",
+      context:"PDP8 sets a target of roughly 6 GW of offshore wind by 2030, with a far larger pipeline proposed. Almost none of it is under construction, held back by the absence of a final marine spatial plan, survey licensing and a bankable price mechanism.",
+      questions:[
+        "What must be fixed first — pricing, permitting, or transmission?",
+        "Can Viet Nam realistically deliver 6 GW by 2030, or is that aspirational?",
+        "Who should pay for the grid connection out at sea?"
+      ],
+      refs:[
+        { label:"Global Wind Energy Council", url:"https://gwec.net" },
+        { label:"IRENA — renewable capacity statistics", url:"https://www.irena.org" },
+        { label:"World Bank — offshore wind for emerging markets", url:"https://www.worldbank.org" }
+      ]},
+
+    { theme:"grid", n:"03", title:"Grid bottlenecks and the 500 kV backbone",
+      context:"Generation grew faster than the wires that carry it. New 500 kV and 220 kV circuits built by EVNNPT are the gate for nearly every new solar, wind or import project, and long delays ripple out into curtailment and investor risk.",
+      questions:[
+        "Should grid investment lead generation, or follow it?",
+        "Is private or PPP ownership of transmission realistic in Viet Nam?",
+        "How much new line can storage and flexible demand defer?"
+      ],
+      refs:[
+        { label:"EVN — Viet Nam Electricity", url:"https://www.evn.com.vn" },
+        { label:"MOIT — Ministry of Industry and Trade", url:"https://moit.gov.vn" },
+        { label:"ADB — energy sector work in Viet Nam", url:"https://www.adb.org" }
+      ]},
+
+    { theme:"policy", n:"04", title:"PDP8 and the road to 2030 and 2050",
+      context:"The National Power Development Plan VIII (approved 2023 and revised since) frames capacity, fuels and emissions out to 2050, including a net-zero-by-2050 ambition and a shift away from new coal. Delivery depends on annual implementation plans and on pricing reform.",
+      questions:[
+        "Is PDP8 consistent with net zero by 2050?",
+        "What does 'no new coal' mean for existing plants and the provinces that host them?",
+        "How should the plan be revised as costs, demand and technology shift?"
+      ],
+      refs:[
+        { label:"MOIT — power development planning", url:"https://moit.gov.vn" },
+        { label:"IEA — Viet Nam", url:"https://www.iea.org" },
+        { label:"UNDP Viet Nam — climate and energy", url:"https://www.undp.org" }
+      ]},
+
+    { theme:"markets", n:"05", title:"Direct PPAs, transitional tariffs and grid parity",
+      context:"Viet Nam is moving from fixed feed-in tariffs toward market mechanisms: a Direct Power Purchase Agreement (DPPA) pilot lets large buyers contract renewables directly, while transitional tariffs apply to projects that missed the FIT window.",
+      questions:[
+        "Will DPPAs unlock broad corporate demand, or only a handful of large buyers?",
+        "Are transitional tariffs high enough to keep projects bankable?",
+        "Should Viet Nam move fully to competitive auctions — and by when?"
+      ],
+      refs:[
+        { label:"MOIT — electricity market and DPPA", url:"https://moit.gov.vn" },
+        { label:"World Bank — energy transition finance", url:"https://www.worldbank.org" },
+        { label:"Reuters — Viet Nam energy coverage", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"finance", n:"06", title:"Paying for the transition: FDI, green finance and JETP",
+      context:"A large share of the build-out has been foreign-financed. The Just Energy Transition Partnership pledged billions, much of it concessional, but disbursement has been slow and weighted toward loans rather than grants.",
+      questions:[
+        "Is JETP delivering money, or mostly re-labelling existing lending?",
+        "Which reforms would make Viet Nam bankable for private capital at scale?",
+        "How should currency, offtake and policy risk be shared between investors and the state?"
+      ],
+      refs:[
+        { label:"World Bank — Viet Nam", url:"https://www.worldbank.org" },
+        { label:"ADB — Viet Nam", url:"https://www.adb.org" },
+        { label:"IEA — financing clean energy transitions", url:"https://www.iea.org" }
+      ]},
+
+    { theme:"lng", n:"07", title:"LNG-to-power: bridge fuel or stranded asset?",
+      context:"Several LNG import terminals and gas-to-power plants are planned or under construction. They are promoted as flexible capacity while renewables scale, but they lock in long-term contracts and exposure to imported fuel prices.",
+      questions:[
+        "Is LNG a necessary bridge or an expensive detour?",
+        "What happens to these assets if renewables and storage get cheaper faster than expected?",
+        "How do long-term LNG contracts square with a net-zero-by-2050 target?"
+      ],
+      refs:[
+        { label:"Global Energy Monitor — Global Gas Plant Tracker", url:"https://globalenergymonitor.org" },
+        { label:"IEA — gas and LNG markets", url:"https://www.iea.org" },
+        { label:"Reuters — energy markets", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"nuclear", n:"08", title:"The return of nuclear at Ninh Thuan",
+      context:"Viet Nam paused its Ninh Thuan nuclear programme in 2016 and revived it in the mid-2020s, with the two sites (Phuoc Dinh and Vinh Hai) written back into national planning. Nuclear offers firm, low-carbon power, but needs decades, very large capital and a strong independent regulator.",
+      questions:[
+        "Can Viet Nam build the safety, regulatory and workforce capacity in time?",
+        "Nuclear versus offshore wind plus storage — which delivers firm power sooner?",
+        "How should the public be engaged on siting and risk?"
+      ],
+      refs:[
+        { label:"IAEA — nuclear safety and infrastructure", url:"https://www.iaea.org" },
+        { label:"MOIT — nuclear power programme", url:"https://moit.gov.vn" },
+        { label:"World Nuclear Association", url:"https://world-nuclear.org" }
+      ]},
+
+    { theme:"hydro", n:"09", title:"Hydropower at its limits — and the Mekong question",
+      context:"Most large hydropower is already built, and climate-driven drought has cut output in some years. Upstream dams on the Mekong change flow, sediment and downstream livelihoods, while small hydro and pumped storage are the remaining room to grow.",
+      questions:[
+        "Is Viet Nam's hydropower potential largely tapped out?",
+        "How should transboundary Mekong impacts weigh against domestic power needs?",
+        "What role could pumped-storage hydro play as a battery for renewables?"
+      ],
+      refs:[
+        { label:"Mekong River Commission", url:"https://www.mrcmekong.org" },
+        { label:"Global Energy Monitor — Global Hydropower Tracker", url:"https://globalenergymonitor.org" },
+        { label:"IEA — hydropower", url:"https://www.iea.org" }
+      ]},
+
+    { theme:"society", n:"10", title:"Land, people and a just transition",
+      context:"Utility-scale solar and wind need land, and land is contested. Resettlement, lost farmland, benefit-sharing and local jobs shape whether a project is fair — and, quite often, whether it gets built on schedule.",
+      questions:[
+        "Who benefits locally when a wind farm or solar park is built?",
+        "How can land for energy and land for food be balanced?",
+        "What does a 'just transition' mean for coal workers and their communities?"
+      ],
+      refs:[
+        { label:"UNDP Viet Nam — just transition", url:"https://www.undp.org" },
+        { label:"World Bank — social dimensions of the energy transition", url:"https://www.worldbank.org" },
+        { label:"ILO — green jobs and just transition", url:"https://www.ilo.org" }
+      ]},
+
+    { theme:"demand", n:"11", title:"Data centres, AI and the next wave of demand",
+      context:"Viet Nam's digital economy and a regional AI build-out are creating new large power users, including data centres in Ho Chi Minh City, Hanoi and Hoa Lac. Their round-the-clock load is both an opportunity for clean procurement and a challenge for a still fossil-heavy grid.",
+      questions:[
+        "Should large data centres be required to procure clean power?",
+        "Is the grid ready for gigawatt-scale compute demand?",
+        "Do data centres crowd out renewables, or crowd in new clean capacity?"
+      ],
+      refs:[
+        { label:"IEA — data centres and electricity demand", url:"https://www.iea.org" },
+        { label:"Viettel IDC — Viet Nam data centre market", url:"https://viettelidc.com.vn" },
+        { label:"Reuters — technology and energy", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"transport", n:"12", title:"EVs and the charging map",
+      context:"Electric two-wheelers already dominate Viet Nam's roads and electric car sales are climbing quickly, led by domestic manufacturer VinFast. Charging infrastructure and the grid impact of a fast-electrifying fleet are the next big questions.",
+      questions:[
+        "Will charging arrive fast enough to keep pace with EV sales?",
+        "Should charging be powered by renewables, or by today's grid mix?",
+        "How do e-motorcycles change the transition compared with cars?"
+      ],
+      refs:[
+        { label:"IEA — global EV outlook", url:"https://www.iea.org" },
+        { label:"VinFast", url:"https://vinfastauto.com" },
+        { label:"ADB — sustainable transport", url:"https://www.adb.org" }
+      ]}
+  ];
+
+  /* =========================================================================
+     STATE
+     ========================================================================= */
+  var TOPIC_KEY = "rvn_hub_topics";
+  var NOTE_KEY  = "rvn_hub_notes";
+
+  var userTopics = load(TOPIC_KEY, []);
+  var notes = load(NOTE_KEY, {});
+  var activeTheme = "all";
+  var query = "";
+  var openId = null;
+
+  function load(key, fallback) {
+    try {
+      var v = JSON.parse(localStorage.getItem(key) || "null");
+      if (key === TOPIC_KEY) return Array.isArray(v) ? v : fallback;
+      return (v && typeof v === "object" && !Array.isArray(v)) ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function persist() {
+    try {
+      localStorage.setItem(TOPIC_KEY, JSON.stringify(userTopics));
+      localStorage.setItem(NOTE_KEY, JSON.stringify(notes));
+    } catch (e) { /* storage unavailable — keep working in memory */ }
+  }
+
+  function all() { return LIBRARY.concat(userTopics); }
+  function idOf(t) { return t.id || ("lib-" + t.n); }
+  function byId(id) {
+    var a = all();
+    for (var i=0;i<a.length;i++) { if (idOf(a[i]) === id) return a[i]; }
+    return null;
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  /* =========================================================================
+     THEME TOKENS — applied inline so no dynamic classes are needed
+     ========================================================================= */
+  function toneVars(theme) {
+    var t = TONES[theme] || TONES.grid;
+    return "--tone:" + t[0] + ";--tone-soft:" + t[1] + ";--tone-border:" + t[2] + ";";
+  }
+
+  /* =========================================================================
+     RENDER
+     ========================================================================= */
+  var gridEl = document.getElementById("grid");
+  var emptyEl = document.getElementById("empty");
+  var chipsEl = document.getElementById("chips");
+
+  function renderChips() {
+    var list = all();
+    var counts = {}; list.forEach(function (t) { counts[t.theme] = (counts[t.theme]||0)+1; });
+    var html = '<button class="chip' + (activeTheme==="all"?" on":"") + '" data-t="all" type="button">All topics<span class="n">' + list.length + '</span></button>';
+    THEMES.forEach(function (th) {
+      if (!counts[th.key]) return;
+      html += '<button class="chip' + (activeTheme===th.key?" on":"") + '" data-t="' + th.key + '" type="button" style="' + toneVars(th.key) + '">' +
+        esc(th.label) + '<span class="n">' + counts[th.key] + '</span></button>';
+    });
+    chipsEl.innerHTML = html;
+  }
+
+  function matches(t) {
+    if (activeTheme !== "all" && t.theme !== activeTheme) return false;
+    if (!query) return true;
+    var hay = [t.title, t.context, themeLabel(t.theme), (t.questions||[]).join(" "), (t.refs||[]).map(function(r){return r.label;}).join(" "), t.author||""].join(" ").toLowerCase();
+    return hay.indexOf(query) > -1;
+  }
+
+  function render() {
+    renderChips();
+    var list = all().filter(matches);
+    gridEl.innerHTML = list.map(function (t) {
+      var id = idOf(t);
+      var hasNote = !!(notes[id] && notes[id].trim());
+      var nq = (t.questions||[]).length;
+      var nr = (t.refs||[]).length;
+      return '<button class="topic' + (t.id ? " custom" : "") + '" data-id="' + esc(id) + '" type="button" style="' + toneVars(t.theme) + '">' +
+        '<span class="topic-top"><span class="idx mono">' + esc(t.n) + '</span><span class="tdot"></span></span>' +
+        '<span class="badge">' + esc(themeLabel(t.theme)) + '</span>' +
+        '<span class="tt">' + esc(t.title) + '</span>' +
+        '<span class="ctx">' + esc(t.context) + '</span>' +
+        '<span class="topic-foot"><span class="meta">' +
+          '<span>' + nq + ' question' + (nq===1?"":"s") + '</span>' +
+          (nr ? '<span>· ' + nr + ' ref' + (nr===1?"":"s") + '</span>' : '') +
+          (hasNote ? '<span class="note-flag">· your note</span>' : '') +
+        '</span><span class="go">↗</span></span>' +
+      '</button>';
+    }).join("");
+
+    emptyEl.hidden = list.length > 0;
+
+    var l = all();
+    document.getElementById("statTopics").textContent = l.length;
+    document.getElementById("statThemes").textContent = THEMES.filter(function (th) {
+      return l.some(function (t) { return t.theme === th.key; });
+    }).length;
+    document.getElementById("statMine").textContent = userTopics.length;
+    document.getElementById("statNotes").textContent = Object.keys(notes).filter(function (k) {
+      return notes[k] && notes[k].trim();
+    }).length;
+  }
+
+  /* =========================================================================
+     MODAL — read a topic, write your view
+     ========================================================================= */
+  var modalEl = document.getElementById("modal");
+  var notesEl = document.getElementById("mNotes");
+  var deleteBtn = document.getElementById("deleteBtn");
+  var savedEl = document.getElementById("mSaved");
+  var saveTimer = null;
+
+  function openTopic(id) {
+    var t = byId(id);
+    if (!t) return;
+    openId = id;
+
+    document.getElementById("sheet").setAttribute("style", toneVars(t.theme));
+    document.getElementById("mIdx").textContent = t.n;
+    var badge = document.getElementById("mBadge");
+    badge.textContent = themeLabel(t.theme);
+    document.getElementById("mTitle").textContent = t.title;
+    document.getElementById("mContext").textContent = t.context || "";
+    if (t.author) document.getElementById("mContext").textContent += "  — raised by " + t.author + ".";
+
+    document.getElementById("mQuestions").innerHTML = (t.questions||[]).map(function (q) {
+      return "<li>" + esc(q) + "</li>";
+    }).join("") || "<li style='border:none;color:var(--faint)'>No questions added yet.</li>";
+
+    document.getElementById("mRefs").innerHTML = (t.refs||[]).map(function (r) {
+      var url = String(r.url||"");
+      var safe = /^https?:\/\//i.test(url) ? url : "#";
+      return '<li><a href="' + esc(safe) + '" target="_blank" rel="noopener noreferrer">' + esc(r.label || url) +
+        ' <span class="src">↗</span></a></li>';
+    }).join("") || "<li style='color:var(--faint)'>No references added yet.</li>";
+
+    notesEl.value = notes[id] || "";
+    savedEl.textContent = notes[id] ? "Saved in this browser." : "";
+
+    deleteBtn.style.display = t.id ? "" : "none";
+    modalEl.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeTopic() {
+    modalEl.classList.remove("open");
+    document.body.style.overflow = "";
+    openId = null;
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    render();   // refresh "your note" flags and the notes counter
+  }
+
+  notesEl.addEventListener("input", function () {
+    if (!openId) return;
+    var v = notesEl.value;
+    if (v.trim()) notes[openId] = v; else delete notes[openId];
+    persist();
+    savedEl.textContent = "Saved.";
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () { savedEl.textContent = notes[openId] ? "Saved in this browser." : ""; }, 1200);
+  });
+
+  deleteBtn.addEventListener("click", function () {
+    var t = byId(openId);
+    if (!t || !t.id) return;
+    if (!confirm('Delete your topic "' + t.title + '"?')) return;
+    userTopics = userTopics.filter(function (u) { return u.id !== t.id; });
+    delete notes[t.id];
+    persist();
+    closeTopic();
+    render();
+  });
+
+  /* =========================================================================
+     ADD TOPIC
+     ========================================================================= */
+  var form = document.getElementById("addForm");
+  var themeSel = document.getElementById("f-theme");
+  themeSel.innerHTML = THEMES.map(function (th) {
+    return '<option value="' + th.key + '">' + esc(th.label) + '</option>';
+  }).join("");
+
+  document.getElementById("addBtn").addEventListener("click", function () {
+    form.hidden = !form.hidden;
+    if (!form.hidden) document.getElementById("f-title").focus();
+  });
+  document.getElementById("cancelBtn").addEventListener("click", function () {
+    form.reset(); form.hidden = true;
+  });
+
+  function nextN() { return String(LIBRARY.length + userTopics.length + 1).padStart(2, "0"); }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var title = document.getElementById("f-title").value.trim();
+    if (!title) { alert("Please give the topic a title."); return; }
+
+    var questions = document.getElementById("f-questions").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    var refs = document.getElementById("f-refs").value.split("\n").map(function (line) {
+      line = line.trim(); if (!line) return null;
+      var parts = line.split("|");
+      if (parts.length >= 2) return { label: parts[0].trim(), url: parts.slice(1).join("|").trim() };
+      return { label: line, url: /^https?:\/\//i.test(line) ? line : "" };
+    }).filter(Boolean);
+
+    var t = {
+      id: "u" + Date.now(),
+      n: nextN(),
+      theme: themeSel.value,
+      title: title,
+      author: document.getElementById("f-author").value.trim(),
+      context: document.getElementById("f-context").value.trim(),
+      questions: questions,
+      refs: refs
+    };
+    userTopics.push(t);
+    persist();
+    form.reset(); form.hidden = true;
+    activeTheme = "all"; query = ""; document.getElementById("q").value = "";
+    render();
+    openTopic(t.id);
+  });
+
+  /* =========================================================================
+     SEARCH + CHIPS
+     ========================================================================= */
+  document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); render(); });
+  chipsEl.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip");
+    if (!b) return;
+    activeTheme = b.getAttribute("data-t");
+    render();
+  });
+  gridEl.addEventListener("click", function (e) {
+    var c = e.target.closest(".topic");
+    if (c) openTopic(c.getAttribute("data-id"));
+  });
+
+  modalEl.addEventListener("click", function (e) { if (e.target === modalEl) closeTopic(); });
+  document.getElementById("closeBtn").addEventListener("click", closeTopic);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && modalEl.classList.contains("open")) closeTopic(); });
+
+  /* =========================================================================
+     EXPORT / IMPORT
+     ========================================================================= */
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var payload = {
+      app: "renewable-vietnam-hub",
+      version: 1,
+      exported: new Date().toISOString(),
+      topics: userTopics,
+      notes: notes
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "renewable-vietnam-hub.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  });
+
+  var fileInput = document.getElementById("fileInput");
+  document.getElementById("importBtn").addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function () {
+    var f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        var topics = Array.isArray(data) ? data : (data && Array.isArray(data.topics) ? data.topics : []);
+        var nNotes = (data && typeof data.notes === "object" && data.notes) || {};
+        var added = 0;
+        topics.forEach(function (u) {
+          if (!u || !u.title) return;
+          var clean = {
+            id: "u" + Date.now() + "_" + added,
+            n: String(LIBRARY.length + userTopics.length + 1).padStart(2, "0"),
+            theme: TONES[u.theme] ? u.theme : "grid",
+            title: String(u.title),
+            author: u.author ? String(u.author) : "",
+            context: u.context ? String(u.context) : "",
+            questions: Array.isArray(u.questions) ? u.questions.map(String) : [],
+            refs: Array.isArray(u.refs) ? u.refs.filter(function (r) { return r && (r.label || r.url); }).map(function (r) {
+              return { label: String(r.label || r.url || ""), url: String(r.url || "") };
+            }) : []
+          };
+          userTopics.push(clean);
+          added++;
+        });
+        if (nNotes && typeof nNotes === "object") {
+          Object.keys(nNotes).forEach(function (k) { if (typeof nNotes[k] === "string") notes[k] = nNotes[k]; });
+        }
+        persist();
+        render();
+        alert("Imported " + added + " topic(s).");
+      } catch (err) {
+        alert("Could not read that file — expected a JSON export from this page.");
+      }
+      fileInput.value = "";
+    };
+    reader.readAsText(f);
+  });
+
+  /* =========================================================================
+     THEME + RESET
+     ========================================================================= */
+  var sun = document.getElementById("iconSun"), moon = document.getElementById("iconMoon");
+  function paintIcons() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    sun.style.display = dark ? "" : "none";
+    moon.style.display = dark ? "none" : "";
+  }
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    paintIcons();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Clear the topics and notes you have added in this browser?")) return;
+    userTopics = []; notes = {};
+    persist(); render();
+  });
+
+  paintIcons();
+  render();
+})();
+</script>
+</body>
+</html>
