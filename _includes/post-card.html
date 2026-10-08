@@ -1,6 +1,8 @@
 {% assign words_per_minute = site.words_per_minute | default: 200 %}
 
-{% for post in paginator.posts %}
+{% if paginator %}{% assign feed_posts = paginator.posts %}{% else %}{% assign feed_posts = site.posts %}{% endif %}
+
+{% for post in feed_posts %}
     <article class="post-card {{ page.class }}{% unless post.cover %} no-image{% endunless %}">
         {% if post.cover %}
             <a class="post-card-image-link" href="{{ site.baseurl }}{{ post.url | remove_first: '/' }}">
