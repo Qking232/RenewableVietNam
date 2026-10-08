@@ -1,0 +1,86 @@
+# Jekyll configuration for renewablevietnam.com
+# Theme: Jasper2 — https://github.com/jekyllt/jasper2 (MIT)
+
+markdown: kramdown
+highlighter: rouge
+paginate: 5
+language: 'en-uk'
+words_per_minute: 200
+
+# Served at the root of the custom domain, so baseurl must carry a leading
+# slash: the theme writes links as "{{ site.baseurl }}assets/...".
+url: "https://renewablevietnam.com"
+baseurl: "/"
+
+# Website info
+title: Renewable Vietnam
+description: Viet Nam's renewable energy transition — progress, projects and outlook to 2030.
+cover: assets/images/blog-cover.jpg
+logo:
+logo_dark:
+favicon: assets/images/favicon.png
+
+# Social info (blank = hidden)
+navigation: True
+subscribers: True
+twitter:
+facebook:
+
+# Disqus / Google Analytics (disabled)
+disqus: False
+disqus_shortname:
+google_analytics:
+
+# Permalinks
+permalink: /:title
+
+# Plugins (Jasper2 ships Ruby plugins in _plugins/ for tag & author pages)
+plugins_dir: [_plugins]
+plugins: [jekyll-paginate, jekyll-feed]
+
+feed:
+  path: feed.xml
+
+# Builds run in UTC, so a post created with a local (UTC+7) timestamp would
+# otherwise be treated as "future" and silently dropped.
+future: true
+
+# Front matter defaults, so the theme's required front matter survives editing
+# through the CMS even if the CMS writes only the fields it knows about.
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      current: post
+      navigation: true
+      class: post-template
+      subclass: 'post'
+      author: renewablevietnam
+  - scope:
+      path: "about"
+    values:
+      layout: page
+      current: about
+      navigation: true
+      class: page-template
+      subclass: 'post page'
+
+safe: False
+lsi: False
+
+exclude:
+  - assets/css
+  - node_modules
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - package.json
+  - package-lock.json
+  - Rakefile
+  - gulpfile.js
+  - script.py
+  - "*.Rmd"
+  - .git*

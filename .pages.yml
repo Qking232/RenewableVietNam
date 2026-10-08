@@ -1,0 +1,70 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration/
+# Tells the admin UI (app.pagescms.org) what content is editable in this repo.
+
+media:
+  # Written without a leading slash on purpose: Jasper2 prefixes covers with
+  # {{ site.baseurl }}, so a leading slash would produce a "//assets/..." URL.
+  input: assets/images
+  output: assets/images
+
+content:
+  # ---------------------------------------------------------------- Blog posts
+  - name: posts
+    label: Blog posts
+    type: collection
+    path: _posts
+    filename:
+      template: "{year}-{month}-{day}-{primary}.md"
+      field: create
+    view:
+      primary: title
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Published
+        type: date
+      - name: author
+        label: Author
+        type: string
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: cover
+        label: Cover image
+        type: image
+      - name: body
+        label: Body
+        type: rich-text
+
+  # --------------------------------------------------------------------- Pages
+  - name: pages
+    label: Pages
+    type: group
+    items:
+      - name: about
+        label: About
+        type: file
+        path: about/index.md
+        fields:
+          - name: title
+            label: Title
+            type: string
+          - name: body
+            label: Body
+            type: rich-text
+
+  # --------------------------------------------- Site settings (advanced / YAML)
+  # Edited as raw YAML on purpose: _config.yml carries the build settings
+  # (plugins, front-matter defaults, permalinks) and must not be rewritten
+  # field-by-field, which would drop the keys the theme depends on.
+  - name: site
+    label: Site settings (advanced)
+    type: file
+    path: _config.yml
+    format: code
