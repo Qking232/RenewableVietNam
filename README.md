@@ -26,32 +26,33 @@ visitors contribute — new topics, and views on a topic — is stored in
 Submissions land as `pending`, so the shelf cannot be flooded with spam; you
 approve or delete them in a web UI.
 
-### One-time setup
+### Setup status
 
-1. Create a project at <https://supabase.com> (the free tier is enough).
-2. Open **SQL Editor → New query**, paste the contents of
-   [`supabase/schema.sql`](supabase/schema.sql), and run it. This creates the
-   `hub_topics` and `hub_views` tables, turns on row-level security, and lets
-   the public insert `pending` rows only.
-3. Open **Project Settings → API** and copy two values:
-   - the **Project URL**, e.g. `https://abcdefghijkl.supabase.co`
-   - the **anon public** key
-4. Paste them into the config block near the top of `hub/index.html`:
+This is already configured. For the record, setup was:
+
+1. A project was created at <https://supabase.com> (free tier).
+2. [`supabase/schema.sql`](supabase/schema.sql) was run in **SQL Editor → New
+   query**. It creates the `hub_topics` and `hub_views` tables, turns on
+   row-level security, and lets the public insert `pending` rows only.
+3. Two values were copied from **Settings → API Keys** and pasted into the
+   config block near the top of `hub/index.html`:
 
    ```js
-   var SUPABASE_URL = "https://abcdefghijkl.supabase.co";
-   var SUPABASE_ANON_KEY = "eyJhbGciOi...";
+   var SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+   var SUPABASE_ANON_KEY = "sb_publishable_…";
    ```
 
-   The anon key is *meant* to be public — row-level security is what protects
-   the data, not secrecy of the key.
-5. Add the same two values as repository secrets so the keep-warm job can use
-   them: **Settings → Secrets and variables → Actions → New repository secret**
-   — create `SUPABASE_URL` and `SUPABASE_ANON_KEY`. Without them the job simply
-   skips, so nothing breaks if you skip this step.
+   Publishable keys (`sb_publishable_…`) are *meant* to be public — row-level
+   security is what protects the data, not secrecy of the key. Never put a
+   secret key (`sb_secret_…`) in the page: it bypasses all security.
 
-While those values are blank the Hub runs in local-only mode: the editorial
-library works, and anything you add stays in your own browser.
+   **Heads-up on header format:** publishable/secret keys are not JWTs, so they
+   are sent on the `apikey` header only. Adding `Authorization: Bearer` makes
+   PostgREST try to parse the key as a JWT and return 401. Legacy `anon` JWTs
+   (`eyJ…`) need *both* headers — `hub/index.html` handles either automatically.
+
+If you ever rotate the key, update it in two places: `hub/index.html` and
+`.github/workflows/supabase-keepalive.yml`.
 
 ### Moderating
 

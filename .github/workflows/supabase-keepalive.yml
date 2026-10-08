@@ -2,7 +2,12 @@ name: Keep the Hub database awake
 
 # Supabase's free tier pauses a project after 7 days without activity, which
 # would make saving fail for occasional visitors. This pings the API daily to
-# keep it warm. If the secrets are not set, the job quietly does nothing.
+# keep it warm.
+#
+# The two values below are the project's public URL and its PUBLISHABLE key —
+# the same ones already shipped in hub/index.html. They are not secrets (the
+# publishable key only reaches what row-level security allows). Never put a
+# secret key (sb_secret_… / service_role) here.
 
 on:
   schedule:
@@ -18,16 +23,11 @@ jobs:
     steps:
       - name: Ping Supabase REST API
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: "https://nkkwegvplpozirrjcxsn.supabase.co"
+          SUPABASE_ANON_KEY: "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU"
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "Supabase secrets are not set — skipping keep-warm ping."
-            exit 0
-          fi
           code=$(curl -s -o /dev/null -w '%{http_code}' \
             -H "apikey: $SUPABASE_ANON_KEY" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
             "$SUPABASE_URL/rest/v1/hub_topics?select=id&limit=1")
           echo "Supabase responded: $code"
           test "$code" = "200"
