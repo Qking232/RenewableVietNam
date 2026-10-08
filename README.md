@@ -67,6 +67,15 @@ Because nothing screens submissions any more, `supabase/schema.sql` carries an
 optional per-IP throttle (10 submissions per hour) at the bottom, commented out.
 Uncomment that block and run the file if the shelf starts collecting spam.
 
+### Context images (optional)
+
+Topics can carry up to three context images. The Hub scales each one down in the
+browser and stores it as a data-URL string in the `hub_topics.images` jsonb
+column. Re-run [`supabase/schema.sql`](supabase/schema.sql) (it is idempotent) to
+add that column; until it exists the page still posts topics — it just retries
+without the images so nothing else breaks. Your own topics keep their images in
+the browser and are unaffected either way.
+
 ### Why the keep-warm job
 
 Supabase's free tier pauses a project after 7 days without activity, which would

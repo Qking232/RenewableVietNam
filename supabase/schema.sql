@@ -23,7 +23,11 @@ create table if not exists public.hub_topics (
   author      text                             check (char_length(coalesce(author,'')) <= 120),
   context     text                             check (char_length(coalesce(context,'')) <= 4000),
   questions   jsonb not null default '[]'::jsonb,
-  refs        jsonb not null default '[]'::jsonb
+  refs        jsonb not null default '[]'::jsonb,
+  -- Context images, stored as small data-URL strings (the page scales them
+  -- down before sending). Optional: without this column the Hub still works,
+  -- it just posts topics without images.
+  images      jsonb not null default '[]'::jsonb check (jsonb_typeof(images) = 'array')
 );
 
 -- ------------------------------------------------------------------- views
@@ -39,6 +43,7 @@ create table if not exists public.hub_views (
 -- Keep already-created tables in step when this file is re-run.
 alter table public.hub_topics alter column status set default 'approved';
 alter table public.hub_views  alter column status set default 'approved';
+alter table public.hub_topics add column if not exists images jsonb not null default '[]'::jsonb;
 
 create index if not exists hub_topics_status_idx on public.hub_topics (status, created_at);
 create index if not exists hub_views_topic_idx   on public.hub_views (topic_id, status, created_at);
