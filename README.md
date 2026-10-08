@@ -21,10 +21,8 @@ Deployment is automatic: pushing to `main` builds with Jekyll
 
 `/hub/` keeps its twelve editorial topics inside the page itself. Everything
 visitors contribute — new topics, and views on a topic — is stored in
-**Supabase** (Postgres) and only appears publicly once *approved*.
-
-Submissions land as `pending`, so the shelf cannot be flooded with spam; you
-approve or delete them in a web UI.
+**Supabase** (Postgres) and, in the current configuration, **published
+immediately** (no review queue).
 
 ### Setup status
 
@@ -54,11 +52,20 @@ This is already configured. For the record, setup was:
 If you ever rotate the key, update it in two places: `hub/index.html` and
 `.github/workflows/supabase-keepalive.yml`.
 
-### Moderating
+### Submissions are auto-approved
 
-Open **Table Editor → `hub_topics`** and change a row's `status` from `pending`
-to `approved` to publish it. Do the same for `hub_views`. Delete junk rows
-freely; you can also use `rejected` to keep a record instead of deleting.
+New topics and views publish immediately — there is no review queue. To remove
+something, open **Table Editor → `hub_topics`** (or `hub_views`) and delete the
+row, or set its `status` to `rejected` to hide it while keeping a record.
+
+Going back to moderated submissions means editing `supabase/schema.sql`: set the
+two `status` column defaults to `'pending'` and the two INSERT policies'
+`WITH CHECK` to `(status = 'pending')`, then re-run the file. Also set
+`AUTO_APPROVE = false` in `hub/index.html` so the wording matches.
+
+Because nothing screens submissions any more, `supabase/schema.sql` carries an
+optional per-IP throttle (10 submissions per hour) at the bottom, commented out.
+Uncomment that block and run the file if the shelf starts collecting spam.
 
 ### Why the keep-warm job
 
