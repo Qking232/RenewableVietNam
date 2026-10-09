@@ -56,7 +56,6 @@
   .node .ct{color:var(--muted);font-variant-numeric:tabular-nums;font-weight:400;font-size:11px}
   input[type=checkbox]{accent-color:var(--accent);width:13px;height:13px;flex:none}
   .label{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:8px 10px 2px}
-  .status{padding:6px 10px;font-size:10.5px;color:var(--muted);border-bottom:1px solid var(--line);line-height:1.5}
   .status b{color:var(--txt);font-weight:600}
   #list{overflow:auto;flex:1;min-height:150px;border-bottom:1px solid var(--line)}
   .listhead{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px 3px;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
@@ -70,7 +69,6 @@
   .row .pin{width:8px;height:8px;border-radius:50%;margin-top:4px;flex:none}
   .row .t{flex:1;min-width:0}
   .row .t .n{font-weight:550;line-height:1.3;overflow:hidden;text-overflow:ellipsis}
-  .row .t .m{color:var(--muted);font-size:10.5px;margin-top:2px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
   .tag{background:var(--panel2);border:1px solid var(--line);border-radius:99px;padding:0 6px;font-size:9.5px}
   .row.active{background:color-mix(in srgb,var(--accent) 16%,transparent)}
   table.grid{width:100%;border-collapse:collapse;font-size:11.5px;table-layout:fixed}
@@ -203,8 +201,6 @@
         <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Show / hide the station list">
           <span class="caret" aria-hidden="true">&#9662;</span>
           <span class="nm">Stations</span>
-          <span class="spacer" style="flex:1"></span>
-          <span class="sub" id="listSub"></span>
         </div>
         <div class="dropbody">
           <div class="drop" id="colDrop">
@@ -218,7 +214,6 @@
           </div>
           <input class="search" id="search" placeholder="Search name, provider, address...">
           <div id="list"></div>
-          <div class="status" id="status"></div>
         </div>
       </div>
       <div class="drop" id="filterDrop">
@@ -252,7 +247,7 @@ const PORTS = {};                       // port name -> color
 });
 const portColor = p => PORTS[p] || "#8b5cf6";
 const keyOf = s => s.port+"\u0000"+s.cpo;
-let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s){return s.port;})), loaded: null, q: "", updated: null, live: false, newIds: new Set(), sort: {key:"name", dir:1}, colW: loadColWidths(), status: {}, cols: loadCols() };
+let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s){return s.port;})), loaded: null, q: "", newIds: new Set(), sort: {key:"name", dir:1}, colW: loadColWidths(), status: {}, cols: loadCols() };
 
 /* ---------------- map ---------------- */
 const PROVIDERS = [
@@ -370,8 +365,7 @@ treeEl.addEventListener("change", e=>{
 });
 
 /* ---------------- list ---------------- */
-const listEl=document.getElementById("list"), searchEl=document.getElementById("search"),
-      statusEl=document.getElementById("status"), listSubEl=document.getElementById("listSub");
+const listEl=document.getElementById("list"), searchEl=document.getElementById("search");
 const NEAREST_N = 10;                     // nearest stations listed on desktop
 const PHONE_N   = 5;                      // ...and on phones (bottom sheet)
 function matches(s){
@@ -478,22 +472,15 @@ function renderList(){
   const k = state.sort.key, dir = state.sort.dir, cmp = SORTS[k] || SORTS.idx;
   if(k !== "idx") rows.sort(function(a,b){ var r = cmp(a,b)*dir; if(!r) r=(a.s.name||"").localeCompare(b.s.name||""); return r; });
 
-  // Distance is the only column that degrades: without a location it is blank.
-  // Phones show the top 3 nearest; a desktop sort by Distance keeps the top N.
-  let sub;
+  // Phones list the nearest few; a desktop sort by Distance keeps the top N.
   if(isMobile()){
     if(myLoc){ rows.sort(function(a,b){ return (a.d==null?Infinity:a.d)-(b.d==null?Infinity:b.d); }); }
     rows = rows.slice(0, PHONE_N);
-    sub = myLoc ? ("top "+rows.length+" nearest") : (rows.length+" of "+matching.length+" \u00b7 set location for nearest");
   }
-  else if(myLoc && k==="dist"){ rows = rows.slice(0, NEAREST_N); sub = "top "+rows.length+" nearest of "+matching.length; }
-  else if(myLoc){ sub = matching.length+" shown \u00b7 click Distance for nearest"; }
-  else { sub = matching.length+" matching \u00b7 set location for distances"; }
-  if(listSubEl) listSubEl.textContent = sub;
+  else if(myLoc && k==="dist"){ rows = rows.slice(0, NEAREST_N); }
 
   const cta = '<div class="row cta" id="locCta"><span class="pin" style="background:var(--accent)"></span>'+
-    '<div class="t"><div class="n">\uD83D\uDCCD '+(isMobile()?PHONE_N:NEAREST_N)+' nearest</div>'+
-    '<div class="m"><span>Use my location, or click the map to set it</span></div></div></div>';
+    '<div class="t"><div class="n">\uD83D\uDCCD '+(isMobile()?PHONE_N:NEAREST_N)+' nearest</div></div></div>';
 
   const active = COLS.filter(function(c){ return state.cols.indexOf(c.key) > -1; });
   const head = '<tr>' + active.map(function(c){
@@ -562,12 +549,7 @@ function wireColResize(){
     grip.addEventListener("click", function(e){ e.stopPropagation(); });
   });
 }
-function renderStatus(sel){
-  const shown = sel ? sel.length : state.stations.filter(isVisible).length;
-  const when = state.updated ? new Date(state.updated).toLocaleString() : "built-in snapshot";
-  statusEl.innerHTML = 'Showing <b>'+shown+'</b> of <b>'+state.stations.length+'</b> stations<br>Updated: <b>'+esc(when)+'</b>'+(state.live?' <span style="color:var(--accent)">(live)</span>':'');
-}
-function refreshView(){ const sel=renderMarkers(); renderList(); renderStatus(sel); }
+function refreshView(){ renderMarkers(); renderList(); }
 
 /* ---------------- my location & directions ---------------- */
 let selected=null, myLoc=null, myMarker=null, myAcc=null, routeLine=null, routeBar=null, picking=false, pendingRoute=null, pendingNearest=false;
