@@ -274,3 +274,61 @@ create policy "public uploads hub files"
 -- drop trigger if exists hub_views_rate on public.hub_views;
 -- create trigger hub_views_rate before insert on public.hub_views
 --   for each row execute function public.hub_rate_ok();
+
+-- ===========================================================================
+--  OPTIONAL: password-protected edits/deletes (Hub "Edit" and "Delete" buttons)
+--  The publishable key still cannot UPDATE or DELETE hub_documents directly, so
+--  these SECURITY DEFINER functions do the write AFTER checking a password that
+--  only lives here (not in the page). Change the password below to change it.
+-- ===========================================================================
+create or replace function public.hub_admin_ok(pw text)
+returns boolean language sql immutable as $$
+  select coalesce(pw, '') = '123';
+$$;
+
+-- Update one document's fields, addressed by uuid. Returns true if a row changed.
+create or replace function public.hub_update_document(p_id uuid, pw text, p jsonb)
+returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  update public.hub_documents set
+    doc_type   = coalesce(p->>'doc_type', doc_type),
+    collection = coalesce(p->>'collection', collection),
+    title      = coalesce(p->>'title', title),
+    author     = coalesce(p->>'author', author),
+    year       = coalesce(p->>'year', year),
+    lang       = coalesce(p->>'lang', lang),
+    summary    = coalesce(p->>'summary', summary),
+    source     = coalesce(p->>'source', source),
+    license    = coalesce(p->>'license', license),
+    points     = coalesce(p->'points', points),
+    refs       = coalesce(p->'refs', refs),
+    links      = coalesce(p->'links', links),
+    rev        = coalesce(p->>'rev', rev),
+    updated    = now()
+  where id = p_id;
+  return found;
+end $$;
+
+-- Delete documents by uuid list. Returns how many rows were removed.
+create or replace function public.hub_delete_documents(p_ids uuid[], pw text)
+returns integer language plpgsql security definer set search_path = public as $$
+declare n integer;
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  delete from public.hub_documents where id = any(p_ids);
+  get diagnostics n = row_count;
+  return n;
+end $$;
+
+revoke all on function public.hub_admin_ok(text) from public;
+revoke all on function public.hub_update_document(uuid, text, jsonb) from public;
+revoke all on function public.hub_delete_documents(uuid[], text) from public;
+grant execute on function public.hub_update_document(uuid, text, jsonb) to anon, authenticated;
+grant execute on function public.hub_delete_documents(uuid[], text) to anon, authenticated;
+
+notify pgrst, 'reload schema';
