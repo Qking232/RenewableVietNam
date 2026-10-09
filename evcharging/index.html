@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>EV Charging Stations + Renewable Viet Nam</title>
+<title>EV Charging Stations - OpenStreetMap</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -30,12 +30,6 @@
   .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:6px 10px;border-radius:7px;cursor:pointer;font-size:11.5px;font-weight:550;white-space:nowrap}
   a.btn{text-decoration:none}
   .btn:hover{border-color:var(--accent);color:var(--accent)}
-  .btn:disabled{opacity:.55;cursor:progress}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .btn.primary:hover{filter:brightness(1.08);color:#fff}
-  .spin{width:12px;height:12px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:none}
-  .btn.primary.loading .spin{display:inline-block}
-  @keyframes sp{to{transform:rotate(360deg)}}
   main{flex:1;display:flex;min-height:0;position:relative}
   aside{width:540px;min-width:540px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
   aside.collapsed{display:none}
@@ -154,7 +148,6 @@
     header .mark{font-size:12px}
     header .mark .txt{display:none}
     .btn{padding:6px 9px;font-size:11px}
-    #csvBtn{display:none}
     #toggleSide .lbl{display:none}
     .foot{display:none}
     #toast{top:8px;max-width:92%}
@@ -198,13 +191,9 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Back to renewablevietnam.com">Home</a>
     <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776; <span class="lbl">Stations</span></button>
-    <div class="mark"><span class="dot"></span><span class="txt">EV Charging Stations</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt">EV Charging</span></div>
     <div class="spacer"></div>
-    <button class="btn primary" id="liveBtn"><span class="spin"></span><span id="liveTxt">&#8635; Live Query</span></button>
-    <button class="btn" id="locBtn" title="Show my location">&#128205; My location</button>
-    <button class="btn" id="dirBtn" title="Directions to the selected / nearest station (opens Google Maps)">&#10148; Directions</button>
-    <button class="btn" id="nearBtn" title="Find the nearest station to me">&#127919; Nearest</button>
-    <button class="btn" id="csvBtn" title="Download filtered list as CSV">&#8681; CSV</button>
+    <button class="btn" id="nearBtn" title="Show the stations nearest to me">&#127919; Near me</button>
     <button class="btn" id="themeBtn" title="Toggle light / dark">&#9788;</button>
   </header>
   <div class="notice">For studying / research purposes only &mdash; non-commercial.</div>
@@ -213,7 +202,7 @@
       <div class="drop open" id="listDrop">
         <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Show / hide the station list">
           <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm">Station list</span>
+          <span class="nm">Stations</span>
           <span class="spacer" style="flex:1"></span>
           <span class="sub" id="listSub"></span>
         </div>
@@ -235,7 +224,7 @@
       <div class="drop" id="filterDrop">
         <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Show / hide the port and provider filters">
           <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm">Filter by port / provider</span>
+          <span class="nm">Filters</span>
           <span class="spacer" style="flex:1"></span>
           <a id="allLnk">All</a><a id="noneLnk">None</a>
         </div>
@@ -250,7 +239,7 @@
     </div>
   </main>
 </div>
-<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
+<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Base map: OpenStreetMap France tiles. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -262,19 +251,14 @@ const PORTS = {};                       // port name -> color
   PORTS[p] = ["#3b82f6","#22c55e","#f59e0b"][i] || "#8b5cf6";
 });
 const portColor = p => PORTS[p] || "#8b5cf6";
-const MAP_MID = "1g0aGaoWQjuDEJrJmjRVNVsnKxKMq778";
-const VIEWER_URL = "https://www.google.com/maps/d/viewer?mid="+MAP_MID+"&hl=en";
-const PROXIES = [ u => "https://cors.eu.org/"+u,
-                  u => "https://api.allorigins.win/raw?url="+encodeURIComponent(u) ];
-
 const keyOf = s => s.port+"\u0000"+s.cpo;
 let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s){return s.port;})), loaded: null, q: "", updated: null, live: false, newIds: new Set(), sort: {key:"name", dir:1}, colW: loadColWidths(), status: {}, cols: loadCols() };
 
 /* ---------------- map ---------------- */
 const PROVIDERS = [
-  {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",           max:20, attr:""},
-  {url:"https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",             max:20, attr:""},
-  {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", max:20, attr:"&copy; CARTO"}
+  {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",           max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: OSM France"},
+  {url:"https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",             max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: OSM France (HOT)"},
+  {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: CARTO"}
 ];
 let pIdx = 0, tileErrors = 0, tileLayer = null;
 const map = L.map("map", {zoomControl:true, worldCopyJump:true}).setView([16.0,106.5], 6);
@@ -302,7 +286,7 @@ function popupHtml(s){
     '<span class="pb" style="background:'+portColor(s.port)+'">'+esc(s.port)+'</span>'+ rows +
     '<div class="lnks"><a href="#" data-route="'+esc(mkKey(s))+'">Directions</a>'+
     '<a href="'+g+'" target="_blank" rel="noopener">Google Maps</a>'+
-    '<a href="'+o+'" target="_blank" rel="noopener">View map</a></div></div>';
+    '<a href="'+o+'" target="_blank" rel="noopener">OpenStreetMap</a></div></div>';
 }
 function markerFor(s){
   const m = L.circleMarker([s.lat,s.lng], {radius:6, color:"#fff", weight:1.4, fillColor:portColor(s.port), fillOpacity:1});
@@ -508,7 +492,7 @@ function renderList(){
   if(listSubEl) listSubEl.textContent = sub;
 
   const cta = '<div class="row cta" id="locCta"><span class="pin" style="background:var(--accent)"></span>'+
-    '<div class="t"><div class="n">\uD83D\uDCCD Show the '+(isMobile()?PHONE_N:NEAREST_N)+' nearest</div>'+
+    '<div class="t"><div class="n">\uD83D\uDCCD '+(isMobile()?PHONE_N:NEAREST_N)+' nearest</div>'+
     '<div class="m"><span>Use my location, or click the map to set it</span></div></div></div>';
 
   const active = COLS.filter(function(c){ return state.cols.indexOf(c.key) > -1; });
@@ -584,93 +568,6 @@ function renderStatus(sel){
   statusEl.innerHTML = 'Showing <b>'+shown+'</b> of <b>'+state.stations.length+'</b> stations<br>Updated: <b>'+esc(when)+'</b>'+(state.live?' <span style="color:var(--accent)">(live)</span>':'');
 }
 function refreshView(){ const sel=renderMarkers(); renderList(); renderStatus(sel); }
-
-/* ---------------- live query ---------------- */
-function kv(o,d){
-  if(Array.isArray(o)){
-    if(o.length>=2 && typeof o[0]==="string" && Array.isArray(o[1]) && o[1].length && typeof o[1][0]!=="object"){
-      d[o[0].replace(/:$/,"").trim()] = o[1][0];
-    } else { for(const e of o) kv(e,d); }
-  }
-  return d;
-}
-function stationKey(s){ return s.id || (s.name+"|"+s.lat+","+s.lng); }
-function mergeStations(found){
-  const byId = new Map();
-  state.stations.forEach(s=>byId.set(stationKey(s), s));
-  const newIds = new Set(); let added=0, updated=0;
-  for(const s of found){
-    const k = stationKey(s);
-    const cur = byId.get(k);
-    if(cur){
-      if(cur.lat!==s.lat || cur.lng!==s.lng) updated++;
-      cur.name=s.name; cur.lat=s.lat; cur.lng=s.lng;
-      cur.port=s.port; cur.cpo=s.cpo; cur.addr=s.addr; cur.conn=s.conn;
-    }else{
-      state.stations.push(s); byId.set(k,s); added++;
-      if(s.id) newIds.add(s.id);
-    }
-  }
-  state.newIds = newIds;
-  if(state.loaded!==null) state.stations.forEach(s=>{ if(newIds.has(s.id)) state.loaded.add(keyOf(s)); });
-  return {added:added, updated:updated};
-}
-function parsePageData(html){
-  const key="var _pageData = "; const k=html.indexOf(key);
-  if(k<0) throw new Error("page data not found");
-  let i=k+key.length; if(html[i]!=='"') throw new Error("bad page data");
-  let j=i+1; while(j<html.length){ const c=html[j]; if(c==="\\"){j+=2;continue;} if(c==='"')break; j++; }
-  const data = JSON.parse(JSON.parse(html.slice(i,j+1)));
-  const layers = data[1][6];
-  const out=[];
-  for(const L of layers){
-    const port = L[2];
-    const feats = L[12][0][13][0];
-    for(const f of feats){
-      let lat,lng; try{ const p=f[1][0][0]; lat=p[0]; lng=p[1]; }catch(e){ continue; }
-      if(!isFinite(lat)||!isFinite(lng)) continue;
-      const d = kv(f[5],{});
-      out.push({name:d["Charging station"]||"", lat:lat, lng:lng, port:port,
-                cpo:d["CPO"]||"", addr:d["Address"]||"", conn:d["Connector"]||"", id:f[0]});
-    }
-  }
-  return out;
-}
-async function liveQuery(){
-  const btn=document.getElementById("liveBtn"), txt=document.getElementById("liveTxt");
-  btn.disabled=true; btn.classList.add("loading"); txt.textContent="Querying...";
-  let lastErr="network error";
-  for(const p of PROXIES){
-    try{
-      const res = await fetch(p(VIEWER_URL), {cache:"no-store"});
-      if(!res.ok) throw new Error("HTTP "+res.status);
-      const found = parsePageData(await res.text());
-      if(!found.length) throw new Error("no stations parsed");
-      const m = mergeStations(found);
-      state.updated = Date.now(); state.live = true;
-      renderTree(); refreshView();
-      txt.textContent = "\u2713 +"+m.added+" new, "+m.updated+" moved";
-      setTimeout(()=>{ txt.textContent="\u21BB Live Query"; }, 2600);
-      return;
-    }catch(e){ lastErr = e.message; }
-  }
-  txt.textContent="\u26A0 Live update failed";
-  statusEl.innerHTML += '<br><span style="color:#e0a44a">Live query unavailable ('+esc(lastErr)+'). Showing built-in data.</span>';
-  btn.disabled=false; btn.classList.remove("loading");
-  setTimeout(()=>{ txt.textContent="\u21BB Live Query"; }, 2600);
-}
-
-/* ---------------- CSV ---------------- */
-function exportCsv(){
-  const rows = state.stations.filter(s=>isVisible(s)&&matches(s));
-  const csv = ["name,port_type,provider,address,connector,latitude,longitude"]
-    .concat(rows.map(s=>[s.name,s.port,s.cpo,s.addr,s.conn,s.lat,s.lng]
-      .map(v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"').join(",")))
-    .join("\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
-  a.download="ev-charging-stations.csv"; a.click(); URL.revokeObjectURL(a.href);
-}
 
 /* ---------------- my location & directions ---------------- */
 let selected=null, myLoc=null, myMarker=null, myAcc=null, routeLine=null, routeBar=null, picking=false, pendingRoute=null, pendingNearest=false;
@@ -800,11 +697,7 @@ wireDropdown("colDrop","colToggle");
 wireDropdown("filterDrop","filterToggle");
 
 /* ---------------- ui wiring ---------------- */
-document.getElementById("liveBtn").addEventListener("click", liveQuery);
-document.getElementById("locBtn").addEventListener("click", locateMe);
 document.getElementById("nearBtn").addEventListener("click", findNearest);
-document.getElementById("dirBtn").addEventListener("click", ()=>directions());
-document.getElementById("csvBtn").addEventListener("click", exportCsv);
 document.getElementById("toggleSide").addEventListener("click", ()=>{ document.getElementById("side").classList.toggle("collapsed"); setTimeout(()=>map.invalidateSize(),60); });
 (function panelResize(){
   const d=document.getElementById("drag"), side=document.getElementById("side");
