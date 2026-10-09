@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>EV Charging Stations - OpenStreetMap</title>
+<title>EV Charging Stations + Renewable Viet Nam</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -250,7 +250,7 @@
     </div>
   </main>
 </div>
-<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Base map: OpenStreetMap France tiles. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
+<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -272,9 +272,9 @@ let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s)
 
 /* ---------------- map ---------------- */
 const PROVIDERS = [
-  {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",           max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: OSM France"},
-  {url:"https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",             max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: OSM France (HOT)"},
-  {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", max:20, attr:"&copy; OpenStreetMap contributors &middot; Tiles: CARTO"}
+  {url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",           max:20, attr:""},
+  {url:"https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",             max:20, attr:""},
+  {url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", max:20, attr:"&copy; CARTO"}
 ];
 let pIdx = 0, tileErrors = 0, tileLayer = null;
 const map = L.map("map", {zoomControl:true, worldCopyJump:true}).setView([16.0,106.5], 6);
@@ -302,7 +302,7 @@ function popupHtml(s){
     '<span class="pb" style="background:'+portColor(s.port)+'">'+esc(s.port)+'</span>'+ rows +
     '<div class="lnks"><a href="#" data-route="'+esc(mkKey(s))+'">Directions</a>'+
     '<a href="'+g+'" target="_blank" rel="noopener">Google Maps</a>'+
-    '<a href="'+o+'" target="_blank" rel="noopener">OpenStreetMap</a></div></div>';
+    '<a href="'+o+'" target="_blank" rel="noopener">View map</a></div></div>';
 }
 function markerFor(s){
   const m = L.circleMarker([s.lat,s.lng], {radius:6, color:"#fff", weight:1.4, fillColor:portColor(s.port), fillOpacity:1});
