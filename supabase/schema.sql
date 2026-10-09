@@ -156,6 +156,40 @@ drop policy if exists "public logs doc views" on public.hub_doc_views;
 create policy "public logs doc views"
   on public.hub_doc_views for insert with check (true);
 
+-- ------------------------------------------------------------ shared links
+-- Download links anyone can add to any document, so a link saved on one device
+-- shows up on every device (a document's own `links` column only covers links
+-- given at upload time). Insert-only for everyone; a row may be removed by the
+-- browser that added it, identified by the x-link-token request header.
+create table if not exists public.hub_doc_links (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  doc_id     text not null,
+  url        text not null check (char_length(url) between 4 and 2000),
+  owner      text check (char_length(coalesce(owner,'')) <= 60)
+);
+create index if not exists hub_doc_links_doc_idx on public.hub_doc_links (doc_id, created_at);
+
+grant select, insert, delete on public.hub_doc_links to anon, authenticated;
+revoke update, truncate, references, trigger on public.hub_doc_links from anon, authenticated;
+
+alter table public.hub_doc_links enable row level security;
+
+drop policy if exists "public reads doc links" on public.hub_doc_links;
+create policy "public reads doc links"
+  on public.hub_doc_links for select using (true);
+
+drop policy if exists "public adds doc links" on public.hub_doc_links;
+create policy "public adds doc links"
+  on public.hub_doc_links for insert with check (true);
+
+-- Only the browser that added a link (holding its owner token) may delete it.
+drop policy if exists "owner removes doc links" on public.hub_doc_links;
+create policy "owner removes doc links"
+  on public.hub_doc_links for delete
+  using (owner is not null
+     and owner = (coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-link-token'));
+
 -- ------------------------------------------------------------- file storage
 -- A public bucket for the document files. Anyone may read or upload a file;
 -- the per-object size cap (25 MB) matches the page's client-side limit.
