@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Energy World Map</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a1020'/%3E%3Cpath d='M17.5 4 8 18h6l-1.5 10L23 13h-6z' fill='%23f6c445'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#0a1020; --ocean:#0a1020; --land:#151d2e; --panel:rgba(13,20,35,.74); --panel-solid:#0d1423; --border:rgba(148,163,184,.20);
+  --fg:#e8edf6; --muted:#93a4bd; --accent:#f6c445; --accent-2:#38bdf8; --good:#34d399; --bad:#f87171;
+  --shadow:0 10px 30px rgba(0,0,0,.45); --radius:12px; --fs:12.5px;
+}
+html[data-theme="light"]{
+  --bg:#eaeef4; --ocean:#e9edf4; --land:#d6dce6; --panel:rgba(255,255,255,.85); --panel-solid:#ffffff; --border:rgba(15,23,42,.14);
+  --fg:#0b1220; --muted:#53627a; --accent:#a9791a; --accent-2:#0369a1; --shadow:0 10px 30px rgba(15,23,42,.16);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font:var(--fs)/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--fg);background:var(--ocean);overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+#map{position:fixed;inset:0;background:var(--ocean);z-index:0}
+.leaflet-container{background:var(--ocean);font:inherit}
+.leaflet-control-attribution{display:none!important}
+.leaflet-bar{border:none!important;box-shadow:var(--shadow)!important;border-radius:10px!important;overflow:hidden}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--fg)!important;border:1px solid var(--border)!important;width:30px!important;height:30px!important;line-height:28px!important;backdrop-filter:blur(8px)}
+.leaflet-control-zoom a:hover{background:var(--panel-solid)!important}
+
+/* ---------- top bar ---------- */
+header{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;pointer-events:none}
+header > *{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:var(--panel);backdrop-filter:blur(10px);border:1px solid var(--border);box-shadow:var(--shadow);font-weight:700;letter-spacing:.2px;font-size:13px;white-space:nowrap}
+.brand .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+.brand .y{color:var(--muted);font-weight:600}
+.spacer{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--panel);color:var(--fg);border:1px solid var(--border);border-radius:10px;padding:7px 10px;font:inherit;font-weight:600;backdrop-filter:blur(10px);box-shadow:var(--shadow);transition:.15s transform,.15s background}
+.btn:hover{transform:translateY(-1px)}
+.btn.icon{padding:7px;min-width:34px}
+.btn.active{background:var(--accent);color:#111;border-color:transparent}
+.btn svg{width:16px;height:16px;display:block}
+
+/* ---------- side panel ---------- */
+#panel{position:fixed;top:0;left:0;bottom:0;z-index:25;width:314px;max-width:86vw;padding:calc(58px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;overflow:auto;transition:transform .25s ease}
+#panel.hidden{transform:translateX(calc(-100% - 14px))}
+.card{background:var(--panel);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:11px 12px}
+.card h2{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+label.fld{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:2px 0 5px;font-weight:700}
+select,input[type=search]{width:100%;background:rgba(127,127,127,.12);color:var(--fg);border:1px solid var(--border);border-radius:9px;padding:8px 9px;font:inherit;outline:none}
+select:focus,input[type=search]:focus{border-color:var(--accent)}
+select option{background:var(--panel-solid);color:var(--fg)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:6px 0 2px}
+.row{display:flex;align-items:center;gap:8px}
+.row .now{font-weight:800;font-size:16px;color:var(--accent)}
+
+/* ---------- legend ---------- */
+#legendBar{height:11px;border-radius:6px;margin:6px 0 4px;border:1px solid var(--border)}
+.legendTicks{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+.nodata{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted);margin-top:7px}
+.nodata i{width:12px;height:11px;border-radius:3px;background:var(--land);border:1px solid var(--border);display:inline-block}
+
+/* ---------- charts (svg) ---------- */
+svg.vbars{width:100%;display:block}
+svg.vbars .brow:hover rect{opacity:.85}
+svg.vbars .brow:hover text{fill:var(--accent)}
+svg.donut{width:130px;height:130px;display:block;margin:2px auto 0}
+svg.chart{width:100%;height:120px;display:block;overflow:visible}
+
+/* ---------- detail readout (in the left panel: Viet Nam) ---------- */
+.dh{display:flex;align-items:center;gap:8px}
+.dh h3{margin:0;font-size:16px;flex:1}
+.sub{color:var(--muted);font-size:11px;margin-top:-4px}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.stat .s{background:rgba(127,127,127,.12);border:1px solid var(--border);border-radius:9px;padding:7px 9px}
+.stat .s b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+.stat .s span{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.piewrap{display:flex;gap:12px;align-items:center;margin-top:4px}
+.mixlist{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+.mixlist .m{display:grid;grid-template-columns:10px 1fr auto;gap:7px;align-items:center;font-size:11px}
+.mixlist .m i{width:10px;height:10px;border-radius:2px}
+.mixlist .m span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mixlist .m b{font-variant-numeric:tabular-nums;font-weight:700}
+.chartwrap{margin-top:6px}
+
+/* ---------- toast / loading ---------- */
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);z-index:40;background:var(--panel-solid);border:1px solid var(--border);border-radius:10px;padding:9px 14px;box-shadow:var(--shadow);opacity:0;transition:.25s;font-weight:600;max-width:90vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#loader{position:fixed;inset:0;z-index:35;display:grid;place-items:center;background:rgba(4,8,18,.55);backdrop-filter:blur(3px)}
+#loader.hidden{display:none}
+#loader .spin{width:38px;height:38px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hint{font-size:10.5px;color:var(--muted);line-height:1.45;margin-top:8px}
+.disclaimer{font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px;margin-top:2px}
+
+/* ---------- mobile ---------- */
+@media (max-width:720px){
+  :root{--fs:12px}
+  #panel{width:100%;left:0;right:0;max-width:none}
+  #panel.hidden{transform:translateY(110%)}
+  .brand{font-size:12px;padding:6px 10px}
+  svg.donut{width:130px;height:130px}
+}
+@media (max-height:520px){ .brand{display:none} }
+
+/* ---------- bare background mode (?bg) : map only, no app chrome ---------- */
+body.bgmode header,
+body.bgmode #panel,
+body.bgmode #toast,
+body.bgmode .leaflet-control-zoom{ display:none !important; }
+body.bgmode #loader{ background:transparent; backdrop-filter:none; }
+body.bgmode #loader .spin{ display:none; }
+
+/* ---------- embed mode (?embed) : map + panel/indicators, map header hidden ---------- */
+body.embed header{ display:none !important; }
+body.embed #panel{ padding-top: calc(84px + env(safe-area-inset-top)); }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<header>
+  <div class="brand"><span class="dot" id="liveDot"></span>Energy&nbsp;World&nbsp;Map <span class="y" id="brandYear">·</span></div>
+  <div class="spacer"></div>
+  <button class="btn icon" id="panelBtn" title="Toggle panel" aria-label="Toggle panel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+  </button>
+  <button class="btn icon" id="themeBtn" title="Theme" aria-label="Theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9 7 7 0 0 0 9 9z"/></svg>
+  </button>
+  <button class="btn icon" id="refreshBtn" title="Refresh data" aria-label="Refresh">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+  </button>
+</header>
+
+<aside id="panel">
+  <div class="card">
+    <h2>Layers</h2>
+    <label class="fld" for="metric">Indicator</label>
+    <select id="metric"></select>
+    <div class="row" style="margin-top:9px"><label class="fld" style="margin:0" for="year">Year</label><div class="spacer"></div><span class="now" id="yearLabel">2024</span></div>
+    <input type="range" id="year" min="2000" max="2025" step="1" value="2024" />
+    <div class="row"><button class="btn" id="playBtn" style="flex:1" title="Animate years">Play years</button><button class="btn" id="latestBtn" title="Jump to latest">Latest</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Legend <span id="legendUnit" style="text-transform:none;color:var(--muted)"></span></h2>
+    <div id="legendBar"></div>
+    <div class="legendTicks" id="legendTicks"></div>
+    <div class="nodata"><i></i> no data</div>
+  </div>
+
+  <div class="card">
+    <div class="dh"><h3 id="dName">Viet Nam</h3></div>
+    <div class="sub" id="dSub"></div>
+    <div class="stat" id="dStats"></div>
+    <div>
+      <label class="fld" style="margin-top:10px">Electricity mix <span id="dMixYear"></span></label>
+      <div class="piewrap">
+        <svg class="donut" id="dPie" viewBox="0 0 160 160"></svg>
+        <div class="mixlist" id="dMixList"></div>
+      </div>
+    </div>
+    <div class="chartwrap">
+      <label class="fld">Trends (2000 → latest)</label>
+      <svg class="chart" id="dChart" viewBox="0 0 320 120" preserveAspectRatio="none"></svg>
+      <div class="legendTicks" style="margin-top:2px"><span style="color:#8ab4ff">● carbon intensity (gCO₂/kWh)</span><span style="color:#ffd166">● renewables share (%)</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="disclaimer">Data: <b>Ember</b> (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised. Boundaries schematic. <span style="opacity:.7">rev 0.06</span></div>
+  </div>
+</aside>
+
+<div id="loader"><div class="spin"></div></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ============================ config ============================ */
+const API  = "https://api.ember-energy.org/v1";
+const KEY  = "a238cbd2-8582-6f08-4e27-03dd861af820";
+const GEODATA = "https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json";
+const Y_MIN = 2000, Y_MAX = 2025, Y_DEFAULT = 2024;
+const FOCUS_ISO = "VNM";  // only Vietnam's information is enabled
+const PARAMS = new URLSearchParams(location.search);
+const BG = PARAMS.has("bg");        // bare: map only, no chrome at all
+const EMBED = PARAMS.has("embed");  // embed: map + indicator panel, but no map header
+
+const FUEL_ORDER = ["Coal","Gas","Other fossil","Nuclear","Hydro","Bioenergy","Solar","Wind","Other renewables","Net imports"];
+const FUEL_COLORS = {
+  "Coal":"#5b6472","Gas":"#ef8a3c","Other fossil":"#9a6a4a","Nuclear":"#a855f7",
+  "Hydro":"#3b82f6","Bioenergy":"#7cb342","Solar":"#f4c430","Wind":"#2dd4bf",
+  "Other renewables":"#a3e635","Net imports":"#94a3b8"
+};
+
+const METRICS = [
+  { id:"carbon",        label:"Carbon intensity of electricity", unit:"gCO₂/kWh", ramp:"carbon", domain:"auto" },
+  { id:"renewShare",    label:"Renewables share of electricity",  unit:"%",        ramp:"green",  domain:[0,100] },
+  { id:"cleanShare",    label:"Clean power share",                unit:"%",        ramp:"green",  domain:[0,100] },
+  { id:"fossilShare",   label:"Fossil share of electricity",      unit:"%",        ramp:"red",    domain:[0,100] },
+  { id:"windsolarShare",label:"Wind & solar share",               unit:"%",        ramp:"purple", domain:[0,100] },
+  { id:"genTWh",        label:"Total electricity generation",     unit:"TWh",      ramp:"blue",   domain:"log" },
+  { id:"emissions",     label:"Power-sector emissions",           unit:"MtCO₂",    ramp:"orange", domain:"log" },
+  { id:"capacityGW",    label:"Wind & solar capacity",            unit:"GW",       ramp:"blue",   domain:"log" },
+];
+const RAMPS = {
+  carbon:["#136f3b","#7fc97f","#ffffbf","#fdae61","#d7191c"],
+  green: ["#0b3320","#1f7a44","#4cc07a","#a8e6b8","#e8f8ec"],
+  red:   ["#0f2d13","#2f7d3a","#f2d16b","#e8803a","#c0261f"],
+  blue:  ["#08304a","#0e6f96","#2bb3d4","#9fe3f0","#eafaff"],
+  purple:["#1a0b3d","#5423a6","#8b5cf6","#c9b6fb","#f4f0ff"],
+  orange:["#3a1404","#97400f","#e07b1e","#f3b45a","#ffe6b0"],
+};
+const M = Object.fromEntries(METRICS.map(m=>[m.id,m]));
+
+/* ============================ state ============================ */
+const state = { metric:"carbon", year:Y_DEFAULT, selected:FOCUS_ISO, playing:false };
+const cache = {};
+let world=null, geoLayer=null, isoSet=null, currentData=null, playTimer=null;
+
+/* ============================ helpers ============================ */
+const $ = (id)=>document.getElementById(id);
+function toast(msg,ms=2600){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),ms); }
+const loader = (on)=>$("loader").classList.toggle("hidden",!on);
+function hex2rgb(h){ h=h.replace("#",""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
+function rampColor(rampName,t){
+  const stops=RAMPS[rampName]; t=Math.max(0,Math.min(1,t));
+  const seg=(stops.length-1)*t, i=Math.min(stops.length-2,Math.floor(seg)), f=seg-i;
+  const a=hex2rgb(stops[i]), b=hex2rgb(stops[i+1]);
+  return `rgb(${lerp(a[0],b[0],f)},${lerp(a[1],b[1],f)},${lerp(a[2],b[2],f)})`;
+}
+function fmt(metric,v){
+  if(v==null||isNaN(v)) return "—";
+  switch(metric){
+    case "carbon": return Math.round(v).toLocaleString();
+    case "emissions": return (v>=100?Math.round(v):v.toFixed(1)).toLocaleString();
+    case "genTWh": return v>=100?Math.round(v).toLocaleString():v.toFixed(1);
+    case "capacityGW": return v>=100?Math.round(v).toLocaleString():v.toFixed(1);
+    default: return v.toFixed(1)+"%";
+  }
+}
+function fmtFull(metric,v){ const m=M[metric]; if(v==null||isNaN(v)) return "—"; return fmt(metric,v)+(m.unit==="%"?"":" "+m.unit); }
+function isDark(){ return document.documentElement.dataset.theme!=="light"; }
+function palette(){ return isDark()
+  ? { nodata:"#182034", border:"rgba(255,255,255,.10)", selBorder:"#ffffff" }
+  : { nodata:"#d6dce6", border:"rgba(15,23,42,.16)",    selBorder:"#0b1220" }; }
+
+/* ============================ API ============================ */
+async function api(path, params){
+  const u = new URL(API+path);
+  Object.entries(params||{}).forEach(([k,v])=>{ if(v!=null && v!=="") u.searchParams.set(k,v); });
+  u.searchParams.set("api_key", KEY);
+  const r = await fetch(u.toString());
+  if(!r.ok) throw new Error(`${path} → HTTP ${r.status}`);
+  return r.json();
+}
+
+/* ============================ year data ============================ */
+async function loadYear(year){
+  if(cache[year]) return cache[year];
+  loader(true);
+  const safe = async (p,q)=>{ try{ return await api(p,q); }catch(e){ console.warn(e); return {data:[]}; } };
+  const [gen, ci, em, cap] = await Promise.all([
+    api("/electricity-generation/yearly", { start_date:year, end_date:year }),
+    safe("/carbon-intensity/yearly",       { start_date:year, end_date:year }),
+    safe("/power-sector-emissions/yearly", { start_date:year, end_date:year }),
+    safe("/installed-capacity/monthly",    { start_date:`${year}-12-01`, end_date:`${year}-12-31` }),
+  ]);
+  const byIso = {};
+  const ensure = (iso)=>(byIso[iso] ||= { name:iso, carbon:null, emissions:null, genTWh:null, renewShare:null, cleanShare:null, fossilShare:null, windsolarShare:null, capacityGW:null, mix:[], series:{} });
+  for(const r of (gen.data||[])){ if(!isoSet.has(r.entity_code)) continue; const c=ensure(r.entity_code); c.name=r.entity; c.series[r.series]={twh:r.generation_twh, share:r.share_of_generation_pct}; }
+  for(const r of (ci.data||[])){ if(!isoSet.has(r.entity_code)) continue; ensure(r.entity_code).carbon=r.emissions_intensity_gco2_per_kwh; }
+  for(const r of (em.data||[])){ if(!isoSet.has(r.entity_code)) continue; const c=ensure(r.entity_code); if(FUEL_ORDER.includes(r.series)&&r.emissions_mtco2!=null) c.emissions=(c.emissions||0)+r.emissions_mtco2; }
+  for(const r of (cap.data||[])){ if(!isoSet.has(r.entity_code)) continue; const c=ensure(r.entity_code);
+    if(r.series==="Wind and solar"){ c.capacityGW=r.capacity_gw; }
+    else if(["Wind","Onshore wind","Offshore wind","Solar"].includes(r.series)){ (c._cap||={})[r.series]=r.capacity_gw; } }
+  for(const iso in byIso){
+    const c=byIso[iso], S=c.series, g=(n)=>S[n]?S[n].share:null, t=(n)=>S[n]?S[n].twh:null;
+    c.genTWh=t("Total generation"); c.renewShare=g("Renewables"); c.cleanShare=g("Clean"); c.fossilShare=g("Fossil"); c.windsolarShare=g("Wind and solar");
+    if(c.capacityGW==null && c._cap){ const wind=c._cap.Wind!=null?c._cap.Wind:((c._cap["Onshore wind"]||0)+(c._cap["Offshore wind"]||0)); c.capacityGW=wind+(c._cap.Solar||0); if(!c.capacityGW) c.capacityGW=null; }
+    delete c._cap;
+    c.mix = FUEL_ORDER.filter(f=>S[f]).map(f=>({ fuel:f, twh:S[f].twh, share:S[f].share }));
+  }
+  cache[year]=byIso; loader(false); return byIso;
+}
+
+/* ============================ minimalist map ============================ */
+let map;
+function domain(metric){
+  const def=M[metric].domain;
+  if(Array.isArray(def)) return def.slice();
+  const vals=Object.values(currentData||{}).map(d=>d[metric]).filter(v=>typeof v==="number"&&isFinite(v)&&v>0);
+  if(!vals.length) return [0,1];
+  vals.sort((a,b)=>a-b);
+  let lo = vals[Math.floor(vals.length*0.02)], hi = vals[Math.floor(vals.length*0.98)];
+  if(!(hi>lo)){ const base = lo>0?lo:1; lo = base*(def==="log"?0.5:0.6); hi = base*(def==="log"?2:1.4); }
+  return [Math.max(0.0001, lo), hi];
+}
+function colorFor(metric,v){
+  const d=M[metric].domain, [lo,hi]=domain(metric);
+  if(d==="log"){ const t=(Math.log10(v)-Math.log10(lo))/(Math.log10(hi)-Math.log10(lo)); return rampColor(M[metric].ramp,Math.max(0,Math.min(1,t))); }
+  return rampColor(M[metric].ramp, Math.max(0,Math.min(1,(v-lo)/(hi-lo))));
+}
+function styleFor(f){
+  const d=currentData?currentData[f.id]:null, v=d?d[state.metric]:null, has=v!=null&&isFinite(v), sel=state.selected===f.id, P=palette();
+  return { fillColor: has?colorFor(state.metric,v):P.nodata, fillOpacity:1, color: sel?P.selBorder:P.border, weight: sel?1.8:0.6 };
+}
+function refreshStyles(){ if(geoLayer) geoLayer.setStyle(styleFor); }
+function onEachFeature(f,layer){
+  if(isoSet && !isoSet.has(f.id)){ layer.options.interactive=false; return; }
+  layer.on({
+    mouseover(e){ const d=currentData?currentData[f.id]:null;
+      layer.bindTooltip(`<b>${f.properties.name}</b><br>${M[state.metric].label}: ${fmtFull(state.metric,d?d[state.metric]:null)}`,{sticky:true}).openTooltip(e.latlng);
+      layer.setStyle({weight:1.6,color:palette().selBorder});
+    },
+    mouseout(){ layer.closeTooltip(); refreshStyles(); },
+    click(){ selectCountry(f.id,true); }
+  });
+}
+
+/* ============================ legend ============================ */
+function refreshLegend(){
+  const [lo,hi]=domain(state.metric), stops=[];
+  for(let i=0;i<=10;i++) stops.push(rampColor(M[state.metric].ramp,i/10));
+  $("legendBar").style.background=`linear-gradient(90deg, ${stops.join(",")})`;
+  $("legendUnit").textContent=M[state.metric].unit;
+  const mid=(lo+hi)/2;
+  $("legendTicks").innerHTML=[lo,mid,hi].map(x=>`<span>${fmt(state.metric,x)}</span>`).join("");
+}
+function setMetric(id){ state.metric=id; if(currentData){ refreshStyles(); refreshLegend(); renderDetail(); } }
+function setYear(y){
+  state.year=y; $("year").value=y; $("yearLabel").textContent=y; $("brandYear").textContent="· "+y;
+  loader(true);
+  return loadYear(y).then(data=>{ currentData=data; refreshStyles(); refreshLegend(); renderDetail(); })
+    .catch(e=>{ toast("Failed to load "+y+" data"); loader(false); console.error(e); });
+}
+
+/* ============================ detail (pie + chart) ============================ */
+function selectCountry(iso, zoom){
+  state.selected=iso; refreshStyles();
+  if(zoom){ const layer=geoLayer.getLayers().find(l=>l.feature.id===iso); if(layer) map.fitBounds(layer.getBounds(),{maxZoom:6,padding:[40,40]}); }
+  renderDetail();
+}
+function renderDetail(){
+  const iso=state.selected;
+  if(!iso||!currentData||!currentData[iso]) return;
+  const d=currentData[iso];
+  $("dName").textContent=d.name; $("dSub").textContent=`${iso} · ${state.year}`;
+  const st=[["Carbon intensity",fmtFull("carbon",d.carbon)],["Renewables share",fmtFull("renewShare",d.renewShare)],["Total generation",fmtFull("genTWh",d.genTWh)],["Emissions",fmtFull("emissions",d.emissions)],["Fossil share",fmtFull("fossilShare",d.fossilShare)],["Wind & solar cap.",fmtFull("capacityGW",d.capacityGW)]];
+  $("dStats").innerHTML=st.map(([k,v])=>`<div class="s"><b>${v}</b><span>${k}</span></div>`).join("");
+  $("dMixYear").textContent="· "+state.year;
+  drawDonut(d);
+  $("dMixList").innerHTML=d.mix.map(m=>`<div class="m"><i style="background:${FUEL_COLORS[m.fuel]||"#888"}"></i><span>${m.fuel}</span><b>${m.share==null?"—":m.share.toFixed(1)+"%"}</b></div>`).join("");
+  drawTrend(iso);
+}
+function drawDonut(d){
+  const svg=$("dPie");
+  const pos=d.mix.filter(m=>m.share>0), total=pos.reduce((s,m)=>s+m.share,0)||1;
+  const R=58, SW=24, C=2*Math.PI*R; let off=0;
+  const segs=pos.map(m=>{
+    const frac=m.share/total, len=Math.max(0,frac*C-1.6);
+    const s=`<circle cx="80" cy="80" r="${R}" fill="none" stroke="${FUEL_COLORS[m.fuel]||"#888"}" stroke-width="${SW}" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off*C).toFixed(2)}" transform="rotate(-90 80 80)"><title>${m.fuel}: ${m.share.toFixed(1)}%</title></circle>`;
+    off+=frac; return s;
+  }).join("");
+  const center = d.renewShare!=null ? d.renewShare.toFixed(0)+"%" : "—";
+  svg.innerHTML = segs + `<text x="80" y="78" text-anchor="middle" fill="var(--fg)" font-size="23" font-weight="700">${center}</text><text x="80" y="95" text-anchor="middle" fill="var(--muted)" font-size="8.5" letter-spacing=".12em">RENEWABLE</text>`;
+}
+function drawTrend(iso){
+  const svg=$("dChart"); svg.innerHTML=`<text x="160" y="64" text-anchor="middle" fill="var(--muted)" font-size="11">loading…</text>`;
+  Promise.all([ api("/electricity-generation/yearly",{entity_code:iso}), api("/carbon-intensity/yearly",{entity_code:iso}) ]).then(([g,c])=>{
+    const byY={};
+    for(const r of g.data||[]){ if(r.series==="Renewables"){ (byY[r.date]||={}).r=r.share_of_generation_pct; } }
+    for(const r of c.data||[]){ (byY[r.date]||={}).ci=r.emissions_intensity_gco2_per_kwh; }
+    const years=Object.keys(byY).map(Number).sort((a,b)=>a-b);
+    if(!years.length){ svg.innerHTML=`<text x="160" y="64" text-anchor="middle" fill="var(--muted)" font-size="11">no trend data</text>`; return; }
+    const W=320,H=120,pad=6, ciVals=years.map(y=>byY[y].ci).filter(v=>v!=null), ciMax=Math.max(...ciVals,1);
+    const x=y=>pad+(W-2*pad)*(y-years[0])/((years[years.length-1]-years[0])||1);
+    const yCi=v=>H-pad-(H-2*pad)*(v/ciMax), yR=v=>H-pad-(H-2*pad)*(v/100);
+    const line=(sel,ys)=>{ const pts=years.map(y=>({x:x(y),v:sel(byY[y])})).filter(p=>p.v!=null); return pts.map((p,i)=>`${i?"L":"M"}${p.x.toFixed(1)},${ys(p.v).toFixed(1)}`).join(" "); };
+    const grid=[0,.25,.5,.75,1].map(t=>`<line x1="${pad}" y1="${(H-pad-(H-2*pad)*t).toFixed(1)}" x2="${W-pad}" y2="${(H-pad-(H-2*pad)*t).toFixed(1)}" stroke="rgba(148,163,184,.18)" stroke-width="1"/>`).join("");
+    const lbl=[years[0],years[years.length-1]].map((y,i)=>`<text x="${i?W-pad:pad}" y="${H-1}" fill="var(--muted)" font-size="9" text-anchor="${i?"end":"start"}">${y}</text>`).join("");
+    svg.innerHTML=grid+`<path d="${line(o=>o?o.ci:null,yCi)}" fill="none" stroke="#8ab4ff" stroke-width="2"/><path d="${line(o=>o?o.r:null,yR)}" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="4 3"/>`+lbl;
+  }).catch(e=>{ svg.innerHTML=`<text x="160" y="64" text-anchor="middle" fill="#f87171" font-size="11">trend unavailable</text>`; console.error(e); });
+}
+
+/* ============================ init ============================ */
+function buildMetricSelect(){
+  const groups=[["Electricity mix & intensity",["carbon","renewShare","cleanShare","fossilShare","windsolarShare"]],["Scale",["genTWh","emissions","capacityGW"]]];
+  $("metric").innerHTML=groups.map(([g,ids])=>`<optgroup label="${g}">`+ids.map(id=>`<option value="${id}">${M[id].label} (${M[id].unit})</option>`).join("")+`</optgroup>`).join("");
+  $("metric").value=state.metric; $("metric").onchange=e=>setMetric(e.target.value);
+}
+function setTheme(t){ document.documentElement.dataset.theme=t; localStorage.setItem("ewm-theme",t); refreshStyles(); renderDetail(); }
+function wireUI(){
+  $("year").min=Y_MIN; $("year").max=Y_MAX; $("year").value=state.year;
+  $("year").oninput=e=>setYear(+e.target.value);
+  $("yearLabel").textContent=state.year; $("brandYear").textContent="· "+state.year;
+  $("latestBtn").onclick=()=>{ stopPlay(); setYear(Y_MAX); };
+  $("playBtn").onclick=togglePlay;
+  $("panelBtn").onclick=()=>$("panel").classList.toggle("hidden");
+  $("themeBtn").onclick=()=>setTheme(isDark()?"light":"dark");
+  $("refreshBtn").onclick=()=>{ delete cache[state.year]; setYear(state.year); toast("Refreshing…"); };
+}
+function togglePlay(){ state.playing?stopPlay():startPlay(); }
+function startPlay(){ state.playing=true; $("playBtn").textContent="Pause"; let y=state.year>=Y_MAX?Y_MIN:state.year; const step=()=>{ if(!state.playing) return; setYear(y); y=y>=Y_MAX?Y_MIN:y+1; playTimer=setTimeout(step,1400); }; step(); }
+function stopPlay(){ state.playing=false; clearTimeout(playTimer); $("playBtn").textContent="Play years"; }
+
+/* ---------- messages from the host page ---------- */
+/* The homepage shows / hides and sizes Zone 1 (this left panel). */
+window.addEventListener("message", (e)=>{
+  const d = e.data || {};
+  if(d.type === "rvn-zone1"){ $("panel").classList.toggle("hidden", !!d.hidden); }
+  else if(d.type === "rvn-zone1-width"){
+    const p = $("panel");
+    if(d.width){ p.style.width = d.width + "px"; p.style.maxWidth = "none"; }
+    else { p.style.width = ""; p.style.maxWidth = ""; }
+  }
+});
+
+async function init(){
+  if(BG) document.body.classList.add("bgmode");
+  if(EMBED) document.body.classList.add("embed");
+  setTheme(localStorage.getItem("ewm-theme")||"dark");
+  map=L.map("map",{ worldCopyJump:false, zoomControl:false, attributionControl:false, minZoom:1 }).setView([16.5,106],5);
+  if(!BG) L.control.zoom({position:"bottomright"}).addTo(map);
+  buildMetricSelect(); wireUI();
+  loader(true);
+  try{
+    const gj=await (await fetch(GEODATA)).json();
+    const vn=gj.features.find(f=>f.id===FOCUS_ISO);
+    if(!vn) throw new Error("Vietnam boundary not found");
+    world=gj;
+    isoSet=new Set([FOCUS_ISO]);
+    geoLayer=L.geoJSON(world,{style:styleFor,onEachFeature}).addTo(map);
+    const b=L.geoJSON(vn).getBounds();
+    map.fitBounds(b,{padding:[24,24]});
+    map.setMaxBounds(b.pad(0.6));
+  }
+  catch(e){ toast("Could not load Vietnam boundary"); console.error(e); }
+  setYear(state.year);
+  setTimeout(()=>{ if(!BG && window.innerWidth<=720) $("panel").classList.add("hidden"); },300);
+}
+init();
+</script>
+</body>
+</html>

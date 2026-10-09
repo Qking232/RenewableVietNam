@@ -1,13 +1,4 @@
 <!DOCTYPE html>
-<!--
-  Renewable Viet Nam — homepage (four domain cards)
-  Rev 0.18  Viet Nam power-sector data added below the four cards, sourced from the
-            Ember Data API (entity VNM): 2025 KPIs (renewable share, total generation,
-            wind & solar, carbon intensity), a 2025 generation-mix bar and a 2001–2025
-            renewable-share / carbon-intensity trend. Data snapshot baked in (no key
-            shipped to the client).
-  Rev 0.19  Contact email (admin@renewablevietnam.com) added beside the footer handle.
--->
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
@@ -143,20 +134,6 @@
     .domain-card:hover .action-glyph {
       transform: translate(2px, -2px);
     }
-
-    /* ----- Viet Nam data section ----- */
-    .mix-bar {
-      display: flex;
-      height: 10px;
-      width: 100%;
-      overflow: hidden;
-      border-radius: 9999px;
-      background: rgba(0, 0, 0, 0.05);
-    }
-    .mix-bar > span { height: 100%; }
-    .trend-grid { stroke: rgba(0, 0, 0, 0.07); stroke-width: 1; }
-    .dark .trend-grid { stroke: rgba(255, 255, 255, 0.09); }
-    .trend-axis { fill: #a1a1aa; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
   </style>
 
   <script>
@@ -367,142 +344,10 @@
 
   </main>
 
-  <!-- ================= Viet Nam power-sector data (source: Ember Data API) ================= -->
-  <section class="relative z-10 w-full max-w-5xl mx-auto pt-10 sm:pt-14">
-    <div class="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between pb-4 sm:pb-5">
-      <div>
-        <p class="font-mono text-[10px] uppercase tracking-[0.25em] text-zinc-400 dark:text-zinc-500">Viet Nam power sector</p>
-        <h2 class="mt-1.5 text-lg sm:text-xl font-normal tracking-tight text-zinc-900 dark:text-zinc-100">Electricity data, 2001&ndash;2025</h2>
-      </div>
-      <a href="https://ember-energy.org" target="_blank" rel="noopener"
-         class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
-        Source: Ember &#8599;
-      </a>
-    </div>
-
-    <!-- KPI tiles -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Renewable share</p>
-        <p class="mt-2 text-2xl sm:text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">46<span class="align-top text-sm text-zinc-400 dark:text-zinc-500">%</span></p>
-        <p class="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">of total generation</p>
-      </div>
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Total generation</p>
-        <p class="mt-2 text-2xl sm:text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">329<span class="align-top text-sm text-zinc-400 dark:text-zinc-500"> TWh</span></p>
-        <p class="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">up from 30.6 TWh in 2001</p>
-      </div>
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Wind &amp; solar</p>
-        <p class="mt-2 text-2xl sm:text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">14.7<span class="align-top text-sm text-zinc-400 dark:text-zinc-500">%</span></p>
-        <p class="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">of generation, from ~0% in 2018</p>
-      </div>
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Carbon intensity</p>
-        <p class="mt-2 text-2xl sm:text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">459<span class="align-top text-sm text-zinc-400 dark:text-zinc-500"> g</span></p>
-        <p class="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">CO&#8322;/kWh of electricity</p>
-      </div>
-    </div>
-
-    <!-- Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
-      <!-- Generation mix -->
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <div class="flex items-baseline justify-between">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Generation mix &middot; 2025</p>
-          <p class="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">329 TWh</p>
-        </div>
-        <div class="mix-bar mt-4" id="mixBar" aria-hidden="true"></div>
-        <ul class="mt-4 grid grid-cols-2 gap-x-5 gap-y-2">
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#334155"></span><span class="truncate">Coal</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">47.8%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#0ea5e9"></span><span class="truncate">Hydro</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">30.9%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#f59e0b"></span><span class="truncate">Solar</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">10.3%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#64748b"></span><span class="truncate">Gas</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">6.0%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#10b981"></span><span class="truncate">Wind</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">4.5%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#a855f7"></span><span class="truncate">Net imports</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">1.0%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#84cc16"></span><span class="truncate">Bioenergy</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">0.4%</span></li>
-          <li class="flex items-center gap-2 text-[11px] text-zinc-600 dark:text-zinc-300"><span class="h-2 w-2 shrink-0 rounded-full" style="background:#94a3b8"></span><span class="truncate">Other fossil</span><span class="ml-auto font-mono text-zinc-400 dark:text-zinc-500">0.2%</span></li>
-        </ul>
-      </div>
-
-      <!-- Trend -->
-      <div class="rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-        <div class="flex items-center justify-between gap-2">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Trend &middot; 2001&ndash;2025</p>
-          <div class="flex items-center gap-3 font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
-            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#10b981"></span>Renewable %</span>
-            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#f59e0b"></span>gCO&#8322;/kWh</span>
-          </div>
-        </div>
-        <svg id="trendSvg" viewBox="0 0 520 220" class="mt-3 w-full h-auto" role="img"
-             aria-label="Viet Nam renewable share and carbon intensity, 2001 to 2025"></svg>
-      </div>
-    </div>
-  </section>
-
   <!-- Footer -->
-  <footer class="relative z-10 w-full flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] font-mono text-zinc-400 dark:text-zinc-500 pt-6 sm:pt-8 max-w-5xl mx-auto tracking-wider">
+  <footer class="relative z-10 w-full flex items-center justify-center text-[11px] font-mono text-zinc-400 dark:text-zinc-500 pt-6 sm:pt-8 max-w-5xl mx-auto tracking-wider">
     <p>@renewablevietnam.com</p>
-    <span class="text-zinc-300 dark:text-zinc-600" aria-hidden="true">&middot;</span>
-    <a href="mailto:admin@renewablevietnam.com" class="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">admin@renewablevietnam.com</a>
   </footer>
-
-  <script>
-    /* Generation-mix bar (2025) */
-    (function () {
-      var mix = [
-        ["Coal", 47.8, "#334155"], ["Hydro", 30.9, "#0ea5e9"], ["Solar", 10.3, "#f59e0b"],
-        ["Gas", 6.0, "#64748b"], ["Wind", 4.5, "#10b981"], ["Net imports", 1.0, "#a855f7"],
-        ["Bioenergy", 0.4, "#84cc16"], ["Other fossil", 0.2, "#94a3b8"]
-      ];
-      var bar = document.getElementById('mixBar');
-      mix.forEach(function (m) {
-        var s = document.createElement('span');
-        s.style.width = m[1] + '%';
-        s.style.background = m[2];
-        s.title = m[0] + ' · ' + m[1] + '%';
-        bar.appendChild(s);
-      });
-    })();
-
-    /* Trend chart — data: Ember Data API (entity VNM), yearly 2001–2025 */
-    (function () {
-      var YEARS = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
-      var REN = [59.5,50.8,46.4,38.6,31.8,34.2,35.1,36.7,37.3,31.2,40.6,46.4,46.6,44.1,34.8,35.9,44.4,38.7,30.4,34.9,43.1,49.9,44.0,43.6,46.0];
-      var CI = [291,344,376,407,462,448,439,422,413,452,408,372,374,404,487,492,433,486,557,531,475,414,467,477,459];
-
-      var W = 520, H = 220, PL = 36, PR = 46, PT = 16, PB = 26;
-      var n = YEARS.length, ciMin = 250, ciMax = 600;
-      function X(i) { return PL + i * (W - PL - PR) / (n - 1); }
-      function yR(v) { return PT + (1 - v / 100) * (H - PT - PB); }
-      function yC(v) { return PT + (1 - (v - ciMin) / (ciMax - ciMin)) * (H - PT - PB); }
-      function line(arr, fn) {
-        return arr.map(function (v, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + fn(v).toFixed(1); }).join(' ');
-      }
-
-      var s = '';
-      [0, 25, 50, 75, 100].forEach(function (t) {
-        var y = yR(t);
-        s += '<line class="trend-grid" x1="' + PL + '" y1="' + y.toFixed(1) + '" x2="' + (W - PR) + '" y2="' + y.toFixed(1) + '"/>';
-        s += '<text class="trend-axis" x="' + (PL - 6) + '" y="' + (y + 3).toFixed(1) + '" font-size="9" text-anchor="end">' + t + '%</text>';
-      });
-      [250, 425, 600].forEach(function (t) {
-        var y = yC(t);
-        s += '<text class="trend-axis" x="' + (W - PR + 6) + '" y="' + (y + 3).toFixed(1) + '" font-size="9">' + t + '</text>';
-      });
-      [[0, '2001'], [9, '2010'], [19, '2020'], [n - 1, '2025']].forEach(function (l) {
-        s += '<text class="trend-axis" x="' + X(l[0]).toFixed(1) + '" y="' + (H - 8) + '" font-size="9" text-anchor="middle">' + l[1] + '</text>';
-      });
-
-      s += '<path d="' + line(REN, yR) + ' L ' + X(n - 1).toFixed(1) + ' ' + (H - PB) + ' L ' + X(0).toFixed(1) + ' ' + (H - PB) + ' Z" fill="rgba(16,185,129,0.12)"/>';
-      s += '<path d="' + line(CI, yC) + '" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round"/>';
-      s += '<path d="' + line(REN, yR) + '" fill="none" stroke="#10b981" stroke-width="1.8" stroke-linejoin="round"/>';
-      s += '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + yR(REN[n - 1]).toFixed(1) + '" r="2.6" fill="#10b981"/>';
-      s += '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + yC(CI[n - 1]).toFixed(1) + '" r="2.6" fill="#f59e0b"/>';
-
-      document.getElementById('trendSvg').innerHTML = s;
-    })();
-  </script>
 
   <script>
     const themeToggleBtn = document.getElementById('themeToggleBtn');

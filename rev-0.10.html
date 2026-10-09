@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — homepage hub
+  Revision history:
+    Rev 0.01  Four domain cards: Energy Projects, EV Charging, Data Center, Hub.
+    Rev 0.02  (2026-10-09)  World Energy Map integrated below the cards.
+    Rev 0.03  (2026-10-09)  Map scoped to Viet Nam (worldmap/rev-0.03.html).
+    Rev 0.04  (2026-10-09)  Map becomes the page background; cards float over it.
+    Rev 0.05  (2026-10-09)  Full interactive map behind the cards; cards opaque.
+    Rev 0.06  (2026-10-09)  Map panel opens on Viet Nam readout (Layers kept).
+    Rev 0.07  (2026-10-09)  Cards reworked as compact live-metric tiles.
+    Rev 0.08  (2026-10-09)  Readout enlarged; panel gap tightened; Hoàng Sa and
+                            Trường Sa drawn on the map.
+    Rev 0.09  (2026-10-09)  No more floating cards. The four access cards now live
+                            inside the map panel at the same level as the Viet Nam
+                            readout (worldmap/rev-0.08.html), so the homepage is the
+                            map itself. The map canvas is non-interactive (no drag,
+                            zoom, wheel or hover) and the zoom buttons are gone; the
+                            panel stays clickable. The header theme toggle drives the
+                            map's theme via postMessage.
+    Rev 0.10  (2026-10-09)  The four access cards are grouped into their own separate
+                            table box ("Explore") in the middle of the sidebar —
+                            between Legend and the Viet Nam readout — instead of
+                            sitting loose under Layers (worldmap/rev-0.09.html).
+-->
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Renewable Infrastructure + Renewable Viet Nam</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class', theme: { extend: {
+      fontFamily: {
+        sans: ['-apple-system','BlinkMacSystemFont','"SF Pro Text"','"SF Pro Display"','"SF Pro"','"Helvetica Neue"','Helvetica','Arial','sans-serif'],
+        mono: ['"SF Mono"','SFMono-Regular','ui-monospace','Menlo','Monaco','Consolas','monospace'],
+      },
+      colors: { obsidian: '#0A0C10' }
+    } } }
+  </script>
+
+  <style>
+    html,body { height: 100%; margin: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.011em;
+    }
+    .chrome-pill {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+    .dark .chrome-pill { background: rgba(10, 12, 16, 0.6); border-color: rgba(255, 255, 255, 0.13); }
+  </style>
+
+  <script>
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+    else { document.documentElement.classList.remove('dark'); if (!savedTheme) localStorage.setItem('theme', 'light'); }
+  </script>
+</head>
+
+<body class="h-screen overflow-hidden bg-obsidian text-zinc-900 dark:text-zinc-100 antialiased selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+
+  <!-- ===== The Energy World Map (Viet Nam) — full page; panel holds everything ===== -->
+  <iframe id="mapbg"
+          src="worldmap/rev-0.09.html?embed=1"
+          title="Vietnam energy — Energy World Map"
+          class="fixed inset-0 z-0 w-full h-full border-0"></iframe>
+
+  <!-- Theme toggle (drives the map theme) -->
+  <button id="themeToggleBtn" aria-label="Toggle Theme" class="chrome-pill fixed top-5 right-5 sm:top-7 sm:right-7 z-20 flex items-center justify-center w-9 h-9 rounded-xl text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white transition-all duration-300 cursor-pointer">
+    <svg id="sunIcon" class="hidden w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+    </svg>
+    <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+    </svg>
+  </button>
+
+  <footer class="fixed bottom-5 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+    <p class="chrome-pill rounded-full px-3.5 py-1.5 text-[11px] font-mono tracking-wider text-zinc-700 dark:text-zinc-200">@renewablevietnam.com</p>
+  </footer>
+
+  <script>
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    const frame = document.getElementById('mapbg');
+
+    function updateIcons(isDark) {
+      sunIcon.classList.toggle('hidden', !isDark);
+      moonIcon.classList.toggle('hidden', isDark);
+    }
+    updateIcons(document.documentElement.classList.contains('dark'));
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateIcons(isDark);
+      if (frame && frame.contentWindow) frame.contentWindow.postMessage('ewm-theme', '*');
+    });
+  </script>
+</body>
+</html>

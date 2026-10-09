@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — homepage hub
+  Revision history:
+    Rev 0.01  Four domain cards: Energy Projects, EV Charging, Data Center, Hub.
+    Rev 0.02  (2026-10-09)  World Energy Map integrated below the cards.
+    Rev 0.03  (2026-10-09)  Map scoped to Viet Nam (worldmap/rev-0.03.html).
+    Rev 0.04  (2026-10-09)  Map becomes the page background; cards float over it.
+    Rev 0.05  (2026-10-09)  Full interactive map behind the cards; "Open full screen"
+                            removed; cards made opaque; card row inset past the panel.
+    Rev 0.06  (2026-10-09)  Map panel opens on Viet Nam (Layers kept; Top 10 and All
+                            countries removed) — worldmap/rev-0.06.html.
+    Rev 0.07  (2026-10-09)  Cards reworked as compact "live metric" tiles: small icon
+                            badge, one headline demo figure, a mini sparkline and the
+                            section name — so far more of the map shows. Demo figures
+                            (128 projects, 1,842 connectors, 6 facilities, 20 docs)
+                            are placeholders to make the hub look live. The
+                            "RENEWABLE INFRASTRUCTURE" header button is removed,
+                            leaving only the theme toggle.
+    Rev 0.13  (2026-10-09)  New baseline restarted from Rev 0.07 (the final one).
+                            Rev 0.08–0.12 (cards moved inside the map panel /
+                            "Explore" box) set aside.
+    Rev 0.14  (2026-10-09)  New "Vietnam electricity mix" section below the map:
+                            four group flashcards (Renewables / Fossil /
+                            Nuclear + Other / Net imports) plus a full table of
+                            every fuel (generation TWh + share %). Figures load
+                            live from the same Ember API as the map, with the
+                            2024 values embedded as fallback. The four domain
+                            cards are unchanged.
+    Rev 0.15  (2026-10-09)  Page divided into three separately bordered zones,
+                            each independently collapsible from the header:
+                            Zone 1 "Left table" (the map side panel, shown/hidden
+                            via postMessage — worldmap/rev-0.12.html), Zone 2 the
+                            four domain flashcards, Zone 3 the Vietnam
+                            electricity-mix table. All three are open on load; the
+                            map keeps its own dark theme as before.
+    Rev 0.16  (2026-10-09)  Zones laid out as three full-height columns filling
+                            the width: Zone 1 (map panel) a fixed 30% on the left,
+                            Zone 2 20%, Zone 3 the remaining 50%. The homepage
+                            measures the 30% column and drives the map panel's
+                            width over postMessage (worldmap/rev-0.13.html); each
+                            zone scrolls internally so all three stay on screen.
+-->
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Renewable Infrastructure + Renewable Viet Nam</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+
+  <!-- Tailwind CSS CDN configured with class-based dark mode & SF Pro typography stack -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: [
+              '-apple-system',
+              'BlinkMacSystemFont',
+              '"SF Pro Text"',
+              '"SF Pro Display"',
+              '"SF Pro"',
+              '"Helvetica Neue"',
+              'Helvetica',
+              'Arial',
+              'sans-serif'
+            ],
+            mono: [
+              '"SF Mono"',
+              'SFMono-Regular',
+              'ui-monospace',
+              'Menlo',
+              'Monaco',
+              'Consolas',
+              'monospace'
+            ],
+          },
+          colors: {
+            alabaster: '#FAFAFA',
+            obsidian: '#0A0C10',
+            darkSurface: '#11141A',
+            surface: '#FFFFFF',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Global Apple System / SF Pro antialiasing polish */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.011em;
+    }
+
+    /* Compact metric card */
+    .domain-card {
+      transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, background-color, box-shadow;
+    }
+    .domain-card:hover { transform: translateY(-5px); }
+
+    /* CARD 01: Energy Projects (Emerald wash) */
+    .card-emerald:hover { background-color: #ECFDF5; border-color: rgba(16,185,129,.35); box-shadow: 0 22px 48px -14px rgba(16,185,129,.42), 0 4px 12px -2px rgba(16,185,129,.3); }
+    .dark .card-emerald:hover { background-color: #062b1e; border-color: rgba(52,211,153,.4); box-shadow: 0 22px 48px -14px rgba(5,150,105,.5), 0 0 22px -2px rgba(16,185,129,.35); }
+
+    /* CARD 02: EV Charging (Amber wash) */
+    .card-amber:hover { background-color: #FFFBEB; border-color: rgba(245,158,11,.35); box-shadow: 0 22px 48px -14px rgba(245,158,11,.42), 0 4px 12px -2px rgba(245,158,11,.3); }
+    .dark .card-amber:hover { background-color: #2e1a05; border-color: rgba(251,191,36,.4); box-shadow: 0 22px 48px -14px rgba(217,119,6,.5), 0 0 22px -2px rgba(245,158,11,.35); }
+
+    /* CARD 03: Data Center (Indigo wash) */
+    .card-indigo:hover { background-color: #EEF2FF; border-color: rgba(99,102,241,.35); box-shadow: 0 22px 48px -14px rgba(99,102,241,.42), 0 4px 12px -2px rgba(99,102,241,.3); }
+    .dark .card-indigo:hover { background-color: #171738; border-color: rgba(129,140,248,.4); box-shadow: 0 22px 48px -14px rgba(79,70,229,.5), 0 0 22px -2px rgba(99,102,241,.35); }
+
+    /* CARD 04: Hub (Sky wash) */
+    .card-sky:hover { background-color: #F0F9FF; border-color: rgba(14,165,233,.35); box-shadow: 0 22px 48px -14px rgba(14,165,233,.42), 0 4px 12px -2px rgba(14,165,233,.3); }
+    .dark .card-sky:hover { background-color: #0c2338; border-color: rgba(56,189,248,.4); box-shadow: 0 22px 48px -14px rgba(2,132,199,.5), 0 0 22px -2px rgba(14,165,233,.35); }
+
+    /* Arrow displacement on card hover */
+    .domain-card:hover .action-glyph { transform: translate(2px, -2px); }
+
+    /* Mini sparkline */
+    .spark { width: 100%; height: 30px; display: block; }
+    .spark polyline { fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+    /* Live dot pulse */
+    @keyframes pulseDot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.82); } }
+    .live-dot { animation: pulseDot 2.4s ease-in-out infinite; }
+
+    /* Frosted chrome (theme toggle / footer) */
+    .chrome-pill {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      backdrop-filter: blur(14px) saturate(150%);
+      transition: background-color 0.4s ease, border-color 0.4s ease;
+    }
+    .dark .chrome-pill {
+      background: rgba(10, 12, 16, 0.6);
+      border-color: rgba(255, 255, 255, 0.13);
+    }
+
+    /* Vietnam electricity-mix group flashcard */
+    .mix-card {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.35s ease, box-shadow 0.35s ease;
+      will-change: transform;
+    }
+    .mix-card:hover { transform: translateY(-4px); }
+
+    /* Vietnam electricity-mix table */
+    .mix-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .mix-table th {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #71717a; text-align: left; padding: 6px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+    }
+    .dark .mix-table th { color: #a1a1aa; border-bottom-color: rgba(255, 255, 255, 0.11); }
+    .mix-table td {
+      font-size: 12px; padding: 6px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark .mix-table td { border-bottom-color: rgba(255, 255, 255, 0.06); }
+    .mix-table .num { text-align: right; }
+    .mix-table .grp td {
+      font-weight: 600; background: rgba(127, 127, 127, 0.07);
+      border-bottom-color: rgba(0, 0, 0, 0.09);
+    }
+    .dark .mix-table .grp td { background: rgba(255, 255, 255, 0.04); border-bottom-color: rgba(255, 255, 255, 0.1); }
+    .mix-table .indent { padding-left: 22px; }
+    .mix-table .total td { font-weight: 700; border-top: 1px solid rgba(0, 0, 0, 0.14); border-bottom: none; }
+    .dark .mix-table .total td { border-top-color: rgba(255, 255, 255, 0.18); }
+    .mix-swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+
+    /* ===== Three zones ===== */
+    /* Zone 1 is the map side panel; its content is controlled via postMessage. */
+    .zone { transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+    .zone-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      cursor: pointer; user-select: none;
+    }
+    .zone-chevron { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .zone.collapsed .zone-body { display: none; }
+    .zone.collapsed .zone-chevron { transform: rotate(-90deg); }
+    .zone-collapsed-note { display: none; }
+    .zone.collapsed .zone-collapsed-note { display: block; }
+
+    /* Header zone chips */
+    .zone-chip { transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease; }
+    .zone-chip[data-active="false"] { opacity: 0.5; }
+    .zone-chip[data-active="false"] .zone-chip-dot { background: #a1a1aa !important; }
+
+    /* Large screens: three full-height columns filling the width —
+       Zone 1 (map panel) 30% on the left, Zone 2 20%, Zone 3 the rest (50%). */
+    @media (min-width: 1024px) {
+      body { height: 100vh; overflow: hidden; }
+      #zoneStack {
+        display: grid;
+        grid-template-columns: 30% 20% 50%;
+        grid-template-rows: minmax(0, 1fr);
+        width: 100vw;
+        max-width: none;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        gap: 0;
+        padding: 0;
+        min-height: 0;
+        align-items: stretch;
+      }
+      #zone1Spacer { display: block; grid-column: 1; }
+      .zone-cell { display: flex; min-height: 0; }
+      .zone-cell-2 { grid-column: 2; padding: 0 6px; }
+      .zone-cell-3 { grid-column: 3; padding: 0 40px 0 6px; }
+      .zone-cell > .zone { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+      .zone-cell .zone-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+    }
+  </style>
+
+  <script>
+    // Strictly default to bright (light) theme unless explicitly set to 'dark' by user
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      if (!savedTheme) {
+        localStorage.setItem('theme', 'light');
+      }
+    }
+  </script>
+</head>
+
+<body class="min-h-screen text-zinc-900 dark:text-zinc-100 antialiased relative overflow-x-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-10 bg-obsidian font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+
+  <!-- ===== Background: the live Energy World Map (interactive, with indicators) ===== -->
+  <iframe id="mapbg"
+          src="worldmap/rev-0.13.html?embed=1"
+          title="Vietnam energy — Energy World Map"
+          class="fixed inset-0 z-0 w-full h-full border-0"></iframe>
+
+  <!-- Header: three zone toggles (left) + theme toggle (right) -->
+  <header class="relative z-20 w-full flex items-center justify-between gap-3 pb-4 sm:pb-6 max-w-5xl mx-auto lg:max-w-none">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="1" data-active="true" aria-pressed="true" title="Show / hide Zone 1 — the left table">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-zinc-500" style="background:#8b5cf6"></span>
+        Zone 1 · Left table
+      </button>
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="2" data-active="true" aria-pressed="true" title="Show / hide Zone 2 — the four flashcards">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        Zone 2 · Cards
+      </button>
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="3" data-active="true" aria-pressed="true" title="Show / hide Zone 3 — the Vietnam electricity-mix table">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+        Zone 3 · Mix
+      </button>
+    </div>
+    <button id="themeToggleBtn" aria-label="Toggle Theme" class="chrome-pill flex items-center justify-center w-9 h-9 rounded-xl text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white transition-all duration-300 cursor-pointer">
+      <svg id="sunIcon" class="hidden w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+      </svg>
+      <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- ===== Zone stack: Zone 2 (cards) + Zone 3 (mix) in the right column; Zone 1 is the map panel ===== -->
+  <div id="zoneStack" class="relative z-10 w-full flex-1 flex flex-col justify-center gap-4 max-w-5xl mx-auto py-1">
+
+    <!-- Zone 1 spacer: the map side panel sits over this 30% column (lg) -->
+    <div id="zone1Spacer" aria-hidden="true" class="hidden lg:block"></div>
+
+    <!-- ZONE 2: the four domain flashcards -->
+    <div class="zone-cell zone-cell-2">
+    <section id="zone2" class="zone rounded-2xl border border-black/[0.08] dark:border-white/[0.1] bg-white/70 dark:bg-darkSurface/70 backdrop-blur-xl shadow-[0_18px_45px_-14px_rgba(0,0,0,0.5)] p-3 sm:p-4">
+      <div class="zone-head px-1 pb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">ZONE 2</span>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Domain flashcards</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="zone-collapsed-note text-[10px] font-mono text-zinc-400 dark:text-zinc-500">collapsed</span>
+          <svg class="zone-chevron w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="zone-body">
+        <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4 items-stretch">
+
+    <!-- CARD 01: ENERGY PROJECTS -->
+    <a href="/projectenergy/" class="domain-card card-emerald group relative flex flex-col justify-between min-h-[210px] p-4 rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] cursor-pointer overflow-hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 group-hover:border-emerald-500/40 dark:group-hover:border-emerald-400/30 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+              <circle cx="12" cy="10" r="1.75" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">01</span>
+        </div>
+        <span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      </div>
+
+      <div class="py-2.5">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-950 dark:group-hover:text-white transition-colors">128</span>
+          <span class="text-[11px] text-zinc-500 dark:text-zinc-400">projects</span>
+        </div>
+        <div class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">12.4 GW pipeline</div>
+        <svg class="spark mt-1.5 text-emerald-500" viewBox="0 0 120 28" preserveAspectRatio="none">
+          <polyline points="0,24 13,21 26,22 39,16 52,17 65,11 78,13 91,8 104,7 120,4"></polyline>
+        </svg>
+      </div>
+
+      <div class="flex items-end justify-between border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-emerald-500/25 dark:group-hover:border-emerald-400/20 pt-2.5 gap-2 transition-colors">
+        <div>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-950 dark:group-hover:text-white transition-colors">Energy Projects</h2>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light transition-colors">Solar · wind · storage</p>
+        </div>
+        <div class="shrink-0 p-1.5 rounded-lg bg-[#F7F7F8] dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.08] group-hover:bg-emerald-600 dark:group-hover:bg-emerald-500 group-hover:border-emerald-600 transition-all duration-300">
+          <svg class="action-glyph w-3 h-3 text-zinc-500 dark:text-zinc-400 group-hover:text-white transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 02: EV CHARGING -->
+    <a href="/evcharging/" class="domain-card card-amber group relative flex flex-col justify-between min-h-[210px] p-4 rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] cursor-pointer overflow-hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 group-hover:text-amber-700 dark:group-hover:text-amber-300 group-hover:border-amber-500/40 dark:group-hover:border-amber-400/30 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+            </svg>
+          </span>
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">02</span>
+        </div>
+        <span class="live-dot w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+      </div>
+
+      <div class="py-2.5">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-950 dark:group-hover:text-white transition-colors">1,842</span>
+          <span class="text-[11px] text-zinc-500 dark:text-zinc-400">connectors</span>
+        </div>
+        <div class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">312 stations · 63 provinces</div>
+        <svg class="spark mt-1.5 text-amber-500" viewBox="0 0 120 28" preserveAspectRatio="none">
+          <polyline points="0,20 13,22 26,18 39,19 52,14 65,15 78,10 91,11 104,7 120,5"></polyline>
+        </svg>
+      </div>
+
+      <div class="flex items-end justify-between border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-amber-500/25 dark:group-hover:border-amber-400/20 pt-2.5 gap-2 transition-colors">
+        <div>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-950 dark:group-hover:text-white transition-colors">EV Charging</h2>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light transition-colors">Fast-charge corridors</p>
+        </div>
+        <div class="shrink-0 p-1.5 rounded-lg bg-[#F7F7F8] dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.08] group-hover:bg-amber-600 dark:group-hover:bg-amber-500 group-hover:border-amber-600 transition-all duration-300">
+          <svg class="action-glyph w-3 h-3 text-zinc-500 dark:text-zinc-400 group-hover:text-white transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 03: DATA CENTER -->
+    <a href="/datacenter/" class="domain-card card-indigo group relative flex flex-col justify-between min-h-[210px] p-4 rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] cursor-pointer overflow-hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 group-hover:border-indigo-500/40 dark:group-hover:border-indigo-400/30 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <rect x="3" y="3.5" width="18" height="4.5" rx="1.2" stroke-linecap="round"/>
+              <rect x="3" y="9.75" width="18" height="4.5" rx="1.2" stroke-linecap="round"/>
+              <rect x="3" y="16" width="18" height="4.5" rx="1.2" stroke-linecap="round"/>
+              <circle cx="6.5" cy="5.75" r="0.75" fill="currentColor"/>
+              <circle cx="6.5" cy="12" r="0.75" fill="currentColor"/>
+              <circle cx="6.5" cy="18.25" r="0.75" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">03</span>
+        </div>
+        <span class="live-dot w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+      </div>
+
+      <div class="py-2.5">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-950 dark:group-hover:text-white transition-colors">6</span>
+          <span class="text-[11px] text-zinc-500 dark:text-zinc-400">facilities</span>
+        </div>
+        <div class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">320 MW committed load</div>
+        <svg class="spark mt-1.5 text-indigo-500" viewBox="0 0 120 28" preserveAspectRatio="none">
+          <polyline points="0,22 13,19 26,21 39,17 52,18 65,12 78,14 91,9 104,10 120,6"></polyline>
+        </svg>
+      </div>
+
+      <div class="flex items-end justify-between border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-indigo-500/25 dark:group-hover:border-indigo-400/20 pt-2.5 gap-2 transition-colors">
+        <div>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-indigo-950 dark:group-hover:text-white transition-colors">Data Center</h2>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light transition-colors">Zero-carbon compute</p>
+        </div>
+        <div class="shrink-0 p-1.5 rounded-lg bg-[#F7F7F8] dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.08] group-hover:bg-indigo-600 dark:group-hover:bg-indigo-500 group-hover:border-indigo-600 transition-all duration-300">
+          <svg class="action-glyph w-3 h-3 text-zinc-500 dark:text-zinc-400 group-hover:text-white transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 04: HUB -->
+    <a href="/hub/" class="domain-card card-sky group relative flex flex-col justify-between min-h-[210px] p-4 rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] cursor-pointer overflow-hidden">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300 group-hover:text-sky-700 dark:group-hover:text-sky-300 group-hover:border-sky-500/40 dark:group-hover:border-sky-400/30 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <circle cx="12" cy="12" r="2.75" />
+              <circle cx="12" cy="4.25" r="1.75" />
+              <circle cx="19.25" cy="8.75" r="1.75" />
+              <circle cx="17" cy="18.25" r="1.75" />
+              <circle cx="7" cy="18.25" r="1.75" />
+              <circle cx="4.75" cy="8.75" r="1.75" />
+              <line x1="12" y1="6" x2="12" y2="9.25" stroke-linecap="round" />
+              <line x1="17.65" y1="9.8" x2="14.4" y2="10.9" stroke-linecap="round" />
+              <line x1="15.65" y1="16.9" x2="13.7" y2="14.3" stroke-linecap="round" />
+              <line x1="8.35" y1="16.9" x2="10.3" y2="14.3" stroke-linecap="round" />
+              <line x1="6.35" y1="9.8" x2="9.6" y2="10.9" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">04</span>
+        </div>
+        <span class="live-dot w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+      </div>
+
+      <div class="py-2.5">
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-sky-950 dark:group-hover:text-white transition-colors">20</span>
+          <span class="text-[11px] text-zinc-500 dark:text-zinc-400">documents</span>
+        </div>
+        <div class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">5 collections · 1.2k views</div>
+        <svg class="spark mt-1.5 text-sky-500" viewBox="0 0 120 28" preserveAspectRatio="none">
+          <polyline points="0,19 13,21 26,17 39,18 52,13 65,14 78,10 91,11 104,8 120,5"></polyline>
+        </svg>
+      </div>
+
+      <div class="flex items-end justify-between border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-sky-500/25 dark:group-hover:border-sky-400/20 pt-2.5 gap-2 transition-colors">
+        <div>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-sky-950 dark:group-hover:text-white transition-colors">Hub</h2>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light transition-colors">Energy transition library</p>
+        </div>
+        <div class="shrink-0 p-1.5 rounded-lg bg-[#F7F7F8] dark:bg-white/[0.04] border border-zinc-200/60 dark:border-white/[0.08] group-hover:bg-sky-600 dark:group-hover:bg-sky-500 group-hover:border-sky-600 transition-all duration-300">
+          <svg class="action-glyph w-3 h-3 text-zinc-500 dark:text-zinc-400 group-hover:text-white transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+          </svg>
+        </div>
+      </div>
+    </a>
+
+      </main>
+      </div>
+    </section>
+    </div>
+
+  <!-- ===== ZONE 3: Vietnam electricity mix — 4 group flashcards + full fuel table ===== -->
+  <div class="zone-cell zone-cell-3">
+  <section id="zone3" class="zone rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] p-4 sm:p-5">
+
+      <div class="zone-head mb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/>
+              <rect x="7" y="11" width="2.4" height="6" rx="0.6"/>
+              <rect x="12" y="7" width="2.4" height="10" rx="0.6"/>
+              <rect x="17" y="9" width="2.4" height="8" rx="0.6"/>
+            </svg>
+          </span>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">ZONE 3</span>
+              <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Vietnam electricity mix</h2>
+            </div>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light">Generation share · <span id="mixYearLabel">2024</span> · Ember live data</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="zone-collapsed-note text-[10px] font-mono text-zinc-400 dark:text-zinc-500">collapsed</span>
+          <span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <svg class="zone-chevron w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="zone-body">
+
+      <!-- 4 group flashcards -->
+      <div id="mixCards" class="grid grid-cols-2 gap-3">
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+      </div>
+
+      <!-- Full table of every fuel -->
+      <div class="mt-4 overflow-x-auto">
+        <table class="mix-table min-w-[420px]">
+          <thead>
+            <tr>
+              <th>Fuel / source</th>
+              <th class="num">Generation (TWh)</th>
+              <th class="num">Share</th>
+            </tr>
+          </thead>
+          <tbody id="mixTableBody">
+            <tr><td colspan="3" class="text-zinc-400 dark:text-zinc-500">Loading live data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-3 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500 font-mono tracking-wide">Source: Ember (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised.</p>
+
+      </div>
+  </section>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="relative z-10 w-full flex items-center justify-center pt-4 sm:pt-6 max-w-5xl mx-auto">
+    <p class="chrome-pill rounded-full px-3.5 py-1.5 text-[11px] font-mono tracking-wider text-zinc-700 dark:text-zinc-200">@renewablevietnam.com</p>
+  </footer>
+
+  <script>
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    function updateIcons(isDark) {
+      if (isDark) {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+    }
+
+    updateIcons(document.documentElement.classList.contains('dark'));
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateIcons(isDark);
+    });
+  </script>
+
+  <script>
+    /* ===== Three zones: Zone 1 = map panel (postMessage), Zones 2 & 3 = page panels ===== */
+    (function () {
+      const frame = document.getElementById('mapbg');
+      const chips = Array.from(document.querySelectorAll('.zone-chip'));
+      const state = { 1: true, 2: true, 3: true };
+
+      function setZone1(visible) {
+        document.body.classList.toggle('zone1-hidden', !visible);
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'rvn-zone1', hidden: !visible }, '*');
+        }
+      }
+      function syncZone1Width() {
+        const spacer = document.getElementById('zone1Spacer');
+        const lg = window.matchMedia('(min-width: 1024px)').matches;
+        const width = (lg && spacer) ? Math.round(spacer.getBoundingClientRect().width) : null;
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'rvn-zone1-width', width }, '*');
+        }
+      }
+      function setPanel(zone, visible) {
+        const el = document.getElementById('zone' + zone);
+        if (el) el.classList.toggle('collapsed', !visible);
+      }
+      function apply() {
+        setZone1(state[1]);
+        setPanel(2, state[2]);
+        setPanel(3, state[3]);
+        chips.forEach((c) => {
+          c.dataset.active = state[c.dataset.zone] ? 'true' : 'false';
+          c.setAttribute('aria-pressed', c.dataset.active);
+        });
+      }
+      function toggle(zone) { state[zone] = !state[zone]; apply(); }
+
+      chips.forEach((c) => c.addEventListener('click', () => toggle(c.dataset.zone)));
+      [2, 3].forEach((z) => {
+        const el = document.getElementById('zone' + z);
+        const head = el && el.querySelector('.zone-head');
+        if (head) head.addEventListener('click', () => toggle(z));
+      });
+      frame.addEventListener('load', () => { setZone1(state[1]); syncZone1Width(); });
+      window.addEventListener('resize', syncZone1Width);
+      apply();
+      syncZone1Width();
+    })();
+  </script>
+
+  <script>
+    /* ===== Vietnam electricity mix: group flashcards + full fuel table ===== */
+    (function () {
+      const MIX_YEAR = 2024;
+      const API = "https://api.ember-energy.org/v1";
+      const KEY = "a238cbd2-8582-6f08-4e27-03dd861af820";
+
+      const COLORS = {
+        "Coal": "#5b6472", "Gas": "#ef8a3c", "Other fossil": "#9a6a4a", "Nuclear": "#a855f7",
+        "Hydro": "#3b82f6", "Bioenergy": "#7cb342", "Solar": "#f4c430", "Wind": "#2dd4bf",
+        "Other renewables": "#a3e635", "Net imports": "#94a3b8"
+      };
+      const GROUPS = [
+        { label: "Renewables",     sub: "Hydro · bio · solar · wind", dot: "bg-emerald-500", tint: "hover:border-emerald-500/45 dark:hover:border-emerald-400/35", fuels: ["Hydro", "Bioenergy", "Solar", "Wind"] },
+        { label: "Fossil",         sub: "Coal · gas · other fossil",  dot: "bg-zinc-500",    tint: "hover:border-zinc-500/45 dark:hover:border-zinc-400/35",       fuels: ["Coal", "Gas", "Other fossil"] },
+        { label: "Nuclear + Other", sub: "Nuclear · other renewables", dot: "bg-indigo-500",  tint: "hover:border-indigo-500/45 dark:hover:border-indigo-400/35",   fuels: ["Nuclear", "Other renewables"] },
+        { label: "Net imports",    sub: "Cross-border power",         dot: "bg-sky-500",     tint: "hover:border-sky-500/45 dark:hover:border-sky-400/35",          fuels: ["Net imports"] }
+      ];
+      // Ember 2024 values — shown immediately, replaced by the live fetch below
+      const FALLBACK = [
+        ["Coal", 152.78, 49.18], ["Gas", 21.83, 7.03], ["Other fossil", 0.62, 0.20],
+        ["Nuclear", 0, 0], ["Hydro", 88.72, 28.56], ["Bioenergy", 1.03, 0.33],
+        ["Solar", 32.91, 10.59], ["Wind", 12.75, 4.10], ["Net imports", 3.60, 1.16]
+      ];
+
+      const fmtTWh = (v) => (v == null || isNaN(v)) ? "—" : (v >= 100 ? v.toFixed(1) : v.toFixed(2));
+      const fmtPct = (v) => (v == null || isNaN(v)) ? "—" : v.toFixed(2) + "%";
+      const fmtPct1 = (v) => (v == null || isNaN(v)) ? "—" : v.toFixed(1) + "%";
+
+      function render(S) {
+        document.getElementById("mixCards").innerHTML = GROUPS.map((g) => {
+          let tSum = 0, sSum = 0, parts = "";
+          for (const f of g.fuels) {
+            if (!S[f]) continue;
+            tSum += S[f].twh || 0; sSum += S[f].share || 0;
+            parts += `<div class="flex items-center justify-between gap-2 text-[10px] text-zinc-500 dark:text-zinc-400">
+              <span class="flex items-center gap-1.5 min-w-0"><i class="w-1.5 h-1.5 rounded-[2px] shrink-0" style="background:${COLORS[f] || "#888"}"></i><span class="truncate">${f}</span></span>
+              <span class="font-mono tabular-nums text-zinc-600 dark:text-zinc-300">${fmtPct1(S[f].share)}</span>
+            </div>`;
+          }
+          return `<div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] ${g.tint} p-3.5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-tight text-zinc-800 dark:text-zinc-200"><i class="w-1.5 h-1.5 rounded-full ${g.dot}"></i>${g.label}</span>
+                <span class="font-mono text-[9px] text-zinc-400 dark:text-zinc-500">${fmtTWh(tSum)} TWh</span>
+              </div>
+              <div class="mt-2 text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">${fmtPct1(sSum)}</div>
+              <p class="mt-1 text-[10px] text-zinc-500 dark:text-zinc-400 font-light">${g.sub}</p>
+            </div>
+            <div class="mt-2.5 pt-2 border-t border-black/[0.06] dark:border-white/[0.08] flex flex-col gap-1">${parts}</div>
+          </div>`;
+        }).join("");
+
+        let html = "";
+        for (const g of GROUPS) {
+          const gT = g.fuels.reduce((a, f) => a + (S[f] ? S[f].twh : 0), 0);
+          const gS = g.fuels.reduce((a, f) => a + (S[f] ? S[f].share : 0), 0);
+          html += `<tr class="grp"><td><span class="mix-swatch" style="background:${COLORS[g.fuels[0]] || "#888"}"></span>${g.label}</td><td class="num">${fmtTWh(gT)}</td><td class="num">${fmtPct(gS)}</td></tr>`;
+          for (const f of g.fuels) {
+            if (!S[f]) continue;
+            html += `<tr><td class="indent"><span class="mix-swatch" style="background:${COLORS[f] || "#888"}"></span>${f}</td><td class="num">${fmtTWh(S[f].twh)}</td><td class="num">${fmtPct(S[f].share)}</td></tr>`;
+          }
+        }
+        const tot = S["Total generation"] || { twh: 310.63, share: 100 };
+        html += `<tr class="total"><td>Total generation</td><td class="num">${fmtTWh(tot.twh)} TWh</td><td class="num">${fmtPct(tot.share)}</td></tr>`;
+        document.getElementById("mixTableBody").innerHTML = html;
+      }
+
+      // instant paint from embedded values
+      const fb = {};
+      for (const [f, t, s] of FALLBACK) fb[f] = { twh: t, share: s };
+      fb["Total generation"] = { twh: 310.63, share: 100 };
+      document.getElementById("mixYearLabel").textContent = MIX_YEAR;
+      render(fb);
+
+      // then refresh from the live Ember API
+      const u = new URL(API + "/electricity-generation/yearly");
+      u.searchParams.set("entity_code", "VNM");
+      u.searchParams.set("start_date", MIX_YEAR);
+      u.searchParams.set("end_date", MIX_YEAR);
+      u.searchParams.set("api_key", KEY);
+      fetch(u.toString())
+        .then((r) => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+        .then((j) => {
+          const S = {};
+          for (const r of j.data || []) S[r.series] = { twh: r.generation_twh, share: r.share_of_generation_pct };
+          if (Object.keys(S).length) render(S);
+        })
+        .catch((e) => console.warn("Ember live mix unavailable, showing embedded 2024 values:", e));
+    })();
+  </script>
+</body>
+</html>
