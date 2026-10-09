@@ -7,7 +7,6 @@
             renewable-share / carbon-intensity trend. Data snapshot baked in (no key
             shipped to the client).
   Rev 0.19  Contact email (admin@renewablevietnam.com) added beside the footer handle.
-  Rev 0.26  Default theme is now dark (saved choice under 'rvn-theme' overrides it).
   Rev 0.25  Data Center card renamed to APAC Data Center. Card parameters are now computed
             live from each domain page's own data (auto-updating; baked values used as fallback).
   Rev 0.24  Refined the icon-box contents: smaller balanced icon, centred metric label.
@@ -167,14 +166,14 @@
   </style>
 
   <script>
-    // Default to dark; only an explicit saved 'light' choice switches it off.
-    const savedTheme = localStorage.getItem('rvn-theme');
-    if (savedTheme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
+    // Strictly default to bright (light) theme unless explicitly set to 'dark' by user
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
       if (!savedTheme) {
-        localStorage.setItem('rvn-theme', 'dark');
+        localStorage.setItem('theme', 'light');
       }
     }
   </script>
@@ -530,12 +529,12 @@
       }
     }
 
-    // Initialize icon state reflecting the default (dark) theme
+    // Initialize icon state reflecting the default light theme
     updateIcons(document.documentElement.classList.contains('dark'));
 
     themeToggleBtn.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('rvn-theme', isDark ? 'dark' : 'light');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
       updateIcons(isDark);
     });
   </script>
