@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EV Charging Stations - OpenStreetMap</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23F59E0B'/%3E%3Cpath d='m4.5 13 9.75-10.5L11 10.5h7.5L9 21l2.25-8H4.5Z' fill='%23fff'/%3E%3C/svg%3E" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -23,7 +24,8 @@
   #app{display:flex;flex-direction:column;width:100%;height:100%;height:100svh;height:100dvh;overflow:hidden}
   header{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:1000;min-width:0}
   header .mark{display:flex;align-items:center;gap:7px;font-weight:650;font-size:13.5px;white-space:nowrap}
-  header .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+  header .mark .logo{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;color:#F59E0B;background:color-mix(in srgb,#F59E0B 16%,transparent);border:1px solid color-mix(in srgb,#F59E0B 42%,transparent)}
+  header .mark .logo svg{width:16px;height:16px}
   header .sub{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   header .spacer{flex:1}
   .notice{padding:5px 12px;text-align:center;font-size:10.5px;letter-spacing:.02em;color:var(--muted);background:color-mix(in srgb,var(--accent) 12%,var(--panel));border-bottom:1px solid var(--line)}
@@ -196,7 +198,7 @@
 <div id="app">
   <header>
     <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776; <span class="lbl">Stations</span></button>
-    <div class="mark"><span class="dot"></span><span class="txt">EV Charging Stations</span></div>
+    <div class="mark"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"/></svg></span><span class="txt">EV Charging Stations</span></div>
     <div class="spacer"></div>
     <button class="btn primary" id="liveBtn"><span class="spin"></span><span id="liveTxt">&#8635; Live Query</span></button>
     <button class="btn" id="locBtn" title="Show my location">&#128205; My location</button>
