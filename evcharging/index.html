@@ -146,7 +146,7 @@
     aside{position:absolute;left:0;top:0;bottom:0;z-index:900;width:min(92vw,430px);min-width:0;box-shadow:var(--shadow)}
     #drag{display:none}
   }
-  /* Phones */
+  /* Phones — the panel is a bottom sheet about 1/4 of the screen */
   @media (max-width:720px){
     header{gap:6px;padding:6px 8px}
     header .sub{display:none}
@@ -157,11 +157,23 @@
     #toggleSide .lbl{display:none}
     .foot{display:none}
     #toast{top:8px;max-width:92%}
-    aside{width:100%;min-width:0;max-width:none;border-right:none;box-shadow:none}
-    table.grid{font-size:11px}
-    table.grid th,table.grid td{padding:6px 6px}
+    aside{left:0;right:0;top:auto;bottom:0;width:100%;min-width:0;max-width:none;
+          height:25vh;min-height:170px;overflow-y:auto;
+          border-right:none;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.28)}
+    #listDrop.open{flex:0 0 auto;min-height:0}
+    #listDrop.open > .dropbody{flex:0 0 auto;min-height:0}
+    #list{flex:0 0 auto;min-height:0}
+    .search{margin:6px 10px 4px;padding:6px 8px}
+    .note{display:none}
+    table.grid{font-size:11.5px}
+    table.grid th,table.grid td{padding:6px 7px}
     .routebar{max-width:calc(100% - 20px)}
     .drop.open .tree{max-height:52vh}
+    .leaflet-bottom{bottom:27vh}
+  }
+  /* Phone in landscape — 1/4 of a very short screen isn't usable */
+  @media (max-width:720px) and (max-height:520px){
+    aside{height:46vh;min-height:150px}
   }
   /* Landscape phones / short windows */
   @media (max-height:520px){
@@ -479,9 +491,15 @@ function renderList(){
   if(k !== "idx") rows.sort(function(a,b){ var r = cmp(a,b)*dir; if(!r) r=(a.s.name||"").localeCompare(b.s.name||""); return r; });
 
   // Distance is the only column that degrades: without a location it is blank.
-  // Sorting by Distance keeps the "top N nearest" behaviour; other sorts show all.
+  // Phones show the top 3 nearest; a desktop sort by Distance keeps the top N.
+  const PHONE_N = 3;
   let sub;
-  if(myLoc && k==="dist"){ rows = rows.slice(0, NEAREST_N); sub = "top "+rows.length+" nearest of "+matching.length; }
+  if(isMobile()){
+    if(myLoc){ rows.sort(function(a,b){ return (a.d==null?Infinity:a.d)-(b.d==null?Infinity:b.d); }); }
+    rows = rows.slice(0, PHONE_N);
+    sub = myLoc ? ("top "+rows.length+" nearest") : (rows.length+" of "+matching.length+" \u00b7 set location for nearest");
+  }
+  else if(myLoc && k==="dist"){ rows = rows.slice(0, NEAREST_N); sub = "top "+rows.length+" nearest of "+matching.length; }
   else if(myLoc){ sub = matching.length+" shown \u00b7 click Distance for nearest"; }
   else { sub = matching.length+" matching \u00b7 set location for distances"; }
   if(listSubEl) listSubEl.textContent = sub;
@@ -524,7 +542,6 @@ function renderList(){
       cluster.zoomToShowLayer(m, function(){ m.openPopup(); });
       listEl.querySelectorAll("tr.active").forEach(function(x){ x.classList.remove("active"); });
       r.classList.add("active");
-      if(isMobile()) collapsePanel();
     });
   });
   const ctaEl = listEl.querySelector("#locCta");
@@ -711,7 +728,6 @@ function findNearest(){
   if(m) cluster.zoomToShowLayer(m, ()=>{ m.openPopup(); });
   else map.setView([s.lat,s.lng],14);
   highlightRow(mkKey(s));
-  if(isMobile()) collapsePanel();
   setTimeout(()=>setMsg(""),4600);
 }
 function openGoogleDir(st){
@@ -760,7 +776,6 @@ map.getContainer().addEventListener("click", e=>{
 
 /* ---------------- filter dropdown + mobile ---------------- */
 function isMobile(){ return window.matchMedia("(max-width:720px)").matches; }
-function collapsePanel(){ document.getElementById("side").classList.add("collapsed"); setTimeout(function(){ map.invalidateSize(); }, 60); }
 function wireDropdown(dropId, headId){
   var drop=document.getElementById(dropId), head=document.getElementById(headId);
   if(!drop||!head) return;
@@ -822,7 +837,11 @@ document.getElementById("themeBtn").addEventListener("click", ()=>{
 
 /* ---------------- keep the map fitted to the screen ---------------- */
 (function keepMapFitted(){
-  function fit(){ try{ map.invalidateSize(); }catch(e){} }
+  var wasMobile = isMobile();
+  function fit(){
+    try{ map.invalidateSize(); }catch(e){}
+    if(isMobile() !== wasMobile){ wasMobile = isMobile(); renderList(); }
+  }
   window.addEventListener("resize", fit);
   window.addEventListener("orientationchange", function(){ setTimeout(fit,320); });
   if(window.visualViewport) window.visualViewport.addEventListener("resize", fit);
