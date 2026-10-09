@@ -24,9 +24,7 @@
   header{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:1000;min-width:0}
   header .mark{display:flex;align-items:center;gap:7px;font-weight:650;font-size:13.5px;white-space:nowrap}
   header .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
-  header .sub{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   header .spacer{flex:1}
-  .notice{padding:5px 12px;text-align:center;font-size:10.5px;letter-spacing:.02em;color:var(--muted);background:color-mix(in srgb,var(--accent) 12%,var(--panel));border-bottom:1px solid var(--line)}
   .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:6px 10px;border-radius:7px;cursor:pointer;font-size:11.5px;font-weight:550;white-space:nowrap}
   a.btn{text-decoration:none}
   .btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -89,7 +87,7 @@
   .st-tag.busy{color:#fff;background:#f59e0b;border-color:#f59e0b}
   .st-tag.off{color:#fff;background:#ef4444;border-color:#ef4444}
   .st-na{color:var(--muted)}
-  .note{padding:6px 10px;font-size:10px;color:var(--muted);border-top:1px solid var(--line);line-height:1.5}
+  .tinyfoot{padding:6px 10px;font-size:8px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line)}
   #mapWrap{position:relative;flex:1;min-width:0;display:flex}
   #map{flex:1;min-width:0;min-height:0;background:#aadaff}
   .leaflet-popup-content{font-size:12.5px;line-height:1.45}
@@ -100,7 +98,6 @@
   .pop .lnks{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
   .pop a{font-size:11px;text-decoration:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 8px;color:#1f3b57;font-weight:550}
   .pop a:hover{border-color:#2f9e6f;color:#2f9e6f}
-  .foot{position:absolute;left:8px;bottom:8px;z-index:500;background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:7px;padding:4px 8px;font-size:10px;color:var(--muted);max-width:min(70vw,720px)}
   .node.port{border-left:3px solid transparent}
   .node.prov .dot{width:7px;height:7px;border-radius:50%;flex:none}
   #toast{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:950;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:11.5px;box-shadow:var(--shadow);display:none;max-width:80%}
@@ -125,9 +122,13 @@
   #listDrop.open{flex:1 1 auto;min-height:0}
   #listDrop.open > .dropbody{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
   .colwrap{padding:2px 10px 10px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px}
+  #colBody{display:none}
+  #listDrop.cols-open #colBody{display:flex}
+  .coltoggle{display:inline-flex;align-items:center;gap:4px;cursor:pointer;color:var(--accent);font-weight:700;font-size:10px;text-transform:none;letter-spacing:0}
+  .coltoggle:hover{text-decoration:underline}
+  .coltoggle .caret{font-size:10px}
   .colwrap label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
   .colwrap input{accent-color:var(--accent)}
-  .drophead .sub{font-weight:600;letter-spacing:0;text-transform:none;font-size:10px;color:var(--muted)}
   aside.collapsed + #drag{display:none}
   /* Tablets & small laptops — keep the panel from crowding the map */
   @media (max-width:1024px){
@@ -146,8 +147,6 @@
     header .mark{font-size:12px}
     header .mark .txt{display:none}
     .btn{padding:6px 9px;font-size:11px}
-    #toggleSide .lbl{display:none}
-    .foot{display:none}
     #toast{top:8px;max-width:92%}
     aside{left:0;right:0;top:auto;bottom:0;width:100%;min-width:0;max-width:none;
           height:40vh;min-height:240px;overflow-y:auto;
@@ -156,7 +155,6 @@
     #listDrop.open > .dropbody{flex:0 0 auto;min-height:0}
     #list{flex:0 0 auto;min-height:0}
     .search{margin:6px 10px 4px;padding:6px 8px}
-    .note{display:none}
     table.grid{font-size:11.5px}
     table.grid th,table.grid td{padding:6px 7px}
     .routebar{max-width:calc(100% - 20px)}
@@ -172,14 +170,12 @@
   @media (max-height:520px){
     header{padding:4px 8px;gap:5px}
     .btn{padding:5px 8px;font-size:11px}
-    .foot{display:none}
     .drop.open .tree{max-height:62vh}
   }
   /* Notch + home-bar safe areas */
   @supports (padding:max(0px)){
     header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
     aside{padding-bottom:env(safe-area-inset-bottom)}
-    .foot{bottom:max(8px,env(safe-area-inset-bottom))}
     #toast{top:max(10px,env(safe-area-inset-top))}
   }
 </style>
@@ -188,30 +184,23 @@
 <div id="app">
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Back to renewablevietnam.com">Home</a>
-    <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776; <span class="lbl">Stations</span></button>
+    <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776;</button>
     <div class="mark"><span class="dot"></span><span class="txt">EV Charging</span></div>
     <div class="spacer"></div>
-    <button class="btn" id="nearBtn" title="Show the stations nearest to me">&#127919; Near me</button>
+    <button class="btn" id="nearBtn" title="Show the stations nearest to me">Near me</button>
     <button class="btn" id="themeBtn" title="Toggle light / dark">&#9788;</button>
   </header>
-  <div class="notice">For studying / research purposes only &mdash; non-commercial.</div>
   <main>
     <aside id="side">
       <div class="drop open" id="listDrop">
         <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Show / hide the station list">
           <span class="caret" aria-hidden="true">&#9662;</span>
           <span class="nm">Stations</span>
+          <span class="spacer" style="flex:1"></span>
+          <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Choose which columns to show">Columns <span class="caret" aria-hidden="true">&#9662;</span></span>
         </div>
         <div class="dropbody">
-          <div class="drop" id="colDrop">
-            <div class="drophead" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Choose which columns to show">
-              <span class="caret" aria-hidden="true">&#9662;</span>
-              <span class="nm">Columns</span>
-              <span class="spacer" style="flex:1"></span>
-              <span class="sub" id="colSub"></span>
-            </div>
-            <div class="dropbody"><div class="colwrap" id="colBody"></div></div>
-          </div>
+          <div class="colwrap" id="colBody"></div>
           <input class="search" id="search" placeholder="Search name, provider, address...">
           <div id="list"></div>
         </div>
@@ -225,7 +214,7 @@
         </div>
         <div class="tree" id="tree"></div>
       </div>
-      <div class="note">Chargers = installed connectors (count × power from the source), not live availability. No public live-status API exists for these networks — see STATUS_ENDPOINT in the page source to plug in a feed.</div>
+      <div class="tinyfoot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo; &mdash; for studying / research purposes only, non-commercial. Base map: OpenStreetMap France tiles. Chargers = installed connectors (count &times; power), not live availability.</div>
     </aside>
     <div id="drag" title="Drag to resize the panel"></div>
     <div id="mapWrap">
@@ -234,7 +223,6 @@
     </div>
   </main>
 </div>
-<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Base map: OpenStreetMap France tiles. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -658,7 +646,7 @@ map.getContainer().addEventListener("click", e=>{
 
 /* ---------------- filter dropdown + mobile ---------------- */
 function isMobile(){ return window.matchMedia("(max-width:720px)").matches; }
-function wireDropdown(dropId, headId){
+function wireDropdown(dropId, headId, ignoreSel){
   var drop=document.getElementById(dropId), head=document.getElementById(headId);
   if(!drop||!head) return;
   function toggle(){
@@ -667,16 +655,27 @@ function wireDropdown(dropId, headId){
     if(dropId==="listDrop") setTimeout(function(){ map.invalidateSize(); }, 60);
   }
   head.addEventListener("click", function(e){
-    if(e.target.closest("a")) return;   // let All / None through
+    if(e.target.closest("a")) return;              // let All / None through
+    if(ignoreSel && e.target.closest(ignoreSel)) return;
     toggle();
   });
   head.addEventListener("keydown", function(e){
     if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); }
   });
 }
-wireDropdown("listDrop","listToggle");
-wireDropdown("colDrop","colToggle");
+wireDropdown("listDrop","listToggle","#colToggle");
 wireDropdown("filterDrop","filterToggle");
+(function colToggle(){
+  var head=document.getElementById("colToggle"), drop=document.getElementById("listDrop");
+  if(!head||!drop) return;
+  function flip(e){
+    if(e){ e.preventDefault(); e.stopPropagation(); }
+    var open=drop.classList.toggle("cols-open");
+    head.setAttribute("aria-expanded", open?"true":"false");
+  }
+  head.addEventListener("click", flip);
+  head.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ flip(e); } });
+})();
 
 /* ---------------- ui wiring ---------------- */
 document.getElementById("nearBtn").addEventListener("click", findNearest);
