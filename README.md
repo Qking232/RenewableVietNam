@@ -8,7 +8,7 @@ static tools served from subfolders.
 | `/` | Card hub: Energy Projects · EV Charging · Data Center · Hub |
 | `/projectenergy/` | Interactive energy potential & grid map |
 | `/datacenter/` | APAC data-centre & subsea cable map |
-| `/hub/` | **Library for Discussion** — curated topics + shared submissions |
+| `/hub/` | **The Library** — documents (reports, datasets, policy, maps) with files, summaries and comments |
 | `/blog/` | Jekyll blog posts |
 | `/presskit/` | Press kit |
 
@@ -17,12 +17,23 @@ Deployment is automatic: pushing to `main` builds with Jekyll
 
 ---
 
-## The Hub's shared store (Supabase)
+## The Library's shared store (Supabase)
 
-`/hub/` keeps its twelve editorial topics inside the page itself. Everything
-visitors contribute — new topics, and views on a topic — is stored in
-**Supabase** (Postgres) and, in the current configuration, **published
+`/hub/` keeps its twelve editorial documents inside the page itself. Everything
+visitors contribute — a new document, its **file**, and comments on a document —
+is stored in **Supabase** and, in the current configuration, **published
 immediately** (no review queue).
+
+| What | Where |
+| --- | --- |
+| Document metadata (title, type, collection, summary, points, refs…) | Postgres table `hub_documents` |
+| The document **file** (PDF, Office, CSV, image…) | Storage bucket `hub-docs` (public) |
+| Comments on a document | Postgres table `hub_views` (`topic_id` = document id) |
+
+Files are uploaded straight from the browser to the `hub-docs` bucket (25 MB per
+file) and referenced by path; the page builds the public download URL from the
+bucket. Re-run [`supabase/schema.sql`](supabase/schema.sql) to create the table,
+the bucket and its read/upload policies — it is idempotent.
 
 ### Setup status
 
@@ -84,9 +95,13 @@ pings the API once a day to keep the project awake.
 
 ---
 
-## Editing the Hub
+## Editing the Library
 
 `hub/index.html` is a single self-contained file — no build step, no
 dependencies, no CDN. It can be opened directly from disk. Revisions are kept
 side by side (`rev-0.01.html`, `rev-0.02.html`, …) with the current version in
-`index.html`.
+`index.html`. `rev-0.10.html` is the first document-library build; `rev-0.11.html`
+makes each shelf row open the document in **its own window** (`/hub/#/doc/<id>`)
+as a full page, with the inline preview panel removed.
+Without Supabase keys it runs local-only (small files inline, export/import as
+JSON); with them, documents and files are shared for everyone.

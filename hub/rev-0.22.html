@@ -77,14 +77,6 @@
                             ("Oct 9, 2026, 09:58 AM") for documents that carry a real timestamp.
                             Values that are a bare date (the seeded briefs) still show the date
                             only, and the column is given a little more room.
-    Rev 0.23  (2026-10-09)  The Update column now shows the time for every row. The seeded
-                            documents carry a real timestamp (the library's compile time) instead
-                            of a bare date, and the formatter always prints date + time.
-    Rev 0.24  (2026-10-09)  Quick links from the table. Every row has a "Links" button on the
-                            right of its title (showing the link count); clicking it opens a small
-                            popover listing that document's download links — each with its type
-                            (Direct link / Torrent), the URL, when it was updated, and Copy / Open
-                            actions — without having to open the document window.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -377,20 +369,6 @@
   .sheet-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:14px 20px; border-top:1px solid var(--line); }
   .sheet-actions .grp { display:flex; gap:8px; flex-wrap:wrap; }
   .saved { font-size:11.5px; color:var(--faint); }
-
-  /* Quick "Links" button on each row + its popover */
-  .linkbtn { margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:var(--radius); white-space:nowrap; }
-  .linkbtn:hover, .linkbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
-  .linkbtn .n { background:var(--accent); color:#fff; border-radius:999px; padding:0 5px; font-size:9px; line-height:14px; }
-  .linkpop { position:fixed; z-index:90; background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius); box-shadow:var(--shadow-hover); width:min(420px, 92vw); padding:10px 12px; }
-  .linkpop h5 { margin:0 0 6px; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:700; }
-  .linkpop .lrow { display:flex; gap:8px; align-items:flex-start; padding:7px 0; border-top:1px solid var(--line); }
-  .linkpop .lrow:first-of-type { border-top:none; }
-  .linkpop .lrow .t { min-width:0; flex:1; }
-  .linkpop .lrow .nm { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
-  .linkpop .lrow a { display:block; font-size:12px; color:var(--accent); overflow-wrap:anywhere; }
-  .linkpop .lrow .up { display:block; font-size:10.5px; color:var(--faint); }
-  .linkpop .empty { font-size:12px; color:var(--muted); }
 
   /* Toast */
   .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px); background:var(--text); color:var(--bg); padding:9px 15px; border-radius:var(--radius); font-size:12px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease; z-index:80; max-width:90vw; }
@@ -734,12 +712,11 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.24</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.22</span>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="linkpop" id="linkPop" hidden></div>
 
 <script>
 (function () {
@@ -943,7 +920,7 @@
         { label:"ADB — sustainable transport", url:"https://www.adb.org" } ] }
   ];
   // Stable ids for the seeded documents (clean share links; keeps existing comments attached).
-  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; d.rev = "1"; d.updated = "2026-10-08T16:16:00"; });
+  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; d.rev = "1"; d.updated = "2026-10-08"; });
 
   /* =========================================================================
      STATE
@@ -1401,17 +1378,13 @@
 
     stackEl.innerHTML = list.map(function (d) {
       var id = idOf(d);
-      var lk = linksOf(d);
       return '<tr data-id="' + esc(id) + '" style="' + toneVars(d.collection) + '">' +
         '<td class="num">' + esc(d.n || "") + '</td>' +
         '<td><div class="c-title"><span class="g" aria-hidden="true">' + esc(typeGlyph(d.type)) + '</span>' +
           '<span><a href="' + esc(docHref(id)) + '" target="_blank" rel="noopener">' + esc(d.title) + '</a>' +
           (d.summary ? '<span class="snip">' + esc(d.summary) + '</span>' : '') +
           (dl(d) ? '<span class="snip">' + dl(d) + ' download' + (dl(d) === 1 ? "" : "s") + '</span>' : '') +
-        '</span>' +
-        '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
-          (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>' +
-        '</div></td>' +
+        '</span></div></td>' +
         '<td><span class="badge">' + esc(typeLabel(d.type)) + '</span></td>' +
         '<td class="dim">' + esc(collectionLabel(d.collection)) + '</td>' +
         '<td class="dim">' + esc(d.author || "—") + '</td>' +
@@ -1448,10 +1421,14 @@
 
   function fileUrl(d) { return d.filePath ? storagePublicUrl(d.filePath) : (d.fileData || ""); }
   function isTorrent(u) { return /^magnet:/i.test(u) || /\.torrent(\?|#|$)/i.test(u); }
-  // Always date + time, e.g. "Oct 8, 2026, 04:16 PM".
   function fmtDateTime(s) {
-    try { return new Date(s).toLocaleString(undefined, { year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }); }
-    catch (e) { return ""; }
+    try {
+      // A bare yyyy-mm-dd carries no time, so only show the date for those.
+      var opts = /^\d{4}-\d{2}-\d{2}$/.test(String(s).trim())
+        ? { year:"numeric", month:"short", day:"numeric" }
+        : { year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" };
+      return new Date(s).toLocaleString(undefined, opts);
+    } catch (e) { return ""; }
   }
 
   /* ---------------- download links (multiple; a direct URL or a torrent) ---------------- */
@@ -1949,68 +1926,8 @@
     if (sel && sel.querySelector('option[value="' + key + '"]')) sel.value = key;
     render();
   });
-  /* ---------------- quick links popover (the "Links" button on each row) ---------------- */
-  var linkPopEl = document.getElementById("linkPop"), linkBtnActive = null;
-  function closeLinkPop() {
-    if (!linkPopEl || linkPopEl.hidden) return;
-    linkPopEl.hidden = true;
-    if (linkBtnActive) linkBtnActive.classList.remove("on");
-    linkBtnActive = null;
-  }
-  function copyText(text) {
-    function fb() {
-      var t = document.createElement("textarea");
-      t.value = text; t.style.position = "fixed"; t.style.left = "-9999px";
-      document.body.appendChild(t); t.select();
-      try { document.execCommand("copy"); toast("Link copied"); } catch (e) { toast(text); }
-      document.body.removeChild(t);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast("Link copied"); }, fb);
-    else fb();
-  }
-  function showLinkPop(btn, id) {
-    var d = byId(id); if (!d) return;
-    var links = linksOf(d);
-    var html = '<h5>Download links</h5>' + (links.length ? links.map(function (l) {
-      var tor = isTorrent(l.url);
-      return '<div class="lrow"><span class="t">' +
-        '<span class="nm">' + (tor ? "Torrent" : "Direct link") + '</span>' +
-        '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">' + esc(l.url) + '</a>' +
-        '<span class="up">Updated ' + esc(l.updated ? fmtDateTime(l.updated) : "—") + '</span></span>' +
-        '<button class="btn small ghost" type="button" data-copy="' + esc(l.url) + '">Copy</button>' +
-        '<a class="btn small" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">Open</a>' +
-      '</div>';
-    }).join("") : '<div class="empty">No links on this document yet.</div>');
-    linkPopEl.innerHTML = html;
-    linkPopEl.hidden = false;
-    var r = btn.getBoundingClientRect(), w = linkPopEl.offsetWidth, h = linkPopEl.offsetHeight;
-    var left = Math.max(8, Math.min(r.left, window.innerWidth - w - 10));
-    var top = r.bottom + 6;
-    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
-    linkPopEl.style.left = left + "px";
-    linkPopEl.style.top = top + "px";
-    if (linkBtnActive && linkBtnActive !== btn) linkBtnActive.classList.remove("on");
-    linkBtnActive = btn; btn.classList.add("on");
-    Array.prototype.forEach.call(linkPopEl.querySelectorAll("[data-copy]"), function (b) {
-      b.addEventListener("click", function (ev) { ev.stopPropagation(); copyText(b.getAttribute("data-copy")); });
-    });
-  }
-  document.addEventListener("mousedown", function (e) {
-    if (linkPopEl.hidden) return;
-    if (e.target.closest("#linkPop") || e.target.closest(".linkbtn")) return;
-    closeLinkPop();
-  });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLinkPop(); });
-  window.addEventListener("scroll", closeLinkPop, true);
-  window.addEventListener("resize", closeLinkPop);
-
-  // Clicking a row opens that document in its own window (the Links button opens the popover).
+  // Clicking a row opens that document in its own window.
   stackEl.addEventListener("click", function (e) {
-    var lb = e.target.closest(".linkbtn");
-    if (lb) {
-      if (linkBtnActive === lb) closeLinkPop(); else showLinkPop(lb, lb.getAttribute("data-links"));
-      return;
-    }
     if (e.target.closest("a")) return;
     var tr = e.target.closest("tr[data-id]"); if (!tr) return;
     window.open(docHref(tr.getAttribute("data-id")), "_blank", "noopener");

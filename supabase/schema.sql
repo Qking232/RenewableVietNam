@@ -81,6 +81,98 @@ create policy "public submits views"
   on public.hub_views for insert
   with check (status = 'approved');
 
+-- -------------------------------------------------------------- documents
+-- Rev 0.10: the Hub became a document library. Metadata lives here; the files
+-- themselves live in the storage bucket below (path recorded in file_path).
+create table if not exists public.hub_documents (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  status      text not null default 'approved' check (status in ('pending','approved','rejected')),
+  doc_type    text not null default 'report'   check (char_length(doc_type) <= 40),
+  collection  text not null default 'grid'     check (char_length(collection) <= 40),
+  title       text not null                    check (char_length(title) between 3 and 300),
+  author      text                             check (char_length(coalesce(author,'')) <= 200),
+  year        text                             check (char_length(coalesce(year,'')) <= 12),
+  lang        text                             check (char_length(coalesce(lang,'')) <= 8),
+  summary     text                             check (char_length(coalesce(summary,'')) <= 4000),
+  points      jsonb not null default '[]'::jsonb,
+  refs        jsonb not null default '[]'::jsonb,
+  source      text                             check (char_length(coalesce(source,'')) <= 500),
+  license     text                             check (char_length(coalesce(license,'')) <= 200),
+  -- Download links used when no file is uploaded. `links` is an array of
+  -- { url, updated } objects (a direct file URL or a magnet:/.torrent link);
+  -- download_link is the older single-link column, still read for compatibility.
+  download_link text,
+  links       jsonb not null default '[]'::jsonb check (jsonb_typeof(links) = 'array'),
+  file_path   text,
+  file_name   text,
+  file_type   text,
+  file_size   bigint,
+  downloads   integer not null default 0
+);
+
+create index if not exists hub_documents_status_idx on public.hub_documents (status, created_at);
+
+grant select, insert on public.hub_documents to anon, authenticated;
+revoke update, delete, truncate, references, trigger on public.hub_documents from anon, authenticated;
+
+alter table public.hub_documents enable row level security;
+
+drop policy if exists "public reads approved documents" on public.hub_documents;
+create policy "public reads approved documents"
+  on public.hub_documents for select using (status = 'approved');
+
+drop policy if exists "public submits documents" on public.hub_documents;
+create policy "public submits documents"
+  on public.hub_documents for insert with check (status = 'approved');
+
+-- Columns carried by newer documents (idempotent). `updated` is the last-modified
+-- date shown in the table; `rev` is the document's revision label.
+alter table public.hub_documents add column if not exists updated timestamptz;
+alter table public.hub_documents add column if not exists rev text;
+alter table public.hub_documents add column if not exists download_link text;
+alter table public.hub_documents add column if not exists links jsonb not null default '[]'::jsonb;
+
+-- ------------------------------------------------------------- view counts
+-- One row per view (insert-only), counted client-side. This keeps the public key
+-- insert-only while still yielding a shared "views" number for each document.
+create table if not exists public.hub_doc_views (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  doc_id     text not null
+);
+create index if not exists hub_doc_views_doc_idx on public.hub_doc_views (doc_id);
+
+grant select, insert on public.hub_doc_views to anon, authenticated;
+revoke update, delete, truncate, references, trigger on public.hub_doc_views from anon, authenticated;
+
+alter table public.hub_doc_views enable row level security;
+
+drop policy if exists "public reads doc views" on public.hub_doc_views;
+create policy "public reads doc views"
+  on public.hub_doc_views for select using (true);
+
+drop policy if exists "public logs doc views" on public.hub_doc_views;
+create policy "public logs doc views"
+  on public.hub_doc_views for insert with check (true);
+
+-- ------------------------------------------------------------- file storage
+-- A public bucket for the document files. Anyone may read or upload a file;
+-- the per-object size cap (25 MB) matches the page's client-side limit.
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('hub-docs', 'hub-docs', true, 26214400)
+on conflict (id) do update set public = true;
+
+drop policy if exists "public reads hub files" on storage.objects;
+create policy "public reads hub files"
+  on storage.objects for select using (bucket_id = 'hub-docs');
+
+drop policy if exists "public uploads hub files" on storage.objects;
+create policy "public uploads hub files"
+  on storage.objects for insert with check (bucket_id = 'hub-docs');
+
+-- hub_views is reused unchanged for per-document comments (topic_id = document id).
+
 -- Deliberately no UPDATE/DELETE policies: the public cannot change or remove
 -- rows. The Supabase dashboard (service role) bypasses RLS, so you can still
 -- edit or delete anything there — e.g. set status to 'rejected' to hide a row.

@@ -55,36 +55,6 @@
                             widen or narrow that column, and drag the divider between the shelf
                             and the "Browse Docs" column to resize the column. Both widths are
                             remembered per browser (localStorage) and re-applied on every render.
-    Rev 0.19  (2026-10-09)  Light theme readability. The secondary and tertiary text greys
-                            (--muted #55555B, --faint #8A8A90) are now black / near-black
-                            (#000000 and #2F2F35), so summaries, labels, counts and table cells
-                            read clearly on white.
-    Rev 0.20  (2026-10-09)  Document window: full width (the 900px column cap is gone), and the
-                            file area now takes a download link when no file is attached. A
-                            document can carry a direct URL or a magnet:/.torrent link, shown as a
-                            "Direct download link" / "Torrent" card with Open and Edit, plus an
-                            "Open link" action. Attach a link from the "＋ Attach download link"
-                            button where "No file attached" showed, or from the new Download link
-                            field in the Add-document form (shared as download_link).
-    Rev 0.21  (2026-10-09)  Multiple download links. A document can now carry any number of links
-                            (direct URL or torrent) instead of one: the file area lists each with
-                            its type, an Open action, Edit and Remove, plus "＋ Add link". Every
-                            link shows when it was added or last changed as a full date and time
-                            ("Updated Oct 9, 2026, 10:05"). Adding/editing a link also bumps the
-                            document's Update time. Links are stored as a {url, updated} array (a
-                            new `links` jsonb column; the old download_link is still read).
-    Rev 0.22  (2026-10-09)  The table's Update column now shows the time as well as the date
-                            ("Oct 9, 2026, 09:58 AM") for documents that carry a real timestamp.
-                            Values that are a bare date (the seeded briefs) still show the date
-                            only, and the column is given a little more room.
-    Rev 0.23  (2026-10-09)  The Update column now shows the time for every row. The seeded
-                            documents carry a real timestamp (the library's compile time) instead
-                            of a bare date, and the formatter always prints date + time.
-    Rev 0.24  (2026-10-09)  Quick links from the table. Every row has a "Links" button on the
-                            right of its title (showing the link count); clicking it opens a small
-                            popover listing that document's download links — each with its type
-                            (Direct link / Torrent), the URL, when it was updated, and Copy / Open
-                            actions — without having to open the document window.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -105,7 +75,7 @@
      Light = BB10 "Bright"; dark = the signature black Hub theme. */
   :root {
     --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F2F4; --chip:#E7E7EA;
-    --text:#000000; --muted:#000000; --faint:#2F2F35;
+    --text:#000000; --muted:#55555B; --faint:#8A8A90;
     --line:rgba(0,0,0,.14); --line-strong:rgba(0,0,0,.34);
     --accent:#0072BC; --accent-2:#0092CC; --accent-soft:rgba(0,114,188,.10); --accent-border:rgba(0,114,188,.50);
     --notify:#C8102E;
@@ -257,7 +227,7 @@
   body.docmode .preview .close-x { display:none; }
   body.docmode .preview .close-label { display:inline; font-size:12.5px; font-weight:600; }
   body.docmode #closeBtn { width:auto; padding:0 12px; }
-  /* The document window fills the screen width — no column cap. */
+  body.docmode .sheet-body { max-width:900px; }
   .preview .placeholder { display:grid; place-items:center; justify-items:center; text-align:center; gap:7px; min-height:320px; padding:46px 26px; color:var(--muted); }
   .preview .placeholder[hidden] { display:none; }
   .preview .placeholder svg { width:30px; height:30px; color:var(--faint); margin-bottom:4px; }
@@ -337,10 +307,6 @@
   .filecard .txt { min-width:0; }
   .filecard .nm { font-size:13.5px; font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .filecard .sz { font-size:11.5px; color:var(--faint); }
-  .filecard .nm, .filecard .sz { display:block; }
-  .filecard .sz a { overflow-wrap:anywhere; }
-  .filecard .act { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; flex:0 0 auto; }
-  .filebox .filecard + .filecard { border-top:1px solid var(--line); }
 
   .meta { display:grid; grid-template-columns:auto 1fr; gap:5px 14px; margin:14px 0 0; font-size:12.5px; }
   .meta dt { color:var(--faint); text-transform:uppercase; letter-spacing:.08em; font-size:9.5px; font-weight:700; padding-top:2px; }
@@ -377,20 +343,6 @@
   .sheet-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:14px 20px; border-top:1px solid var(--line); }
   .sheet-actions .grp { display:flex; gap:8px; flex-wrap:wrap; }
   .saved { font-size:11.5px; color:var(--faint); }
-
-  /* Quick "Links" button on each row + its popover */
-  .linkbtn { margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:var(--radius); white-space:nowrap; }
-  .linkbtn:hover, .linkbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
-  .linkbtn .n { background:var(--accent); color:#fff; border-radius:999px; padding:0 5px; font-size:9px; line-height:14px; }
-  .linkpop { position:fixed; z-index:90; background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius); box-shadow:var(--shadow-hover); width:min(420px, 92vw); padding:10px 12px; }
-  .linkpop h5 { margin:0 0 6px; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:700; }
-  .linkpop .lrow { display:flex; gap:8px; align-items:flex-start; padding:7px 0; border-top:1px solid var(--line); }
-  .linkpop .lrow:first-of-type { border-top:none; }
-  .linkpop .lrow .t { min-width:0; flex:1; }
-  .linkpop .lrow .nm { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
-  .linkpop .lrow a { display:block; font-size:12px; color:var(--accent); overflow-wrap:anywhere; }
-  .linkpop .lrow .up { display:block; font-size:10.5px; color:var(--faint); }
-  .linkpop .empty { font-size:12px; color:var(--muted); }
 
   /* Toast */
   .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px); background:var(--text); color:var(--bg); padding:9px 15px; border-radius:var(--radius); font-size:12px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease; z-index:80; max-width:90vw; }
@@ -575,11 +527,6 @@
       </div>
 
       <div class="field">
-        <label for="f-download">Download links — one per line, direct file or torrent (optional)</label>
-        <textarea id="f-download" placeholder="https://…/file.pdf&#10;magnet:?xt=urn:btih:…"></textarea>
-      </div>
-
-      <div class="field">
         <label for="f-summary">Summary</label>
         <textarea id="f-summary" placeholder="A few sentences on what this document is and why it matters."></textarea>
       </div>
@@ -734,12 +681,11 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.24</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.18</span>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="linkpop" id="linkPop" hidden></div>
 
 <script>
 (function () {
@@ -943,7 +889,7 @@
         { label:"ADB — sustainable transport", url:"https://www.adb.org" } ] }
   ];
   // Stable ids for the seeded documents (clean share links; keeps existing comments attached).
-  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; d.rev = "1"; d.updated = "2026-10-08T16:16:00"; });
+  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; d.rev = "1"; d.updated = "2026-10-08"; });
 
   /* =========================================================================
      STATE
@@ -960,7 +906,6 @@
   var VIEW_KEY       = "rvn_lib_views";
   var COLW_KEY       = "rvn_lib_colwidths";
   var SIDE_KEY       = "rvn_lib_sidewidth";
-  var LINK_KEY       = "rvn_lib_download_links";
 
   var userDocs = load(DOC_KEY, []);
   var notes = load(NOTE_KEY, {});
@@ -974,7 +919,6 @@
   var views = load(VIEW_KEY, {});
   var sharedViews = {};                       // doc id -> view count (shared store)
   var colWidths = load(COLW_KEY, {});         // column key -> px
-  var linkOverrides = load(LINK_KEY, {});     // doc id -> download link (built-in / shared)
   var sideW = 290;                            // Browse Docs column width (px)
   try { var sw = localStorage.getItem(SIDE_KEY); if (sw) sideW = Math.max(220, Math.min(560, parseInt(sw, 10) || 290)); } catch (e) {}
   var activeTag = "all";
@@ -1021,7 +965,6 @@
       localStorage.setItem(VIEW_KEY, JSON.stringify(views));
       localStorage.setItem(COLW_KEY, JSON.stringify(colWidths));
       localStorage.setItem(SIDE_KEY, String(sideW));
-      localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
 
@@ -1142,7 +1085,6 @@
             fileName:r.file_name ? String(r.file_name) : "",
             fileType:r.file_type ? String(r.file_type) : "",
             fileSize:r.file_size ? Number(r.file_size) : 0,
-            links:normLinks(Array.isArray(r.links) && r.links.length ? r.links : (r.download_link ? [{ url:String(r.download_link) }] : [])),
             rev:r.rev ? String(r.rev) : "1",
             updated:r.updated || r.created_at || "",
             created_at:r.created_at
@@ -1349,7 +1291,7 @@
     { key:"type",       label:"Type",                 w:96  },
     { key:"collection", label:"Collection",           w:150 },
     { key:"creator",    label:"Creator",              w:150 },
-    { key:"update",     label:"Update",               w:168 },
+    { key:"update",     label:"Update",               w:120 },
     { key:"rev",        label:"Rev",        num:true, w:56  },
     { key:"views",      label:"Views",      num:true, w:66  }
   ];
@@ -1401,21 +1343,17 @@
 
     stackEl.innerHTML = list.map(function (d) {
       var id = idOf(d);
-      var lk = linksOf(d);
       return '<tr data-id="' + esc(id) + '" style="' + toneVars(d.collection) + '">' +
         '<td class="num">' + esc(d.n || "") + '</td>' +
         '<td><div class="c-title"><span class="g" aria-hidden="true">' + esc(typeGlyph(d.type)) + '</span>' +
           '<span><a href="' + esc(docHref(id)) + '" target="_blank" rel="noopener">' + esc(d.title) + '</a>' +
           (d.summary ? '<span class="snip">' + esc(d.summary) + '</span>' : '') +
           (dl(d) ? '<span class="snip">' + dl(d) + ' download' + (dl(d) === 1 ? "" : "s") + '</span>' : '') +
-        '</span>' +
-        '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
-          (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>' +
-        '</div></td>' +
+        '</span></div></td>' +
         '<td><span class="badge">' + esc(typeLabel(d.type)) + '</span></td>' +
         '<td class="dim">' + esc(collectionLabel(d.collection)) + '</td>' +
         '<td class="dim">' + esc(d.author || "—") + '</td>' +
-        '<td class="dim">' + (d.updated ? esc(fmtDateTime(d.updated)) : "—") + '</td>' +
+        '<td class="dim">' + (d.updated ? esc(fmtDate(d.updated)) : "—") + '</td>' +
         '<td class="num dim">' + esc(d.rev || "1") + '</td>' +
         '<td class="num">' + viewCount(d) + '</td>' +
       '</tr>';
@@ -1447,75 +1385,6 @@
   var current = null;
 
   function fileUrl(d) { return d.filePath ? storagePublicUrl(d.filePath) : (d.fileData || ""); }
-  function isTorrent(u) { return /^magnet:/i.test(u) || /\.torrent(\?|#|$)/i.test(u); }
-  // Always date + time, e.g. "Oct 8, 2026, 04:16 PM".
-  function fmtDateTime(s) {
-    try { return new Date(s).toLocaleString(undefined, { year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }); }
-    catch (e) { return ""; }
-  }
-
-  /* ---------------- download links (multiple; a direct URL or a torrent) ---------------- */
-  function normLinks(raw) {
-    var arr = Array.isArray(raw) ? raw : (typeof raw === "string" && raw ? [{ url:raw }] : []);
-    return arr.filter(function (l) { return l && l.url; }).map(function (l) {
-      return { url:String(l.url).trim(), updated:l.updated ? String(l.updated) : "" };
-    });
-  }
-  function linksOf(d) {
-    var arr = normLinks(d.links && d.links.length ? d.links : linkOverrides[idOf(d)]);
-    return arr.length ? arr : normLinks(d.download);         // legacy single-link field
-  }
-  function firstLink(d) { var l = linksOf(d); return l.length ? l[0].url : ""; }
-  function setLinksFor(id, arr) {
-    var d = byId(id); if (!d) return;
-    arr = normLinks(arr);
-    if (d.id && !d.shared && !d.seed) {                      // your own document — edit it in place
-      for (var i=0;i<userDocs.length;i++) if (userDocs[i].id === d.id) { userDocs[i].links = arr; userDocs[i].updated = new Date().toISOString(); }
-    } else {                                                 // built-in / shared — per-browser override
-      linkOverrides[idOf(d)] = arr;
-    }
-    persist();
-    openDoc(id, { silent:true });
-  }
-  function addLink(id) {
-    var d = byId(id); if (!d) return;
-    var url = prompt("Download link — a direct file URL, or a magnet: / .torrent link:", "https://");
-    if (url === null) return;
-    url = String(url).trim();
-    if (!url || url === "https://") return;
-    var arr = linksOf(d).slice();
-    arr.push({ url:url, updated:new Date().toISOString() });
-    setLinksFor(id, arr);
-    toast("Link added");
-  }
-  function editLink(id, i) {
-    var d = byId(id); if (!d) return;
-    var arr = linksOf(d).slice(); if (!arr[i]) return;
-    var url = prompt("Edit this download link:", arr[i].url);
-    if (url === null) return;
-    url = String(url).trim(); if (!url) return;
-    arr[i] = { url:url, updated:new Date().toISOString() };
-    setLinksFor(id, arr);
-    toast("Link updated");
-  }
-  function removeLink(id, i) {
-    var d = byId(id); if (!d) return;
-    var arr = linksOf(d).slice(); if (!arr[i]) return;
-    if (!confirm("Remove this download link?")) return;
-    arr.splice(i, 1);
-    setLinksFor(id, arr);
-    toast("Link removed");
-  }
-  function bindLinkButtons(box, d) {
-    var add = box.querySelector("#addLinkBtn");
-    if (add) add.addEventListener("click", function () { addLink(idOf(d)); });
-    Array.prototype.forEach.call(box.querySelectorAll("[data-lnk]"), function (b) {
-      b.addEventListener("click", function () {
-        var i = Number(b.getAttribute("data-i"));
-        if (b.getAttribute("data-lnk") === "edit") editLink(idOf(d), i); else removeLink(idOf(d), i);
-      });
-    });
-  }
 
   function renderMeta(d) {
     var rows = [];
@@ -1537,37 +1406,14 @@
   function renderFileBox(d) {
     var box = document.getElementById("mFile");
     var url = fileUrl(d);
-    var links = linksOf(d);
     var openBtn = document.getElementById("openBtn");
     var dlBtn = document.getElementById("downloadBtn");
     var srcBtn = document.getElementById("sourceBtn");
-    openBtn.hidden = !(url || links.length); dlBtn.hidden = !url; srcBtn.hidden = !d.source;
-    openBtn.textContent = (!url && links.length) ? "Open link" : "Open file";
+    openBtn.hidden = !url; dlBtn.hidden = !url; srcBtn.hidden = !d.source;
     if (!url) {
-      if (links.length) {                                // no uploaded file — list the download links
-        var rows = links.map(function (l, i) {
-          var tor = isTorrent(l.url);
-          return '<div class="filecard">' +
-            '<span class="g">' + (tor ? "⛓" : "⇩") + '</span>' +
-            '<span class="txt"><span class="nm">' + (tor ? "Torrent" : "Direct download link") + '</span>' +
-            '<span class="sz"><a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">' + esc(l.url) + '</a></span>' +
-            '<span class="sz">Updated ' + esc(l.updated ? fmtDateTime(l.updated) : "—") + '</span></span>' +
-            '<span class="act"><a class="btn small" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">Open</a>' +
-            '<button class="btn small ghost" type="button" data-lnk="edit" data-i="' + i + '">Edit</button>' +
-            '<button class="btn small ghost danger" type="button" data-lnk="del" data-i="' + i + '" title="Remove link">✕</button></span>' +
-          '</div>';
-        }).join("");
-        box.innerHTML = '<div class="filebox">' + rows +
-          '<div class="filecard"><span class="act" style="margin-left:0"><button class="btn small" id="addLinkBtn" type="button">＋ Add link</button></span></div></div>';
-        bindLinkButtons(box, d);
-        return;
-      }
       box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
-        '<span class="txt"><span class="nm">' + (d.source ? "No attachment — open the source" : "No file attached") + '</span>' +
-        '<span class="sz">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) + '</span></span>' +
-        '<span class="act"><button class="btn small" id="addLinkBtn" type="button">＋ Attach download link</button></span>' +
-        '</div></div>';
-      bindLinkButtons(box, d);
+        '<span class="txt"><span class="nm">' + (d.source ? "Link-only — open the source" : "No file attached") + '</span>' +
+        '<span class="sz">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) + '</span></span></div></div>';
       return;
     }
     var mime = d.fileType || "";
@@ -1722,7 +1568,7 @@
 
   /* ---------------- Reader actions: open / download / source / share ---------------- */
   document.getElementById("openBtn").addEventListener("click", function () {
-    if (current) window.open(fileUrl(current) || firstLink(current), "_blank", "noopener");
+    if (current) window.open(fileUrl(current), "_blank", "noopener");
   });
   document.getElementById("downloadBtn").addEventListener("click", function () {
     if (!current) return;
@@ -1830,12 +1676,6 @@
       lang: document.getElementById("f-lang").value,
       source: document.getElementById("f-source").value.trim(),
       license: document.getElementById("f-license").value.trim(),
-      links: (function () {
-        var now = new Date().toISOString();
-        return document.getElementById("f-download").value.split("\n")
-          .map(function (s) { return s.trim(); }).filter(Boolean)
-          .map(function (u) { return { url:u, updated:now }; });
-      })(),
       summary: document.getElementById("f-summary").value.trim(),
       points: document.getElementById("f-points").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean),
       refs: document.getElementById("f-refs").value.split("\n").map(function (line) {
@@ -1883,7 +1723,7 @@
         id:"u" + Date.now(),
         type:data.type, collection:data.collection, title:data.title, author:data.author, year:data.year,
         lang:data.lang, source:data.source, license:data.license, summary:data.summary,
-        points:data.points, refs:data.refs, links:data.links,
+        points:data.points, refs:data.refs,
         fileName:pendingFile ? pendingFile.name : "",
         fileType:pendingFile ? (pendingFile.type || "") : "",
         fileSize:pendingFile ? pendingFile.size : 0,
@@ -1949,68 +1789,8 @@
     if (sel && sel.querySelector('option[value="' + key + '"]')) sel.value = key;
     render();
   });
-  /* ---------------- quick links popover (the "Links" button on each row) ---------------- */
-  var linkPopEl = document.getElementById("linkPop"), linkBtnActive = null;
-  function closeLinkPop() {
-    if (!linkPopEl || linkPopEl.hidden) return;
-    linkPopEl.hidden = true;
-    if (linkBtnActive) linkBtnActive.classList.remove("on");
-    linkBtnActive = null;
-  }
-  function copyText(text) {
-    function fb() {
-      var t = document.createElement("textarea");
-      t.value = text; t.style.position = "fixed"; t.style.left = "-9999px";
-      document.body.appendChild(t); t.select();
-      try { document.execCommand("copy"); toast("Link copied"); } catch (e) { toast(text); }
-      document.body.removeChild(t);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast("Link copied"); }, fb);
-    else fb();
-  }
-  function showLinkPop(btn, id) {
-    var d = byId(id); if (!d) return;
-    var links = linksOf(d);
-    var html = '<h5>Download links</h5>' + (links.length ? links.map(function (l) {
-      var tor = isTorrent(l.url);
-      return '<div class="lrow"><span class="t">' +
-        '<span class="nm">' + (tor ? "Torrent" : "Direct link") + '</span>' +
-        '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">' + esc(l.url) + '</a>' +
-        '<span class="up">Updated ' + esc(l.updated ? fmtDateTime(l.updated) : "—") + '</span></span>' +
-        '<button class="btn small ghost" type="button" data-copy="' + esc(l.url) + '">Copy</button>' +
-        '<a class="btn small" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">Open</a>' +
-      '</div>';
-    }).join("") : '<div class="empty">No links on this document yet.</div>');
-    linkPopEl.innerHTML = html;
-    linkPopEl.hidden = false;
-    var r = btn.getBoundingClientRect(), w = linkPopEl.offsetWidth, h = linkPopEl.offsetHeight;
-    var left = Math.max(8, Math.min(r.left, window.innerWidth - w - 10));
-    var top = r.bottom + 6;
-    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
-    linkPopEl.style.left = left + "px";
-    linkPopEl.style.top = top + "px";
-    if (linkBtnActive && linkBtnActive !== btn) linkBtnActive.classList.remove("on");
-    linkBtnActive = btn; btn.classList.add("on");
-    Array.prototype.forEach.call(linkPopEl.querySelectorAll("[data-copy]"), function (b) {
-      b.addEventListener("click", function (ev) { ev.stopPropagation(); copyText(b.getAttribute("data-copy")); });
-    });
-  }
-  document.addEventListener("mousedown", function (e) {
-    if (linkPopEl.hidden) return;
-    if (e.target.closest("#linkPop") || e.target.closest(".linkbtn")) return;
-    closeLinkPop();
-  });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLinkPop(); });
-  window.addEventListener("scroll", closeLinkPop, true);
-  window.addEventListener("resize", closeLinkPop);
-
-  // Clicking a row opens that document in its own window (the Links button opens the popover).
+  // Clicking a row opens that document in its own window.
   stackEl.addEventListener("click", function (e) {
-    var lb = e.target.closest(".linkbtn");
-    if (lb) {
-      if (linkBtnActive === lb) closeLinkPop(); else showLinkPop(lb, lb.getAttribute("data-links"));
-      return;
-    }
     if (e.target.closest("a")) return;
     var tr = e.target.closest("tr[data-id]"); if (!tr) return;
     window.open(docHref(tr.getAttribute("data-id")), "_blank", "noopener");

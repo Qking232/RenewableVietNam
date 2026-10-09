@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — Hub · Library for Discussion
+  Revision history:
+    Rev 0.01  (2026-10-08)  First release. A browsable library of discussion topics on
+                            Viet Nam's energy transition. Each topic carries context, the
+                            questions worth arguing about, and reference sources. Visitors
+                            can filter/search, open a topic, write their own view (saved in
+                            the browser), add their own topics, and export/import everything
+                            as a JSON file. Light/dark theme, no build step, no dependencies.
+    Rev 0.02  (2026-10-08)  Shared store. Topics and discussion views can now be saved
+                            online for everyone (Supabase Postgres over REST), with an
+                            approval queue: submissions land 'pending' and only appear once
+                            approved. Paste the project URL + anon key in the config block
+                            to switch it on; leave them blank and the Hub runs local-only.
+    Rev 0.03  (2026-10-08)  Connected to the live Supabase project. Fixed the request
+                            headers for Supabase's new key format: sb_publishable_… keys
+                            are not JWTs and must be sent on the apikey header only —
+                            adding Authorization: Bearer made PostgREST return 401. Legacy
+                            anon JWTs still send both. Trailing slashes on the project URL
+                            are now tolerated.
+    Rev 0.04  (2026-10-08)  Auto-approve: submissions publish immediately, so the client
+                            no longer relies on a review step and refreshes the shelf
+                            after posting. Added a honeypot to both forms (bots fill it,
+                            the post is silently dropped). schema.sql switches the
+                            defaults/policies to auto-approve and carries an optional
+                            per-IP throttle for later.
+    Rev 0.05  (2026-10-08)  Stacked layout. Topics now stack in a single column beside a
+                            side-by-side preview: click a topic and its context, questions,
+                            references and discussion open in the panel to the right, instead
+                            of a centred pop-up. On phones the preview becomes a full-screen
+                            overlay with a back button. Nothing else changes — search, filters,
+                            add, export/import and the shared store all behave as before.
+    Rev 0.06  (2026-10-08)  Per-section line-break control and clearer actions. Each preview
+                            section (Context, Questions, References, Discussion) now carries a
+                            "wrap" button that switches its text between wrapped and a single
+                            unbroken line; the choice is remembered per browser. The study-only
+                            notice banner is removed. Add topic / Delete topic buttons now sit
+                            above the stack, and Delete works on any topic: your own are removed,
+                            built-ins are hidden locally, and shared ones are deleted for everyone
+                            where the database allows it (otherwise hidden locally). Advanced
+                            gains a "Restore hidden topics" button.
+    Rev 0.07  (2026-10-08)  Editable tags and a full-width layout. The tag shown beside a
+                            topic's number in the preview is now a dropdown: pick another
+                            theme (Solar, Wind, Grid & storage, …) and the topic re-tags
+                            everywhere — your own topics are edited in place; built-in and
+                            shared ones get a per-browser override. The page now stretches to
+                            the full width of the browser window instead of a 1120px column,
+                            so the stack and the preview both use the whole screen.
+    Rev 0.08  (2026-10-08)  Tags you can manage, images in the context, and tidier actions.
+                            Delete topic moves into the preview panel (next to the topic it
+                            acts on). Beside the tag dropdown, "＋ tag" creates a new tag and
+                            "− tag" deletes the one shown — topics using a deleted tag are
+                            re-tagged automatically, and built-in tags can be brought back from
+                            Advanced. The Context field now takes images: they are scaled down in
+                            the browser and shown with the topic (your own topics keep them
+                            locally; the shared shelf stores them in a new images column when
+                            the schema has been updated, and silently falls back when it has not).
+    Rev 0.09  (2026-10-09)  BlackBerry theme. The whole interface is restyled to BlackBerry's
+                            BB10 design language: black surfaces with a subtle radial wallpaper,
+                            the BlackBerry-blue accent (#0072BC / #0092CC), red notification
+                            accents, and sharp 2px rectangles in place of rounded cards and pills.
+                            Buttons are the BB10 rectangular gradient style with uppercase,
+                            letterspaced labels; the top bar carries a blue accent hairline; each
+                            topic shows a Hub-style account colour bar, and the selected topic gets
+                            a blue active-frame edge. Typography leans on a Slate-style stack with
+                            thin display headings. Dark is now the default theme (black), with the
+                            BB10 "bright" light theme still one tap away and the choice remembered.
+
+  Single self-contained file. No CDN, no build step. The shared store is optional —
+  with no keys configured, the page works entirely offline. Study / research only.
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hub — Library for Discussion · Renewable Viet Nam</title>
+<meta name="description" content="A library of discussion topics on Viet Nam's energy transition — context, key questions and reference sources, plus space to add your own topics." />
+
+<!-- Favicon: BlackBerry-style seven-dot berry (blue on black) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23000000'/%3E%3Cg fill='%230092CC'%3E%3Ccircle cx='32' cy='15' r='5'/%3E%3Ccircle cx='20' cy='24' r='5'/%3E%3Ccircle cx='44' cy='24' r='5'/%3E%3Ccircle cx='15' cy='36' r='5'/%3E%3Ccircle cx='49' cy='36' r='5'/%3E%3Ccircle cx='25' cy='47' r='5'/%3E%3Ccircle cx='39' cy='47' r='5'/%3E%3C/g%3E%3C/svg%3E" />
+
+<style>
+  /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
+     BlackBerry-blue accent (#0072BC → #0092CC), black surfaces, red notifications.
+     Light = BB10 "Bright"; dark = the signature black Hub theme. */
+  :root {
+    --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F2F4; --chip:#E7E7EA;
+    --text:#000000; --muted:#55555B; --faint:#8A8A90;
+    --line:rgba(0,0,0,.14); --line-strong:rgba(0,0,0,.34);
+    --accent:#0072BC; --accent-2:#0092CC; --accent-soft:rgba(0,114,188,.10); --accent-border:rgba(0,114,188,.50);
+    --notify:#C8102E;
+    --shadow:0 1px 2px rgba(0,0,0,.06);
+    --shadow-hover:0 8px 22px -12px rgba(0,114,188,.40), 0 1px 3px rgba(0,0,0,.12);
+    --radius:2px;
+    --btn-face:linear-gradient(180deg,#FFFFFF,#ECECEF);
+    --wall:none;
+  }
+  [data-theme="dark"] {
+    --bg:#000000; --surface:#0C0C0E; --surface-2:#141416; --chip:#1D1D21;
+    --text:#FFFFFF; --muted:#9DA0A6; --faint:#666A70;
+    --line:rgba(255,255,255,.15); --line-strong:rgba(255,255,255,.34);
+    --accent:#0092CC; --accent-2:#3FC0F5; --accent-soft:rgba(0,146,204,.16); --accent-border:rgba(0,146,204,.60);
+    --notify:#FF2D3F;
+    --shadow:0 1px 2px rgba(0,0,0,.70);
+    --shadow-hover:0 12px 34px -14px rgba(0,146,204,.50), 0 2px 8px rgba(0,0,0,.80);
+    --btn-face:linear-gradient(180deg,#1E1E22,#141416);
+    --wall:radial-gradient(1100px 620px at 50% -18%, #0E1F2B 0%, #050506 58%, #000 100%);
+  }
+
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; color:var(--text); line-height:1.55;
+    background-color:var(--bg); background-image:var(--wall); background-attachment:fixed;
+    font-family:"Slate Pro", "Slate", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    letter-spacing:-.004em; transition:background-color .35s ease, color .35s ease;
+  }
+  a { color:var(--accent); }
+  button { font:inherit; cursor:pointer; }
+  .mono { font-family:"SF Mono", SFMono-Regular, ui-monospace, Menlo, Monaco, Consolas, monospace; }
+  .wrap { width:100%; max-width:none; margin:0 auto; padding:0 26px; }
+
+  /* ---------------- Top bar ---------------- */
+  header.top { position:sticky; top:0; z-index:30; background:color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter:blur(12px) saturate(140%); -webkit-backdrop-filter:blur(12px) saturate(140%); border-bottom:1px solid var(--line); }
+  header.top::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg,#0072BC,#00A0E0 55%,#3FC0F5); }
+  .top-inner { display:flex; align-items:center; justify-content:space-between; gap:14px; min-height:58px; padding:8px 26px; max-width:none; margin:0 auto; }
+  .brand { display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--text); font-weight:700; font-size:11.5px; letter-spacing:.24em; text-transform:uppercase; }
+  .brand .dot { width:9px; height:9px; border-radius:2px; background:var(--accent-2); box-shadow:0 0 10px var(--accent-2); flex:0 0 auto; }
+  .top-actions { display:flex; align-items:center; gap:8px; }
+  .link-btn { text-decoration:none; color:var(--muted); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:7px 11px; border-radius:var(--radius); border:1px solid transparent; }
+  .link-btn:hover { color:var(--text); background:var(--chip); border-color:var(--line); }
+  .icon-btn { display:grid; place-items:center; width:36px; height:36px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--line); color:var(--muted); }
+  .icon-btn:hover { color:var(--text); border-color:var(--accent); }
+  .icon-btn svg { width:16px; height:16px; }
+
+  /* ---------------- Hero ---------------- */
+  main { padding-bottom:40px; }
+  .hero { padding:34px 0 6px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--faint); font-weight:700; margin:0 0 12px; }
+  .eyebrow::before { content:""; width:10px; height:10px; border-radius:1px; background:linear-gradient(135deg,#00A0E0,#0072BC); flex:0 0 auto; }
+  .hero h1 { font-size:clamp(28px, 4.4vw, 44px); font-weight:200; letter-spacing:-.02em; margin:0 0 10px; }
+  .hero p.lede { color:var(--muted); font-size:14.5px; max-width:64ch; margin:0 0 16px; font-weight:300; }
+  .stats { display:flex; gap:18px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); }
+  .stats b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* ---------------- Toolbar ---------------- */
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:22px 0 12px; }
+  .search { position:relative; flex:1 1 240px; min-width:200px; }
+  .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--faint); pointer-events:none; }
+  .search input { width:100%; padding:10px 12px 10px 36px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
+  .search input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); background:var(--surface); }
+  .btn { font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:10px 16px; border-radius:var(--radius); border:1px solid var(--line-strong); background:var(--btn-face); color:var(--text); white-space:nowrap; transition:border-color .2s ease, background .2s ease, transform .1s ease; }
+  .btn:hover { border-color:var(--accent); }
+  .btn:active { transform:translateY(1px); }
+  .btn.primary { background:linear-gradient(180deg,#00A0E0,#0072BC); border-color:#005A96; color:#fff; }
+  .btn.primary:hover { background:linear-gradient(180deg,#12B0EE,#0082CE); border-color:#005A96; }
+  .btn.ghost { background:transparent; border-color:transparent; color:var(--muted); }
+  .btn.ghost:hover { color:var(--text); background:var(--chip); border-color:var(--line); }
+
+  /* Theme chips */
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 20px; }
+  .chip { display:inline-flex; align-items:center; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:6px 11px; border-radius:var(--radius); border:1px solid var(--line); border-left:3px solid var(--tone, var(--line-strong)); background:transparent; color:var(--muted); }
+  .chip:hover { color:var(--text); border-color:var(--line-strong); border-left-color:var(--tone, var(--line-strong)); background:var(--surface-2); }
+  .chip.on { background:var(--accent-soft); border-color:var(--accent-border); border-left-color:var(--tone, var(--accent)); color:var(--accent); }
+  .chip .n { opacity:.6; margin-left:6px; font-variant-numeric:tabular-nums; }
+
+  /* ---------------- List bar — add / delete ---------------- */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:20px 0 11px; }
+  .listbar .count { font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:700; }
+  .listbar .count b { color:var(--text); font-variant-numeric:tabular-nums; }
+  .listbar-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn.small { font-size:11px; padding:8px 13px; border-radius:var(--radius); }
+  .btn.danger { color:var(--notify); border-color:rgba(200,16,46,.40); background:transparent; }
+  .btn.danger:hover:not(:disabled) { background:rgba(200,16,46,.10); border-color:var(--notify); }
+  .btn.danger:disabled { opacity:.4; cursor:not-allowed; }
+  [data-theme="dark"] .btn.danger { color:#ff6b78; border-color:rgba(255,45,63,.45); }
+
+  /* ---------------- Stacked list + side-by-side preview ---------------- */
+  .split { display:grid; grid-template-columns:minmax(320px, 25vw) minmax(0, 1fr); gap:22px; align-items:start; }
+  .split[hidden] { display:none; }
+  .stack { display:flex; flex-direction:column; gap:8px; }
+
+  .item {
+    position:relative; display:block; width:100%; text-align:left;
+    padding:13px 34px 14px 15px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--line);
+    box-shadow:var(--shadow); cursor:pointer; overflow:hidden;
+    transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1), border-color .25s ease, background-color .25s ease;
+  }
+  .item:hover { transform:translateX(2px); box-shadow:var(--shadow-hover); border-color:var(--line-strong); }
+  .item.on { border-color:var(--tone-border); background:var(--tone-soft); }
+  .item::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--tone); opacity:.85; transition:opacity .25s ease; }
+  .item:hover::before, .item.on::before { opacity:1; }
+  .item.on::after { content:""; position:absolute; right:0; top:0; bottom:0; width:3px; background:var(--accent); }
+  .item .row1 { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+  .item .idx { font-size:10.5px; letter-spacing:.14em; font-weight:700; color:var(--faint); font-variant-numeric:tabular-nums; }
+  .item .tdot { width:6px; height:6px; border-radius:50%; background:var(--tone); }
+  .item .tt { display:block; font-size:14px; font-weight:600; letter-spacing:-.008em; line-height:1.32; color:var(--text); }
+  .item .snippet { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin:5px 0 0; font-size:12px; color:var(--muted); font-weight:300; }
+  .item .metaline { display:flex; align-items:center; gap:8px; margin-top:9px; font-size:10.5px; color:var(--faint); }
+  .item .chev { position:absolute; right:13px; top:15px; color:var(--tone); opacity:.55; transition:opacity .25s ease, transform .25s ease; }
+  .item:hover .chev, .item.on .chev { opacity:1; transform:translateX(2px); }
+  .badge { align-self:flex-start; font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:3px 8px; border-radius:var(--radius); color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); }
+  .item .note-flag { color:var(--notify); font-weight:700; }
+  .item.custom .idx::after { content:" · YOURS"; color:var(--accent); letter-spacing:.06em; }
+  .item.shared .idx::after { content:" · SHARED"; color:var(--accent); letter-spacing:.06em; }
+
+  /* The preview that opens beside the stack */
+  .preview { position:sticky; top:74px; align-self:start; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .preview .placeholder { display:grid; place-items:center; justify-items:center; text-align:center; gap:7px; min-height:440px; padding:46px 26px; color:var(--muted); }
+  .preview .placeholder[hidden] { display:none; }
+  .preview .placeholder svg { width:30px; height:30px; color:var(--faint); margin-bottom:4px; }
+  .preview .placeholder .big { font-size:15px; font-weight:600; color:var(--text); }
+  .preview .placeholder .sub { font-size:12.5px; font-weight:300; max-width:36ch; }
+  .preview .close-label { display:none; }
+  @media (min-width:861px) {
+    .preview { max-height:calc(100vh - 92px); overflow-y:auto; }
+    .preview .sheet-top { position:sticky; top:0; background:var(--surface); z-index:1; }
+  }
+
+  .empty { text-align:center; color:var(--muted); padding:44px 20px; font-size:14px; border:1px dashed var(--line-strong); border-radius:var(--radius); }
+
+  /* ---------------- Advanced ---------------- */
+  details.adv { margin-top:34px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+  details.adv > summary { cursor:pointer; list-style:none; padding:14px 18px; font-size:12.5px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:9px; }
+  details.adv > summary::-webkit-details-marker { display:none; }
+  details.adv > summary::before { content:"▸"; color:var(--accent); font-size:11px; }
+  details.adv[open] > summary::before { content:"▾"; }
+  .adv-body { padding:0 18px 18px; font-size:12.5px; color:var(--muted); }
+  .adv-body h4 { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin:14px 0 6px; }
+  .adv-body h4:first-child { margin-top:4px; }
+  .adv-body ul { margin:0; padding-left:18px; }
+  .adv-body li { margin:3px 0; }
+  .adv-body .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+
+  /* ---------------- Add form ---------------- */
+  form.add { margin:0 0 20px; padding:18px; border:1px solid var(--accent-border); border-top:3px solid var(--accent); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); }
+  form.add h3 { margin:0 0 4px; font-size:15px; font-weight:600; }
+  form.add p.hint { margin:0 0 14px; font-size:12px; color:var(--muted); }
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:5px; }
+  .field input, .field select, .field textarea {
+    width:100%; padding:9px 11px; font:inherit; font-size:13px; color:var(--text);
+    background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none;
+  }
+  .field textarea { resize:vertical; min-height:64px; line-height:1.5; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+  .field.two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .field.two > div { min-width:0; }
+  .form-actions { display:flex; gap:10px; margin-top:4px; }
+  .imgdrop { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .imgdrop .hint { margin:0; }
+  .thumbs { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .thumb { position:relative; width:92px; height:92px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); background:var(--surface-2); }
+  .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb .x { position:absolute; top:3px; right:3px; width:20px; height:20px; border-radius:var(--radius); border:none; background:rgba(0,0,0,.62); color:#fff; font-size:13px; line-height:1; display:grid; place-items:center; }
+  .thumb .x:hover { background:rgba(0,0,0,.82); }
+
+  /* ---------------- Preview sheet ---------------- */
+  .sheet { width:100%; background:var(--surface); animation:fade .25s ease-out; }
+  .sheet[hidden] { display:none; }
+  @keyframes fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .sheet-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); box-shadow:inset 0 3px 0 var(--tone, var(--accent)); }
+  .sheet-top .left { display:flex; align-items:center; gap:10px; }
+  .sheet-top .idx { font-size:11px; letter-spacing:.14em; color:var(--faint); font-weight:600; }
+  /* Editable tag — a badge-shaped dropdown */
+  .tagedit { position:relative; display:inline-flex; align-items:center; }
+  .tagedit::after { content:"▾"; position:absolute; right:9px; font-size:7px; color:var(--tone); pointer-events:none; }
+  .tagselect { appearance:none; -webkit-appearance:none; font:inherit; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 22px 3px 10px; border-radius:var(--radius); color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); cursor:pointer; outline:none; }
+  .tagselect:focus { box-shadow:0 0 0 3px var(--accent-soft); }
+  .tagselect option { color:var(--text); background:var(--surface); }
+  .tagbtn { font-size:10.5px; font-weight:700; letter-spacing:.04em; padding:3px 9px; border-radius:var(--radius); border:1px solid var(--line); background:transparent; color:var(--muted); white-space:nowrap; }
+  .tagbtn:hover { color:var(--text); border-color:var(--line-strong); }
+  #delTagBtn:hover { color:#b91c1c; border-color:rgba(220,38,38,.4); }
+  .sheet-body { padding:20px; }
+  .sheet-body h2 { margin:0 0 10px; font-size:23px; font-weight:400; letter-spacing:-.02em; line-height:1.2; }
+  .sheet-body h4 { font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--faint); margin:22px 0 8px; font-weight:700; }
+  .sechead { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:22px 0 8px; }
+  .sechead h4 { margin:0; }
+  .wrapbtn { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:var(--radius); border:1px solid var(--line); background:transparent; color:var(--faint); white-space:nowrap; }
+  .wrapbtn:hover { color:var(--text); border-color:var(--line-strong); }
+  .wrapbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
+  .sheet-body p.context { margin:0; font-size:14px; color:var(--muted); font-weight:300; }
+  .ctximgs { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:10px; margin-top:12px; }
+  .ctximgs[hidden] { display:none; }
+  .ctximgs a { display:block; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); background:var(--surface-2); }
+  .ctximgs img { display:block; width:100%; height:150px; object-fit:cover; }
+  .qlist { margin:0; padding:0; list-style:none; counter-reset:q; }
+  .qlist li { position:relative; padding:8px 0 8px 30px; font-size:13.5px; border-top:1px solid var(--line); }
+  .qlist li:first-child { border-top:none; }
+  .qlist li::before { counter-increment:q; content:"Q" counter(q); position:absolute; left:0; top:8px; font-size:10px; font-weight:700; color:var(--accent); letter-spacing:.04em; }
+  .reflist { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; }
+  .reflist a { display:inline-flex; align-items:center; gap:6px; font-size:13px; text-decoration:none; }
+  .reflist a:hover { text-decoration:underline; }
+  .reflist .src { color:var(--faint); font-size:11.5px; }
+  .notes { width:100%; min-height:96px; padding:11px; font:inherit; font-size:13px; line-height:1.5; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; resize:vertical; }
+  .notes:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+
+  /* Discussion: shared views + composer */
+  .views { margin:0; padding:0; list-style:none; }
+  .views li { padding:10px 0; border-top:1px solid var(--line); }
+  .views li:first-child { border-top:none; }
+  .views .who { font-size:12.5px; font-weight:650; color:var(--text); }
+  .views .when { font-size:11px; color:var(--faint); margin-left:7px; }
+  .views .body { font-size:13.5px; color:var(--muted); margin-top:4px; white-space:pre-wrap; }
+  .views .none { color:var(--faint); font-size:12.5px; }
+
+  /* break-line off: hold each section's text on one unbroken line */
+  .context.nowrap { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .qlist.nowrap li { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .reflist.nowrap { flex-direction:row; flex-wrap:nowrap; overflow-x:auto; gap:14px; padding-bottom:3px; }
+  .reflist.nowrap a { white-space:nowrap; }
+  .views.nowrap li { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .views.nowrap .body { white-space:nowrap; }
+  .composer { margin-top:14px; }
+  .composer input[type=text], .composer textarea { width:100%; padding:10px 11px; font:inherit; font-size:13px; line-height:1.5; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
+  .composer input[type=text] { margin-bottom:8px; }
+  .composer textarea { min-height:78px; resize:vertical; }
+  .composer input:focus, .composer textarea:focus { border-color:var(--accent-border); box-shadow:0 0 0 3px var(--accent-soft); }
+  .composer-actions { display:flex; align-items:center; gap:10px; margin-top:9px; flex-wrap:wrap; }
+  .sheet-actions { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 20px; border-top:1px solid var(--line); }
+  .saved { font-size:11.5px; color:var(--faint); }
+
+  /* ---------------- Footer ---------------- */
+  footer.site { border-top:1px solid var(--line); margin-top:40px; padding:22px 0 30px; font-size:11.5px; color:var(--faint); }
+  .foot-inner { display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; align-items:center; }
+  footer.site a { color:var(--muted); text-decoration:none; }
+  footer.site a:hover { color:var(--accent); }
+
+  @media (max-width:860px) {
+    .split { grid-template-columns:1fr; }
+    .preview { position:fixed; inset:0; top:0; z-index:60; border:none; border-radius:0; overflow-y:auto; display:none; box-shadow:none; }
+    .preview.open { display:block; }
+    .preview .placeholder { display:none; }
+    .sheet { min-height:100%; }
+    .sheet-top { position:sticky; top:0; background:var(--surface); z-index:1; flex-wrap:wrap; }
+    .sheet-top .left { flex-wrap:wrap; }
+    .preview .close-x { display:none; }
+    .preview .close-label { display:inline; font-size:12.5px; font-weight:600; }
+    #closeBtn { width:auto; padding:0 12px; }
+  }
+  @media (max-width:560px) {
+    .hero { padding-top:24px; }
+    .field.two { grid-template-columns:1fr; }
+    .toolbar .btn { flex:1 1 auto; text-align:center; }
+    .sheet-body h2 { font-size:20px; }
+  }
+</style>
+
+<script>
+  // BlackBerry is a dark-first theme: use the saved choice, else the system
+  // preference, else dark.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('theme'); } catch (e) { /* storage may be unavailable */ }
+    if (t !== 'dark' && t !== 'light') {
+      var light = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      t = light ? 'light' : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="/"><span class="dot" aria-hidden="true"></span> Hub · Library for Discussion</a>
+      <div class="top-actions">
+        <a class="link-btn" href="/">← Home</a>
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light / dark theme">
+          <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero">
+      <p class="eyebrow">The Hub</p>
+      <h1>Library for Discussion</h1>
+      <p class="lede">
+        A shelf of the questions that shape Viet Nam's energy transition. Each topic gives you the
+        context, the arguments worth having, and where to check the facts. Open one, take a position,
+        and keep your own notes — or add a topic of your own.
+      </p>
+      <div class="stats">
+        <span><b id="statTopics">0</b> topics</span>
+        <span><b id="statThemes">0</b> themes</span>
+        <span><b id="statShared">0</b> shared</span>
+        <span><b id="statMine">0</b> added by you</span>
+        <span><b id="statNotes">0</b> with your notes</span>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+        <input type="search" id="q" placeholder="Search topics, questions or themes…" autocomplete="off" />
+      </label>
+      <button class="btn" id="exportBtn" type="button">Export</button>
+      <button class="btn" id="importBtn" type="button">Import</button>
+      <input type="file" id="fileInput" accept="application/json,.json" hidden />
+    </div>
+
+    <div class="chips" id="chips"></div>
+
+    <form class="add" id="addForm" hidden>
+      <h3>Add a topic</h3>
+      <p class="hint" id="addHint"></p>
+      <!-- honeypot: bots fill this, humans never see it -->
+      <input type="text" id="f-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+      <div class="field">
+        <label for="f-title">Title</label>
+        <input type="text" id="f-title" placeholder="e.g. Should rooftop solar be mandatory on new builds?" required />
+      </div>
+      <div class="field two">
+        <div>
+          <label for="f-theme">Theme</label>
+          <select id="f-theme"></select>
+        </div>
+        <div>
+          <label for="f-author">Who is asking (optional)</label>
+          <input type="text" id="f-author" placeholder="Your name or organisation" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-context">Context</label>
+        <textarea id="f-context" placeholder="A few sentences of background so others can weigh in."></textarea>
+        <div class="imgdrop" style="margin-top:9px">
+          <input type="file" id="f-images" accept="image/*" multiple hidden />
+          <button class="btn small" type="button" id="imgPick">＋ Add image</button>
+          <span class="hint" id="imgHint">JPG or PNG · up to 3, scaled down automatically</span>
+        </div>
+        <div class="thumbs" id="imgThumbs"></div>
+      </div>
+      <div class="field">
+        <label for="f-questions">Questions to discuss — one per line</label>
+        <textarea id="f-questions" placeholder="Why does this matter now?&#10;Who wins and who pays?&#10;What would change your mind?"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-refs">References — one per line, as “Label | https://…”</label>
+        <textarea id="f-refs" placeholder="IEA | https://www.iea.org&#10;Ministry of Industry and Trade | https://moit.gov.vn"></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" type="submit" id="fSubmit">Save topic</button>
+        <button class="btn ghost" type="button" id="cancelBtn">Cancel</button>
+      </div>
+      <p class="hint" id="fMsg" style="margin-top:10px" hidden></p>
+    </form>
+
+    <div class="listbar">
+      <span class="count">Topics <b id="listCount">0</b></span>
+      <div class="listbar-actions">
+        <button class="btn small primary" id="addBtn" type="button">＋ Add topic</button>
+      </div>
+    </div>
+
+    <div class="split" id="split">
+      <div class="stack" id="stack"></div>
+
+      <aside class="preview" id="previewPanel" aria-live="polite">
+        <div class="placeholder" id="placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M8.5 9.5h7M8.5 13h7M8.5 16.5h4"/></svg>
+          <span class="big">Pick a topic to preview</span>
+          <span class="sub">Click any topic in the stack and its context, questions, references and discussion open here, side by side.</span>
+        </div>
+
+        <div class="sheet" id="sheet" hidden>
+          <div class="sheet-top">
+            <div class="left">
+              <span class="idx mono" id="mIdx">01</span>
+              <label class="tagedit" title="Change this topic's tag">
+                <select class="tagselect" id="mTag" aria-label="Topic tag"></select>
+              </label>
+              <button class="tagbtn" id="newTagBtn" type="button" title="Create a new tag">＋ tag</button>
+              <button class="tagbtn" id="delTagBtn" type="button" title="Delete the tag shown">− tag</button>
+            </div>
+            <button class="icon-btn" id="closeBtn" type="button" aria-label="Close preview">
+              <svg class="close-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6 6 18"/></svg>
+              <span class="close-label">← Back to list</span>
+            </button>
+          </div>
+          <div class="sheet-body">
+            <h2 id="mTitle">Topic</h2>
+            <div class="sechead"><h4>Context</h4><button class="wrapbtn" data-wrap="context" type="button" aria-pressed="true" title="Toggle line breaks in this section">⏎ wrap</button></div>
+            <p class="context" id="mContext"></p>
+            <div class="ctximgs" id="mImages"></div>
+            <div class="sechead"><h4>Questions to discuss</h4><button class="wrapbtn" data-wrap="questions" type="button" aria-pressed="true" title="Toggle line breaks in this section">⏎ wrap</button></div>
+            <ul class="qlist" id="mQuestions"></ul>
+            <div class="sechead"><h4>References</h4><button class="wrapbtn" data-wrap="references" type="button" aria-pressed="true" title="Toggle line breaks in this section">⏎ wrap</button></div>
+            <ul class="reflist" id="mRefs"></ul>
+            <div id="mLocal">
+              <h4>Your view / notes</h4>
+              <textarea class="notes" id="mNotes" placeholder="Write your position, what you'd need to be convinced, or what to check next. Saved in this browser."></textarea>
+            </div>
+
+            <div id="mShared" hidden>
+              <div class="sechead"><h4>Discussion <span id="mVCount" class="mono" style="color:var(--faint)"></span></h4><button class="wrapbtn" data-wrap="discussion" type="button" aria-pressed="true" title="Toggle line breaks in this section">⏎ wrap</button></div>
+              <ul class="views" id="mViews"></ul>
+              <div class="composer">
+                <input type="text" id="v-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+                <input type="text" id="vAuthor" placeholder="Your name (optional)" autocomplete="off" />
+                <textarea id="vBody" placeholder="Add your view, or what you'd need to be convinced. It appears for everyone straight away."></textarea>
+                <div class="composer-actions">
+                  <button class="btn primary" id="postViewBtn" type="button">Post view</button>
+                  <span class="saved" id="vMsg"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn ghost danger" id="deleteTopicBtn" type="button">Delete topic</button>
+            <span class="saved" id="mSaved"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <p class="empty" id="empty" hidden>No topics match that search.</p>
+
+    <details class="adv">
+      <summary>Advanced — your data, sources &amp; reset</summary>
+      <div class="adv-body">
+        <h4>Where your work lives</h4>
+        <p style="margin:0">
+          The <strong>shared</strong> shelf is stored in a Postgres database (Supabase). Submissions publish
+          immediately — nothing is held back for review. If something unwanted appears, delete the row (or set its
+          <em>status</em> to <em>rejected</em>) in the Supabase table editor: a web UI, no commands.
+        </p>
+        <p style="margin:8px 0 0">
+          While the shared store is switched off, topics you add and the notes you write live only in this browser
+          (local storage). <strong>Export</strong> saves them to a JSON file and <strong>Import</strong> restores them on another device.
+        </p>
+
+        <h4>Reference sources used</h4>
+        <ul>
+          <li>Ministry of Industry and Trade (MOIT) &amp; the National Power Development Plan (PDP8)</li>
+          <li>EVN / EVNNPT — national utility and grid operator disclosures</li>
+          <li>IEA, IRENA, World Bank, ADB, UNDP, ILO — energy, finance and just-transition analysis</li>
+          <li>Global Energy Monitor, Ember, Global Wind Energy Council — asset and generation trackers</li>
+        </ul>
+
+        <h4>Tags</h4>
+        <p style="margin:0 0 4px">Change a topic's tag from the dropdown beside its number in the preview. <strong>＋ tag</strong> creates a new tag; <strong>− tag</strong> deletes the one shown, and any topic using it moves to another tag automatically. Tags you set on your own topics are saved with them; re-tagging a built-in or shared topic is remembered in this browser.</p>
+
+        <h4>Hidden topics &amp; tags</h4>
+        <p style="margin:0 0 4px">Deleting a built-in or shared topic hides it from your list in this browser, and deleting a built-in tag hides that tag. Bring them all back here (tags you created yourself are removed for good and are not restored).</p>
+        <div class="row">
+          <button class="btn ghost" id="restoreBtn" type="button">Restore hidden topics &amp; tags</button>
+        </div>
+
+        <h4>Reset</h4>
+        <p style="margin:0 0 4px">Clears the topics and notes you have added in this browser. The built-in library is unaffected.</p>
+        <div class="row">
+          <button class="btn ghost" id="resetBtn" type="button">Clear my topics &amp; notes</button>
+        </div>
+      </div>
+    </details>
+  </main>
+
+  <footer class="site">
+    <div class="wrap foot-inner">
+      <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · Hub · Rev 0.09</span>
+    </div>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================================
+     THEMES — key, label, and CSS tone variables
+     ========================================================================= */
+  var THEMES = [
+    { key:"solar",     label:"Solar" },
+    { key:"wind",      label:"Wind" },
+    { key:"grid",      label:"Grid & storage" },
+    { key:"policy",    label:"Policy" },
+    { key:"markets",   label:"Markets & tariffs" },
+    { key:"finance",   label:"Finance" },
+    { key:"lng",       label:"LNG & gas" },
+    { key:"nuclear",   label:"Nuclear" },
+    { key:"hydro",     label:"Hydropower" },
+    { key:"society",   label:"People & land" },
+    { key:"demand",    label:"Demand & data" },
+    { key:"transport", label:"Transport" }
+  ];
+  var TONES = {
+    solar:     ["#10b981", "rgba(16,185,129,.12)", "rgba(16,185,129,.35)"],
+    wind:      ["#06b6d4", "rgba(6,182,212,.12)",  "rgba(6,182,212,.35)"],
+    grid:      ["#0ea5e9", "rgba(14,165,233,.12)", "rgba(14,165,233,.35)"],
+    policy:    ["#8b5cf6", "rgba(139,92,246,.12)", "rgba(139,92,246,.35)"],
+    markets:   ["#6366f1", "rgba(99,102,241,.12)", "rgba(99,102,241,.35)"],
+    finance:   ["#f59e0b", "rgba(245,158,11,.14)", "rgba(245,158,11,.38)"],
+    lng:       ["#64748b", "rgba(100,116,139,.14)","rgba(100,116,139,.38)"],
+    nuclear:   ["#f43f5e", "rgba(244,63,94,.12)",  "rgba(244,63,94,.35)"],
+    hydro:     ["#3b82f6", "rgba(59,130,246,.12)", "rgba(59,130,246,.35)"],
+    society:   ["#14b8a6", "rgba(20,184,166,.12)", "rgba(20,184,166,.35)"],
+    demand:    ["#a855f7", "rgba(168,85,247,.12)", "rgba(168,85,247,.35)"],
+    transport: ["#22c55e", "rgba(34,197,94,.12)",  "rgba(34,197,94,.35)"]
+  };
+  /* Tag helpers. Built-in tags come from THEMES; visitors can also create their
+     own (customTags) and remove built-in ones (hiddenTags). */
+  var TAG_PALETTE = ["#ef4444","#f97316","#eab308","#22c55e","#14b8a6","#0ea5e9","#6366f1","#8b5cf6","#ec4899","#64748b","#84cc16","#06b6d4"];
+  function slugTag(s) {
+    var k = String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    return k || "tag";
+  }
+  function rgba(hex, a) {
+    var h = String(hex).replace("#", "");
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var n = parseInt(h, 16);
+    return "rgba(" + ((n>>16)&255) + "," + ((n>>8)&255) + "," + (n&255) + "," + a + ")";
+  }
+  function allTags() {
+    var list = [];
+    THEMES.forEach(function (th) {
+      if (hiddenTags.indexOf(th.key) < 0) list.push({ key:th.key, label:th.label, tone:TONES[th.key] });
+    });
+    customTags.forEach(function (t) { list.push(t); });
+    return list;
+  }
+  function tagOf(k) { var l = allTags(); for (var i=0;i<l.length;i++) if (l[i].key===k) return l[i]; return null; }
+  function isTagKey(k) { return !!tagOf(k); }
+  function themeLabel(k) { var t = tagOf(k); return t ? t.label : k; }
+  function toneOf(k) { var t = tagOf(k); return t ? t.tone : TONES.grid; }
+
+  /* =========================================================================
+     BUILD-IN LIBRARY — curated discussion topics
+     Each: theme, title, context, questions[], refs[{label,url}]
+     ========================================================================= */
+  var LIBRARY = [
+    { theme:"solar", n:"01", title:"Solar's boom years — and the curtailment question",
+      context:"Between 2018 and 2021 Viet Nam added well over 16 GW of solar, among the fastest build-outs in the region, pulled along by generous feed-in tariffs. Transmission did not keep pace, and in the following years large volumes of solar output were curtailed in the south-central provinces. What should the next wave learn from the first?",
+      questions:[
+        "Was the feed-in-tariff surge a success, or an expensive rush?",
+        "What would have prevented curtailment — more grid, more storage, or slower build?",
+        "Should the next wave be utility-scale farms, or rooftop self-consumption?"
+      ],
+      refs:[
+        { label:"IEA — Viet Nam energy profile", url:"https://www.iea.org" },
+        { label:"Global Energy Monitor — Global Solar Power Tracker", url:"https://globalenergymonitor.org" },
+        { label:"Ember — electricity data and analysis", url:"https://ember-climate.org" }
+      ]},
+
+    { theme:"wind", n:"02", title:"Offshore wind: from pipeline to steel",
+      context:"PDP8 sets a target of roughly 6 GW of offshore wind by 2030, with a far larger pipeline proposed. Almost none of it is under construction, held back by the absence of a final marine spatial plan, survey licensing and a bankable price mechanism.",
+      questions:[
+        "What must be fixed first — pricing, permitting, or transmission?",
+        "Can Viet Nam realistically deliver 6 GW by 2030, or is that aspirational?",
+        "Who should pay for the grid connection out at sea?"
+      ],
+      refs:[
+        { label:"Global Wind Energy Council", url:"https://gwec.net" },
+        { label:"IRENA — renewable capacity statistics", url:"https://www.irena.org" },
+        { label:"World Bank — offshore wind for emerging markets", url:"https://www.worldbank.org" }
+      ]},
+
+    { theme:"grid", n:"03", title:"Grid bottlenecks and the 500 kV backbone",
+      context:"Generation grew faster than the wires that carry it. New 500 kV and 220 kV circuits built by EVNNPT are the gate for nearly every new solar, wind or import project, and long delays ripple out into curtailment and investor risk.",
+      questions:[
+        "Should grid investment lead generation, or follow it?",
+        "Is private or PPP ownership of transmission realistic in Viet Nam?",
+        "How much new line can storage and flexible demand defer?"
+      ],
+      refs:[
+        { label:"EVN — Viet Nam Electricity", url:"https://www.evn.com.vn" },
+        { label:"MOIT — Ministry of Industry and Trade", url:"https://moit.gov.vn" },
+        { label:"ADB — energy sector work in Viet Nam", url:"https://www.adb.org" }
+      ]},
+
+    { theme:"policy", n:"04", title:"PDP8 and the road to 2030 and 2050",
+      context:"The National Power Development Plan VIII (approved 2023 and revised since) frames capacity, fuels and emissions out to 2050, including a net-zero-by-2050 ambition and a shift away from new coal. Delivery depends on annual implementation plans and on pricing reform.",
+      questions:[
+        "Is PDP8 consistent with net zero by 2050?",
+        "What does 'no new coal' mean for existing plants and the provinces that host them?",
+        "How should the plan be revised as costs, demand and technology shift?"
+      ],
+      refs:[
+        { label:"MOIT — power development planning", url:"https://moit.gov.vn" },
+        { label:"IEA — Viet Nam", url:"https://www.iea.org" },
+        { label:"UNDP Viet Nam — climate and energy", url:"https://www.undp.org" }
+      ]},
+
+    { theme:"markets", n:"05", title:"Direct PPAs, transitional tariffs and grid parity",
+      context:"Viet Nam is moving from fixed feed-in tariffs toward market mechanisms: a Direct Power Purchase Agreement (DPPA) pilot lets large buyers contract renewables directly, while transitional tariffs apply to projects that missed the FIT window.",
+      questions:[
+        "Will DPPAs unlock broad corporate demand, or only a handful of large buyers?",
+        "Are transitional tariffs high enough to keep projects bankable?",
+        "Should Viet Nam move fully to competitive auctions — and by when?"
+      ],
+      refs:[
+        { label:"MOIT — electricity market and DPPA", url:"https://moit.gov.vn" },
+        { label:"World Bank — energy transition finance", url:"https://www.worldbank.org" },
+        { label:"Reuters — Viet Nam energy coverage", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"finance", n:"06", title:"Paying for the transition: FDI, green finance and JETP",
+      context:"A large share of the build-out has been foreign-financed. The Just Energy Transition Partnership pledged billions, much of it concessional, but disbursement has been slow and weighted toward loans rather than grants.",
+      questions:[
+        "Is JETP delivering money, or mostly re-labelling existing lending?",
+        "Which reforms would make Viet Nam bankable for private capital at scale?",
+        "How should currency, offtake and policy risk be shared between investors and the state?"
+      ],
+      refs:[
+        { label:"World Bank — Viet Nam", url:"https://www.worldbank.org" },
+        { label:"ADB — Viet Nam", url:"https://www.adb.org" },
+        { label:"IEA — financing clean energy transitions", url:"https://www.iea.org" }
+      ]},
+
+    { theme:"lng", n:"07", title:"LNG-to-power: bridge fuel or stranded asset?",
+      context:"Several LNG import terminals and gas-to-power plants are planned or under construction. They are promoted as flexible capacity while renewables scale, but they lock in long-term contracts and exposure to imported fuel prices.",
+      questions:[
+        "Is LNG a necessary bridge or an expensive detour?",
+        "What happens to these assets if renewables and storage get cheaper faster than expected?",
+        "How do long-term LNG contracts square with a net-zero-by-2050 target?"
+      ],
+      refs:[
+        { label:"Global Energy Monitor — Global Gas Plant Tracker", url:"https://globalenergymonitor.org" },
+        { label:"IEA — gas and LNG markets", url:"https://www.iea.org" },
+        { label:"Reuters — energy markets", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"nuclear", n:"08", title:"The return of nuclear at Ninh Thuan",
+      context:"Viet Nam paused its Ninh Thuan nuclear programme in 2016 and revived it in the mid-2020s, with the two sites (Phuoc Dinh and Vinh Hai) written back into national planning. Nuclear offers firm, low-carbon power, but needs decades, very large capital and a strong independent regulator.",
+      questions:[
+        "Can Viet Nam build the safety, regulatory and workforce capacity in time?",
+        "Nuclear versus offshore wind plus storage — which delivers firm power sooner?",
+        "How should the public be engaged on siting and risk?"
+      ],
+      refs:[
+        { label:"IAEA — nuclear safety and infrastructure", url:"https://www.iaea.org" },
+        { label:"MOIT — nuclear power programme", url:"https://moit.gov.vn" },
+        { label:"World Nuclear Association", url:"https://world-nuclear.org" }
+      ]},
+
+    { theme:"hydro", n:"09", title:"Hydropower at its limits — and the Mekong question",
+      context:"Most large hydropower is already built, and climate-driven drought has cut output in some years. Upstream dams on the Mekong change flow, sediment and downstream livelihoods, while small hydro and pumped storage are the remaining room to grow.",
+      questions:[
+        "Is Viet Nam's hydropower potential largely tapped out?",
+        "How should transboundary Mekong impacts weigh against domestic power needs?",
+        "What role could pumped-storage hydro play as a battery for renewables?"
+      ],
+      refs:[
+        { label:"Mekong River Commission", url:"https://www.mrcmekong.org" },
+        { label:"Global Energy Monitor — Global Hydropower Tracker", url:"https://globalenergymonitor.org" },
+        { label:"IEA — hydropower", url:"https://www.iea.org" }
+      ]},
+
+    { theme:"society", n:"10", title:"Land, people and a just transition",
+      context:"Utility-scale solar and wind need land, and land is contested. Resettlement, lost farmland, benefit-sharing and local jobs shape whether a project is fair — and, quite often, whether it gets built on schedule.",
+      questions:[
+        "Who benefits locally when a wind farm or solar park is built?",
+        "How can land for energy and land for food be balanced?",
+        "What does a 'just transition' mean for coal workers and their communities?"
+      ],
+      refs:[
+        { label:"UNDP Viet Nam — just transition", url:"https://www.undp.org" },
+        { label:"World Bank — social dimensions of the energy transition", url:"https://www.worldbank.org" },
+        { label:"ILO — green jobs and just transition", url:"https://www.ilo.org" }
+      ]},
+
+    { theme:"demand", n:"11", title:"Data centres, AI and the next wave of demand",
+      context:"Viet Nam's digital economy and a regional AI build-out are creating new large power users, including data centres in Ho Chi Minh City, Hanoi and Hoa Lac. Their round-the-clock load is both an opportunity for clean procurement and a challenge for a still fossil-heavy grid.",
+      questions:[
+        "Should large data centres be required to procure clean power?",
+        "Is the grid ready for gigawatt-scale compute demand?",
+        "Do data centres crowd out renewables, or crowd in new clean capacity?"
+      ],
+      refs:[
+        { label:"IEA — data centres and electricity demand", url:"https://www.iea.org" },
+        { label:"Viettel IDC — Viet Nam data centre market", url:"https://viettelidc.com.vn" },
+        { label:"Reuters — technology and energy", url:"https://www.reuters.com" }
+      ]},
+
+    { theme:"transport", n:"12", title:"EVs and the charging map",
+      context:"Electric two-wheelers already dominate Viet Nam's roads and electric car sales are climbing quickly, led by domestic manufacturer VinFast. Charging infrastructure and the grid impact of a fast-electrifying fleet are the next big questions.",
+      questions:[
+        "Will charging arrive fast enough to keep pace with EV sales?",
+        "Should charging be powered by renewables, or by today's grid mix?",
+        "How do e-motorcycles change the transition compared with cars?"
+      ],
+      refs:[
+        { label:"IEA — global EV outlook", url:"https://www.iea.org" },
+        { label:"VinFast", url:"https://vinfastauto.com" },
+        { label:"ADB — sustainable transport", url:"https://www.adb.org" }
+      ]}
+  ];
+
+  /* =========================================================================
+     STATE
+     ========================================================================= */
+  var TOPIC_KEY       = "rvn_hub_topics";
+  var NOTE_KEY        = "rvn_hub_notes";
+  var HIDDEN_KEY      = "rvn_hub_hidden";
+  var WRAP_KEY        = "rvn_hub_wrap";
+  var THEMES_KEY      = "rvn_hub_themes";
+  var TAGS_KEY        = "rvn_hub_tags";
+  var HIDDEN_TAGS_KEY = "rvn_hub_tags_hidden";
+
+  var userTopics = load(TOPIC_KEY, []);
+  var notes = load(NOTE_KEY, {});
+  var hidden = load(HIDDEN_KEY, []);          // ids removed from this browser's list
+  var wrap = load(WRAP_KEY, {});              // section -> keep line breaks on/off
+  var themeOverrides = load(THEMES_KEY, {});  // id -> re-tagged theme (built-in / shared)
+  var customTags = load(TAGS_KEY, []);        // tags created in this browser
+  var hiddenTags = load(HIDDEN_TAGS_KEY, []); // built-in tags removed here
+  var activeTheme = "all";
+  var query = "";
+  var openId = null;
+  var MAX_IMAGES = 3;                         // context images per topic
+
+  /* -------------------------------------------------------------------------
+     BACKEND — Supabase. Paste your two project values to switch sharing on.
+     Leave either blank and the Hub runs in local-only mode (library + your
+     browser). The publishable key (sb_publishable_…) is public by design:
+     row-level security decides what it may do (here: insert only, and read
+     only approved rows). Never put a secret key (sb_secret_…) here.
+     ------------------------------------------------------------------------- */
+  var SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
+  SUPABASE_URL = String(SUPABASE_URL).replace(/\/+$/, "");   // tolerate a pasted trailing slash
+  var dbOn = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  var AUTO_APPROVE = true;      // submissions publish immediately — no review queue
+
+  var sharedTopics = [];        // approved topics from the shared store
+  var viewsCache = {};          // topicId -> approved views
+
+  function load(key, fallback) {
+    try {
+      var v = JSON.parse(localStorage.getItem(key) || "null");
+      if (key === TOPIC_KEY || key === HIDDEN_KEY || key === TAGS_KEY || key === HIDDEN_TAGS_KEY) return Array.isArray(v) ? v : fallback;
+      return (v && typeof v === "object" && !Array.isArray(v)) ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function persist() {
+    try {
+      localStorage.setItem(TOPIC_KEY, JSON.stringify(userTopics));
+      localStorage.setItem(NOTE_KEY, JSON.stringify(notes));
+      localStorage.setItem(HIDDEN_KEY, JSON.stringify(hidden));
+      localStorage.setItem(WRAP_KEY, JSON.stringify(wrap));
+      localStorage.setItem(THEMES_KEY, JSON.stringify(themeOverrides));
+      localStorage.setItem(TAGS_KEY, JSON.stringify(customTags));
+      localStorage.setItem(HIDDEN_TAGS_KEY, JSON.stringify(hiddenTags));
+    } catch (e) { /* storage unavailable — keep working in memory */ }
+  }
+
+  // The shelf, minus anything hidden here, with any re-tagged theme applied.
+  function all() {
+    return LIBRARY.concat(sharedTopics, userTopics).filter(function (t) {
+      return hidden.indexOf(idOf(t)) < 0;
+    }).map(function (t) {
+      var ov = themeOverrides[idOf(t)];
+      if (!ov || !isTagKey(ov) || ov === t.theme) return t;
+      var c = {}; for (var k in t) if (Object.prototype.hasOwnProperty.call(t, k)) c[k] = t[k];
+      c.theme = ov;
+      return c;
+    });
+  }
+  function idOf(t) { return t.id || ("lib-" + t.n); }
+  function byId(id) {
+    var a = all();
+    for (var i=0;i<a.length;i++) { if (idOf(a[i]) === id) return a[i]; }
+    return null;
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+
+  /* =========================================================================
+     SHARED STORE — read approved rows, write pending rows (Supabase REST)
+     ========================================================================= */
+  function sbHeaders(extra) {
+    var h = { apikey:SUPABASE_ANON_KEY, "Content-Type":"application/json" };
+    // New-style keys (sb_publishable_… / sb_secret_…) are not JWTs, so they go on
+    // the apikey header only — sending one as a Bearer token fails. Legacy
+    // anon/service_role JWTs (eyJ…) still need the Authorization header.
+    if (SUPABASE_ANON_KEY.indexOf("sb_") !== 0) h.Authorization = "Bearer " + SUPABASE_ANON_KEY;
+    if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
+    return h;
+  }
+  function sbGet(table, params) {
+    return fetch(SUPABASE_URL + "/rest/v1/" + table + "?" + params, { headers:sbHeaders() })
+      .then(function (r) { if (!r.ok) throw new Error("GET " + table + " → " + r.status); return r.json(); });
+  }
+  function sbPost(table, row) {
+    // return=minimal: we may not read the row back (it is still 'pending').
+    return fetch(SUPABASE_URL + "/rest/v1/" + table, {
+      method:"POST",
+      headers:sbHeaders({ Prefer:"return=minimal" }),
+      body:JSON.stringify(row)
+    }).then(function (r) { if (!r.ok) throw new Error("POST " + table + " → " + r.status); return true; });
+  }
+  function sbDelete(table, id) {
+    // Only rows the publishable key is allowed to remove will go; a 401/403
+    // (no delete policy) just means the topic is hidden in this browser instead.
+    return fetch(SUPABASE_URL + "/rest/v1/" + table + "?id=eq." + encodeURIComponent(id), {
+      method:"DELETE",
+      headers:sbHeaders({ Prefer:"return=minimal" })
+    }).then(function (r) { if (!r.ok) throw new Error("DELETE " + table + " → " + r.status); return true; });
+  }
+
+  function normTheme(k) { return isTagKey(k) ? k : "grid"; }
+  function normImages(imgs) {
+    if (!Array.isArray(imgs)) return [];
+    return imgs.filter(function (s) { return typeof s === "string" && /^data:image\//i.test(s); }).slice(0, MAX_IMAGES);
+  }
+  function normRefs(refs) {
+    if (!Array.isArray(refs)) return [];
+    return refs.map(function (r) {
+      if (typeof r === "string") {
+        var p = r.split("|");
+        if (p.length >= 2) return { label:p[0].trim(), url:p.slice(1).join("|").trim() };
+        var s = r.trim();
+        return { label:s, url:/^https?:\/\//i.test(s) ? s : "" };
+      }
+      if (r && typeof r === "object") return { label:String(r.label || r.url || ""), url:String(r.url || "") };
+      return null;
+    }).filter(Boolean);
+  }
+  function fmtDate(s) {
+    try { return new Date(s).toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" }); }
+    catch (e) { return ""; }
+  }
+
+  function loadShared() {
+    if (!dbOn) return;
+    // select=* so the query keeps working before/after the optional images column exists.
+    sbGet("hub_topics", "status=eq.approved&select=*&order=created_at.asc")
+      .then(function (rows) {
+        sharedTopics = rows.filter(function (r) { return r && r.title; }).map(function (r) {
+          return {
+            id:"s-" + r.id, shared:true, n:null,
+            theme:normTheme(r.theme),
+            title:String(r.title),
+            author:r.author ? String(r.author) : "",
+            context:r.context ? String(r.context) : "",
+            questions:Array.isArray(r.questions) ? r.questions.map(String) : [],
+            refs:normRefs(r.refs),
+            images:normImages(r.images)
+          };
+        });
+        render();
+      })
+      .catch(function (e) { console.warn("Hub: shared topics unavailable —", e.message); });
+  }
+
+  function renderViews(topicId) {
+    var rows = viewsCache[topicId] || [];
+    document.getElementById("mVCount").textContent = rows.length ? "(" + rows.length + ")" : "";
+    document.getElementById("mViews").innerHTML = rows.length ? rows.map(function (v) {
+      return '<li><span class="who">' + esc(v.author || "Anonymous") + '</span>' +
+             '<span class="when">' + esc(fmtDate(v.created_at)) + '</span>' +
+             '<div class="body">' + esc(v.body) + '</div></li>';
+    }).join("") : '<li class="none">No views yet — be the first.</li>';
+  }
+  function loadViews(topicId) {
+    document.getElementById("mViews").innerHTML = '<li class="none">Loading…</li>';
+    sbGet("hub_views", "topic_id=eq." + encodeURIComponent(topicId) + "&status=eq.approved&select=id,created_at,author,body&order=created_at.asc")
+      .then(function (rows) { viewsCache[topicId] = rows; renderViews(topicId); })
+      .catch(function (e) {
+        document.getElementById("mViews").innerHTML = '<li class="none">Could not load the discussion.</li>';
+        console.warn("Hub: views unavailable —", e.message);
+      });
+  }
+
+  /* =========================================================================
+     THEME TOKENS — applied inline so no dynamic classes are needed
+     ========================================================================= */
+  function toneVars(theme) {
+    var t = toneOf(theme);
+    return "--tone:" + t[0] + ";--tone-soft:" + t[1] + ";--tone-border:" + t[2] + ";";
+  }
+
+  /* =========================================================================
+     RENDER
+     ========================================================================= */
+  var stackEl = document.getElementById("stack");
+  var splitEl = document.getElementById("split");
+  var emptyEl = document.getElementById("empty");
+  var chipsEl = document.getElementById("chips");
+  var listCountEl = document.getElementById("listCount");
+  var deleteTopicBtn = document.getElementById("deleteTopicBtn");
+
+  /* ---------------- Per-section line breaks ---------------- */
+  var WRAP_SECTIONS = { context:"mContext", questions:"mQuestions", references:"mRefs", discussion:"mViews" };
+  function wrapOn(k) { return wrap[k] !== false; }
+  function applyWrap() {
+    Object.keys(WRAP_SECTIONS).forEach(function (k) {
+      var el = document.getElementById(WRAP_SECTIONS[k]);
+      if (el) el.classList.toggle("nowrap", !wrapOn(k));
+      var btn = document.querySelector('.wrapbtn[data-wrap="' + k + '"]');
+      if (btn) { btn.classList.toggle("on", wrapOn(k)); btn.setAttribute("aria-pressed", String(wrapOn(k))); }
+    });
+  }
+
+  function renderChips() {
+    var list = all();
+    var counts = {}; list.forEach(function (t) { counts[t.theme] = (counts[t.theme]||0)+1; });
+    var html = '<button class="chip' + (activeTheme==="all"?" on":"") + '" data-t="all" type="button">All topics<span class="n">' + list.length + '</span></button>';
+    allTags().forEach(function (th) {
+      if (!counts[th.key]) return;
+      html += '<button class="chip' + (activeTheme===th.key?" on":"") + '" data-t="' + th.key + '" type="button" style="' + toneVars(th.key) + '">' +
+        esc(th.label) + '<span class="n">' + counts[th.key] + '</span></button>';
+    });
+    chipsEl.innerHTML = html;
+  }
+
+  function matches(t) {
+    if (activeTheme !== "all" && t.theme !== activeTheme) return false;
+    if (!query) return true;
+    var hay = [t.title, t.context, themeLabel(t.theme), (t.questions||[]).join(" "), (t.refs||[]).map(function(r){return r.label;}).join(" "), t.author||""].join(" ").toLowerCase();
+    return hay.indexOf(query) > -1;
+  }
+
+  // Number entries by display order: editorial shelf, then shared, then yours.
+  function assignNumbers() {
+    var next = LIBRARY.length;
+    sharedTopics.forEach(function (t) { next++; t.n = String(next).padStart(2, "0"); });
+    userTopics.forEach(function (t) { next++; t.n = String(next).padStart(2, "0"); });
+  }
+
+  function render() {
+    assignNumbers();
+    renderChips();
+    var list = all().filter(matches);
+    stackEl.innerHTML = list.map(function (t) {
+      var id = idOf(t);
+      var hasNote = !!(notes[id] && notes[id].trim());
+      var nq = (t.questions||[]).length;
+      var nr = (t.refs||[]).length;
+      var cls = t.shared ? " shared" : (t.id ? " custom" : "");
+      var open = (id === openId) ? " on" : "";
+      return '<button class="item' + cls + open + '" data-id="' + esc(id) + '" type="button" aria-pressed="' + (id===openId) + '" style="' + toneVars(t.theme) + '">' +
+        '<span class="chev" aria-hidden="true">›</span>' +
+        '<span class="row1"><span class="idx mono">' + esc(t.n) + '</span><span class="tdot"></span>' +
+          '<span class="badge">' + esc(themeLabel(t.theme)) + '</span></span>' +
+        '<span class="tt">' + esc(t.title) + '</span>' +
+        '<span class="snippet">' + esc(t.context) + '</span>' +
+        '<span class="metaline">' +
+          '<span>' + nq + ' question' + (nq===1?"":"s") + '</span>' +
+          (nr ? '<span>· ' + nr + ' ref' + (nr===1?"":"s") + '</span>' : '') +
+          (hasNote ? '<span class="note-flag">· your note</span>' : '') +
+        '</span>' +
+      '</button>';
+    }).join("");
+
+    splitEl.hidden = list.length === 0;
+    emptyEl.hidden = list.length > 0;
+    listCountEl.textContent = all().length;
+
+    var l = all();
+    document.getElementById("statTopics").textContent = l.length;
+    var used = {}; l.forEach(function (t) { used[t.theme] = 1; });
+    document.getElementById("statThemes").textContent = Object.keys(used).length;
+    document.getElementById("statMine").textContent = userTopics.length;
+    document.getElementById("statShared").textContent = sharedTopics.length;
+    document.getElementById("statNotes").textContent = Object.keys(notes).filter(function (k) {
+      return notes[k] && notes[k].trim();
+    }).length;
+  }
+
+  /* =========================================================================
+     PREVIEW — read a topic, write your view
+     ========================================================================= */
+  var previewEl = document.getElementById("previewPanel");
+  var sheetEl = document.getElementById("sheet");
+  var placeholderEl = document.getElementById("placeholder");
+  var notesEl = document.getElementById("mNotes");
+  var savedEl = document.getElementById("mSaved");
+  var saveTimer = null;
+
+  function openTopic(id) {
+    var t = byId(id);
+    if (!t) return;
+    openId = id;
+
+    sheetEl.setAttribute("style", toneVars(t.theme));
+    document.getElementById("mIdx").textContent = t.n;
+    document.getElementById("mTag").value = t.theme;
+    document.getElementById("mTitle").textContent = t.title;
+    document.getElementById("mContext").textContent = t.context || "";
+    if (t.author) document.getElementById("mContext").textContent += "  — raised by " + t.author + ".";
+
+    var imgs = normImages(t.images);
+    var imgBox = document.getElementById("mImages");
+    imgBox.innerHTML = imgs.map(function (src, i) {
+      return '<a href="' + src + '" target="_blank" rel="noopener noreferrer"><img src="' + src + '" alt="Context image ' + (i+1) + '" loading="lazy" /></a>';
+    }).join("");
+    imgBox.hidden = imgs.length === 0;
+
+    document.getElementById("mQuestions").innerHTML = (t.questions||[]).map(function (q) {
+      return "<li>" + esc(q) + "</li>";
+    }).join("") || "<li style='border:none;color:var(--faint)'>No questions added yet.</li>";
+
+    document.getElementById("mRefs").innerHTML = (t.refs||[]).map(function (r) {
+      var url = String(r.url||"");
+      var safe = /^https?:\/\//i.test(url) ? url : "#";
+      return '<li><a href="' + esc(safe) + '" target="_blank" rel="noopener noreferrer">' + esc(r.label || url) +
+        ' <span class="src">↗</span></a></li>';
+    }).join("") || "<li style='color:var(--faint)'>No references added yet.</li>";
+
+    notesEl.value = notes[id] || "";
+    savedEl.textContent = notes[id] ? "Saved in this browser." : "";
+
+    applyWrap();
+
+    // With the backend on, the shared discussion replaces the private note box.
+    document.getElementById("mLocal").hidden = dbOn;
+    document.getElementById("mShared").hidden = !dbOn;
+    if (dbOn) {
+      document.getElementById("vMsg").textContent = "";
+      document.getElementById("vAuthor").value = "";
+      document.getElementById("vBody").value = "";
+      loadViews(id);
+    }
+
+    placeholderEl.hidden = true;
+    sheetEl.hidden = false;
+    previewEl.classList.add("open");
+    render();   // mark the selected row in the stack
+  }
+
+  function closeTopic() {
+    sheetEl.hidden = true;
+    placeholderEl.hidden = false;
+    previewEl.classList.remove("open");
+    openId = null;
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+    render();   // clear the selection and refresh the notes counter
+  }
+
+  /* Apply a tag to a topic object: your own are edited in place, everything
+     else gets a per-browser override. */
+  function assignTheme(t, theme) {
+    if (t.id && !t.shared) {
+      for (var i=0;i<userTopics.length;i++) if (userTopics[i].id === t.id) userTopics[i].theme = theme;
+    } else {
+      themeOverrides[idOf(t)] = theme;
+    }
+  }
+
+  /* Re-tag the topic the preview is showing. */
+  function setTheme(id, theme) {
+    if (!isTagKey(theme)) return;
+    var t = byId(id);
+    if (!t) return;
+    assignTheme(t, theme);
+    persist();
+    openTopic(id);   // refresh the tone, the tag and the stack row
+  }
+
+  /* Rebuild both tag dropdowns from the current tag list. */
+  function rebuildTagSelects() {
+    var opts = allTags().map(function (th) {
+      return '<option value="' + esc(th.key) + '">' + esc(th.label) + '</option>';
+    }).join("");
+    var a = document.getElementById("f-theme"), keepA = a.value;
+    a.innerHTML = opts;
+    if (keepA && isTagKey(keepA)) a.value = keepA;
+    var b = document.getElementById("mTag"), keepB = b.value;
+    b.innerHTML = opts;
+    if (keepB && isTagKey(keepB)) b.value = keepB;
+  }
+
+  /* Create a tag, reusing an existing one of the same name. Returns its key. */
+  function createTag(label) {
+    label = String(label || "").trim();
+    if (!label) return null;
+    var key = slugTag(label);
+    if (isTagKey(key)) return key;
+    var base = key, n = 2;
+    while (allTags().some(function (t) { return t.key === key; })) key = base + "-" + (n++);
+    var hex = TAG_PALETTE[customTags.length % TAG_PALETTE.length];
+    customTags.push({ key:key, label:label, tone:[hex, rgba(hex,.12), rgba(hex,.35)] });
+    persist();
+    rebuildTagSelects();
+    render();
+    return key;
+  }
+
+  /* Delete a tag; any topic using it moves to another tag. */
+  function deleteTag(key) {
+    if (!isTagKey(key)) return;
+    var tags = allTags();
+    if (tags.length <= 1) { alert("Keep at least one tag."); return; }
+    var fb = tags.filter(function (t) { return t.key !== key; })[0].key;
+    if (!confirm('Delete the tag "' + themeLabel(key) + '"? Any topic using it moves to "' + themeLabel(fb) + '".')) return;
+
+    LIBRARY.concat(sharedTopics, userTopics).forEach(function (t) {
+      var eff = themeOverrides[idOf(t)] || t.theme;
+      if (eff === key) assignTheme(t, fb);
+    });
+    var idx = -1;
+    for (var j=0;j<customTags.length;j++) if (customTags[j].key === key) idx = j;
+    if (idx >= 0) customTags.splice(idx, 1);
+    else if (hiddenTags.indexOf(key) < 0) hiddenTags.push(key);
+
+    persist();
+    rebuildTagSelects();
+    if (openId && byId(openId)) openTopic(openId); else render();
+  }
+
+  document.getElementById("newTagBtn").addEventListener("click", function () {
+    var name = prompt("Name for the new tag (e.g. Geothermal):");
+    if (name === null) return;
+    var key = createTag(name);
+    if (key && openId) setTheme(openId, key);   // tag the topic you are looking at
+  });
+  document.getElementById("delTagBtn").addEventListener("click", function () {
+    var key = document.getElementById("mTag").value;
+    if (key) deleteTag(key);
+  });
+
+  notesEl.addEventListener("input", function () {
+    if (!openId) return;
+    var v = notesEl.value;
+    if (v.trim()) notes[openId] = v; else delete notes[openId];
+    persist();
+    savedEl.textContent = "Saved.";
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () { savedEl.textContent = notes[openId] ? "Saved in this browser." : ""; }, 1200);
+  });
+
+  /* Delete the selected topic. Yours are removed; built-in and shared topics
+     are hidden in this browser (a shared one is also deleted for everyone
+     where the database's delete policy allows it). */
+  deleteTopicBtn.addEventListener("click", function () {
+    var t = byId(openId);
+    if (!t) return;
+    var isLocal = !!(t.id && !t.shared);
+    var msg = t.shared
+      ? 'Remove "' + t.title + '" from the shared shelf for everyone?'
+      : (isLocal
+          ? 'Delete your topic "' + t.title + '"?'
+          : 'Remove "' + t.title + '" from your list? The built-in topic stays in the shelf for other visitors.');
+    if (!confirm(msg)) return;
+
+    var tid = idOf(t);
+    closeTopic();
+    if (isLocal) {
+      userTopics = userTopics.filter(function (u) { return u.id !== t.id; });
+      delete notes[t.id];
+    } else {
+      if (t.shared) {
+        sharedTopics = sharedTopics.filter(function (s) { return idOf(s) !== tid; });
+        if (dbOn) sbDelete("hub_topics", String(tid).replace(/^s-/, "")).catch(function (e) {
+          console.warn("Hub: could not delete the shared row —", e.message);
+        });
+      }
+      hidden.push(tid);
+    }
+    persist();
+    render();
+  });
+
+  /* Per-section line-break toggle in the preview. */
+  previewEl.addEventListener("click", function (e) {
+    var b = e.target.closest(".wrapbtn");
+    if (!b) return;
+    var k = b.getAttribute("data-wrap");
+    wrap[k] = !wrapOn(k);
+    persist();
+    applyWrap();
+  });
+
+  /* =========================================================================
+     ADD TOPIC
+     ========================================================================= */
+  var form = document.getElementById("addForm");
+  var themeSel = document.getElementById("f-theme");
+
+  // Editable tag in the preview — same tag list as the add form.
+  var tagSel = document.getElementById("mTag");
+  tagSel.addEventListener("change", function () { if (openId) setTheme(openId, tagSel.value); });
+  rebuildTagSelects();
+
+  /* ---------------- Context images ---------------- */
+  var pendingImages = [];
+  var imgInput = document.getElementById("f-images");
+  var imgThumbs = document.getElementById("imgThumbs");
+  var imgHint = document.getElementById("imgHint");
+  var MAX_DIM = 1280, MAX_CHARS = 600000;
+
+  function scaleImage(file, cb) {
+    var reader = new FileReader();
+    reader.onerror = function () { cb(null); };
+    reader.onload = function () {
+      var img = new Image();
+      img.onerror = function () { cb(null); };
+      img.onload = function () {
+        var isPng = /png/i.test(file.type);
+        var maxDim = isPng ? 900 : MAX_DIM;
+        var sw = img.width || maxDim, sh = img.height || maxDim;
+        var sc = Math.min(1, maxDim / Math.max(sw, sh));
+        var w = Math.max(1, Math.round(sw * sc)), h = Math.max(1, Math.round(sh * sc));
+        var cv = document.createElement("canvas");
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        var type = isPng ? "image/png" : "image/jpeg";
+        var q = 0.82, out = cv.toDataURL(type, q);
+        while (out.length > MAX_CHARS && !isPng && q > 0.42) { q -= 0.13; out = cv.toDataURL("image/jpeg", q); }
+        cb(out);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderThumbs() {
+    imgThumbs.innerHTML = pendingImages.map(function (src, i) {
+      return '<span class="thumb"><img src="' + src + '" alt="Image ' + (i+1) + '" />' +
+        '<button class="x" type="button" data-i="' + i + '" aria-label="Remove image">✕</button></span>';
+    }).join("");
+    var left = MAX_IMAGES - pendingImages.length;
+    imgHint.textContent = left > 0
+      ? "JPG or PNG · up to " + MAX_IMAGES + " (" + left + " left), scaled down automatically"
+      : "That is the maximum of " + MAX_IMAGES + " images.";
+  }
+
+  document.getElementById("imgPick").addEventListener("click", function () { imgInput.click(); });
+  imgInput.addEventListener("change", function () {
+    var files = Array.prototype.slice.call(imgInput.files || []).slice(0, MAX_IMAGES - pendingImages.length);
+    if (!files.length) { imgInput.value = ""; return; }
+    var done = 0;
+    files.forEach(function (f) {
+      scaleImage(f, function (data) {
+        if (data) pendingImages.push(data);
+        if (++done === files.length) { renderThumbs(); imgInput.value = ""; }
+      });
+    });
+  });
+  imgThumbs.addEventListener("click", function (e) {
+    var b = e.target.closest(".x");
+    if (!b) return;
+    pendingImages.splice(Number(b.getAttribute("data-i")), 1);
+    renderThumbs();
+  });
+  renderThumbs();
+
+  document.getElementById("addBtn").addEventListener("click", function () {
+    form.hidden = !form.hidden;
+    if (!form.hidden) document.getElementById("f-title").focus();
+  });
+  document.getElementById("cancelBtn").addEventListener("click", function () {
+    form.reset(); form.hidden = true; pendingImages = []; renderThumbs();
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var title = document.getElementById("f-title").value.trim();
+    if (!title) { alert("Please give the topic a title."); return; }
+
+    var author = document.getElementById("f-author").value.trim();
+    var context = document.getElementById("f-context").value.trim();
+    var questions = document.getElementById("f-questions").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+    var refs = document.getElementById("f-refs").value.split("\n").map(function (line) {
+      line = line.trim(); if (!line) return null;
+      var parts = line.split("|");
+      if (parts.length >= 2) return { label: parts[0].trim(), url: parts.slice(1).join("|").trim() };
+      return { label: line, url: /^https?:\/\//i.test(line) ? line : "" };
+    }).filter(Boolean);
+
+    var fMsg = document.getElementById("fMsg");
+    var fSubmit = document.getElementById("fSubmit");
+
+    // Shared mode: publish it.
+    if (dbOn) {
+      // Honeypot — a real person never sees, let alone fills, this field.
+      if (document.getElementById("f-hp").value) { form.reset(); form.hidden = true; fMsg.hidden = true; return; }
+      var imgs = pendingImages.slice();
+      var base = { theme: themeSel.value, title: title, author: author || null, context: context, questions: questions, refs: refs };
+      function done(msg) {
+        fMsg.textContent = msg;
+        form.reset(); pendingImages = []; renderThumbs();
+        fSubmit.disabled = false;
+        loadShared();                 // pull the new entry back in
+      }
+      function attempt(withImages) {
+        var row = {}, k;
+        for (k in base) if (Object.prototype.hasOwnProperty.call(base, k)) row[k] = base[k];
+        if (withImages) row.images = imgs;
+        return sbPost("hub_topics", row);
+      }
+      fMsg.hidden = false; fMsg.textContent = "Posting…";
+      fSubmit.disabled = true;
+      attempt(imgs.length > 0).then(function () {
+        done(AUTO_APPROVE ? "Posted — it is on the shelf now." : "Thanks — your topic is awaiting review.");
+      }).catch(function (err) {
+        // The shared table may not have an images column yet — try again without.
+        if (!imgs.length) throw err;
+        return attempt(false).then(function () {
+          done("Posted — but the shared shelf cannot store images yet, so they were left out.");
+        });
+      }).catch(function (err) {
+        fMsg.textContent = "Could not post — please try again.";
+        fSubmit.disabled = false;
+        console.warn("Hub:", err.message);
+      });
+      return;
+    }
+
+    // Local-only mode: keep it in this browser.
+    var t = {
+      id: "u" + Date.now(),
+      theme: themeSel.value,
+      title: title,
+      author: author,
+      context: context,
+      questions: questions,
+      refs: refs,
+      images: pendingImages.slice()
+    };
+    userTopics.push(t);
+    persist();
+    form.reset(); form.hidden = true; fMsg.hidden = true;
+    pendingImages = []; renderThumbs();
+    activeTheme = "all"; query = ""; document.getElementById("q").value = "";
+    render();
+    openTopic(t.id);
+  });
+
+  /* =========================================================================
+     POST A VIEW — shared discussion on a topic
+     ========================================================================= */
+  document.getElementById("postViewBtn").addEventListener("click", function () {
+    if (!dbOn || !openId) return;
+    var body = document.getElementById("vBody").value.trim();
+    var msg = document.getElementById("vMsg");
+    if (document.getElementById("v-hp").value) { document.getElementById("vBody").value = ""; return; }
+    if (!body) { msg.textContent = "Write something first."; return; }
+
+    var topicId = openId;
+    var btn = this;
+    btn.disabled = true;
+    msg.textContent = "Posting…";
+    sbPost("hub_views", {
+      topic_id: topicId,
+      author: document.getElementById("vAuthor").value.trim() || null,
+      body: body
+    }).then(function () {
+      msg.textContent = AUTO_APPROVE ? "Posted." : "Thanks — your view is awaiting review.";
+      document.getElementById("vBody").value = "";
+      btn.disabled = false;
+      if (AUTO_APPROVE && openId === topicId) loadViews(topicId);   // show it immediately
+    }).catch(function (err) {
+      msg.textContent = "Could not post — please try again.";
+      btn.disabled = false;
+      console.warn("Hub:", err.message);
+    });
+  });
+
+  /* =========================================================================
+     SEARCH + CHIPS
+     ========================================================================= */
+  document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); render(); });
+  chipsEl.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip");
+    if (!b) return;
+    activeTheme = b.getAttribute("data-t");
+    render();
+  });
+  stackEl.addEventListener("click", function (e) {
+    var c = e.target.closest(".item");
+    if (!c) return;
+    var id = c.getAttribute("data-id");
+    if (id === openId) closeTopic(); else openTopic(id);
+  });
+
+  document.getElementById("closeBtn").addEventListener("click", closeTopic);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !sheetEl.hidden) closeTopic(); });
+
+  /* =========================================================================
+     EXPORT / IMPORT
+     ========================================================================= */
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var payload = {
+      app: "renewable-vietnam-hub",
+      version: 1,
+      exported: new Date().toISOString(),
+      topics: userTopics,
+      notes: notes,
+      themes: themeOverrides,
+      tags: customTags,
+      hiddenTags: hiddenTags
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "renewable-vietnam-hub.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  });
+
+  var fileInput = document.getElementById("fileInput");
+  document.getElementById("importBtn").addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function () {
+    var f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        var topics = Array.isArray(data) ? data : (data && Array.isArray(data.topics) ? data.topics : []);
+        var nNotes = (data && typeof data.notes === "object" && data.notes) || {};
+        var added = 0;
+        topics.forEach(function (u) {
+          if (!u || !u.title) return;
+          var clean = {
+            id: "u" + Date.now() + "_" + added,
+            theme: isTagKey(u.theme) ? u.theme : "grid",
+            title: String(u.title),
+            author: u.author ? String(u.author) : "",
+            context: u.context ? String(u.context) : "",
+            questions: Array.isArray(u.questions) ? u.questions.map(String) : [],
+            refs: Array.isArray(u.refs) ? u.refs.filter(function (r) { return r && (r.label || r.url); }).map(function (r) {
+              return { label: String(r.label || r.url || ""), url: String(r.url || "") };
+            }) : [],
+            images: normImages(u.images)
+          };
+          userTopics.push(clean);
+          added++;
+        });
+        if (nNotes && typeof nNotes === "object") {
+          Object.keys(nNotes).forEach(function (k) { if (typeof nNotes[k] === "string") notes[k] = nNotes[k]; });
+        }
+        var nTags = (data && Array.isArray(data.tags)) ? data.tags : [];
+        nTags.forEach(function (t) {
+          if (!t || !t.key || !t.label) return;
+          if (allTags().some(function (x) { return x.key === t.key; })) return;
+          var tone = (Array.isArray(t.tone) && t.tone.length === 3) ? t.tone : null;
+          if (!tone) { var hex = TAG_PALETTE[customTags.length % TAG_PALETTE.length]; tone = [hex, rgba(hex,.12), rgba(hex,.35)]; }
+          customTags.push({ key:String(t.key), label:String(t.label), tone:tone });
+        });
+        var nHiddenTags = (data && Array.isArray(data.hiddenTags)) ? data.hiddenTags : [];
+        nHiddenTags.forEach(function (k) { if (hiddenTags.indexOf(k) < 0) hiddenTags.push(k); });
+        var nThemes = (data && typeof data.themes === "object" && data.themes) || {};
+        Object.keys(nThemes).forEach(function (k) { if (isTagKey(nThemes[k])) themeOverrides[k] = nThemes[k]; });
+        rebuildTagSelects();
+        persist();
+        render();
+        alert("Imported " + added + " topic(s).");
+      } catch (err) {
+        alert("Could not read that file — expected a JSON export from this page.");
+      }
+      fileInput.value = "";
+    };
+    reader.readAsText(f);
+  });
+
+  /* =========================================================================
+     THEME + RESET
+     ========================================================================= */
+  var sun = document.getElementById("iconSun"), moon = document.getElementById("iconMoon");
+  function paintIcons() {
+    var dark = document.documentElement.getAttribute("data-theme") === "dark";
+    sun.style.display = dark ? "" : "none";
+    moon.style.display = dark ? "none" : "";
+  }
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    paintIcons();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Clear the topics and notes you have added in this browser?")) return;
+    userTopics = []; notes = {};
+    persist(); render();
+  });
+
+  document.getElementById("restoreBtn").addEventListener("click", function () {
+    if (hidden.length) hidden = [];
+    if (hiddenTags.length) hiddenTags = [];
+    rebuildTagSelects();
+    persist(); render();
+  });
+
+  document.getElementById("addHint").textContent = dbOn
+    ? (AUTO_APPROVE
+        ? "Your topic is published to the shared shelf straight away."
+        : "Your topic goes to the shared store and appears once it is approved.")
+    : "New topics stay in this browser only. Add your Supabase keys to publish them for everyone.";
+
+  paintIcons();
+  applyWrap();
+  render();
+  loadShared();
+})();
+</script>
+</body>
+</html>

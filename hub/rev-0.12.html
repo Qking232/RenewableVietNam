@@ -25,66 +25,6 @@
                             longer shows a "References" section; the source link in the details
                             list stays. (Reference data is still collected on upload and is still
                             matched by search.)
-    Rev 0.13  (2026-10-09)  A "Browse Docs" column on the right of the shelf: a compact list of
-                            every collection with its document count, for one-click jumping to a
-                            collection. It stays in sync with the filter chips (choosing in one
-                            updates the other) and collapses under the shelf on phones.
-    Rev 0.14  (2026-10-09)  The horizontal collection chip row is removed from the shelf. The
-                            "Browse Docs" column is now the one place to browse and filter by
-                            collection; its edge case of an empty list (no collections in use) is
-                            handled by the "All documents" row.
-    Rev 0.15  (2026-10-09)  Import/Export buttons removed. Collections are now editable from the
-                            "Browse Docs" column: each row has ✎ rename and ✕ delete, and a
-                            "＋ New collection" button sits at the foot of the column. Renaming
-                            works for built-in collections too (stored as a per-browser label
-                            override); deleting re-homes any documents to another collection.
-    Rev 0.16  (2026-10-09)  Tidy ups. The second "＋ Add document" button (the one beside the
-                            document count) is removed — adding is done from the toolbar button.
-                            The Type/Sort row and the document-count row are merged into a single
-                            row, with the count pushed to the right.
-    Rev 0.17  (2026-10-09)  The document list becomes a table. Columns: # · Title · Type ·
-                            Collection · Creator · Update · Rev · Views, with clickable headers
-                            (▲/▼) for sorting, on top of the Sort dropdown. New per-document data:
-                            Creator (the author/publisher), Update (last-modified date: created_at
-                            for shared, saved time for yours, the compile date for the seeded
-                            briefs), Rev (default 1) and Views (a view is logged each time a
-                            document window opens — one insert-only row per view via the new
-                            hub_doc_views table, counted client-side, or a local tally when the
-                            shared store is off). The row's title is still a real link.
-    Rev 0.18  (2026-10-09)  Adjustable widths. Drag the grip on a table header's right edge to
-                            widen or narrow that column, and drag the divider between the shelf
-                            and the "Browse Docs" column to resize the column. Both widths are
-                            remembered per browser (localStorage) and re-applied on every render.
-    Rev 0.19  (2026-10-09)  Light theme readability. The secondary and tertiary text greys
-                            (--muted #55555B, --faint #8A8A90) are now black / near-black
-                            (#000000 and #2F2F35), so summaries, labels, counts and table cells
-                            read clearly on white.
-    Rev 0.20  (2026-10-09)  Document window: full width (the 900px column cap is gone), and the
-                            file area now takes a download link when no file is attached. A
-                            document can carry a direct URL or a magnet:/.torrent link, shown as a
-                            "Direct download link" / "Torrent" card with Open and Edit, plus an
-                            "Open link" action. Attach a link from the "＋ Attach download link"
-                            button where "No file attached" showed, or from the new Download link
-                            field in the Add-document form (shared as download_link).
-    Rev 0.21  (2026-10-09)  Multiple download links. A document can now carry any number of links
-                            (direct URL or torrent) instead of one: the file area lists each with
-                            its type, an Open action, Edit and Remove, plus "＋ Add link". Every
-                            link shows when it was added or last changed as a full date and time
-                            ("Updated Oct 9, 2026, 10:05"). Adding/editing a link also bumps the
-                            document's Update time. Links are stored as a {url, updated} array (a
-                            new `links` jsonb column; the old download_link is still read).
-    Rev 0.22  (2026-10-09)  The table's Update column now shows the time as well as the date
-                            ("Oct 9, 2026, 09:58 AM") for documents that carry a real timestamp.
-                            Values that are a bare date (the seeded briefs) still show the date
-                            only, and the column is given a little more room.
-    Rev 0.23  (2026-10-09)  The Update column now shows the time for every row. The seeded
-                            documents carry a real timestamp (the library's compile time) instead
-                            of a bare date, and the formatter always prints date + time.
-    Rev 0.24  (2026-10-09)  Quick links from the table. Every row has a "Links" button on the
-                            right of its title (showing the link count); clicking it opens a small
-                            popover listing that document's download links — each with its type
-                            (Direct link / Torrent), the URL, when it was updated, and Copy / Open
-                            actions — without having to open the document window.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -105,7 +45,7 @@
      Light = BB10 "Bright"; dark = the signature black Hub theme. */
   :root {
     --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F2F4; --chip:#E7E7EA;
-    --text:#000000; --muted:#000000; --faint:#2F2F35;
+    --text:#000000; --muted:#55555B; --faint:#8A8A90;
     --line:rgba(0,0,0,.14); --line-strong:rgba(0,0,0,.34);
     --accent:#0072BC; --accent-2:#0092CC; --accent-soft:rgba(0,114,188,.10); --accent-border:rgba(0,114,188,.50);
     --notify:#C8102E;
@@ -179,85 +119,68 @@
   .btn.ghost:hover { color:var(--text); background:var(--chip); border-color:var(--line); }
   .btn[disabled] { opacity:.45; cursor:not-allowed; }
 
+  /* Theme chips */
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 12px; }
+  .chip { display:inline-flex; align-items:center; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:6px 11px; border-radius:var(--radius); border:1px solid var(--line); border-left:3px solid var(--tone, var(--line-strong)); background:transparent; color:var(--muted); }
+  .chip:hover { color:var(--text); border-color:var(--line-strong); border-left-color:var(--tone, var(--line-strong)); background:var(--surface-2); }
+  .chip.on { background:var(--accent-soft); border-color:var(--accent-border); border-left-color:var(--tone, var(--accent)); color:var(--accent); }
+  .chip .n { opacity:.6; margin-left:6px; font-variant-numeric:tabular-nums; }
+
   /* Secondary filter row */
-  .filterbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:22px 0 12px; }
+  .filterbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:0 0 16px; }
   .filterbar label { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:700; }
   .select { font:inherit; font-size:12px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:7px 10px; outline:none; }
   .select:focus { border-color:var(--accent); }
 
-  /* ---------------- Filter row — type, sort and count on one line ---------------- */
-  .filterbar .count { margin-left:auto; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:700; }
-  .filterbar .count b { color:var(--text); font-variant-numeric:tabular-nums; }
+  /* ---------------- List bar — upload / delete ---------------- */
+  .listbar { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:20px 0 11px; }
+  .listbar .count { font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:700; }
+  .listbar .count b { color:var(--text); font-variant-numeric:tabular-nums; }
+  .listbar-actions { display:flex; gap:8px; flex-wrap:wrap; }
   .btn.small { font-size:11px; padding:8px 13px; border-radius:var(--radius); }
   .btn.danger { color:var(--notify); border-color:rgba(200,16,46,.40); background:transparent; }
   .btn.danger:hover:not(:disabled) { background:rgba(200,16,46,.10); border-color:var(--notify); }
   .btn.danger:disabled { opacity:.4; cursor:not-allowed; }
   [data-theme="dark"] .btn.danger { color:#ff6b78; border-color:rgba(255,45,63,.45); }
 
-  /* ---------------- Documents table + reader ---------------- */
+  /* ---------------- Stacked list + side-by-side reader ---------------- */
   .split { display:block; }
   .split[hidden] { display:none; }
+  .stack { display:flex; flex-direction:column; gap:8px; }
 
-  .docs { width:100%; border-collapse:collapse; table-layout:fixed; font-size:12.5px; }
-  .docs thead th { position:relative; text-align:left; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:700; padding:9px 10px; border-bottom:1px solid var(--line-strong); white-space:nowrap; cursor:pointer; user-select:none; }
-  .docs thead th:hover { color:var(--text); }
-  .docs thead th .lbl { display:inline-block; max-width:calc(100% - 12px); overflow:hidden; text-overflow:ellipsis; vertical-align:bottom; }
-  .docs thead th .ar { margin-left:4px; color:var(--accent); font-size:9px; }
-  /* Drag grip on each header to widen / narrow the column */
-  .docs thead th .grip { position:absolute; top:0; right:-5px; width:10px; height:100%; z-index:3; cursor:col-resize; }
-  .docs thead th .grip:hover, .docs thead th .grip.on { background:var(--accent); opacity:.3; }
-  body.colresize { cursor:col-resize; user-select:none; }
-  .docs th.num, .docs td.num { text-align:right; font-variant-numeric:tabular-nums; }
-  .docs tbody tr { border-bottom:1px solid var(--line); cursor:pointer; }
-  .docs tbody tr:hover { background:var(--surface-2); }
-  .docs tbody td { padding:9px 10px; vertical-align:top; overflow:hidden; text-overflow:ellipsis; }
-  .docs tbody td:first-child { border-left:3px solid var(--tone, transparent); color:var(--faint); }
-  .docs td.dim { color:var(--faint); }
-  .docs .c-title { display:flex; gap:9px; align-items:flex-start; }
-  .docs .c-title .g { width:26px; height:26px; flex:0 0 auto; display:grid; place-items:center; font-size:13px; color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); border-radius:var(--radius); }
-  .docs .c-title a { color:var(--text); font-weight:600; text-decoration:none; line-height:1.3; }
-  .docs .c-title a:hover { color:var(--accent); }
-  .docs .c-title .snip { margin-top:3px; font-size:11px; color:var(--muted); font-weight:300; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
-  .badge { font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); white-space:nowrap; }
-
-  /* ---------------- Browse Docs — quick collection access (right column) ---------------- */
-  .browse { display:grid; grid-template-columns:minmax(0, 1fr) 9px minmax(220px, var(--side-w, 290px)); gap:8px; align-items:stretch; }
-  .browse-main { min-width:0; }
-  /* Drag divider between the shelf and the Browse Docs column */
-  .vdiv { position:relative; cursor:col-resize; }
-  .vdiv::after { content:""; position:absolute; left:4px; top:0; bottom:0; width:1px; background:var(--line); }
-  .vdiv:hover::after, body.colresize .vdiv::after { background:var(--accent); width:2px; left:3px; }
-  .browse-side { position:sticky; top:74px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
-  .browse-side h3 { margin:0; padding:12px 14px 11px; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:700; border-bottom:1px solid var(--line); box-shadow:inset 0 3px 0 var(--accent); }
-  .coll-list { list-style:none; margin:0; padding:5px 0; max-height:calc(100vh - 210px); overflow-y:auto; }
-  .coll-row { display:flex; align-items:center; }
-  .coll-pick { display:flex; align-items:center; gap:9px; flex:1 1 auto; min-width:0; text-align:left; padding:8px 6px 8px 14px; border:0; border-left:3px solid transparent; background:transparent; color:var(--muted); font-size:12.5px; font-weight:600; }
-  .coll-pick:hover { background:var(--surface-2); color:var(--text); }
-  .coll-pick .sw { width:9px; height:9px; border-radius:2px; background:var(--tone, var(--line-strong)); flex:0 0 auto; }
-  .coll-pick .nm { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .coll-pick .ct { font-size:11px; color:var(--faint); font-variant-numeric:tabular-nums; }
-  .coll-pick.on { background:var(--surface-2); color:var(--text); border-left-color:var(--tone, var(--accent)); }
-  .coll-pick.on .ct { color:var(--accent); }
-  .coll-ico { width:24px; height:24px; margin-right:5px; flex:0 0 auto; display:grid; place-items:center; border:0; background:transparent; color:var(--faint); font-size:12px; line-height:1; border-radius:var(--radius); opacity:.4; }
-  .coll-row:hover .coll-ico, .coll-ico:focus-visible { opacity:1; }
-  .coll-ico:hover { color:var(--text); background:var(--chip); }
-  .coll-ico.del:hover { color:var(--notify); }
-  .coll-new { display:block; width:100%; text-align:left; padding:10px 14px; border:0; border-top:1px solid var(--line); background:transparent; color:var(--accent); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-  .coll-new:hover { background:var(--surface-2); }
+  .item {
+    position:relative; display:flex; gap:11px; align-items:flex-start; width:100%; text-align:left;
+    padding:12px 34px 13px 14px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--line);
+    box-shadow:var(--shadow); cursor:pointer; overflow:hidden; text-decoration:none; color:inherit;
+    transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1), border-color .25s ease, background-color .25s ease;
+  }
+  .item:hover { transform:translateX(2px); box-shadow:var(--shadow-hover); border-color:var(--line-strong); }
+  .item:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .item::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--tone); opacity:.85; transition:opacity .25s ease; }
+  .item:hover::before { opacity:1; }
+  .glyph { width:34px; height:34px; flex:0 0 auto; display:grid; place-items:center; font-size:15px; background:var(--tone-soft); color:var(--tone); border:1px solid var(--tone-border); border-radius:var(--radius); }
+  .ibody { min-width:0; flex:1; }
+  .item .tt { display:block; font-size:14px; font-weight:600; letter-spacing:-.008em; line-height:1.3; color:var(--text); }
+  .item .snippet { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin:4px 0 0; font-size:11.5px; color:var(--muted); font-weight:300; }
+  .item .metaline { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:8px; font-size:10.5px; color:var(--faint); }
+  .item .chev { position:absolute; right:12px; top:14px; color:var(--tone); opacity:.55; transition:opacity .25s ease, transform .25s ease; }
+  .item:hover .chev, .item.on .chev { opacity:1; transform:translateX(2px); }
+  .badge { font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); }
+  .item .note-flag { color:var(--notify); font-weight:700; }
+  .item.custom .metaline::after { content:"· YOURS"; color:var(--accent); letter-spacing:.06em; }
+  .item.shared .metaline::after { content:"· PUBLIC"; color:var(--accent); letter-spacing:.06em; }
 
   /* The document opens in its own window (deep link #/doc/<id>) — never a side preview.
      In "document mode" the browse chrome is hidden and this fills the page. */
   .preview { display:none; }
   body.docmode .preview { display:block; position:static; max-height:none; overflow:hidden; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
   body.docmode .sheet-top { position:static; box-shadow:inset 0 3px 0 var(--tone, var(--accent)); }
-  body.docmode .hero, body.docmode .toolbar, body.docmode .filterbar,
-  body.docmode .adv, body.docmode .docs, body.docmode #empty,
-  body.docmode .browse-side { display:none; }
-  body.docmode .browse { display:block; }
+  body.docmode .hero, body.docmode .toolbar, body.docmode .chips, body.docmode .filterbar,
+  body.docmode .listbar, body.docmode .adv, body.docmode .stack, body.docmode #empty { display:none; }
   body.docmode .preview .close-x { display:none; }
   body.docmode .preview .close-label { display:inline; font-size:12.5px; font-weight:600; }
   body.docmode #closeBtn { width:auto; padding:0 12px; }
-  /* The document window fills the screen width — no column cap. */
+  body.docmode .sheet-body { max-width:900px; }
   .preview .placeholder { display:grid; place-items:center; justify-items:center; text-align:center; gap:7px; min-height:320px; padding:46px 26px; color:var(--muted); }
   .preview .placeholder[hidden] { display:none; }
   .preview .placeholder svg { width:30px; height:30px; color:var(--faint); margin-bottom:4px; }
@@ -337,10 +260,6 @@
   .filecard .txt { min-width:0; }
   .filecard .nm { font-size:13.5px; font-weight:600; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .filecard .sz { font-size:11.5px; color:var(--faint); }
-  .filecard .nm, .filecard .sz { display:block; }
-  .filecard .sz a { overflow-wrap:anywhere; }
-  .filecard .act { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; flex:0 0 auto; }
-  .filebox .filecard + .filecard { border-top:1px solid var(--line); }
 
   .meta { display:grid; grid-template-columns:auto 1fr; gap:5px 14px; margin:14px 0 0; font-size:12.5px; }
   .meta dt { color:var(--faint); text-transform:uppercase; letter-spacing:.08em; font-size:9.5px; font-weight:700; padding-top:2px; }
@@ -378,20 +297,6 @@
   .sheet-actions .grp { display:flex; gap:8px; flex-wrap:wrap; }
   .saved { font-size:11.5px; color:var(--faint); }
 
-  /* Quick "Links" button on each row + its popover */
-  .linkbtn { margin-left:auto; flex:0 0 auto; display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 8px; border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:var(--radius); white-space:nowrap; }
-  .linkbtn:hover, .linkbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
-  .linkbtn .n { background:var(--accent); color:#fff; border-radius:999px; padding:0 5px; font-size:9px; line-height:14px; }
-  .linkpop { position:fixed; z-index:90; background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius); box-shadow:var(--shadow-hover); width:min(420px, 92vw); padding:10px 12px; }
-  .linkpop h5 { margin:0 0 6px; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); font-weight:700; }
-  .linkpop .lrow { display:flex; gap:8px; align-items:flex-start; padding:7px 0; border-top:1px solid var(--line); }
-  .linkpop .lrow:first-of-type { border-top:none; }
-  .linkpop .lrow .t { min-width:0; flex:1; }
-  .linkpop .lrow .nm { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
-  .linkpop .lrow a { display:block; font-size:12px; color:var(--accent); overflow-wrap:anywhere; }
-  .linkpop .lrow .up { display:block; font-size:10.5px; color:var(--faint); }
-  .linkpop .empty { font-size:12px; color:var(--muted); }
-
   /* Toast */
   .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(12px); background:var(--text); color:var(--bg); padding:9px 15px; border-radius:var(--radius); font-size:12px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease; z-index:80; max-width:90vw; }
   .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -404,10 +309,6 @@
 
   @media (max-width:860px) {
     .split { grid-template-columns:1fr; }
-    .browse { grid-template-columns:1fr; }
-    .vdiv { display:none; }
-    .browse-side { position:static; }
-    .coll-list { max-height:none; }
     .preview { position:fixed; inset:0; top:0; z-index:60; border:none; border-radius:0; overflow-y:auto; display:none; box-shadow:none; }
     .preview.open { display:block; }
     .preview .placeholder { display:none; }
@@ -484,7 +385,12 @@
         <input type="search" id="q" placeholder="Search title, author, summary, collection…" autocomplete="off" />
       </label>
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
+      <button class="btn" id="exportBtn" type="button">Export</button>
+      <button class="btn" id="importBtn" type="button">Import</button>
+      <input type="file" id="fileInput" accept="application/json,.json" hidden />
     </div>
+
+    <div class="chips" id="chips"></div>
 
     <div class="filterbar">
       <label for="typeFilter">Type</label>
@@ -493,15 +399,10 @@
       <select class="select" id="sortBy">
         <option value="new">Newest first</option>
         <option value="title">Title A–Z</option>
-        <option value="creator">Creator A–Z</option>
-        <option value="update">Recently updated</option>
-        <option value="views">Most viewed</option>
-        <option value="downloads">Most downloaded</option>
-        <option value="rev">Revision</option>
         <option value="year">Year, newest</option>
+        <option value="downloads">Most downloaded</option>
       </select>
       <span class="saved" id="storeMsg"></span>
-      <span class="count">Documents <b id="listCount">0</b></span>
     </div>
 
     <form class="add" id="addForm" hidden>
@@ -575,11 +476,6 @@
       </div>
 
       <div class="field">
-        <label for="f-download">Download links — one per line, direct file or torrent (optional)</label>
-        <textarea id="f-download" placeholder="https://…/file.pdf&#10;magnet:?xt=urn:btih:…"></textarea>
-      </div>
-
-      <div class="field">
         <label for="f-summary">Summary</label>
         <textarea id="f-summary" placeholder="A few sentences on what this document is and why it matters."></textarea>
       </div>
@@ -601,13 +497,15 @@
       <p class="hint" id="fMsg" style="margin-top:10px" hidden></p>
     </form>
 
-    <div class="browse">
-    <div class="browse-main">
+    <div class="listbar">
+      <span class="count">Documents <b id="listCount">0</b></span>
+      <div class="listbar-actions">
+        <button class="btn small primary" id="addBtn" type="button">＋ Add document</button>
+      </div>
+    </div>
+
     <div class="split" id="split">
-      <table class="docs" id="docsTable">
-        <thead></thead>
-        <tbody id="stack"></tbody>
-      </table>
+      <div class="stack" id="stack"></div>
 
       <aside class="preview" id="previewPanel" aria-live="polite">
         <div class="placeholder" id="placeholder">
@@ -679,16 +577,6 @@
       </aside>
     </div>
     <p class="empty" id="empty" hidden>No documents match that search.</p>
-    </div><!-- /browse-main -->
-
-    <div class="vdiv" id="vdiv" title="Drag to resize" aria-hidden="true"></div>
-
-    <aside class="browse-side" aria-label="Browse documents">
-      <h3>Browse Docs</h3>
-      <ul class="coll-list" id="collList"></ul>
-      <button class="coll-new" id="newCollBtn" type="button">＋ New collection</button>
-    </aside>
-    </div><!-- /browse -->
 
     <details class="adv">
       <summary>Advanced — where files live, sources &amp; reset</summary>
@@ -702,7 +590,8 @@
         </p>
         <p style="margin:8px 0 0">
           While the shared store is switched off, the documents you add and your notes live only in this browser
-          (local storage), and files up to about 1&nbsp;MB are kept inline.
+          (local storage), and files up to about 1&nbsp;MB are kept inline. <strong>Export</strong> saves your
+          documents to a JSON file and <strong>Import</strong> restores them on another device.
         </p>
 
         <h4>Reference sources used</h4>
@@ -714,7 +603,7 @@
         </ul>
 
         <h4>Collections</h4>
-        <p style="margin:0 0 4px">Manage collections in the <strong>Browse Docs</strong> column: <strong>＋ New collection</strong> adds one, <strong>✎</strong> renames it, and <strong>✕</strong> deletes it (any document using a deleted collection moves to another one automatically). A document's own collection can also be changed from the dropdown beside its number in the reader.</p>
+        <p style="margin:0 0 4px">Change a document's collection from the dropdown beside its number in the reader. <strong>＋ collection</strong> creates a new one; <strong>− collection</strong> deletes the one shown, and any document using it moves to another collection automatically.</p>
 
         <h4>Hidden documents &amp; collections</h4>
         <p style="margin:0 0 4px">Deleting a built-in or public document hides it from your shelf in this browser, and deleting a built-in collection hides it. Bring them all back here.</p>
@@ -734,12 +623,11 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.24</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.12</span>
     </div>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="linkpop" id="linkPop" hidden></div>
 
 <script>
 (function () {
@@ -803,9 +691,9 @@
   function allTags() {
     var list = [];
     COLLECTIONS.forEach(function (c) {
-      if (hiddenTags.indexOf(c.key) < 0) list.push({ key:c.key, label:(collLabels[c.key] || c.label), tone:TONES[c.key] });
+      if (hiddenTags.indexOf(c.key) < 0) list.push({ key:c.key, label:c.label, tone:TONES[c.key] });
     });
-    customTags.forEach(function (t) { list.push({ key:t.key, label:(collLabels[t.key] || t.label), tone:t.tone }); });
+    customTags.forEach(function (t) { list.push(t); });
     return list;
   }
   function tagOf(k) { var l = allTags(); for (var i=0;i<l.length;i++) if (l[i].key===k) return l[i]; return null; }
@@ -943,7 +831,7 @@
         { label:"ADB — sustainable transport", url:"https://www.adb.org" } ] }
   ];
   // Stable ids for the seeded documents (clean share links; keeps existing comments attached).
-  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; d.rev = "1"; d.updated = "2026-10-08T16:16:00"; });
+  LIBRARY.forEach(function (d, i) { d.n = String(i + 1).padStart(2, "0"); d.id = "lib-" + d.n; d.seed = true; });
 
   /* =========================================================================
      STATE
@@ -955,12 +843,7 @@
   var COLL_KEY       = "rvn_lib_coll_overrides";
   var TAGS_KEY       = "rvn_lib_collections";
   var HIDDEN_TAGS_KEY= "rvn_lib_coll_hidden";
-  var LABELS_KEY     = "rvn_lib_coll_labels";
   var DN_KEY         = "rvn_lib_downloads";
-  var VIEW_KEY       = "rvn_lib_views";
-  var COLW_KEY       = "rvn_lib_colwidths";
-  var SIDE_KEY       = "rvn_lib_sidewidth";
-  var LINK_KEY       = "rvn_lib_download_links";
 
   var userDocs = load(DOC_KEY, []);
   var notes = load(NOTE_KEY, {});
@@ -969,18 +852,10 @@
   var collOverrides = load(COLL_KEY, {});
   var customTags = load(TAGS_KEY, []);
   var hiddenTags = load(HIDDEN_TAGS_KEY, []);
-  var collLabels = load(LABELS_KEY, {});
   var downloads = load(DN_KEY, {});
-  var views = load(VIEW_KEY, {});
-  var sharedViews = {};                       // doc id -> view count (shared store)
-  var colWidths = load(COLW_KEY, {});         // column key -> px
-  var linkOverrides = load(LINK_KEY, {});     // doc id -> download link (built-in / shared)
-  var sideW = 290;                            // Browse Docs column width (px)
-  try { var sw = localStorage.getItem(SIDE_KEY); if (sw) sideW = Math.max(220, Math.min(560, parseInt(sw, 10) || 290)); } catch (e) {}
   var activeTag = "all";
   var typeFilter = "all";
   var sortBy = "new";
-  var sortDir = "desc";
   var query = "";
   var openId = null;
 
@@ -1016,12 +891,7 @@
       localStorage.setItem(COLL_KEY, JSON.stringify(collOverrides));
       localStorage.setItem(TAGS_KEY, JSON.stringify(customTags));
       localStorage.setItem(HIDDEN_TAGS_KEY, JSON.stringify(hiddenTags));
-      localStorage.setItem(LABELS_KEY, JSON.stringify(collLabels));
       localStorage.setItem(DN_KEY, JSON.stringify(downloads));
-      localStorage.setItem(VIEW_KEY, JSON.stringify(views));
-      localStorage.setItem(COLW_KEY, JSON.stringify(colWidths));
-      localStorage.setItem(SIDE_KEY, String(sideW));
-      localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
 
@@ -1142,36 +1012,12 @@
             fileName:r.file_name ? String(r.file_name) : "",
             fileType:r.file_type ? String(r.file_type) : "",
             fileSize:r.file_size ? Number(r.file_size) : 0,
-            links:normLinks(Array.isArray(r.links) && r.links.length ? r.links : (r.download_link ? [{ url:String(r.download_link) }] : [])),
-            rev:r.rev ? String(r.rev) : "1",
-            updated:r.updated || r.created_at || "",
             created_at:r.created_at
           };
         });
         render();
       })
       .catch(function (e) { console.warn("Library: shared documents unavailable —", e.message); });
-  }
-
-  /* ---------------- view counts ---------------- */
-  // With the shared store on, a view is logged as an insert (one row per view) and
-  // counted client-side; locally we just keep a per-browser tally.
-  function viewCount(d) { return dbOn ? (sharedViews[idOf(d)] || 0) : (views[idOf(d)] || 0); }
-  function recordView(id) {
-    if (dbOn) {
-      sharedViews[id] = (sharedViews[id] || 0) + 1;
-      sbPost("hub_doc_views", { doc_id:id }).catch(function (e) { console.warn("Library: view not recorded —", e.message); });
-    } else { views[id] = (views[id] || 0) + 1; persist(); }
-  }
-  function loadViewCounts() {
-    if (!dbOn) return;
-    sbGet("hub_doc_views", "select=doc_id")
-      .then(function (rows) {
-        sharedViews = {};
-        (rows || []).forEach(function (r) { if (r && r.doc_id) sharedViews[r.doc_id] = (sharedViews[r.doc_id] || 0) + 1; });
-        render();
-      })
-      .catch(function (e) { console.warn("Library: view counts unavailable —", e.message); });
   }
 
   function renderViews(docId) {
@@ -1204,78 +1050,9 @@
   var stackEl = document.getElementById("stack");
   var splitEl = document.getElementById("split");
   var emptyEl = document.getElementById("empty");
+  var chipsEl = document.getElementById("chips");
   var listCountEl = document.getElementById("listCount");
   var typeFilterEl = document.getElementById("typeFilter");
-  var docsTable = document.getElementById("docsTable");
-
-  function buildHead() {
-    var cg = docsTable.querySelector("colgroup");
-    if (!cg) { cg = document.createElement("colgroup"); docsTable.insertBefore(cg, docsTable.firstChild); }
-    cg.innerHTML = COLS.map(function (c) { return '<col data-col="' + c.key + '">'; }).join("");
-    docsTable.querySelector("thead").innerHTML = '<tr>' + COLS.map(function (c) {
-      return '<th data-sort="' + c.key + '"' + (c.num ? ' class="num"' : '') + '>' +
-        '<span class="lbl">' + esc(c.label) + '</span><span class="ar"></span>' +
-        '<span class="grip" data-col="' + c.key + '" title="Drag to resize"></span></th>';
-    }).join("") + '</tr>';
-    applyColWidths();
-  }
-  function colDefault(key) {
-    for (var i=0;i<COLS.length;i++) if (COLS[i].key === key) return COLS[i].w;
-    return 0;
-  }
-  function applyColWidths() {
-    Array.prototype.forEach.call(docsTable.querySelectorAll("colgroup col"), function (col) {
-      var k = col.getAttribute("data-col");
-      var w = colWidths[k] || colDefault(k);
-      col.style.width = w ? (w + "px") : "";
-    });
-  }
-  function applySideWidth() {
-    var b = document.querySelector(".browse");
-    if (b) b.style.setProperty("--side-w", sideW + "px");
-  }
-  function markSort() {
-    Array.prototype.forEach.call(docsTable.querySelectorAll("thead th"), function (th) {
-      var ar = th.querySelector(".ar");
-      if (ar) ar.textContent = (th.getAttribute("data-sort") === sortBy) ? (sortDir === "asc" ? "\u25B2" : "\u25BC") : "";
-    });
-  }
-
-  /* ---------------- adjustable widths — drag to resize ---------------- */
-  function startDrag(e, onMove, onEnd) {
-    e.preventDefault();
-    document.body.classList.add("colresize");
-    function mv(ev) { onMove(ev); }
-    function up() {
-      document.removeEventListener("mousemove", mv);
-      document.removeEventListener("mouseup", up);
-      document.body.classList.remove("colresize");
-      if (onEnd) onEnd();
-    }
-    document.addEventListener("mousemove", mv);
-    document.addEventListener("mouseup", up);
-  }
-  docsTable.querySelector("thead").addEventListener("mousedown", function (e) {
-    var grip = e.target.closest(".grip"); if (!grip) return;
-    var key = grip.getAttribute("data-col");
-    var col = docsTable.querySelector('colgroup col[data-col="' + key + '"]');
-    var startX = e.clientX, startW = grip.closest("th").getBoundingClientRect().width;
-    grip.classList.add("on");
-    startDrag(e, function (ev) {
-      var w = Math.max(40, Math.round(startW + (ev.clientX - startX)));
-      colWidths[key] = w;
-      col.style.width = w + "px";
-    }, function () { grip.classList.remove("on"); persist(); });
-  });
-  var vdivEl = document.getElementById("vdiv"), browseEl = document.querySelector(".browse");
-  vdivEl.addEventListener("mousedown", function (e) {
-    var side = document.querySelector(".browse-side");
-    var startX = e.clientX, startW = side.getBoundingClientRect().width;
-    startDrag(e, function (ev) {
-      sideW = Math.max(220, Math.min(560, Math.round(startW - (ev.clientX - startX))));
-      browseEl.style.setProperty("--side-w", sideW + "px");
-    }, function () { persist(); });
-  });
 
   var WRAP_SECTIONS = { summary:"mSummary", points:"mPoints", comments:"mViews" };
   function wrapOn(k) { return wrap[k] !== false; }
@@ -1286,6 +1063,18 @@
       var btn = document.querySelector('.wrapbtn[data-wrap="' + k + '"]');
       if (btn) { btn.classList.toggle("on", wrapOn(k)); btn.setAttribute("aria-pressed", String(wrapOn(k))); }
     });
+  }
+
+  function renderChips() {
+    var list = all();
+    var counts = {}; list.forEach(function (d) { counts[d.collection] = (counts[d.collection]||0)+1; });
+    var html = '<button class="chip' + (activeTag==="all"?" on":"") + '" data-t="all" type="button">All<span class="n">' + list.length + '</span></button>';
+    allTags().forEach(function (c) {
+      if (!counts[c.key]) return;
+      html += '<button class="chip' + (activeTag===c.key?" on":"") + '" data-t="' + c.key + '" type="button" style="' + toneVars(c.key) + '">' +
+        esc(c.label) + '<span class="n">' + counts[c.key] + '</span></button>';
+    });
+    chipsEl.innerHTML = html;
   }
 
   function renderTypeFilter() {
@@ -1300,38 +1089,6 @@
     typeFilterEl.value = typeFilter;
   }
 
-  // Right column: quick access to each collection, and a place to manage them.
-  function renderBrowseCols() {
-    var list = all();
-    var counts = {}; list.forEach(function (d) { counts[d.collection] = (counts[d.collection]||0)+1; });
-    var html = '<li class="coll-row"><button type="button" data-t="all" class="coll-pick' + (activeTag==="all"?" on":"") + '" style="--tone:var(--accent)">' +
-      '<span class="sw"></span><span class="nm">All documents</span><span class="ct">' + list.length + '</span></button></li>';
-    allTags().forEach(function (c) {
-      var emptyCustom = !counts[c.key] && customTags.some(function (t) { return t.key === c.key; });
-      if (!counts[c.key] && !emptyCustom) return;
-      html += '<li class="coll-row">' +
-        '<button type="button" data-t="' + esc(c.key) + '" class="coll-pick' + (activeTag===c.key?" on":"") + '" style="' + toneVars(c.key) + '">' +
-          '<span class="sw"></span><span class="nm">' + esc(c.label) + '</span><span class="ct">' + counts[c.key] + '</span></button>' +
-        '<button type="button" class="coll-ico" data-edit="rename" data-key="' + esc(c.key) + '" title="Rename collection" aria-label="Rename ' + esc(c.label) + '">✎</button>' +
-        '<button type="button" class="coll-ico del" data-edit="delete" data-key="' + esc(c.key) + '" title="Delete collection" aria-label="Delete ' + esc(c.label) + '">✕</button>' +
-      '</li>';
-    });
-    document.getElementById("collList").innerHTML = html;
-  }
-
-  // Rename a collection (works for built-in ones too, via a label override).
-  function renameColl(key) {
-    if (!isTagKey(key)) return;
-    var cur = collectionLabel(key);
-    var name = prompt("Rename this collection:", cur);
-    if (name === null) return;
-    name = String(name).trim();
-    if (!name || name === cur) return;
-    collLabels[key] = name;
-    persist(); rebuildCollectionSelects(); render();
-    toast("Collection renamed");
-  }
-
   function haystack(d) {
     return [d.title, d.summary, d.author, d.year, d.license, d.source, collectionLabel(d.collection), typeLabel(d.type),
       (d.points||[]).join(" "), (d.refs||[]).map(function(r){return r.label;}).join(" ")].join(" ").toLowerCase();
@@ -1342,45 +1099,14 @@
     if (!query) return true;
     return haystack(d).indexOf(query) > -1;
   }
-  // Table columns (order matches the header). num = right-aligned.
-  var COLS = [
-    { key:"num",        label:"#",          num:true, w:48  },
-    { key:"title",      label:"Title",                w:360 },
-    { key:"type",       label:"Type",                 w:96  },
-    { key:"collection", label:"Collection",           w:150 },
-    { key:"creator",    label:"Creator",              w:150 },
-    { key:"update",     label:"Update",               w:168 },
-    { key:"rev",        label:"Rev",        num:true, w:56  },
-    { key:"views",      label:"Views",      num:true, w:66  }
-  ];
-  function colValue(d, key) {
-    switch (key) {
-      case "num":        return parseInt(d.n || "0", 10) || 0;
-      case "title":      return String(d.title || "").toLowerCase();
-      case "type":       return typeLabel(d.type).toLowerCase();
-      case "collection": return collectionLabel(d.collection).toLowerCase();
-      case "creator":    return String(d.author || "").toLowerCase();
-      case "update":     return d.updated || d.created_at || "";
-      case "rev":        return parseInt(d.rev || "1", 10) || 1;
-      case "views":      return viewCount(d);
-      case "year":       return parseInt(d.year || "0", 10) || 0;
-      case "downloads":  return dl(d);
-    }
-    return "";
-  }
   function sorted(list) {
-    var l = list.slice(), key = sortBy;
-    if (key === "new") {                      // user + shared first, then the seeded order
-      var rank = {}; sharedDocs.forEach(function(d,i){ rank[idOf(d)] = 1e6 + i; }); userDocs.forEach(function(d,i){ rank[idOf(d)] = 2e6 + i; });
-      l.sort(function(a,b){ return (rank[idOf(b)]||0) - (rank[idOf(a)]||0); });
-      return l;
-    }
-    var numeric = (key === "views" || key === "rev" || key === "year" || key === "downloads" || key === "num");
-    l.sort(function (a, b) {
-      var x = colValue(a, key), y = colValue(b, key);
-      var c = numeric ? (x - y) : String(x).localeCompare(String(y));
-      return sortDir === "asc" ? c : -c;
-    });
+    var l = list.slice();
+    if (sortBy === "title") l.sort(function(a,b){ return a.title.toLowerCase().localeCompare(b.title.toLowerCase()); });
+    else if (sortBy === "year") l.sort(function(a,b){ return (parseInt(b.year||"0",10)||0) - (parseInt(a.year||"0",10)||0); });
+    else if (sortBy === "downloads") l.sort(function(a,b){ return dl(a) - dl(b); });
+    // "new": user + shared first (most recent), then the seeded editorial order
+    else { var rank = {}; sharedDocs.forEach(function(d,i){ rank[idOf(d)] = 1e6 + i; }); userDocs.forEach(function(d,i){ rank[idOf(d)] = 2e6 + i; });
+      l.sort(function(a,b){ return (rank[idOf(b)]||0) - (rank[idOf(a)]||0); }); }
     return l;
   }
   function dl(d) { return downloads[idOf(d)] || 0; }
@@ -1395,30 +1121,29 @@
 
   function render() {
     assignNumbers();
+    renderChips();
     renderTypeFilter();
-    renderBrowseCols();
     var list = sorted(all().filter(matches));
 
     stackEl.innerHTML = list.map(function (d) {
       var id = idOf(d);
-      var lk = linksOf(d);
-      return '<tr data-id="' + esc(id) + '" style="' + toneVars(d.collection) + '">' +
-        '<td class="num">' + esc(d.n || "") + '</td>' +
-        '<td><div class="c-title"><span class="g" aria-hidden="true">' + esc(typeGlyph(d.type)) + '</span>' +
-          '<span><a href="' + esc(docHref(id)) + '" target="_blank" rel="noopener">' + esc(d.title) + '</a>' +
-          (d.summary ? '<span class="snip">' + esc(d.summary) + '</span>' : '') +
-          (dl(d) ? '<span class="snip">' + dl(d) + ' download' + (dl(d) === 1 ? "" : "s") + '</span>' : '') +
+      var cls = d.shared ? " shared" : (d.seed ? "" : (d.id ? " custom" : ""));
+      var bits = [];
+      bits.push('<span class="badge">' + esc(typeLabel(d.type)) + '</span>');
+      bits.push('<span>' + esc(collectionLabel(d.collection)) + '</span>');
+      if (d.author) bits.push('<span>' + esc(d.author) + '</span>');
+      if (d.year) bits.push('<span>' + esc(d.year) + '</span>');
+      if (d.fileName) bits.push('<span>' + esc(fmtSize(d.fileSize || 0)) + '</span>');
+      if (dl(d)) bits.push('<span>' + dl(d) + ' downloads</span>');
+      return '<a class="item' + cls + '" href="' + esc(docHref(id)) + '" target="_blank" rel="noopener" data-id="' + esc(id) + '" style="' + toneVars(d.collection) + '">' +
+        '<span class="glyph" aria-hidden="true">' + esc(typeGlyph(d.type)) + '</span>' +
+        '<span class="ibody">' +
+          '<span class="tt">' + esc(d.title) + '</span>' +
+          (d.summary ? '<span class="snippet">' + esc(d.summary) + '</span>' : '') +
+          '<span class="metaline">' + bits.join('<span>·</span>') + '</span>' +
         '</span>' +
-        '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
-          (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>' +
-        '</div></td>' +
-        '<td><span class="badge">' + esc(typeLabel(d.type)) + '</span></td>' +
-        '<td class="dim">' + esc(collectionLabel(d.collection)) + '</td>' +
-        '<td class="dim">' + esc(d.author || "—") + '</td>' +
-        '<td class="dim">' + (d.updated ? esc(fmtDateTime(d.updated)) : "—") + '</td>' +
-        '<td class="num dim">' + esc(d.rev || "1") + '</td>' +
-        '<td class="num">' + viewCount(d) + '</td>' +
-      '</tr>';
+        '<span class="chev" aria-hidden="true">›</span>' +
+      '</a>';
     }).join("");
 
     splitEl.hidden = list.length === 0;
@@ -1432,7 +1157,6 @@
     document.getElementById("statFiles").textContent = l.filter(function (d) { return !!d.filePath || !!d.fileData; }).length;
     document.getElementById("statPublic").textContent = sharedDocs.length;
     document.getElementById("statMine").textContent = userDocs.length;
-    markSort();
   }
 
   /* =========================================================================
@@ -1447,75 +1171,6 @@
   var current = null;
 
   function fileUrl(d) { return d.filePath ? storagePublicUrl(d.filePath) : (d.fileData || ""); }
-  function isTorrent(u) { return /^magnet:/i.test(u) || /\.torrent(\?|#|$)/i.test(u); }
-  // Always date + time, e.g. "Oct 8, 2026, 04:16 PM".
-  function fmtDateTime(s) {
-    try { return new Date(s).toLocaleString(undefined, { year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }); }
-    catch (e) { return ""; }
-  }
-
-  /* ---------------- download links (multiple; a direct URL or a torrent) ---------------- */
-  function normLinks(raw) {
-    var arr = Array.isArray(raw) ? raw : (typeof raw === "string" && raw ? [{ url:raw }] : []);
-    return arr.filter(function (l) { return l && l.url; }).map(function (l) {
-      return { url:String(l.url).trim(), updated:l.updated ? String(l.updated) : "" };
-    });
-  }
-  function linksOf(d) {
-    var arr = normLinks(d.links && d.links.length ? d.links : linkOverrides[idOf(d)]);
-    return arr.length ? arr : normLinks(d.download);         // legacy single-link field
-  }
-  function firstLink(d) { var l = linksOf(d); return l.length ? l[0].url : ""; }
-  function setLinksFor(id, arr) {
-    var d = byId(id); if (!d) return;
-    arr = normLinks(arr);
-    if (d.id && !d.shared && !d.seed) {                      // your own document — edit it in place
-      for (var i=0;i<userDocs.length;i++) if (userDocs[i].id === d.id) { userDocs[i].links = arr; userDocs[i].updated = new Date().toISOString(); }
-    } else {                                                 // built-in / shared — per-browser override
-      linkOverrides[idOf(d)] = arr;
-    }
-    persist();
-    openDoc(id, { silent:true });
-  }
-  function addLink(id) {
-    var d = byId(id); if (!d) return;
-    var url = prompt("Download link — a direct file URL, or a magnet: / .torrent link:", "https://");
-    if (url === null) return;
-    url = String(url).trim();
-    if (!url || url === "https://") return;
-    var arr = linksOf(d).slice();
-    arr.push({ url:url, updated:new Date().toISOString() });
-    setLinksFor(id, arr);
-    toast("Link added");
-  }
-  function editLink(id, i) {
-    var d = byId(id); if (!d) return;
-    var arr = linksOf(d).slice(); if (!arr[i]) return;
-    var url = prompt("Edit this download link:", arr[i].url);
-    if (url === null) return;
-    url = String(url).trim(); if (!url) return;
-    arr[i] = { url:url, updated:new Date().toISOString() };
-    setLinksFor(id, arr);
-    toast("Link updated");
-  }
-  function removeLink(id, i) {
-    var d = byId(id); if (!d) return;
-    var arr = linksOf(d).slice(); if (!arr[i]) return;
-    if (!confirm("Remove this download link?")) return;
-    arr.splice(i, 1);
-    setLinksFor(id, arr);
-    toast("Link removed");
-  }
-  function bindLinkButtons(box, d) {
-    var add = box.querySelector("#addLinkBtn");
-    if (add) add.addEventListener("click", function () { addLink(idOf(d)); });
-    Array.prototype.forEach.call(box.querySelectorAll("[data-lnk]"), function (b) {
-      b.addEventListener("click", function () {
-        var i = Number(b.getAttribute("data-i"));
-        if (b.getAttribute("data-lnk") === "edit") editLink(idOf(d), i); else removeLink(idOf(d), i);
-      });
-    });
-  }
 
   function renderMeta(d) {
     var rows = [];
@@ -1537,37 +1192,14 @@
   function renderFileBox(d) {
     var box = document.getElementById("mFile");
     var url = fileUrl(d);
-    var links = linksOf(d);
     var openBtn = document.getElementById("openBtn");
     var dlBtn = document.getElementById("downloadBtn");
     var srcBtn = document.getElementById("sourceBtn");
-    openBtn.hidden = !(url || links.length); dlBtn.hidden = !url; srcBtn.hidden = !d.source;
-    openBtn.textContent = (!url && links.length) ? "Open link" : "Open file";
+    openBtn.hidden = !url; dlBtn.hidden = !url; srcBtn.hidden = !d.source;
     if (!url) {
-      if (links.length) {                                // no uploaded file — list the download links
-        var rows = links.map(function (l, i) {
-          var tor = isTorrent(l.url);
-          return '<div class="filecard">' +
-            '<span class="g">' + (tor ? "⛓" : "⇩") + '</span>' +
-            '<span class="txt"><span class="nm">' + (tor ? "Torrent" : "Direct download link") + '</span>' +
-            '<span class="sz"><a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">' + esc(l.url) + '</a></span>' +
-            '<span class="sz">Updated ' + esc(l.updated ? fmtDateTime(l.updated) : "—") + '</span></span>' +
-            '<span class="act"><a class="btn small" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">Open</a>' +
-            '<button class="btn small ghost" type="button" data-lnk="edit" data-i="' + i + '">Edit</button>' +
-            '<button class="btn small ghost danger" type="button" data-lnk="del" data-i="' + i + '" title="Remove link">✕</button></span>' +
-          '</div>';
-        }).join("");
-        box.innerHTML = '<div class="filebox">' + rows +
-          '<div class="filecard"><span class="act" style="margin-left:0"><button class="btn small" id="addLinkBtn" type="button">＋ Add link</button></span></div></div>';
-        bindLinkButtons(box, d);
-        return;
-      }
       box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
-        '<span class="txt"><span class="nm">' + (d.source ? "No attachment — open the source" : "No file attached") + '</span>' +
-        '<span class="sz">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) + '</span></span>' +
-        '<span class="act"><button class="btn small" id="addLinkBtn" type="button">＋ Attach download link</button></span>' +
-        '</div></div>';
-      bindLinkButtons(box, d);
+        '<span class="txt"><span class="nm">' + (d.source ? "Link-only — open the source" : "No file attached") + '</span>' +
+        '<span class="sz">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) + '</span></span></div></div>';
       return;
     }
     var mime = d.fileType || "";
@@ -1722,7 +1354,7 @@
 
   /* ---------------- Reader actions: open / download / source / share ---------------- */
   document.getElementById("openBtn").addEventListener("click", function () {
-    if (current) window.open(fileUrl(current) || firstLink(current), "_blank", "noopener");
+    if (current) window.open(fileUrl(current), "_blank", "noopener");
   });
   document.getElementById("downloadBtn").addEventListener("click", function () {
     if (!current) return;
@@ -1797,6 +1429,7 @@
   });
 
   document.getElementById("uploadBtn").addEventListener("click", function () { toggleForm(); });
+  document.getElementById("addBtn").addEventListener("click", function () { toggleForm(); });
   function toggleForm() {
     form.hidden = !form.hidden;
     if (!form.hidden) document.getElementById("f-title").focus();
@@ -1830,12 +1463,6 @@
       lang: document.getElementById("f-lang").value,
       source: document.getElementById("f-source").value.trim(),
       license: document.getElementById("f-license").value.trim(),
-      links: (function () {
-        var now = new Date().toISOString();
-        return document.getElementById("f-download").value.split("\n")
-          .map(function (s) { return s.trim(); }).filter(Boolean)
-          .map(function (u) { return { url:u, updated:now }; });
-      })(),
       summary: document.getElementById("f-summary").value.trim(),
       points: document.getElementById("f-points").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean),
       refs: document.getElementById("f-refs").value.split("\n").map(function (line) {
@@ -1883,12 +1510,11 @@
         id:"u" + Date.now(),
         type:data.type, collection:data.collection, title:data.title, author:data.author, year:data.year,
         lang:data.lang, source:data.source, license:data.license, summary:data.summary,
-        points:data.points, refs:data.refs, links:data.links,
+        points:data.points, refs:data.refs,
         fileName:pendingFile ? pendingFile.name : "",
         fileType:pendingFile ? (pendingFile.type || "") : "",
         fileSize:pendingFile ? pendingFile.size : 0,
-        fileData:fData || "",
-        rev:"1", updated:new Date().toISOString()
+        fileData:fData || ""
       };
       userDocs.push(doc);
       persist();
@@ -1933,102 +1559,10 @@
      ========================================================================= */
   document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); render(); });
   typeFilterEl.addEventListener("change", function () { typeFilter = this.value; render(); });
-  document.getElementById("sortBy").addEventListener("change", function () {
-    sortBy = this.value;
-    sortDir = (sortBy === "title" || sortBy === "creator") ? "asc" : "desc";
-    render();
-  });
-  // Sortable column headers (▲/▼ on the active column).
-  docsTable.querySelector("thead").addEventListener("click", function (e) {
-    if (e.target.closest(".grip")) return;               // resizing, not sorting
-    var th = e.target.closest("th"); if (!th) return;
-    var key = th.getAttribute("data-sort");
-    if (sortBy === key) sortDir = (sortDir === "asc" ? "desc" : "asc");
-    else { sortBy = key; sortDir = (key === "title" || key === "type" || key === "collection" || key === "creator") ? "asc" : "desc"; }
-    var sel = document.getElementById("sortBy");
-    if (sel && sel.querySelector('option[value="' + key + '"]')) sel.value = key;
-    render();
-  });
-  /* ---------------- quick links popover (the "Links" button on each row) ---------------- */
-  var linkPopEl = document.getElementById("linkPop"), linkBtnActive = null;
-  function closeLinkPop() {
-    if (!linkPopEl || linkPopEl.hidden) return;
-    linkPopEl.hidden = true;
-    if (linkBtnActive) linkBtnActive.classList.remove("on");
-    linkBtnActive = null;
-  }
-  function copyText(text) {
-    function fb() {
-      var t = document.createElement("textarea");
-      t.value = text; t.style.position = "fixed"; t.style.left = "-9999px";
-      document.body.appendChild(t); t.select();
-      try { document.execCommand("copy"); toast("Link copied"); } catch (e) { toast(text); }
-      document.body.removeChild(t);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast("Link copied"); }, fb);
-    else fb();
-  }
-  function showLinkPop(btn, id) {
-    var d = byId(id); if (!d) return;
-    var links = linksOf(d);
-    var html = '<h5>Download links</h5>' + (links.length ? links.map(function (l) {
-      var tor = isTorrent(l.url);
-      return '<div class="lrow"><span class="t">' +
-        '<span class="nm">' + (tor ? "Torrent" : "Direct link") + '</span>' +
-        '<a href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">' + esc(l.url) + '</a>' +
-        '<span class="up">Updated ' + esc(l.updated ? fmtDateTime(l.updated) : "—") + '</span></span>' +
-        '<button class="btn small ghost" type="button" data-copy="' + esc(l.url) + '">Copy</button>' +
-        '<a class="btn small" href="' + esc(l.url) + '" target="_blank" rel="noopener noreferrer">Open</a>' +
-      '</div>';
-    }).join("") : '<div class="empty">No links on this document yet.</div>');
-    linkPopEl.innerHTML = html;
-    linkPopEl.hidden = false;
-    var r = btn.getBoundingClientRect(), w = linkPopEl.offsetWidth, h = linkPopEl.offsetHeight;
-    var left = Math.max(8, Math.min(r.left, window.innerWidth - w - 10));
-    var top = r.bottom + 6;
-    if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
-    linkPopEl.style.left = left + "px";
-    linkPopEl.style.top = top + "px";
-    if (linkBtnActive && linkBtnActive !== btn) linkBtnActive.classList.remove("on");
-    linkBtnActive = btn; btn.classList.add("on");
-    Array.prototype.forEach.call(linkPopEl.querySelectorAll("[data-copy]"), function (b) {
-      b.addEventListener("click", function (ev) { ev.stopPropagation(); copyText(b.getAttribute("data-copy")); });
-    });
-  }
-  document.addEventListener("mousedown", function (e) {
-    if (linkPopEl.hidden) return;
-    if (e.target.closest("#linkPop") || e.target.closest(".linkbtn")) return;
-    closeLinkPop();
-  });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLinkPop(); });
-  window.addEventListener("scroll", closeLinkPop, true);
-  window.addEventListener("resize", closeLinkPop);
-
-  // Clicking a row opens that document in its own window (the Links button opens the popover).
-  stackEl.addEventListener("click", function (e) {
-    var lb = e.target.closest(".linkbtn");
-    if (lb) {
-      if (linkBtnActive === lb) closeLinkPop(); else showLinkPop(lb, lb.getAttribute("data-links"));
-      return;
-    }
-    if (e.target.closest("a")) return;
-    var tr = e.target.closest("tr[data-id]"); if (!tr) return;
-    window.open(docHref(tr.getAttribute("data-id")), "_blank", "noopener");
-  });
-  document.getElementById("collList").addEventListener("click", function (e) {
-    var ico = e.target.closest(".coll-ico");
-    if (ico) {
-      var key = ico.getAttribute("data-key");
-      if (ico.getAttribute("data-edit") === "rename") renameColl(key); else deleteTag(key);
-      return;
-    }
-    var b = e.target.closest(".coll-pick"); if (!b) return;
+  document.getElementById("sortBy").addEventListener("change", function () { sortBy = this.value; render(); });
+  chipsEl.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip"); if (!b) return;
     activeTag = b.getAttribute("data-t"); render();
-  });
-  document.getElementById("newCollBtn").addEventListener("click", function () {
-    var name = prompt("Name for the new collection (e.g. Geothermal):");
-    if (name === null) return;
-    if (createTag(name)) toast("Collection added");
   });
   // Shelf rows are real links (<a target="_blank">) that open each document in its own window.
   document.getElementById("closeBtn").addEventListener("click", closeDoc);
@@ -2038,7 +1572,7 @@
   });
 
   /* =========================================================================
-     DELETE
+     DELETE / EXPORT / IMPORT
      ========================================================================= */
   document.getElementById("deleteDocBtn").addEventListener("click", function () {
     if (!openId) return;
@@ -2063,6 +1597,64 @@
       }
     }
     persist(); render();
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var payload = {
+      app:"renewable-vietnam-library", version:1, exported:new Date().toISOString(),
+      documents:userDocs, notes:notes, collections:customTags, hiddenCollections:hiddenTags,
+      overrides:collOverrides
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "renewable-vietnam-library.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast("Exported");
+  });
+
+  var fileInput = document.getElementById("fileInput");
+  document.getElementById("importBtn").addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function () {
+    var f = fileInput.files && fileInput.files[0];
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try {
+        var data = JSON.parse(r.result);
+        var docs = Array.isArray(data) ? data : (data && Array.isArray(data.documents) ? data.documents : []);
+        var added = 0;
+        docs.forEach(function (u) {
+          if (!u || !u.title) return;
+          userDocs.push({
+            id:"u" + Date.now() + "_" + added,
+            type:normType(u.type), collection:normTag(u.collection), title:String(u.title),
+            author:u.author ? String(u.author) : "", year:u.year ? String(u.year) : "", lang:u.lang ? String(u.lang) : "",
+            summary:u.summary ? String(u.summary) : "", points:Array.isArray(u.points) ? u.points.map(String) : [],
+            refs:normRefs(u.refs), source:u.source ? String(u.source) : "", license:u.license ? String(u.license) : "",
+            fileName:u.fileName ? String(u.fileName) : "", fileType:u.fileType ? String(u.fileType) : "",
+            fileSize:u.fileSize ? Number(u.fileSize) : 0, fileData:u.fileData ? String(u.fileData) : ""
+          });
+          added++;
+        });
+        var n = (data && data.notes) || {};
+        Object.keys(n).forEach(function (k) { if (typeof n[k] === "string") notes[k] = n[k]; });
+        (data && Array.isArray(data.collections) ? data.collections : []).forEach(function (t) {
+          if (!t || !t.key || !t.label) return;
+          if (allTags().some(function (x) { return x.key === t.key; })) return;
+          var tone = (Array.isArray(t.tone) && t.tone.length === 3) ? t.tone : (function () { var hex = TAG_PALETTE[customTags.length % TAG_PALETTE.length]; return [hex, rgba(hex,.12), rgba(hex,.35)]; })();
+          customTags.push({ key:String(t.key), label:String(t.label), tone:tone });
+        });
+        (data && Array.isArray(data.hiddenCollections) ? data.hiddenCollections : []).forEach(function (k) { if (hiddenTags.indexOf(k) < 0) hiddenTags.push(k); });
+        rebuildCollectionSelects(); persist(); render();
+        alert("Imported " + added + " document(s).");
+      } catch (err) {
+        alert("Could not read that file — expected a JSON export from this page.");
+      }
+      fileInput.value = "";
+    };
+    r.readAsText(f);
   });
 
   /* =========================================================================
@@ -2103,25 +1695,19 @@
     return '<option value="' + t.key + '">' + esc(t.label) + '</option>';
   }).join("");
 
-  buildHead();
-  applySideWidth();
   rebuildCollectionSelects();
   paintIcons();
   applyWrap();
   render();
   loadShared();
-  loadViewCounts();
 
   // Deep link: /hub/#/doc/<id> — this window shows one document, full page.
   function enterDocMode(id) {
     document.body.classList.add("docmode");
     window.scrollTo(0, 0);
-    var tries = 0, recorded = false;
+    var tries = 0;
     (function attempt() {
-      if (byId(id)) {
-        if (!recorded) { recorded = true; recordView(id); }   // count the view once
-        openDoc(id, { silent:true });
-      }
+      if (byId(id)) openDoc(id, { silent:true });
       else if (++tries < 16) setTimeout(attempt, 250);
       else { document.getElementById("placeholder").hidden = false; }
     })();
