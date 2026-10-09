@@ -137,32 +137,6 @@
     Rev 0.35  (2026-10-09)  Header tidy. The "Home" link moves from the right of the header to
                             the left of the "The Library" wordmark, and its leading arrow is
                             removed (plain text "Home"). The theme toggle stays on the right.
-    Rev 0.36  (2026-10-09)  The small type glyph before each document title in the table's "Title"
-                            column is removed — the title now starts the cell.
-    Rev 0.37  (2026-10-09)  The intro paragraph under the title now fills the full width of the
-                            screen (its 66-character cap is removed).
-    Rev 0.38  (2026-10-09)  The 3px accent line on the left edge of each table row (beside the
-                            tick box) is removed.
-    Rev 0.39  (2026-10-09)  The page heading now reads "Library" instead of "Document Library".
-    Rev 0.40  (2026-10-09)  Table alignment: every column except "Title" is centred (Type,
-                            Collection, Creator, Update, Rev, Views and Links, alongside the tick
-                            box and "No.").
-    Rev 0.41  (2026-10-09)  The intro paragraph is trimmed to the single sentence "The reports,
-                            datasets, policy and maps behind Viet Nam's energy transition, kept in
-                            one place." — the upload/open/how-to sentences are removed.
-    Rev 0.42  (2026-10-09)  The "Advanced" section is removed — its data/sources notes, the
-                            "Restore hidden documents & collections" and "Clear my documents &
-                            notes" buttons, and their handlers and styles.
-    Rev 0.43  (2026-10-09)  Edit a document, and attach links from a box. The document window has an
-                            "Edit" button that opens a form for every field — title, type,
-                            collection, language, author, year, source, licence, summary, key
-                            points, references and download links. Saving updates the shared row
-                            when the shared store is on, otherwise it is kept in this browser. The
-                            "＋ Add link" / "＋ Attach download link" button is replaced by a
-                            drop-in box: paste a URL or magnet and press Attach.
-    Rev 0.44  (2026-10-09)  Multi-select delete. A "Delete selected" button sits beside "Export
-                            links" (enabled once documents are ticked) and removes every ticked
-                            document after a password prompt (the password is "123").
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -242,7 +216,7 @@
   .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--faint); font-weight:700; margin:0 0 12px; }
   .eyebrow::before { content:""; width:10px; height:10px; border-radius:1px; background:linear-gradient(135deg,#00A0E0,#0072BC); flex:0 0 auto; }
   .hero h1 { font-size:clamp(28px, 4.4vw, 44px); font-weight:200; letter-spacing:-.02em; margin:0 0 10px; }
-  .hero p.lede { color:var(--muted); font-size:14.5px; max-width:none; margin:0 0 16px; font-weight:300; }
+  .hero p.lede { color:var(--muted); font-size:14.5px; max-width:66ch; margin:0 0 16px; font-weight:300; }
   .stats { display:flex; gap:18px; flex-wrap:wrap; font-size:11.5px; color:var(--muted); }
   .stats b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
 
@@ -289,15 +263,13 @@
   .docs thead th .grip { position:absolute; top:0; right:-5px; width:10px; height:100%; z-index:3; cursor:col-resize; }
   .docs thead th .grip:hover, .docs thead th .grip.on { background:var(--accent); opacity:.3; }
   body.colresize { cursor:col-resize; user-select:none; }
-  .docs th.num, .docs td.num { text-align:center; font-variant-numeric:tabular-nums; }
-  /* Every column is centred except the title (the tick box, No., Type, Collection,
-     Creator, Update, Rev, Views and Links all sit mid-cell) */
-  .docs thead th:not(.pick):not([data-sort="title"]), .docs tbody td.dim, .docs td.lnk { text-align:center; }
+  .docs th.num, .docs td.num { text-align:right; font-variant-numeric:tabular-nums; }
   /* The "No." column is centred */
   .docs thead th[data-sort="num"], .docs td.idx { text-align:center; }
   .docs tbody tr { border-bottom:1px solid var(--line); }
   .docs tbody tr:hover { background:var(--surface-2); }
   .docs tbody td { padding:9px 10px; vertical-align:top; overflow:hidden; text-overflow:ellipsis; }
+  .docs tbody td:first-child { border-left:3px solid var(--tone, transparent); }
   .docs td.idx, .docs td.dim { color:var(--faint); }
   /* multi-select column */
   .docs th.pick, .docs td.pick { text-align:center; cursor:default; }
@@ -305,6 +277,7 @@
   .docs input[type=checkbox] { width:14px; height:14px; accent-color:var(--accent); vertical-align:middle; }
   .docs tbody tr.picked { background:var(--accent-soft); }
   .docs .c-title { display:flex; gap:9px; align-items:flex-start; }
+  .docs .c-title .g { width:26px; height:26px; flex:0 0 auto; display:grid; place-items:center; font-size:13px; color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); border-radius:var(--radius); }
   .docs .c-title a { color:var(--text); font-weight:600; text-decoration:none; line-height:1.3; }
   .docs .c-title a:hover { color:var(--accent); }
   .docs .c-title .snip { margin-top:3px; font-size:11px; color:var(--muted); font-weight:300; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
@@ -350,7 +323,7 @@
   body.docmode .preview { display:block; position:static; max-height:none; overflow:hidden; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
   body.docmode .sheet-top { position:static; box-shadow:inset 0 3px 0 var(--tone, var(--accent)); }
   body.docmode .hero, body.docmode .toolbar, body.docmode .filterbar,
-  body.docmode .docs, body.docmode #empty,
+  body.docmode .adv, body.docmode .docs, body.docmode #empty,
   body.docmode .browse-side { display:none; }
   body.docmode .browse { display:block; }
   body.docmode .preview .close-x { display:none; }
@@ -365,6 +338,19 @@
   .preview .close-label { display:none; }
 
   .empty { text-align:center; color:var(--muted); padding:44px 20px; font-size:14px; border:1px dashed var(--line-strong); border-radius:var(--radius); }
+
+  /* ---------------- Advanced ---------------- */
+  details.adv { margin-top:34px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); }
+  details.adv > summary { cursor:pointer; list-style:none; padding:14px 18px; font-size:12.5px; font-weight:600; color:var(--muted); display:flex; align-items:center; gap:9px; }
+  details.adv > summary::-webkit-details-marker { display:none; }
+  details.adv > summary::before { content:"▸"; color:var(--accent); font-size:11px; }
+  details.adv[open] > summary::before { content:"▾"; }
+  .adv-body { padding:0 18px 18px; font-size:12.5px; color:var(--muted); }
+  .adv-body h4 { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin:14px 0 6px; }
+  .adv-body h4:first-child { margin-top:4px; }
+  .adv-body ul { margin:0; padding-left:18px; }
+  .adv-body li { margin:3px 0; }
+  .adv-body .row { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
 
   /* ---------------- Upload form ---------------- */
   form.add { margin:0 0 20px; padding:18px; border:1px solid var(--accent-border); border-top:3px solid var(--accent); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); }
@@ -383,12 +369,9 @@
   .field.two > div, .field.three > div { min-width:0; }
   .form-actions { display:flex; gap:10px; margin-top:4px; }
 
-  /* Attach a link — a box you drop the URL / magnet into */
-  .linkadd, .attachbox { display:flex; gap:8px; align-items:center; padding:10px; border:1px dashed var(--line-strong); border-radius:var(--radius); background:var(--surface-2); }
-  .attachbox { padding:12px; }
-  .linkadd input, .attachbox input { flex:1; min-width:0; padding:9px 11px; font:inherit; font-size:13px; color:var(--text); background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
-  .linkadd input:focus, .attachbox input:focus { border-color:var(--accent-border); box-shadow:0 0 0 2px var(--accent-soft); }
-  .filebox .attachbox { border:0; border-top:1px solid var(--line); border-radius:0; }
+  .linkadd { display:flex; gap:8px; align-items:center; }
+  .linkadd input { flex:1; min-width:0; padding:9px 11px; font:inherit; font-size:13px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
+  .linkadd input:focus { border-color:var(--accent-border); box-shadow:0 0 0 2px var(--accent-soft); }
   .linklist { list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:6px; }
   .linklist:empty { display:none; }
   .linklist li { display:flex; align-items:center; gap:8px; padding:7px 9px; font-size:12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface-2); }
@@ -399,8 +382,6 @@
   /* ---------------- Reader sheet ---------------- */
   .sheet { width:100%; background:var(--surface); animation:fade .25s ease-out; }
   .sheet[hidden] { display:none; }
-  .sheet-edit { padding:16px 20px 20px; }
-  .sheet-edit[hidden] { display:none; }
   @keyframes fade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
   .sheet-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; border-bottom:1px solid var(--line); box-shadow:inset 0 3px 0 var(--tone, var(--accent)); }
   .sheet-top .left { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -546,6 +527,7 @@
     .filebox iframe, .filebox embed { height:min(60dvh, 320px); }
     .docs { font-size:12px; }
     .docs td, .docs thead th { padding:8px 6px; }
+    .docs .c-title .g { width:22px; height:22px; font-size:12px; }
     .linkbtn { font-size:9px; padding:3px 6px; }
     .filecard { flex-wrap:wrap; }
     .filecard .act { margin-left:0; }
@@ -593,9 +575,11 @@
 
     <section class="hero">
       <p class="eyebrow">Renewable Viet Nam</p>
-      <h1>Library</h1>
+      <h1>Document Library</h1>
       <p class="lede">
-        The reports, datasets, policy and maps behind Viet Nam's energy transition, kept in one place.
+        The reports, datasets, policy and maps behind Viet Nam's energy transition, kept in one
+        place. Upload a file or a link, describe it, and share it — anyone can browse and download;
+        everyone can add. Open a document to read it, take notes, and leave a comment.
       </p>
       <div class="stats">
         <span><b id="statDocs">0</b> documents</span>
@@ -613,7 +597,6 @@
       </label>
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
       <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
-      <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (password protected)">Delete selected</button>
     </div>
 
     <div class="filterbar">
@@ -779,83 +762,12 @@
             </div>
           </div>
 
-          <form class="sheet-edit" id="mEdit" hidden>
-            <div class="field">
-              <label for="e-title">Title</label>
-              <input type="text" id="e-title" required />
-            </div>
-            <div class="field three">
-              <div>
-                <label for="e-type">Type</label>
-                <select id="e-type"></select>
-              </div>
-              <div>
-                <label for="e-collection">Collection</label>
-                <select id="e-collection"></select>
-              </div>
-              <div>
-                <label for="e-lang">Language</label>
-                <select id="e-lang">
-                  <option value="">—</option>
-                  <option value="en">English</option>
-                  <option value="vi">Tiếng Việt</option>
-                </select>
-              </div>
-            </div>
-            <div class="field two">
-              <div>
-                <label for="e-author">Author / publisher</label>
-                <input type="text" id="e-author" />
-              </div>
-              <div>
-                <label for="e-year">Year</label>
-                <input type="text" id="e-year" />
-              </div>
-            </div>
-            <div class="field two">
-              <div>
-                <label for="e-source">Source link</label>
-                <input type="text" id="e-source" />
-              </div>
-              <div>
-                <label for="e-license">Licence</label>
-                <input type="text" id="e-license" />
-              </div>
-            </div>
-            <div class="field">
-              <label for="e-link">Download links — attach a direct file or torrent</label>
-              <div class="linkadd">
-                <input type="text" id="e-link" placeholder="https://…/file.pdf  or  magnet:?xt=urn:btih:…" />
-                <button class="btn small" type="button" id="addEditLink">＋ Attach</button>
-              </div>
-              <ul class="linklist" id="e-linkList"></ul>
-            </div>
-            <div class="field">
-              <label for="e-summary">Summary</label>
-              <textarea id="e-summary"></textarea>
-            </div>
-            <div class="field">
-              <label for="e-points">Key points — one per line</label>
-              <textarea id="e-points"></textarea>
-            </div>
-            <div class="field">
-              <label for="e-refs">References — one per line, as “Label | https://…”</label>
-              <textarea id="e-refs"></textarea>
-            </div>
-            <div class="form-actions">
-              <button class="btn primary" type="submit" id="eSubmit">Save changes</button>
-              <button class="btn ghost" type="button" id="eCancel">Cancel</button>
-            </div>
-            <p class="hint" id="eMsg" style="margin-top:10px" hidden></p>
-          </form>
-
           <div class="sheet-actions">
             <div class="grp">
               <button class="btn small" id="openBtn" type="button" hidden>Open file</button>
               <button class="btn small" id="downloadBtn" type="button" hidden>Download</button>
               <button class="btn small" id="sourceBtn" type="button" hidden>Source ↗</button>
               <button class="btn small ghost" id="shareBtn" type="button">Copy link</button>
-              <button class="btn small ghost" id="editDocBtn" type="button">Edit</button>
             </div>
             <div class="grp">
               <button class="btn small ghost danger" id="deleteDocBtn" type="button">Delete document</button>
@@ -881,12 +793,52 @@
       </div>
     </aside>
     </div><!-- /browse -->
+
+    <details class="adv">
+      <summary>Advanced — where the data lives, sources &amp; reset</summary>
+      <div class="adv-body">
+        <h4>Where the library lives</h4>
+        <p style="margin:0">
+          The <strong>public</strong> shelf is stored in Postgres (Supabase) — the documents in
+          <code>hub_documents</code>, shared download links in <code>hub_doc_links</code> and comments in
+          <code>hub_views</code>. Submissions publish immediately — nothing is held back for review. To remove
+          something, open <strong>Table Editor</strong> and delete the row.
+        </p>
+        <p style="margin:8px 0 0">
+          While the shared store is switched off, the documents, links and notes you add live only in this browser
+          (local storage).
+        </p>
+
+        <h4>Reference sources used</h4>
+        <ul>
+          <li>Ministry of Industry and Trade (MOIT) &amp; the National Power Development Plan (PDP8)</li>
+          <li>EVN / EVNNPT — national utility and grid operator disclosures</li>
+          <li>IEA, IRENA, World Bank, ADB, UNDP, ILO — energy, finance and just-transition analysis</li>
+          <li>Global Energy Monitor, Ember, Global Wind Energy Council — asset and generation trackers</li>
+        </ul>
+
+        <h4>Collections</h4>
+        <p style="margin:0 0 4px">Manage collections in the <strong>Browse Docs</strong> column: <strong>＋ New collection</strong> adds one, <strong>✎</strong> renames it, and <strong>✕</strong> deletes it (any document using a deleted collection moves to another one automatically). A document's own collection can also be changed from the dropdown beside its number in the reader.</p>
+
+        <h4>Hidden documents &amp; collections</h4>
+        <p style="margin:0 0 4px">Deleting a built-in or public document hides it from your shelf in this browser, and deleting a built-in collection hides it. Bring them all back here.</p>
+        <div class="row">
+          <button class="btn ghost" id="restoreBtn" type="button">Restore hidden documents &amp; collections</button>
+        </div>
+
+        <h4>Reset</h4>
+        <p style="margin:0 0 4px">Clears the documents and notes you have added in this browser. The built-in library is unaffected.</p>
+        <div class="row">
+          <button class="btn ghost" id="resetBtn" type="button">Clear my documents &amp; notes</button>
+        </div>
+      </div>
+    </details>
   </main>
 
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.44</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.35</span>
     </div>
   </footer>
 
@@ -1131,7 +1083,6 @@
   var SIDE_KEY       = "rvn_lib_sidewidth";
   var BROWSE_KEY     = "rvn_lib_browse_open";
   var LINK_KEY       = "rvn_lib_download_links";
-  var EDIT_KEY       = "rvn_lib_doc_edits";
   var OWNER_KEY      = "rvn_lib_owner";
 
   var userDocs = load(DOC_KEY, []);
@@ -1147,7 +1098,6 @@
   var sharedViews = {};                       // doc id -> view count (shared store)
   var colWidths = load(COLW_KEY, {});         // column key -> px
   var linkOverrides = load(LINK_KEY, {});     // doc id -> download links (local-only mode)
-  var docEdits = load(EDIT_KEY, {});          // doc id -> edited fields (per-browser override)
   var sharedLinks = {};                       // doc id -> [{id,url,updated,owner}] (shared store)
   var sharedCollections = {};                 // key -> {label, tone, hidden} (shared store)
   var ownerToken = "";
@@ -1204,7 +1154,6 @@
       localStorage.setItem(COLW_KEY, JSON.stringify(colWidths));
       localStorage.setItem(SIDE_KEY, String(sideW));
       localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
-      localStorage.setItem(EDIT_KEY, JSON.stringify(docEdits));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
 
@@ -1212,12 +1161,10 @@
     return LIBRARY.concat(sharedDocs, userDocs).filter(function (d) {
       return hidden.indexOf(idOf(d)) < 0;
     }).map(function (d) {
-      var id = idOf(d), ed = docEdits[id], ov = collOverrides[id];
-      var colOver = ov && isTagKey(ov) && ov !== d.collection;
-      if (!ed && !colOver) return d;
+      var ov = collOverrides[idOf(d)];
+      if (!ov || !isTagKey(ov) || ov === d.collection) return d;
       var c = {}; for (var k in d) if (Object.prototype.hasOwnProperty.call(d, k)) c[k] = d[k];
-      if (ed) for (var e in ed) if (Object.prototype.hasOwnProperty.call(ed, e)) c[e] = ed[e];   // edited fields
-      if (colOver) c.collection = ov;
+      c.collection = ov;
       return c;
     });
   }
@@ -1268,13 +1215,6 @@
       headers:sbHeaders({ "Content-Type":"application/json", Prefer:"return=minimal" }),
       body:JSON.stringify(row)
     }).then(function (r) { if (!r.ok) throw new Error("POST " + table + " → " + r.status); return true; });
-  }
-  function sbPatch(table, id, row) {
-    return fetch(SUPABASE_URL + "/rest/v1/" + table + "?id=eq." + encodeURIComponent(id), {
-      method:"PATCH",
-      headers:sbHeaders({ "Content-Type":"application/json", Prefer:"return=minimal" }),
-      body:JSON.stringify(row)
-    }).then(function (r) { if (!r.ok) throw new Error("PATCH " + table + " → " + r.status); return true; });
   }
   function sbDelete(table, id) {
     return fetch(SUPABASE_URL + "/rest/v1/" + table + "?id=eq." + encodeURIComponent(id), {
@@ -1666,7 +1606,7 @@
       return '<tr data-id="' + esc(id) + '" class="' + (picked[id] ? "picked" : "") + '" style="' + toneVars(d.collection) + '">' +
         '<td class="pick"><input type="checkbox" data-pick="' + esc(id) + '"' + (picked[id] ? " checked" : "") + ' aria-label="Select ' + esc(d.title) + '"></td>' +
         '<td class="num idx">' + esc(d.n || "") + '</td>' +
-        '<td><div class="c-title">' +
+        '<td><div class="c-title"><span class="g" aria-hidden="true">' + esc(typeGlyph(d.type)) + '</span>' +
           '<span><a href="' + esc(docHref(id)) + '" target="_blank" rel="noopener">' + esc(d.title) + '</a>' +
           '<span class="c-meta">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) +
             (d.author ? ' · ' + esc(d.author) : '') +
@@ -1755,22 +1695,23 @@
     persist();
     openDoc(id, { silent:true });
   }
-  // Attach a link typed into the file area's box.
-  function attachLink(id, url) {
+  function addLink(id) {
     var d = byId(id); if (!d) return;
-    url = String(url || "").trim();
-    if (!url) return;
+    var url = prompt("Download link — a direct file URL, or a magnet: / .torrent link:", "https://");
+    if (url === null) return;
+    url = String(url).trim();
+    if (!url || url === "https://") return;
     if (dbOn) {                                              // saved for everyone, and for your other devices
       sbAddLink(id, url).then(function () {
         loadSharedLinks();                                   // pull it back with its row id
-        toast("Link attached — saved for everyone");
-      }).catch(function (e) { toast("Could not attach link"); console.warn("Library:", e.message); });
+        toast("Link added — saved for everyone");
+      }).catch(function (e) { toast("Could not add link"); console.warn("Library:", e.message); });
       return;
     }
     var arr = localLinksOf(d).slice();
     arr.push({ url:url, updated:new Date().toISOString() });
     setLocalLinks(id, arr);
-    toast("Link attached (this browser only)");
+    toast("Link added (this browser only)");
   }
   function editLink(id, i) {
     var d = byId(id); if (!d) return;
@@ -1807,28 +1748,13 @@
     setLocalLinks(id, arr);
     toast("Link removed");
   }
-  function attachBoxHtml() {
-    return '<div class="attachbox">' +
-      '<input type="text" class="attach-input" placeholder="Paste a file URL or magnet: link…" aria-label="Attach a download link" />' +
-      '<button class="btn small attach-go" type="button">Attach</button></div>';
-  }
-  function bindLinkButtons(container, d) {
-    var id = idOf(d);
-    var ab = container.querySelector(".attachbox");
-    if (ab) {
-      var input = ab.querySelector(".attach-input");
-      var go = function () {
-        var v = input.value.trim();
-        if (!v) { input.focus(); return; }
-        attachLink(id, v); input.value = "";
-      };
-      ab.querySelector(".attach-go").addEventListener("click", go);
-      input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); go(); } });
-    }
-    Array.prototype.forEach.call(container.querySelectorAll("[data-lnk]"), function (b) {
+  function bindLinkButtons(box, d) {
+    var add = box.querySelector("#addLinkBtn");
+    if (add) add.addEventListener("click", function () { addLink(idOf(d)); });
+    Array.prototype.forEach.call(box.querySelectorAll("[data-lnk]"), function (b) {
       b.addEventListener("click", function () {
         var i = Number(b.getAttribute("data-i"));
-        if (b.getAttribute("data-lnk") === "edit") editLink(id, i); else removeLink(id, i);
+        if (b.getAttribute("data-lnk") === "edit") editLink(idOf(d), i); else removeLink(idOf(d), i);
       });
     });
   }
@@ -1876,14 +1802,16 @@
             '</span>' +
           '</div>';
         }).join("");
-        box.innerHTML = '<div class="filebox">' + rows + attachBoxHtml() + '</div>';
+        box.innerHTML = '<div class="filebox">' + rows +
+          '<div class="filecard"><span class="act" style="margin-left:0"><button class="btn small" id="addLinkBtn" type="button">＋ Add link</button></span></div></div>';
         bindLinkButtons(box, d);
         return;
       }
       box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
         '<span class="txt"><span class="nm">' + (d.source ? "No attachment — open the source" : "No file attached") + '</span>' +
         '<span class="sz">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) + '</span></span>' +
-        '</div>' + attachBoxHtml() + '</div>';
+        '<span class="act"><button class="btn small" id="addLinkBtn" type="button">＋ Attach download link</button></span>' +
+        '</div></div>';
       bindLinkButtons(box, d);
       return;
     }
@@ -1905,7 +1833,6 @@
   function openDoc(id, opts) {
     var d = byId(id);
     if (!d) return;
-    closeEdit();                                 // never open a doc with the editor still showing
     openId = id; current = d;
 
     sheetEl.setAttribute("style", toneVars(d.collection));
@@ -1953,125 +1880,6 @@
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
     render();
-  }
-
-  /* ---------------- edit a document (every field) ---------------- */
-  var pendingEditLinks = [];
-
-  function renderEditLinks() {
-    var list = document.getElementById("e-linkList");
-    list.innerHTML = pendingEditLinks.map(function (l, i) {
-      return '<li><span class="t">' + (isTorrent(l.url) ? "Torrent" : "Link") + '</span>' +
-        '<span class="u">' + esc(l.url) + '</span>' +
-        '<button class="x" type="button" data-i="' + i + '" title="Remove link">✕</button></li>';
-    }).join("");
-    Array.prototype.forEach.call(list.querySelectorAll(".x"), function (b) {
-      b.addEventListener("click", function () { pendingEditLinks.splice(Number(b.getAttribute("data-i")), 1); renderEditLinks(); });
-    });
-  }
-  function addEditLink() {
-    var el = document.getElementById("e-link");
-    var url = String(el.value || "").trim();
-    if (!url) return;
-    pendingEditLinks.push({ url:url, updated:new Date().toISOString() });
-    el.value = ""; el.focus(); renderEditLinks();
-  }
-  function openEdit(d) {
-    var tSel = document.getElementById("e-type");
-    tSel.innerHTML = TYPES.map(function (t) { return '<option value="' + t.key + '">' + esc(t.label) + '</option>'; }).join("");
-    var cSel = document.getElementById("e-collection");
-    cSel.innerHTML = allTags().map(function (c) { return '<option value="' + esc(c.key) + '">' + esc(c.label) + '</option>'; }).join("");
-    document.getElementById("e-title").value = d.title || "";
-    tSel.value = d.type || "report";
-    cSel.value = d.collection || "grid";
-    document.getElementById("e-lang").value = d.lang || "";
-    document.getElementById("e-author").value = d.author || "";
-    document.getElementById("e-year").value = d.year || "";
-    document.getElementById("e-source").value = d.source || "";
-    document.getElementById("e-license").value = d.license || "";
-    document.getElementById("e-summary").value = d.summary || "";
-    document.getElementById("e-points").value = (d.points || []).join("\n");
-    document.getElementById("e-refs").value = (d.refs || []).map(function (r) { return r.label + (r.url ? " | " + r.url : ""); }).join("\n");
-    pendingEditLinks = normLinks(d.links).map(function (l) { return { url:l.url, updated:l.updated }; });
-    renderEditLinks();
-    document.getElementById("e-link").value = "";
-    document.getElementById("eMsg").hidden = true;
-    var left = sheetEl.querySelector(".sheet-top .left"); if (left) left.style.display = "none";
-    sheetEl.querySelector(".sheet-body").hidden = true;
-    sheetEl.querySelector(".sheet-actions").hidden = true;
-    document.getElementById("mEdit").hidden = false;
-  }
-  function closeEdit() {
-    document.getElementById("mEdit").hidden = true;
-    sheetEl.querySelector(".sheet-body").hidden = false;
-    sheetEl.querySelector(".sheet-actions").hidden = false;
-    var left = sheetEl.querySelector(".sheet-top .left"); if (left) left.style.display = "";
-  }
-  function rowFromFields(f) {
-    return {
-      doc_type:f.type, collection:f.collection, title:f.title, author:f.author, year:f.year, lang:f.lang,
-      source:f.source, license:f.license, summary:f.summary, points:f.points, refs:f.refs, links:f.links,
-      rev:f.rev, updated:f.updated
-    };
-  }
-  function applyLocalEdit(id, fields) {
-    var d = byId(id);
-    if (d && d.id && !d.shared && !d.seed) {          // your own local document — edit it in place
-      for (var i=0;i<userDocs.length;i++) {
-        if (userDocs[i].id === d.id) {
-          for (var k in fields) if (Object.prototype.hasOwnProperty.call(fields, k)) userDocs[i][k] = fields[k];
-        }
-      }
-    } else {                                          // built-in / shared — per-browser override
-      var cur = docEdits[id] || {};
-      for (var e in fields) if (Object.prototype.hasOwnProperty.call(fields, e)) cur[e] = fields[e];
-      docEdits[id] = cur;
-    }
-    persist();
-    if (openId === id) openDoc(id, { silent:true }); else render();
-  }
-  function saveEdit() {
-    var id = openId; if (!id) return;
-    var d = byId(id); if (!d) return;
-    var msg = document.getElementById("eMsg");
-    var title = document.getElementById("e-title").value.trim();
-    if (!title) { msg.hidden = false; msg.textContent = "Please give the document a title."; return; }
-    var fields = {
-      type: document.getElementById("e-type").value,
-      collection: document.getElementById("e-collection").value,
-      title: title,
-      author: document.getElementById("e-author").value.trim(),
-      year: document.getElementById("e-year").value.trim(),
-      lang: document.getElementById("e-lang").value,
-      source: document.getElementById("e-source").value.trim(),
-      license: document.getElementById("e-license").value.trim(),
-      summary: document.getElementById("e-summary").value.trim(),
-      points: document.getElementById("e-points").value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean),
-      refs: document.getElementById("e-refs").value.split("\n").map(function (line) {
-        line = line.trim(); if (!line) return null;
-        var p = line.split("|");
-        if (p.length >= 2) return { label:p[0].trim(), url:p.slice(1).join("|").trim() };
-        return { label:line, url:/^https?:\/\//i.test(line) ? line : "" };
-      }).filter(Boolean),
-      links: pendingEditLinks.slice(),
-      rev: String((parseInt(d.rev || "1", 10) || 1) + 1),
-      updated: new Date().toISOString()
-    };
-    if (dbOn && d.shared) {                       // a shared row — update it for everyone
-      msg.hidden = false; msg.textContent = "Saving…";
-      sbPatch("hub_documents", String(d.id).replace(/^s-/, ""), rowFromFields(fields))
-        .then(function () { loadShared(); })
-        .then(function () { closeEdit(); if (openId === id) openDoc(id, { silent:true }); toast("Saved — updated for everyone"); })
-        .catch(function (e) {                      // shared update blocked → keep it in this browser
-          applyLocalEdit(id, fields); closeEdit();
-          toast("Saved in this browser (shared update failed)");
-          console.warn("Library:", e.message);
-        });
-      return;
-    }
-    applyLocalEdit(id, fields);
-    closeEdit();
-    toast("Saved");
   }
 
   function assignCollection(d, tag) {
@@ -2439,8 +2247,6 @@
     var btn = document.getElementById("exportLinksBtn");
     var n = Object.keys(picked).length;
     if (btn) { btn.textContent = n ? "Export links (" + n + ")" : "Export links"; btn.disabled = !n; }
-    var del = document.getElementById("deleteSelectedBtn");
-    if (del) { del.textContent = n ? "Delete (" + n + ")" : "Delete selected"; del.disabled = !n; }
     var all = document.getElementById("pickAll");
     if (all) { all.checked = boxes.length > 0 && on === boxes.length; all.indeterminate = on > 0 && on < boxes.length; }
   }
@@ -2510,14 +2316,6 @@
   });
   // Shelf rows are real links (<a target="_blank">) that open each document in its own window.
   document.getElementById("closeBtn").addEventListener("click", closeDoc);
-  document.getElementById("editDocBtn").addEventListener("click", function () {
-    if (!openId) return;
-    var d = byId(openId); if (d) openEdit(d);
-  });
-  document.getElementById("eCancel").addEventListener("click", closeEdit);
-  document.getElementById("addEditLink").addEventListener("click", addEditLink);
-  document.getElementById("e-link").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addEditLink(); } });
-  document.getElementById("mEdit").addEventListener("submit", function (e) { e.preventDefault(); saveEdit(); });
   document.addEventListener("keydown", function (e) {
     var tag = (e.target && e.target.tagName) || "";
     if (e.key === "Escape" && !sheetEl.hidden && tag !== "INPUT" && tag !== "TEXTAREA") closeDoc();
@@ -2526,23 +2324,6 @@
   /* =========================================================================
      DELETE
      ========================================================================= */
-  // Remove one document from the shelf — the same rules for the single-document
-  // button and the multi-select delete.
-  function deleteOne(d) {
-    var tid = idOf(d);
-    if (d.id && !d.shared) {                      // your own local document
-      userDocs = userDocs.filter(function (u) { return u.id !== d.id; });
-      delete notes[d.id];
-    } else if (d.shared) {                        // a shared row — remove it for everyone
-      sharedDocs = sharedDocs.filter(function (s) { return idOf(s) !== tid; });
-      if (dbOn) sbDelete("hub_documents", String(tid).replace(/^s-/, "")).catch(function (e) { console.warn("Library:", e.message); });
-    } else {                                      // built-in — hide it from your shelf
-      hidden.push(tid);
-    }
-    delete docEdits[tid];
-    delete picked[tid];
-  }
-
   document.getElementById("deleteDocBtn").addEventListener("click", function () {
     if (!openId) return;
     var d = byId(openId);
@@ -2552,27 +2333,24 @@
       ? 'Remove "' + d.title + '" from the public library for everyone?'
       : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
     if (!confirm(msg)) return;
+    var tid = idOf(d);
     closeDoc();
-    deleteOne(d);
+    if (isLocal) {
+      userDocs = userDocs.filter(function (u) { return u.id !== d.id; });
+      delete notes[d.id];
+    } else {
+      if (d.shared) {
+        sharedDocs = sharedDocs.filter(function (s) { return idOf(s) !== tid; });
+        if (dbOn) sbDelete("hub_documents", String(tid).replace(/^s-/, "")).catch(function (e) { console.warn("Library:", e.message); });
+      } else {
+        hidden.push(tid);
+      }
+    }
     persist(); render();
-  });
-
-  // Delete every ticked document, gated behind a password.
-  document.getElementById("deleteSelectedBtn").addEventListener("click", function () {
-    var docs = all().filter(function (d) { return picked[idOf(d)]; });
-    if (!docs.length) { toast("Tick some documents first"); return; }
-    var n = docs.length;
-    var pw = prompt("Password to delete " + n + " selected document" + (n === 1 ? "" : "s") + ":");
-    if (pw === null) return;
-    if (pw !== "123") { toast("Wrong password"); return; }
-    if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
-    docs.forEach(deleteOne);
-    persist(); render();
-    toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
   });
 
   /* =========================================================================
-     THEME
+     THEME + RESET
      ========================================================================= */
   var sun = document.getElementById("iconSun"), moon = document.getElementById("iconMoon");
   function paintIcons() {
@@ -2585,6 +2363,24 @@
     document.documentElement.setAttribute("data-theme", next);
     try { localStorage.setItem("theme", next); } catch (e) {}
     paintIcons();
+  });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Clear the documents and notes you have added in this browser?")) return;
+    userDocs = []; notes = {}; persist(); render();
+  });
+  document.getElementById("restoreBtn").addEventListener("click", function () {
+    if (hidden.length) hidden = [];
+    if (hiddenTags.length) hiddenTags = [];
+    if (dbOn) {                                   // bring back every shared-hidden collection
+      Object.keys(sharedCollections).forEach(function (k) {
+        var sc = sharedCollections[k];
+        if (sc && sc.hidden) {
+          sc.hidden = false;
+          sbUpsertCollection({ key:k, label:sc.label || k, tone:sc.tone, hidden:false }).catch(function () {});
+        }
+      });
+    }
+    rebuildCollectionSelects(); persist(); render();
   });
 
   /* =========================================================================

@@ -160,9 +160,6 @@
                             when the shared store is on, otherwise it is kept in this browser. The
                             "＋ Add link" / "＋ Attach download link" button is replaced by a
                             drop-in box: paste a URL or magnet and press Attach.
-    Rev 0.44  (2026-10-09)  Multi-select delete. A "Delete selected" button sits beside "Export
-                            links" (enabled once documents are ticked) and removes every ticked
-                            document after a password prompt (the password is "123").
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -613,7 +610,6 @@
       </label>
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
       <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
-      <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (password protected)">Delete selected</button>
     </div>
 
     <div class="filterbar">
@@ -886,7 +882,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.44</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.43</span>
     </div>
   </footer>
 
@@ -2439,8 +2435,6 @@
     var btn = document.getElementById("exportLinksBtn");
     var n = Object.keys(picked).length;
     if (btn) { btn.textContent = n ? "Export links (" + n + ")" : "Export links"; btn.disabled = !n; }
-    var del = document.getElementById("deleteSelectedBtn");
-    if (del) { del.textContent = n ? "Delete (" + n + ")" : "Delete selected"; del.disabled = !n; }
     var all = document.getElementById("pickAll");
     if (all) { all.checked = boxes.length > 0 && on === boxes.length; all.indeterminate = on > 0 && on < boxes.length; }
   }
@@ -2526,23 +2520,6 @@
   /* =========================================================================
      DELETE
      ========================================================================= */
-  // Remove one document from the shelf — the same rules for the single-document
-  // button and the multi-select delete.
-  function deleteOne(d) {
-    var tid = idOf(d);
-    if (d.id && !d.shared) {                      // your own local document
-      userDocs = userDocs.filter(function (u) { return u.id !== d.id; });
-      delete notes[d.id];
-    } else if (d.shared) {                        // a shared row — remove it for everyone
-      sharedDocs = sharedDocs.filter(function (s) { return idOf(s) !== tid; });
-      if (dbOn) sbDelete("hub_documents", String(tid).replace(/^s-/, "")).catch(function (e) { console.warn("Library:", e.message); });
-    } else {                                      // built-in — hide it from your shelf
-      hidden.push(tid);
-    }
-    delete docEdits[tid];
-    delete picked[tid];
-  }
-
   document.getElementById("deleteDocBtn").addEventListener("click", function () {
     if (!openId) return;
     var d = byId(openId);
@@ -2552,23 +2529,20 @@
       ? 'Remove "' + d.title + '" from the public library for everyone?'
       : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
     if (!confirm(msg)) return;
+    var tid = idOf(d);
     closeDoc();
-    deleteOne(d);
+    if (isLocal) {
+      userDocs = userDocs.filter(function (u) { return u.id !== d.id; });
+      delete notes[d.id];
+    } else {
+      if (d.shared) {
+        sharedDocs = sharedDocs.filter(function (s) { return idOf(s) !== tid; });
+        if (dbOn) sbDelete("hub_documents", String(tid).replace(/^s-/, "")).catch(function (e) { console.warn("Library:", e.message); });
+      } else {
+        hidden.push(tid);
+      }
+    }
     persist(); render();
-  });
-
-  // Delete every ticked document, gated behind a password.
-  document.getElementById("deleteSelectedBtn").addEventListener("click", function () {
-    var docs = all().filter(function (d) { return picked[idOf(d)]; });
-    if (!docs.length) { toast("Tick some documents first"); return; }
-    var n = docs.length;
-    var pw = prompt("Password to delete " + n + " selected document" + (n === 1 ? "" : "s") + ":");
-    if (pw === null) return;
-    if (pw !== "123") { toast("Wrong password"); return; }
-    if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
-    docs.forEach(deleteOne);
-    persist(); render();
-    toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
   });
 
   /* =========================================================================
