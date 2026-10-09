@@ -156,6 +156,36 @@ drop policy if exists "public logs doc views" on public.hub_doc_views;
 create policy "public logs doc views"
   on public.hub_doc_views for insert with check (true);
 
+-- ------------------------------------------------------- shared collections
+-- The collections shown in "Browse Docs", shared so every device sees the same
+-- list: a row can add a new collection, rename one (including a built-in, via its
+-- key) or hide it (hidden = true). Upserts only, so no delete policy is needed.
+create table if not exists public.hub_collections (
+  key        text primary key check (char_length(key) between 1 and 60),
+  label      text not null       check (char_length(label) between 1 and 120),
+  tone       jsonb,
+  hidden     boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated    timestamptz not null default now()
+);
+
+grant select, insert, update on public.hub_collections to anon, authenticated;
+revoke delete, truncate, references, trigger on public.hub_collections from anon, authenticated;
+
+alter table public.hub_collections enable row level security;
+
+drop policy if exists "public reads collections" on public.hub_collections;
+create policy "public reads collections"
+  on public.hub_collections for select using (true);
+
+drop policy if exists "public adds collections" on public.hub_collections;
+create policy "public adds collections"
+  on public.hub_collections for insert with check (true);
+
+drop policy if exists "public updates collections" on public.hub_collections;
+create policy "public updates collections"
+  on public.hub_collections for update using (true) with check (true);
+
 -- ------------------------------------------------------------ shared links
 -- Download links anyone can add to any document, so a link saved on one device
 -- shows up on every device (a document's own `links` column only covers links
