@@ -1546,8 +1546,7 @@
     if (!url || url === "https://") return;
     if (dbOn) {                                              // saved for everyone, and for your other devices
       sbAddLink(id, url).then(function () {
-        (sharedLinks[id] = sharedLinks[id] || []).push({ url:url, updated:new Date().toISOString(), owner:ownerToken });
-        openDoc(id, { silent:true });
+        loadSharedLinks();                                   // pull it back with its row id
         toast("Link added — saved for everyone");
       }).catch(function (e) { toast("Could not add link"); console.warn("Library:", e.message); });
       return;
@@ -1561,6 +1560,7 @@
     var d = byId(id); if (!d) return;
     var l = linksOf(d)[i]; if (!l) return;
     if (!canEditLink(l)) { toast("That link was added on another device"); return; }
+    if (l.src === "shared" && !l.id) { loadSharedLinks(); toast("Refreshing links — try again"); return; }
     var url = prompt("Edit this download link:", l.url);
     if (url === null) return;
     url = String(url).trim(); if (!url) return;
@@ -1579,6 +1579,7 @@
     var d = byId(id); if (!d) return;
     var l = linksOf(d)[i]; if (!l) return;
     if (!canEditLink(l)) { toast("That link was added on another device"); return; }
+    if (l.src === "shared" && !l.id) { loadSharedLinks(); toast("Refreshing links — try again"); return; }
     if (!confirm("Remove this download link?")) return;
     if (l.src === "shared") {
       sbDeleteLink(l.id).then(function () { loadSharedLinks(); toast("Link removed"); })
