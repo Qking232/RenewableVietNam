@@ -331,4 +331,15 @@ revoke all on function public.hub_delete_documents(uuid[], text) from public;
 grant execute on function public.hub_update_document(uuid, text, jsonb) to anon, authenticated;
 grant execute on function public.hub_delete_documents(uuid[], text) to anon, authenticated;
 
+-- Aggregated view counts for the shelf. One small response instead of paging
+-- through every hub_doc_views row (the public API caps a request at 1000 rows,
+-- which silently under-counts once a document has a few hundred views).
+create or replace function public.hub_view_counts()
+returns table(doc_id text, n bigint)
+language sql stable security definer set search_path = public as $$
+  select doc_id, count(*)::bigint from public.hub_doc_views group by doc_id;
+$$;
+revoke all on function public.hub_view_counts() from public;
+grant execute on function public.hub_view_counts() to anon, authenticated;
+
 notify pgrst, 'reload schema';
