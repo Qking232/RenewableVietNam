@@ -4,7 +4,7 @@
   Theme: Modern White / Ocean Blue Theme
   Features:
     - 100+ Comprehensive Verified Renewable Projects across Viet Nam
-    - Live OpenStreetMap Overpass API Query Engine
+    - Live Overpass API Query Engine
     - Transmission Grid (500kV, 220kV, 110kV) & Substations
     - Data Provenance and Sources Transparency Section
     - Unified Details Modal & Geolocation (My Location)
@@ -464,8 +464,8 @@
         </span>
       </a>
       <div class="tools">
-        <button class="btn live-sync" id="btn-live-osm" title="Direct live query to OpenStreetMap Overpass API">
-          <span>⚡ Live Query (OSM API)</span>
+        <button class="btn live-sync" id="btn-live-osm" title="Direct live query to the Overpass API">
+          <span>⚡ Live Query</span>
         </button>
         <button class="btn" id="btn-loc" type="button" title="Center map on your current GPS location">📍 My location</button>
         <button class="btn" id="btn-panel" type="button">Hide panel</button>
@@ -589,7 +589,7 @@
             <button class="btn mini" id="co-import" type="button">Import</button>
             <input type="file" id="co-file" accept="application/json,.json" hidden />
           </div>
-          <div class="hint" id="osm-status" style="font-size:11px;color:var(--muted);margin-top:6px;">Verified offline registry loaded. Click "Live Query" for real-time OSM data.</div>
+          <div class="hint" id="osm-status" style="font-size:11px;color:var(--muted);margin-top:6px;">Verified offline registry loaded. Click "Live Query" for real-time live data.</div>
         </div>
       </details>
 
@@ -641,7 +641,7 @@
         <summary>Data Sources &amp; Transparency</summary>
         <div class="card-body">
           <div class="source-card">
-            <strong>1. OpenStreetMap &amp; Overpass API (Live)</strong>
+            <strong>1. Overpass API (Live)</strong>
             <p>Real-time community-maintained geospatial data for Vietnamese power infrastructure (<code>power=plant</code>). Free, keyless live REST endpoint.</p>
           </div>
           <div class="source-card">
@@ -720,7 +720,7 @@
 
   <footer class="site">
     <div class="footer-meta">
-      <span>Basemaps: OpenStreetMap (France) · Esri satellite · EVNNPT grid data compiled under PDP8 · rendered with Leaflet</span>
+      <span>Basemaps: Esri satellite · EVNNPT grid data compiled under PDP8 · rendered with Leaflet</span>
       <span class="rev">White Theme · 104+ Project Registry</span>
     </div>
     <div class="disclaimer-bottom">
@@ -1234,12 +1234,12 @@
     });
     map.fitBounds(VN_BOUNDS);
 
-    var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+    var OSM_ATTR = '';
 
     var BASE = {
       osmfr: {
-        label:"OpenStreetMap (France)", badge:"Default", maxZoom:19, subdomains:"abc",
-        attribution:OSM_ATTR + ' · tiles &copy; <a href="https://openstreetmap.fr" target="_blank" rel="noopener">OSM France</a>',
+        label:"Street map", badge:"Default", maxZoom:19, subdomains:"abc",
+        attribution:"",
         url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
       },
       esriSat: {
@@ -1849,13 +1849,13 @@
       map.fitBounds(VN_BOUNDS);
     });
 
-    /* ---------------- Live Overpass OSM API Query ---------------- */
+    /* ---------------- Live Overpass API Query ---------------- */
     var liveBtn = document.getElementById("btn-live-osm");
     var statusEl = document.getElementById("osm-status");
 
     liveBtn.onclick = function () {
       liveBtn.classList.add("syncing");
-      liveBtn.textContent = "Querying OpenStreetMap...";
+      liveBtn.textContent = "Querying...";
       statusEl.textContent = "Executing Overpass query for power generators in Vietnam...";
 
       var query = '[out:json][timeout:25];area["ISO3166-1"="VN"][admin_level=2]->.a;(node["power"="plant"]["plant:source"~"solar|wind"](area.a);way["power"="plant"]["plant:source"~"solar|wind"](area.a););out center 40;';
@@ -1871,33 +1871,33 @@
               var lon = el.lon || (el.center && el.center.lon);
               if (!lat || !lon) return;
 
-              var name = (el.tags && el.tags.name) || "Live OSM Power Facility";
+              var name = (el.tags && el.tags.name) || "Live Power Facility";
               var source = (el.tags && el.tags["plant:source"]) || "solar";
               var output = (el.tags && el.tags["plant:output:electricity"]) || "Grid Active";
-              var operator = (el.tags && el.tags.operator) || "OSM Community";
+              var operator = (el.tags && el.tags.operator) || "Community";
 
               PROJECTS_DB.push({
                 name: name,
-                company: operator + " [OSM Live]",
-                country: "Viet Nam (OSM)",
+                company: operator + " [Live]",
+                country: "Viet Nam",
                 type: source === "wind" ? "wind" : "solar",
                 cap: output,
                 loc: "Vietnam",
                 lat: lat,
                 lon: lon,
-                note: "Live data point received from OpenStreetMap Overpass API."
+                note: "Live data point received from the Overpass API."
               });
               count++;
             });
           }
-          statusEl.textContent = "Success: Fetched " + count + " active facilities from OpenStreetMap.";
+          statusEl.textContent = "Success: Fetched " + count + " active facilities.";
           rebuildAll(false);
-          liveBtn.textContent = "✓ Synced with OSM";
+          liveBtn.textContent = "✓ Synced";
           liveBtn.classList.remove("syncing");
         })
         .catch(function (err) {
-          statusEl.textContent = "Notice: Live OSM endpoint busy. Offline verified registry retained.";
-          liveBtn.textContent = "⚡ Live Query (OSM API)";
+          statusEl.textContent = "Notice: Live endpoint busy. Offline verified registry retained.";
+          liveBtn.textContent = "⚡ Live Query";
           liveBtn.classList.remove("syncing");
         });
     };
@@ -2183,9 +2183,9 @@
       return null;
     }
     function keyedAttr(provider) {
-      if (provider === "maptiler") return '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; OpenStreetMap contributors';
-      if (provider === "thunderforest") return 'Maps &copy; <a href="https://www.thunderforest.com/" target="_blank" rel="noopener">Thunderforest</a>, data &copy; OpenStreetMap contributors';
-      if (provider === "stadia") return '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> &copy; OpenStreetMap contributors';
+      if (provider === "maptiler") return '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a>';
+      if (provider === "thunderforest") return 'Maps &copy; <a href="https://www.thunderforest.com/" target="_blank" rel="noopener">Thunderforest</a>';
+      if (provider === "stadia") return '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a>';
       return OSM_ATTR;
     }
 

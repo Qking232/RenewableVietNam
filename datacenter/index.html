@@ -2,7 +2,7 @@
 <!--
   APAC Data Center & Subsea Cable Infrastructure Map
   Theme: Modern Clean White / Enterprise Cloud Siting Theme
-  Default Basemap: OpenStreetMap (France)
+  Default Basemap: Street map
 -->
 <html lang="en" dir="ltr">
 <head>
@@ -656,7 +656,7 @@
 
   <footer class="site">
     <div class="footer-meta">
-      <span>Basemaps: OpenStreetMap (France) · Esri satellite · Subsea fiber routes compiled from telecom disclosures · rendered with Leaflet</span>
+      <span>Basemaps: Esri satellite · Subsea fiber routes compiled from telecom disclosures · rendered with Leaflet</span>
       <span class="rev">APAC Data Center Intelligence Platform</span>
     </div>
     <div class="disclaimer-bottom">
@@ -1061,18 +1061,18 @@
     });
     map.fitBounds(APAC_BOUNDS);
 
-    var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+    var OSM_ATTR = '';
 
-    /* BASEMAP CONFIGURATION: OSM France as Default[cite: 1] */
+    /* BASEMAP CONFIGURATION: street map as default */
     var BASE = {
       osmfr: {
-        label:"OpenStreetMap (France)", badge:"Default", maxZoom:19, subdomains:"abc",
-        attribution:OSM_ATTR + ' · tiles &copy; <a href="https://openstreetmap.fr" target="_blank" rel="noopener">OSM France</a>',
+        label:"Street map", badge:"Default", maxZoom:19, subdomains:"abc",
+        attribution:"",
         url:"https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
       },
       cartoLight: {
         label:"CartoDB Positron", maxZoom:19,
-        attribution:'&copy; <a href="https://carto.com/">CARTO</a> ' + OSM_ATTR,
+        attribution:'&copy; <a href="https://carto.com/">CARTO</a>',
         url:"https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       },
       esriSat: {
@@ -1894,9 +1894,9 @@
       return null;
     }
     function keyedAttr(provider) {
-      if (provider === "maptiler") return '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a> &copy; OpenStreetMap contributors';
-      if (provider === "thunderforest") return 'Maps &copy; <a href="https://www.thunderforest.com/" target="_blank" rel="noopener">Thunderforest</a>, data &copy; OpenStreetMap contributors';
-      if (provider === "stadia") return '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a> &copy; OpenStreetMap contributors';
+      if (provider === "maptiler") return '&copy; <a href="https://www.maptiler.com/copyright/" target="_blank" rel="noopener">MapTiler</a>';
+      if (provider === "thunderforest") return 'Maps &copy; <a href="https://www.thunderforest.com/" target="_blank" rel="noopener">Thunderforest</a>';
+      if (provider === "stadia") return '&copy; <a href="https://stadiamaps.com/" target="_blank" rel="noopener">Stadia Maps</a>';
       return OSM_ATTR;
     }
 
