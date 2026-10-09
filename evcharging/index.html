@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EV Charging Stations - OpenStreetMap</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
@@ -18,13 +18,15 @@
     --txt:#16212c; --muted:#5c6b7a; --shadow:0 6px 18px rgba(20,40,60,.12);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;color:var(--txt);background:var(--bg)}
-  #app{display:flex;flex-direction:column;height:100%}
-  header{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:1000}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:12.5px;color:var(--txt);background:var(--bg)}
+  #app{display:flex;flex-direction:column;width:100%;height:100%;height:100svh;height:100dvh;overflow:hidden}
+  header{display:flex;align-items:center;gap:9px;padding:7px 12px;background:var(--panel);border-bottom:1px solid var(--line);z-index:1000;min-width:0}
   header .mark{display:flex;align-items:center;gap:7px;font-weight:650;font-size:13.5px;white-space:nowrap}
   header .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
   header .sub{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   header .spacer{flex:1}
+  .notice{padding:5px 12px;text-align:center;font-size:10.5px;letter-spacing:.02em;color:var(--muted);background:color-mix(in srgb,var(--accent) 12%,var(--panel));border-bottom:1px solid var(--line)}
   .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:6px 10px;border-radius:7px;cursor:pointer;font-size:11.5px;font-weight:550;white-space:nowrap}
   .btn:hover{border-color:var(--accent);color:var(--accent)}
   .btn:disabled{opacity:.55;cursor:progress}
@@ -37,7 +39,7 @@
   aside{width:540px;min-width:540px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
   aside.collapsed{display:none}
   .filters{padding:8px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:7px}
-  .search{width:100%;padding:7px 9px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font-size:12px;outline:none}
+  .search{width:calc(100% - 20px);margin:8px 10px 6px;padding:7px 9px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font-size:12px;outline:none}
   .search:focus{border-color:var(--accent)}
   .quick{display:flex;gap:8px;align-items:center;font-size:10.5px;color:var(--muted)}
   .quick a{color:var(--accent);cursor:pointer;text-decoration:none;font-weight:600}
@@ -96,7 +98,7 @@
   .st-na{color:var(--muted)}
   .note{padding:6px 10px;font-size:10px;color:var(--muted);border-top:1px solid var(--line);line-height:1.5}
   #mapWrap{position:relative;flex:1;min-width:0;display:flex}
-  #map{flex:1;min-width:0;background:#aadaff}
+  #map{flex:1;min-width:0;min-height:0;background:#aadaff}
   .leaflet-popup-content{font-size:12.5px;line-height:1.45}
   .pop .pn{font-weight:650;font-size:13px;margin-bottom:4px}
   .pop .pb{display:inline-block;font-size:10.5px;font-weight:600;color:#fff;padding:2px 7px;border-radius:99px;margin-bottom:6px}
@@ -115,14 +117,73 @@
   .routebar a{color:var(--accent);text-decoration:none;font-weight:600}
   .routebar .x{cursor:pointer;color:var(--muted)}
   .routebar .x:hover{color:#e11d48}
-  @media (max-width:720px){aside{position:absolute;z-index:900;height:calc(100% - 46px);top:46px;box-shadow:var(--shadow)}}
+  .drop{border-bottom:1px solid var(--line)}
+  .drophead{display:flex;align-items:center;gap:7px;padding:8px 10px;cursor:pointer;user-select:none;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+  .drophead:hover{background:var(--panel2);color:var(--txt)}
+  .drophead .caret{font-size:11px;color:var(--muted);transition:transform .16s ease}
+  .drop.open .drophead .caret{transform:rotate(180deg)}
+  .drophead a{color:var(--accent);text-decoration:none;font-weight:700;text-transform:none;letter-spacing:0;padding:0 2px}
+  .drophead a:hover{text-decoration:underline}
+  .drop .tree{display:none}
+  .drop.open .tree{display:block;max-height:46vh}
+  .drop > .dropbody{display:none}
+  .drop.open > .dropbody{display:block}
+  #listDrop{flex:0 0 auto;display:flex;flex-direction:column}
+  #listDrop.open{flex:1 1 auto;min-height:0}
+  #listDrop.open > .dropbody{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+  .colwrap{padding:2px 10px 10px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px}
+  .colwrap label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
+  .colwrap input{accent-color:var(--accent)}
+  .drophead .sub{font-weight:600;letter-spacing:0;text-transform:none;font-size:10px;color:var(--muted)}
+  aside.collapsed + #drag{display:none}
+  /* Tablets & small laptops — keep the panel from crowding the map */
+  @media (max-width:1024px){
+    aside{width:430px;min-width:430px}
+  }
+  /* Panel floats over the map rather than pushing it */
+  @media (max-width:900px){
+    header{flex-wrap:wrap}
+    aside{position:absolute;left:0;top:0;bottom:0;z-index:900;width:min(92vw,430px);min-width:0;box-shadow:var(--shadow)}
+    #drag{display:none}
+  }
+  /* Phones */
+  @media (max-width:720px){
+    header{gap:6px;padding:6px 8px}
+    header .sub{display:none}
+    header .mark{font-size:12px}
+    header .mark .txt{display:none}
+    .btn{padding:6px 9px;font-size:11px}
+    #csvBtn{display:none}
+    #toggleSide .lbl{display:none}
+    .foot{display:none}
+    #toast{top:8px;max-width:92%}
+    aside{width:100%;min-width:0;max-width:none;border-right:none;box-shadow:none}
+    table.grid{font-size:11px}
+    table.grid th,table.grid td{padding:6px 6px}
+    .routebar{max-width:calc(100% - 20px)}
+    .drop.open .tree{max-height:52vh}
+  }
+  /* Landscape phones / short windows */
+  @media (max-height:520px){
+    header{padding:4px 8px;gap:5px}
+    .btn{padding:5px 8px;font-size:11px}
+    .foot{display:none}
+    .drop.open .tree{max-height:62vh}
+  }
+  /* Notch + home-bar safe areas */
+  @supports (padding:max(0px)){
+    header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+    aside{padding-bottom:env(safe-area-inset-bottom)}
+    .foot{bottom:max(8px,env(safe-area-inset-bottom))}
+    #toast{top:max(10px,env(safe-area-inset-top))}
+  }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <button class="btn" id="toggleSide" title="Toggle panel">&#9776;</button>
-    <div class="mark"><span class="dot"></span> EV Charging Stations</div>
+    <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776; <span class="lbl">Stations</span></button>
+    <div class="mark"><span class="dot"></span><span class="txt">EV Charging Stations</span></div>
     <div class="spacer"></div>
     <button class="btn primary" id="liveBtn"><span class="spin"></span><span id="liveTxt">&#8635; Live Query</span></button>
     <button class="btn" id="locBtn" title="Show my location">&#128205; My location</button>
@@ -131,16 +192,40 @@
     <button class="btn" id="csvBtn" title="Download filtered list as CSV">&#8681; CSV</button>
     <button class="btn" id="themeBtn" title="Toggle light / dark">&#9788;</button>
   </header>
+  <div class="notice">For studying / research purposes only &mdash; non-commercial.</div>
   <main>
     <aside id="side">
-      <div class="listhead"><span>Station list</span><span class="sub" id="listSub"></span></div>
-      <div id="list"></div>
-      <div class="filters">
-        <input class="search" id="search" placeholder="Search name, provider, address...">
-        <div class="quick"><span>Filter by port / provider:</span><span class="spacer" style="flex:1"></span><a id="allLnk">All</a><a id="noneLnk">None</a></div>
+      <div class="drop open" id="listDrop">
+        <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Show / hide the station list">
+          <span class="caret" aria-hidden="true">&#9662;</span>
+          <span class="nm">Station list</span>
+          <span class="spacer" style="flex:1"></span>
+          <span class="sub" id="listSub"></span>
+        </div>
+        <div class="dropbody">
+          <div class="drop" id="colDrop">
+            <div class="drophead" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Choose which columns to show">
+              <span class="caret" aria-hidden="true">&#9662;</span>
+              <span class="nm">Columns</span>
+              <span class="spacer" style="flex:1"></span>
+              <span class="sub" id="colSub"></span>
+            </div>
+            <div class="dropbody"><div class="colwrap" id="colBody"></div></div>
+          </div>
+          <input class="search" id="search" placeholder="Search name, provider, address...">
+          <div id="list"></div>
+          <div class="status" id="status"></div>
+        </div>
       </div>
-      <div class="tree" id="tree"></div>
-      <div class="status" id="status"></div>
+      <div class="drop" id="filterDrop">
+        <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Show / hide the port and provider filters">
+          <span class="caret" aria-hidden="true">&#9662;</span>
+          <span class="nm">Filter by port / provider</span>
+          <span class="spacer" style="flex:1"></span>
+          <a id="allLnk">All</a><a id="noneLnk">None</a>
+        </div>
+        <div class="tree" id="tree"></div>
+      </div>
       <div class="note">Chargers = installed connectors (count × power from the source), not live availability. No public live-status API exists for these networks — see STATUS_ENDPOINT in the page source to plug in a feed.</div>
     </aside>
     <div id="drag" title="Drag to resize the panel"></div>
@@ -150,7 +235,7 @@
     </div>
   </main>
 </div>
-<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo; (tramev.vn). Base map: OpenStreetMap France tiles. Live Query re-fetches the source on demand.</div>
+<div class="foot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo;. Base map: OpenStreetMap France tiles. Live Query re-fetches the source on demand. For studying / research purposes only &mdash; non-commercial.</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -168,7 +253,7 @@ const PROXIES = [ u => "https://cors.eu.org/"+u,
                   u => "https://api.allorigins.win/raw?url="+encodeURIComponent(u) ];
 
 const keyOf = s => s.port+"\u0000"+s.cpo;
-let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s){return s.port;})), loaded: null, q: "", updated: null, live: false, newIds: new Set(), sort: {key:"name", dir:1}, colW: loadColWidths(), status: {} };
+let state = { stations: STATIONS.slice(), open: new Set(STATIONS.map(function(s){return s.port;})), loaded: null, q: "", updated: null, live: false, newIds: new Set(), sort: {key:"name", dir:1}, colW: loadColWidths(), status: {}, cols: loadCols() };
 
 /* ---------------- map ---------------- */
 const PROVIDERS = [
@@ -295,6 +380,40 @@ function matches(s){
   return (s.name+" "+(s.cpo||"")+" "+(s.addr||"")).toLowerCase().includes(q);
 }
 function portShort(p){ return String(p||"").replace(/^Charging port:\s*/, ""); }
+function loadCols(){ try{ var v=JSON.parse(localStorage.getItem("evmap-cols")||"null"); if(Array.isArray(v)&&v.length) return v; }catch(e){} return ["name","chg","dist"]; }
+function saveCols(){ try{ localStorage.setItem("evmap-cols", JSON.stringify(state.cols)); }catch(e){} }
+function cellFor(x, key){
+  const s = x.s;
+  if(key==="name")   return '<td class="nm" title="'+esc(s.name)+'"><span class="pin" style="background:'+portColor(s.port)+'"></span>'+esc(s.name)+(state.newIds.has(s.id)?' <span class="tag newtag">NEW</span>':'')+'</td>';
+  if(key==="port")   return '<td><span class="ptag" style="background:'+portColor(s.port)+'">'+esc(portShort(s.port))+'</span></td>';
+  if(key==="cpo")    return '<td title="'+esc(s.cpo||"")+'">'+esc(s.cpo||"\u2014")+'</td>';
+  if(key==="chg")    return '<td class="num" title="'+esc(chargerInfo(s).label||"")+'">'+chargerCell(s)+'</td>';
+  if(key==="status") return '<td>'+statusCell(s)+'</td>';
+  if(key==="dist")   return '<td class="num">'+(x.d!=null ? fmtKm(x.d*1000) : "\u2014")+'</td>';
+  return "";
+}
+function renderColPicker(){
+  const box = document.getElementById("colBody");
+  if(box){
+    box.innerHTML = COLS.map(function(c){
+      return '<label><input type="checkbox" data-colpick="'+c.key+'"'+(state.cols.indexOf(c.key)>-1?" checked":"")+'>'+esc(c.label)+'</label>';
+    }).join("");
+    box.querySelectorAll("input[data-colpick]").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        const key = inp.dataset.colpick;
+        if(inp.checked){ if(state.cols.indexOf(key)<0) state.cols.push(key); }
+        else {
+          if(state.cols.length<=1){ inp.checked=true; return; }   // keep at least one
+          state.cols = state.cols.filter(function(kk){ return kk!==key; });
+        }
+        state.cols = COLS.map(function(c){ return c.key; }).filter(function(kk){ return state.cols.indexOf(kk)>-1; });
+        saveCols(); renderList();
+      });
+    });
+  }
+  const subEl = document.getElementById("colSub");
+  if(subEl) subEl.textContent = COLS.filter(function(c){ return state.cols.indexOf(c.key)>-1; }).map(function(c){ return c.label; }).join(" \u00b7 ");
+}
 // Installed connectors, parsed from "AC:2*7", "GBT:1*22+1*7", "CCS2:1*60" ...
 function chargerInfo(s){
   var out=[], points=0, maxKw=0;
@@ -318,7 +437,7 @@ function chargerCell(s){
 /* Live availability is not published by these networks. To turn the Status column on,
    point STATUS_ENDPOINT at any CORS-enabled URL returning
    { "<station id>": { available: n, total: m, state: "AVAILABLE"|"IN_USE"|"OFFLINE" } }
-   (e.g. your own proxy in front of the Tram EV app API or evcs.vn). */
+   (e.g. your own proxy in front of a network's availability API). */
 var STATUS_ENDPOINT = "";
 async function refreshStatus(){
   if(!STATUS_ENDPOINT) return;
@@ -371,7 +490,8 @@ function renderList(){
     '<div class="t"><div class="n">\uD83D\uDCCD Show the '+NEAREST_N+' nearest</div>'+
     '<div class="m"><span>Use my location, or click the map to set it</span></div></div></div>';
 
-  const head = '<tr>' + COLS.map(function(c){
+  const active = COLS.filter(function(c){ return state.cols.indexOf(c.key) > -1; });
+  const head = '<tr>' + active.map(function(c){
     const on = state.sort.key===c.key;
     const ar = (on && c.key!=="idx") ? (state.sort.dir>0 ? " \u25B2" : " \u25BC") : "";
     const w = state.colW[c.key] != null ? state.colW[c.key]+"px" : c.w;
@@ -379,23 +499,16 @@ function renderList(){
       '<span class="rgrip" data-col="'+c.key+'" title="Drag to resize"></span></th>';
   }).join("") + '</tr>';
 
-  const body = rows.map(function(x,i){
-    const s = x.s, isNew = state.newIds.has(s.id);
-    return '<tr class="srow" data-id="'+esc(s.id)+'">'+
-      '<td class="nm" title="'+esc(s.name)+'"><span class="pin" style="background:'+portColor(s.port)+'"></span>'+esc(s.name)+(isNew?' <span class="tag newtag">NEW</span>':'')+'</td>'+
-      '<td><span class="ptag" style="background:'+portColor(s.port)+'">'+esc(portShort(s.port))+'</span></td>'+
-      '<td title="'+esc(s.cpo||"")+'">'+esc(s.cpo||"\u2014")+'</td>'+
-      '<td class="num" title="'+esc(chargerInfo(s).label||"")+'">'+chargerCell(s)+'</td>'+
-      '<td>'+statusCell(s)+'</td>'+
-      '<td class="num">'+(x.d!=null ? fmtKm(x.d*1000) : "\u2014")+'</td>'+
-    '</tr>';
+  const body = rows.map(function(x){
+    return '<tr class="srow" data-id="'+esc(x.s.id)+'">' + active.map(function(c){ return cellFor(x, c.key); }).join("") + '</tr>';
   }).join("");
 
   let html = "";
   if(!myLoc) html += cta;
   html += '<table class="grid"><thead>'+head+'</thead><tbody>'+
-    (body || '<tr><td class="emptyrow" colspan="6">No matching stations.</td></tr>')+'</tbody></table>';
+    (body || '<tr><td class="emptyrow" colspan="'+active.length+'">No matching stations.</td></tr>')+'</tbody></table>';
   listEl.innerHTML = html;
+  renderColPicker();
 
   listEl.querySelectorAll("th[data-key]").forEach(function(el){
     el.addEventListener("click", function(){
@@ -411,6 +524,7 @@ function renderList(){
       cluster.zoomToShowLayer(m, function(){ m.openPopup(); });
       listEl.querySelectorAll("tr.active").forEach(function(x){ x.classList.remove("active"); });
       r.classList.add("active");
+      if(isMobile()) collapsePanel();
     });
   });
   const ctaEl = listEl.querySelector("#locCta");
@@ -597,6 +711,7 @@ function findNearest(){
   if(m) cluster.zoomToShowLayer(m, ()=>{ m.openPopup(); });
   else map.setView([s.lat,s.lng],14);
   highlightRow(mkKey(s));
+  if(isMobile()) collapsePanel();
   setTimeout(()=>setMsg(""),4600);
 }
 function openGoogleDir(st){
@@ -643,6 +758,29 @@ map.getContainer().addEventListener("click", e=>{
   const m=markersById.get(a.getAttribute("data-route")); if(m&&m._st) directions(m._st);
 });
 
+/* ---------------- filter dropdown + mobile ---------------- */
+function isMobile(){ return window.matchMedia("(max-width:720px)").matches; }
+function collapsePanel(){ document.getElementById("side").classList.add("collapsed"); setTimeout(function(){ map.invalidateSize(); }, 60); }
+function wireDropdown(dropId, headId){
+  var drop=document.getElementById(dropId), head=document.getElementById(headId);
+  if(!drop||!head) return;
+  function toggle(){
+    var open=drop.classList.toggle("open");
+    head.setAttribute("aria-expanded", open?"true":"false");
+    if(dropId==="listDrop") setTimeout(function(){ map.invalidateSize(); }, 60);
+  }
+  head.addEventListener("click", function(e){
+    if(e.target.closest("a")) return;   // let All / None through
+    toggle();
+  });
+  head.addEventListener("keydown", function(e){
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); toggle(); }
+  });
+}
+wireDropdown("listDrop","listToggle");
+wireDropdown("colDrop","colToggle");
+wireDropdown("filterDrop","filterToggle");
+
 /* ---------------- ui wiring ---------------- */
 document.getElementById("liveBtn").addEventListener("click", liveQuery);
 document.getElementById("locBtn").addEventListener("click", locateMe);
@@ -682,8 +820,20 @@ document.getElementById("themeBtn").addEventListener("click", ()=>{
   if(!t) t = matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";
   document.documentElement.setAttribute("data-theme", t); })();
 
+/* ---------------- keep the map fitted to the screen ---------------- */
+(function keepMapFitted(){
+  function fit(){ try{ map.invalidateSize(); }catch(e){} }
+  window.addEventListener("resize", fit);
+  window.addEventListener("orientationchange", function(){ setTimeout(fit,320); });
+  if(window.visualViewport) window.visualViewport.addEventListener("resize", fit);
+  if(window.ResizeObserver){
+    try{ new ResizeObserver(fit).observe(document.getElementById("mapWrap")); }catch(e){}
+  }
+})();
+
 /* ---------------- boot ---------------- */
 
+document.getElementById("side").classList.add("collapsed");
 renderTree(); refreshView();
 if(state.stations.length){
   const b = L.latLngBounds(state.stations.map(s=>[s.lat,s.lng]));
