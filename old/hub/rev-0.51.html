@@ -209,10 +209,6 @@
                             on the server: every sign-in, on any device, records the user, and a new
                             device that signs in with only the private key restores that account's
                             saved name and email.
-    Rev 0.52  (2026-10-11)  Signing in asks for the email as well as the private key. Both forms
-                            check the server so a user cannot be duplicated: "Create User" refuses an
-                            email that is already registered, or a key already tied to another email,
-                            and signing in refuses when the email does not match the key.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -845,19 +841,13 @@
 
     <form class="add" id="reKeyForm" hidden>
       <h3>Private key</h3>
-      <p class="hint" id="reKeyHint">Sign in with the email and private key you registered. It reveals the download links and unlocks editing, comments and your favourites.</p>
-      <div class="field two">
-        <div>
-          <label for="r-email">Email</label>
-          <input type="email" id="r-email" placeholder="you@example.com" autocomplete="email" required />
-        </div>
-        <div>
-          <label for="r-key">Private key</label>
-          <input type="password" id="r-key" placeholder="Private key" autocomplete="off" required />
-        </div>
+      <p class="hint" id="reKeyHint">Re-enter the private key you created to sign in again. It reveals the download links and unlocks editing, comments and your favourites.</p>
+      <div class="field">
+        <label for="r-key">Private key</label>
+        <input type="password" id="r-key" placeholder="Private key" autocomplete="off" required />
       </div>
       <div class="form-actions">
-        <button class="btn primary" type="submit" id="rSubmit">Sign in</button>
+        <button class="btn primary" type="submit" id="rSubmit">Unlock</button>
         <button class="btn ghost" type="button" id="rCancel">Cancel</button>
       </div>
       <p class="hint" id="rMsg" style="margin-top:10px" hidden></p>
@@ -1034,7 +1024,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.52 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.51 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -2896,12 +2886,10 @@
     keyForm.hidden = true;
     reForm.hidden = false;
     document.getElementById("reKeyHint").textContent = note ||
-      "Sign in with the email and private key you registered. It reveals the download links and unlocks editing, comments and your favourites.";
+      "Re-enter the private key you created to sign in again. It reveals the download links and unlocks editing, comments and your favourites.";
     document.getElementById("rMsg").hidden = true;
     document.getElementById("r-key").value = "";
-    var em = document.getElementById("r-email");
-    em.value = (userRec && userRec.email) || (creds && creds.email) || "";
-    (em.value ? document.getElementById("r-key") : em).focus();
+    document.getElementById("r-key").focus();
   }
   function closeRePanel() { reForm.hidden = true; }
 
@@ -2963,7 +2951,7 @@
   });
   document.getElementById("keyReBtn").addEventListener("click", function () {
     if (!reForm.hidden) { closeRePanel(); return; }
-    openRePanel(unlocked() ? "You are signed in. Enter the email and private key of another user to switch." : undefined);
+    openRePanel(unlocked() ? "You are signed in. Enter the private key of another user to switch." : undefined);
   });
   document.getElementById("kCancel").addEventListener("click", closeKeyPanel);
   document.getElementById("rCancel").addEventListener("click", closeRePanel);
@@ -2972,8 +2960,7 @@
     if (openId) openDoc(openId, { silent:true }); else render();
     toast("Signed out — download links hidden");
   });
-  // Create a user (name + email + private key). One email and one key per account,
-  // so the same person cannot end up with two users.
+  // Create a user (name + email + private key).
   keyForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var msg = document.getElementById("kMsg");
@@ -2984,60 +2971,21 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.hidden = false; msg.textContent = "Please enter a valid email."; return; }
     if (key.trim().length < 3) { msg.hidden = false; msg.textContent = "Please enter a private key of at least 3 characters."; return; }
     if (PRIVATE_KEY && key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
+    userRec = { name:name, email:email, key:key };
+    persist();
     msg.hidden = false; msg.textContent = "Creating your user…";
-    sha256hex("hub:" + key).then(function (hash) {
-      if (!dbOn) return null;
-      return Promise.all([
-        sbRpc("hub_user_email_taken", { p_email:email }).catch(function () { return false; }),
-        sbRpc("hub_user_profile", { p_hash:hash }).catch(function () { return null; })
-      ]).then(function (r) {
-        if (r[0] === true) throw new Error("email-taken");
-        var p = Array.isArray(r[1]) ? r[1][0] : r[1];
-        if (p && p.email && p.email.toLowerCase() !== email.toLowerCase()) throw new Error("key-taken");
-        return null;
-      });
-    }).then(function () {
-      userRec = { name:name, email:email, key:key };
-      persist();
-      return signIn(name, email, key);
-    }).catch(function (err) {
-      if (err.message === "email-taken") msg.textContent = "An account with this email already exists — sign in with your private key instead.";
-      else if (err.message === "key-taken") msg.textContent = "This private key is already registered to another email.";
-      else msg.textContent = "Could not create the user — please try again.";
-    });
+    signIn(name, email, key);
   });
-  // Sign in with the registered email + private key. The server holds the account,
-  // so the same pair works on any device — and an email that does not match the key
-  // is refused, so a user cannot be duplicated or taken over.
+  // Sign back in by re-entering the private key created above.
   reForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var msg = document.getElementById("rMsg");
-    var email = document.getElementById("r-email").value.trim();
     var key = document.getElementById("r-key").value;
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.hidden = false; msg.textContent = "Please enter a valid email."; return; }
     if (key.trim().length < 3) { msg.hidden = false; msg.textContent = "Please enter your private key."; return; }
     if (PRIVATE_KEY && key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
+    if (userRec && userRec.key && key !== userRec.key) { msg.hidden = false; msg.textContent = "Wrong private key — it does not match the user on this device."; return; }
     msg.hidden = false; msg.textContent = "Signing in…";
-    if (!dbOn) {                                  // offline: check against this device's account
-      if (userRec && userRec.key && key !== userRec.key) { msg.textContent = "Wrong private key."; return; }
-      if (userRec && userRec.email && userRec.email.toLowerCase() !== email.toLowerCase()) { msg.textContent = "That email does not match the account on this device."; return; }
-      signIn(userRec ? userRec.name : "", email, key);
-      return;
-    }
-    sha256hex("hub:" + key).then(function (hash) {
-      return sbRpc("hub_user_profile", { p_hash:hash }).then(function (row) {
-        var p = Array.isArray(row) ? row[0] : row;
-        if (!p) throw new Error("no-account");
-        if (p.email && p.email.toLowerCase() !== email.toLowerCase()) throw new Error("email-mismatch");
-        userRec = { name:p.name || "", email:p.email || email, key:key };
-        persist();
-        return signIn(userRec.name, userRec.email, key);
-      });
-    }).catch(function (err) {
-      if (err.message === "no-account") msg.textContent = "No account for that email and private key — use “Create User” first.";
-      else if (err.message === "email-mismatch") msg.textContent = "That email does not match this private key.";
-      else msg.textContent = "Could not sign in — please try again.";
-    });
+    signIn(userRec ? userRec.name : "", userRec ? userRec.email : "", key);
   });
 
   /* =========================================================================
