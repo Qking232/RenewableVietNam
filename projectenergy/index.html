@@ -473,10 +473,9 @@
   @media (max-width:820px) {
     .side { top: 8px; left: 8px; right: 8px; width: auto !important; max-width: none; max-height: 64vh; }
     .resizer { display: none; }
-    /* Phones: the menu is hidden until the "Energy Map" wordmark is tapped. */
+    /* Phones: the menu stays closed until the Show / Close button is tapped. */
     .side .side-body { display: none; }
     .side.menu-open .side-body { display: block; }
-    .side .brand { cursor: pointer; }
     .btn.menu-toggle { display: inline-flex; }
     /* Phones: the Layers panel collapses to its heading. */
     .grid-panel .gp-body { display: none; }
@@ -2307,24 +2306,16 @@
     });
   </script>
   <script>
-    // Phones: the "Show / Close" button (and the "Energy Map" wordmark) open / close the menu.
+    // Phones: the "Show / Close" button opens / closes the menu.
+    // The "Energy Map" wordmark is a link back to the site home.
     (function () {
       var side = document.querySelector(".side");
-      var brand = document.querySelector(".side .brand");
       var toggle = document.getElementById("menu-toggle");
-      if (!side) return;
-
-      function setMenu(open) {
+      if (!side || !toggle) return;
+      toggle.addEventListener("click", function () {
+        var open = !side.classList.contains("menu-open");
         side.classList.toggle("menu-open", open);
-        if (toggle) toggle.textContent = open ? "Close" : "Show";
-      }
-      if (toggle) toggle.addEventListener("click", function () {
-        setMenu(!side.classList.contains("menu-open"));
-      });
-      if (brand) brand.addEventListener("click", function (e) {
-        if (!window.matchMedia("(max-width:820px)").matches) return;
-        e.preventDefault();
-        setMenu(!side.classList.contains("menu-open"));
+        toggle.textContent = open ? "Close" : "Show";
       });
     })();
   </script>
