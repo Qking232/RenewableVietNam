@@ -461,6 +461,12 @@ create or replace function public.hub_user_ping(p_hash text, p_name text, p_emai
 returns boolean language plpgsql security definer set search_path = public as $$
 begin
   if char_length(coalesce(p_hash, '')) < 1 then return false; end if;
+  -- A brand-new account is refused while sign-ups are closed; an existing user
+  -- can still sign in (their row is only updated).
+  if not exists (select 1 from public.hub_users u where u.owner_hash = p_hash)
+     and not public.hub_signup_open() then
+    raise exception 'sign-ups are closed' using errcode = '42501';
+  end if;
   insert into public.hub_users(owner_hash, name, email, last_seen)
   values (p_hash, left(coalesce(p_name, ''), 120), left(coalesce(p_email, ''), 200), now())
   on conflict (owner_hash) do update
@@ -471,6 +477,41 @@ begin
 end $$;
 revoke all on function public.hub_user_ping(text, text, text) from public;
 grant execute on function public.hub_user_ping(text, text, text) to anon, authenticated;
+
+-- ------------------------------------------------------------------ settings
+-- A small key/value store for site settings the admin controls. Today it holds
+-- just "signup": {open: true|false}, which turns new sign-ups on or off.
+create table if not exists public.hub_settings (
+  key     text primary key check (char_length(key) between 1 and 60),
+  value   jsonb not null default '{}'::jsonb,
+  updated timestamptz not null default now()
+);
+
+alter table public.hub_settings enable row level security;
+-- Deliberately no policies: reachable only through the functions below.
+
+-- Are new sign-ups open? (Defaults to true when never set.)
+create or replace function public.hub_signup_open()
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce((select (value->>'open')::boolean from public.hub_settings where key = 'signup'), true);
+$$;
+revoke all on function public.hub_signup_open() from public;
+grant execute on function public.hub_signup_open() to anon, authenticated;
+
+-- Admin console: turn new sign-ups on or off.
+create or replace function public.hub_admin_set_signup(pw text, p_open boolean)
+returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  insert into public.hub_settings(key, value, updated)
+  values ('signup', jsonb_build_object('open', coalesce(p_open, true)), now())
+  on conflict (key) do update set value = excluded.value, updated = now();
+  return true;
+end $$;
+revoke all on function public.hub_admin_set_signup(text, boolean) from public;
+grant execute on function public.hub_admin_set_signup(text, boolean) to anon, authenticated;
 
 -- The name/email saved for a key, so a new device that signs in with only the
 -- private key restores the same account (my name, my favourites) from the server.

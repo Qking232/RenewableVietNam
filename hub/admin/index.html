@@ -81,6 +81,9 @@
   table.grid td { padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
   table.grid tr:hover td { background:var(--surface-2); }
   table.grid .t { font-weight:600; }
+  .setting { padding:13px 14px; }
+  .setting label { display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600; cursor:pointer; }
+  .setting .hint { margin:8px 0 0; }
   .pill { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); border:1px solid var(--line); color:var(--muted); }
   .sw { width:14px; height:14px; accent-color:var(--accent); vertical-align:middle; }
   .pager { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px; padding:14px; }
@@ -147,6 +150,14 @@
       <div class="stats" id="stats"></div>
 
       <section class="panel">
+        <h3>Sign-ups <span class="sub" id="suState"></span></h3>
+        <div class="setting">
+          <label><input class="sw" type="checkbox" id="signupToggle" /> Allow new users to sign up</label>
+          <p class="hint">When off, the "Sign Up" button is disabled on the Library and the server refuses new accounts; existing users can still sign in. Takes effect for everyone.</p>
+        </div>
+      </section>
+
+      <section class="panel">
         <h3>Users <span class="sub" id="uCount"></span></h3>
         <p class="hint" style="padding:12px 14px 0">Every user who signs in, on any device, is saved on the server. The same private key gives the same account (and the same favourites) everywhere.</p>
         <table class="grid" id="usersTable">
@@ -188,7 +199,7 @@
   var SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
   var SESSION_KEY = "rvn_hub_admin";
-  var PAGE_SIZE = 30, ONLINE_MS = 5 * 60 * 1000;
+  var PAGE_SIZE = 20, ONLINE_MS = 5 * 60 * 1000;
 
   var adminKey = "";
   try { adminKey = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
@@ -225,7 +236,7 @@
   function showConsole() {
     gate.hidden = true;
     document.getElementById("console").hidden = false;
-    loadUsers(); loadDocs();
+    loadUsers(); loadDocs(); loadSignup();
   }
   gate.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -276,6 +287,25 @@
       for (var i=0;i<users.length;i++) if (users[i].owner_hash === hash) users[i].can_delete = can;
       toast(can ? "This user may now delete documents" : "This user may no longer delete");
     }).catch(function () { cb.disabled = false; cb.checked = !can; toast("Could not save the permission"); });
+  });
+
+  /* ---------------- sign-ups on/off ---------------- */
+  var signupToggle = document.getElementById("signupToggle");
+  function loadSignup() {
+    rpc("hub_signup_open", {}).then(function (open) {
+      var isOpen = open !== false;
+      signupToggle.checked = isOpen;
+      document.getElementById("suState").textContent = isOpen ? "open" : "closed";
+    }).catch(function () { document.getElementById("suState").textContent = "—"; });
+  }
+  signupToggle.addEventListener("change", function () {
+    var on = this.checked, self = this;
+    self.disabled = true;
+    rpc("hub_admin_set_signup", { pw:adminKey, p_open:on }).then(function () {
+      self.disabled = false;
+      document.getElementById("suState").textContent = on ? "open" : "closed";
+      toast(on ? "New sign-ups are allowed" : "New sign-ups are closed");
+    }).catch(function () { self.disabled = false; self.checked = !on; toast("Could not save the setting"); });
   });
 
   /* ---------------- documents ---------------- */
