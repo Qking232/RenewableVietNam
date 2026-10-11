@@ -8,6 +8,7 @@ static tools served from subfolders.
 | `/` | Card hub: Energy Projects · EV Charging · Data Center · Hub |
 | `/projectenergy/` | Interactive energy potential & grid map |
 | `/datacenter/` | APAC data-centre & subsea cable map |
+| `/evcharging/` | Interactive EV charging station map (20,822 stations, all operators + VinFast) |
 | `/hub/` | **The Library** — documents (reports, datasets, policy, maps) with files, summaries and comments |
 | `/blog/` | Jekyll blog posts |
 | `/presskit/` | Press kit |
@@ -93,6 +94,38 @@ the browser and are unaffected either way.
 Supabase's free tier pauses a project after 7 days without activity, which would
 make saving fail for occasional visitors. `.github/workflows/supabase-keepalive.yml`
 pings the API once a day to keep the project awake.
+
+---
+
+## The EV map's shared store (Supabase)
+
+`/evcharging/` ships with the whole station list baked into the page. The admin
+console's **Live Query** refreshes it from the three Google My Maps sources, and
+anything that changes is written to the same Supabase project, so every device
+shows the latest on its next load.
+
+| What | Where |
+| --- | --- |
+| Stations that differ from the baked-in copy (new or updated) | Postgres table `ev_delta` |
+| One row per run: station count, added/updated counts, last sync time | Postgres table `ev_sync` |
+
+Reads are public. **Writes are not** — there is no INSERT/UPDATE policy for
+`anon`. The page writes through `ev_push(p_key, p_rows, p_meta)`, a
+`security definer` function that rejects anything whose `p_key` doesn't hash to
+the admin password, so the publishable key in the page can read but never write.
+`ev_reset(p_key)` clears the synced changes. Re-run
+[`supabase/ev_schema.sql`](supabase/ev_schema.sql) to (re)create them — it is
+idempotent.
+
+The console (the **Admin** button, password-gated) offers **Live Query** per
+source, **Live Query all**, **Import KML** (for a source whose KML export Google
+blocks), **Export KML** (the whole dataset back out) and **Pull shared**. The
+typed password is only kept in memory for the session — the page itself stores
+just its SHA-256.
+
+Changing the admin password means updating its SHA-256 in two places: the
+`PASS_SHA` constant in `evcharging/index.html`, and the hash compared inside
+`ev_push`/`ev_reset` in `supabase/ev_schema.sql`.
 
 ---
 
