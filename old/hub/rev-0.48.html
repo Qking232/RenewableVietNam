@@ -187,13 +187,6 @@
                             owner-hash row-level security, so the same key on another device gives
                             the same list. The private key no longer has to match a fixed value, so
                             each visitor can have their own account.
-    Rev 0.49  (2026-10-11)  Create a user. The toolbar's "Private key" button becomes "Create User" —
-                            it makes a user from a name, email and private key — and a second "Private
-                            key" button re-enters a created key to sign back in. The document window's
-                            "Edit" button is hidden until a key is accepted, and posting a comment now
-                            asks for the key too. The shelf loads past the API's 1000-row page so a
-                            large library shows in full, and every document that mentioned EVN is
-                            revised (its EVN/EVNNPT reference dropped) or removed.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -792,8 +785,8 @@
     </form>
 
     <form class="add" id="keyForm" hidden>
-      <h3>Create user</h3>
-      <p class="hint" id="keyHint">Create a user with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.</p>
+      <h3>Private key</h3>
+      <p class="hint" id="keyHint">Sign in with your name, email and a private key. It reveals the download links, unlocks editing, and keys your favourites on every device.</p>
       <div class="field three">
         <div>
           <label for="k-name">Name</label>
@@ -809,25 +802,11 @@
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn primary" type="submit" id="kSubmit">Create user</button>
+        <button class="btn primary" type="submit" id="kSubmit">Sign in</button>
         <button class="btn ghost" type="button" id="kCancel">Cancel</button>
-        <button class="btn ghost" type="button" id="kLock" hidden>Sign out</button>
+        <button class="btn ghost" type="button" id="kLock" hidden>Lock</button>
       </div>
       <p class="hint" id="kMsg" style="margin-top:10px" hidden></p>
-    </form>
-
-    <form class="add" id="reKeyForm" hidden>
-      <h3>Private key</h3>
-      <p class="hint" id="reKeyHint">Re-enter the private key you created to sign in again. It reveals the download links and unlocks editing, comments and your favourites.</p>
-      <div class="field">
-        <label for="r-key">Private key</label>
-        <input type="password" id="r-key" placeholder="Private key" autocomplete="off" required />
-      </div>
-      <div class="form-actions">
-        <button class="btn primary" type="submit" id="rSubmit">Unlock</button>
-        <button class="btn ghost" type="button" id="rCancel">Cancel</button>
-      </div>
-      <p class="hint" id="rMsg" style="margin-top:10px" hidden></p>
     </form>
 
     <div class="browse">
@@ -1000,7 +979,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.49</span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.46</span>
     </div>
   </footer>
 
@@ -1247,7 +1226,6 @@
   var EDIT_KEY       = "rvn_lib_doc_edits";
   var OWNER_KEY      = "rvn_lib_owner";
   var CREDS_KEY      = "rvn_lib_creds";
-  var USER_KEY       = "rvn_lib_user";
   var FAV_KEY        = "rvn_lib_favs";
 
   var userDocs = load(DOC_KEY, []);
@@ -1284,7 +1262,6 @@
   var openId = null;
   var picked = {};                            // document ids ticked in the table (for export)
   var creds = load(CREDS_KEY, null);          // {name,email,key,hash} once signed in with a private key
-  var userRec = load(USER_KEY, null);         // the user created on this device {name,email,key}
   var favs = load(FAV_KEY, {});               // doc id -> true (favourites, mirrored locally)
 
   /* -------------------------------------------------------------------------
@@ -1330,7 +1307,6 @@
       localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
       localStorage.setItem(EDIT_KEY, JSON.stringify(docEdits));
       localStorage.setItem(CREDS_KEY, JSON.stringify(creds));
-      localStorage.setItem(USER_KEY, JSON.stringify(userRec));
       localStorage.setItem(FAV_KEY, JSON.stringify(favs));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
@@ -1431,26 +1407,9 @@
     catch (e) { return ""; }
   }
 
-  // Supabase returns at most 1000 rows per request, so page through the whole
-  // shelf with a Range header until every document has loaded.
-  function fetchAllDocuments() {
-    var PAGE = 1000, out = [];
-    function page(from) {
-      return fetch(SUPABASE_URL + "/rest/v1/hub_documents?status=eq.approved&select=*&order=created_at.asc", {
-        headers:sbHeaders({ Range:from + "-" + (from + PAGE - 1) })
-      }).then(function (r) {
-        if (!r.ok) throw new Error("GET hub_documents → " + r.status);
-        return r.json();
-      }).then(function (rows) {
-        out = out.concat(rows);
-        return (rows.length === PAGE) ? page(from + PAGE) : out;
-      });
-    }
-    return page(0);
-  }
   function loadShared() {
     if (!dbOn) return;
-    fetchAllDocuments()
+    sbGet("hub_documents", "status=eq.approved&select=*&order=created_at.asc")
       .then(function (rows) {
         sharedDocs = rows.filter(function (r) { return r && r.title; }).map(function (r) {
           return {
@@ -2074,7 +2033,6 @@
     try { document.title = d.title + " · The Library"; } catch (e) {}
 
     renderFileBox(d);
-    applyLocks();
     renderMeta(d);
     renderFavourites();
 
@@ -2089,7 +2047,7 @@
     document.getElementById("mShared").hidden = !dbOn;
     if (dbOn) {
       document.getElementById("vMsg").textContent = "";
-      document.getElementById("vAuthor").value = (creds && creds.name) || "";
+      document.getElementById("vAuthor").value = "";
       document.getElementById("vBody").value = "";
       loadViews(id);
     }
@@ -2219,7 +2177,7 @@
       updated: new Date().toISOString()
     };
     if (dbOn && d.shared) {                       // a shared row — update it for everyone
-      if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to save changes to this shared document."); return; }
+      if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to save changes to this shared document."); return; }
       var pw = creds.key;
       msg.hidden = false; msg.textContent = "Saving…";
       sbRpc("hub_update_document", { p_id:String(d.id).replace(/^s-/, ""), pw:pw, p:rowFromFields(fields) })
@@ -2485,16 +2443,15 @@
      ========================================================================= */
   document.getElementById("postViewBtn").addEventListener("click", function () {
     if (!dbOn || !openId) return;
-    var msg = document.getElementById("vMsg");
-    if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to post a comment."); return; }
     var body = document.getElementById("vBody").value.trim();
+    var msg = document.getElementById("vMsg");
     if (document.getElementById("v-hp").value) { document.getElementById("vBody").value = ""; return; }
     if (!body) { msg.textContent = "Write something first."; return; }
     var docId = openId, btn = this;
     btn.disabled = true; msg.textContent = "Posting…";
     sbPost("hub_views", {
       topic_id:docId,
-      author:document.getElementById("vAuthor").value.trim() || (creds.name || null),
+      author:document.getElementById("vAuthor").value.trim() || null,
       body:body
     }).then(function () {
       msg.textContent = AUTO_APPROVE ? "Posted." : "Thanks — awaiting review.";
@@ -2642,7 +2599,7 @@
   document.getElementById("exportLinksBtn").addEventListener("click", function () {
     var docs = all().filter(function (d) { return picked[idOf(d)]; });
     if (!docs.length) { toast("Tick some documents first"); return; }
-    if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to export download links."); return; }
+    if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to export download links."); return; }
     var rows = [["Title", "Type", "Collection", "Creator", "Update", "Document link", "Download link", "Link updated"]];
     docs.forEach(function (d) {
       var base = [d.title, typeLabel(d.type), collectionLabel(d.collection), d.author || "",
@@ -2678,7 +2635,6 @@
   document.getElementById("closeBtn").addEventListener("click", closeDoc);
   document.getElementById("editDocBtn").addEventListener("click", function () {
     if (!openId) return;
-    if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to edit this document."); return; }
     var d = byId(openId); if (d) openEdit(d);
   });
   document.getElementById("eCancel").addEventListener("click", closeEdit);
@@ -2729,7 +2685,7 @@
       : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
     if (!confirm(msg)) return;
     var pw = null;
-    if (d.shared && dbOn) { if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete this shared document."); return; } pw = creds.key; }
+    if (d.shared && dbOn) { if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to delete this shared document."); return; } pw = creds.key; }
     closeDoc();
     deleteDocs([d], pw);
   });
@@ -2739,7 +2695,7 @@
     var docs = all().filter(function (d) { return picked[idOf(d)]; });
     if (!docs.length) { toast("Tick some documents first"); return; }
     var n = docs.length;
-    if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete the selected documents."); return; }
+    if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to delete the selected documents."); return; }
     if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
     deleteDocs(docs, creds.key);
     toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
@@ -2792,7 +2748,7 @@
     }
   }
   function toggleFav(id) {
-    if (!creds) { toast("Enter your private key first"); requestKey("Enter your private key to save favourites and reach them from your other devices."); return; }
+    if (!creds) { toast("Enter your private key first"); openKeyPanel("Enter your private key to save favourites and reach them from your other devices."); return; }
     var on = !isFav(id);
     if (on) favs[id] = true; else delete favs[id];
     persist(); render();
@@ -2839,44 +2795,20 @@
   document.getElementById("favBtn").addEventListener("click", function () { if (openId) toggleFav(openId); });
 
   /* =========================================================================
-     USERS — create a user (name, email, private key); sign back in with the key.
-     The key reveals the download links and unlocks editing and comments.
+     PRIVATE KEY — sign in; reveal the download links; authorise edits/deletes
      ========================================================================= */
   var keyForm = document.getElementById("keyForm");
-  var reForm  = document.getElementById("reKeyForm");
   function unlocked() { return !!(creds && creds.key); }
-  // The "Edit" button is reachable only once a private key is accepted.
-  function applyLocks() {
-    var eb = document.getElementById("editDocBtn");
-    if (eb) eb.hidden = !unlocked();
-  }
-  // Ask for the key: a returning user re-enters it, a new visitor creates a user.
-  function requestKey(note) { if (userRec) openRePanel(note); else openKeyPanel(note); }
-
   function openKeyPanel(note) {
-    reForm.hidden = true;
     keyForm.hidden = false;
-    var src = userRec || creds || {};
-    document.getElementById("k-name").value = src.name || "";
-    document.getElementById("k-email").value = src.email || "";
+    if (creds) { document.getElementById("k-name").value = creds.name || ""; document.getElementById("k-email").value = creds.email || ""; }
     document.getElementById("keyHint").textContent = note ||
-      "Create a user with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.";
+      "Sign in with your name, email and a private key. It reveals the download links, unlocks editing, and keys your favourites on every device.";
     document.getElementById("kMsg").hidden = true;
     renderKeyPanel();
     if (!unlocked()) document.getElementById("k-key").focus();
   }
   function closeKeyPanel() { keyForm.hidden = true; }
-  function openRePanel(note) {
-    keyForm.hidden = true;
-    reForm.hidden = false;
-    document.getElementById("reKeyHint").textContent = note ||
-      "Re-enter the private key you created to sign in again. It reveals the download links and unlocks editing, comments and your favourites.";
-    document.getElementById("rMsg").hidden = true;
-    document.getElementById("r-key").value = "";
-    document.getElementById("r-key").focus();
-  }
-  function closeRePanel() { reForm.hidden = true; }
-
   function renderKeyPanel() {
     var btn = document.getElementById("keyBtn");
     var lock = document.getElementById("kLock");
@@ -2888,41 +2820,19 @@
       submit.hidden = true;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = true; });
     } else {
-      btn.textContent = "Create User";
+      btn.textContent = "Private key";
       lock.hidden = true;
       submit.hidden = false;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = false; });
     }
-    applyLocks();
-  }
-  function afterSignIn() {
-    renderKeyPanel();
-    closeKeyPanel(); closeRePanel();
-    if (openId) openDoc(openId, { silent:true }); else render();
-    loadFavourites();
-    toast("Signed in — favourites sync across your devices");
-  }
-  function signIn(name, email, key) {
-    return sha256hex("hub:" + key).then(function (hash) {
-      creds = { name:name || "", email:email || "", key:key, hash:hash };
-      persist(); afterSignIn();
-    });
   }
   document.getElementById("keyBtn").addEventListener("click", function () {
     if (keyForm.hidden) openKeyPanel(); else closeKeyPanel();
   });
-  document.getElementById("keyReBtn").addEventListener("click", function () {
-    if (!reForm.hidden) { closeRePanel(); return; }
-    openRePanel(unlocked() ? "You are signed in. Enter the private key of another user to switch." : undefined);
-  });
   document.getElementById("kCancel").addEventListener("click", closeKeyPanel);
-  document.getElementById("rCancel").addEventListener("click", closeRePanel);
   document.getElementById("kLock").addEventListener("click", function () {
-    creds = null; persist(); renderKeyPanel();
-    if (openId) openDoc(openId, { silent:true }); else render();
-    toast("Signed out — download links hidden");
+    creds = null; persist(); render(); renderKeyPanel(); toast("Locked — download links hidden");
   });
-  // Create a user (name + email + private key).
   keyForm.addEventListener("submit", function (e) {
     e.preventDefault();
     var msg = document.getElementById("kMsg");
@@ -2933,21 +2843,13 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.hidden = false; msg.textContent = "Please enter a valid email."; return; }
     if (key.trim().length < 3) { msg.hidden = false; msg.textContent = "Please enter a private key of at least 3 characters."; return; }
     if (PRIVATE_KEY && key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
-    userRec = { name:name, email:email, key:key };
-    persist();
-    msg.hidden = false; msg.textContent = "Creating your user…";
-    signIn(name, email, key);
-  });
-  // Sign back in by re-entering the private key created above.
-  reForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var msg = document.getElementById("rMsg");
-    var key = document.getElementById("r-key").value;
-    if (key.trim().length < 3) { msg.hidden = false; msg.textContent = "Please enter your private key."; return; }
-    if (PRIVATE_KEY && key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
-    if (userRec && userRec.key && key !== userRec.key) { msg.hidden = false; msg.textContent = "Wrong private key — it does not match the user on this device."; return; }
     msg.hidden = false; msg.textContent = "Signing in…";
-    signIn(userRec ? userRec.name : "", userRec ? userRec.email : "", key);
+    sha256hex("hub:" + key).then(function (hash) {
+      creds = { name:name, email:email, key:key, hash:hash };
+      persist(); render(); renderKeyPanel(); closeKeyPanel();
+      loadFavourites();
+      toast("Signed in — favourites sync across your devices");
+    });
   });
 
   /* =========================================================================
