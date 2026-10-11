@@ -240,6 +240,9 @@
                             which hides the links even from signed-in members.
     Rev 0.60  (2026-10-11)  The header's "The Library" wordmark links back to /hub/ (the shelf); the
                             "Home" link beside it still goes to the site root.
+    Rev 0.61  (2026-10-11)  One auth button. The header's "Sign in" button becomes "Sign out" once you
+                            are signed in (clicking it signs you out), and "Sign Up" is hidden while
+                            signed in, so the header carries a single sign-in / sign-out control.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -879,7 +882,6 @@
       <div class="form-actions">
         <button class="btn primary" type="submit" id="kSubmit">Sign up</button>
         <button class="btn ghost" type="button" id="kCancel">Cancel</button>
-        <button class="btn ghost" type="button" id="kLock" hidden>Sign out</button>
       </div>
       <p class="hint" id="kMsg" style="margin-top:10px" hidden></p>
     </form>
@@ -1075,7 +1077,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.60 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.61 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -2957,8 +2959,7 @@
     if (!b) return;
     var closed = !signupOpen && !unlocked();
     b.disabled = closed;
-    b.title = closed ? "Sign-ups are closed"
-      : (unlocked() ? "Signed in" : "Sign up with a name, email and private key");
+    b.title = closed ? "Sign-ups are closed" : "Sign up with a name, email and private key";
   }
   function loadSignupSetting() {
     if (!dbOn) return;
@@ -3004,17 +3005,16 @@
 
   function renderKeyPanel() {
     var btn = document.getElementById("keyBtn");
-    var lock = document.getElementById("kLock");
+    var reBtn = document.getElementById("keyReBtn");
     var submit = document.getElementById("kSubmit");
     var inputs = keyForm.querySelectorAll("input");
+    // "Sign Up" only exists while signed out; the second button doubles as "Sign out".
+    btn.hidden = unlocked();
+    reBtn.textContent = unlocked() ? "Sign out" : "Sign in";
     if (unlocked()) {
-      btn.textContent = "Signed in";
-      lock.hidden = false;
       submit.hidden = true;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = true; });
     } else {
-      btn.textContent = "Sign Up";
-      lock.hidden = true;
       submit.hidden = false;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = false; });
     }
@@ -3059,17 +3059,19 @@
   document.getElementById("keyBtn").addEventListener("click", function () {
     if (keyForm.hidden) openKeyPanel(); else closeKeyPanel();
   });
-  document.getElementById("keyReBtn").addEventListener("click", function () {
-    if (!reForm.hidden) { closeRePanel(); return; }
-    openRePanel(unlocked() ? "You are signed in. Enter the email and private key of another user to switch." : undefined);
-  });
-  document.getElementById("kCancel").addEventListener("click", closeKeyPanel);
-  document.getElementById("rCancel").addEventListener("click", closeRePanel);
-  document.getElementById("kLock").addEventListener("click", function () {
+  function signOut() {
     creds = null; persist(); renderKeyPanel();
     if (openId) openDoc(openId, { silent:true }); else render();
     toast("Signed out — download links hidden");
+  }
+  // One button: it opens sign-in while signed out, and signs you out when signed in.
+  document.getElementById("keyReBtn").addEventListener("click", function () {
+    if (unlocked()) { signOut(); return; }
+    if (!reForm.hidden) { closeRePanel(); return; }
+    openRePanel();
   });
+  document.getElementById("kCancel").addEventListener("click", closeKeyPanel);
+  document.getElementById("rCancel").addEventListener("click", closeRePanel);
   // Sign up (name + email + private key). One email and one key per account,
   // so the same person cannot end up with two users.
   keyForm.addEventListener("submit", function (e) {
