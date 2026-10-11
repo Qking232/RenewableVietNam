@@ -1170,10 +1170,10 @@
     var CARTO_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution/" target="_blank" rel="noopener">CARTO</a>';
 
     var BASE = {
-      light: {
-        label:"Light", badge:"Default", maxZoom:20, subdomains:"abcd",
-        attribution:CARTO_ATTR,
-        url:"https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=" + CARTO_KEY
+      osm: {
+        label:"OpenStreetMap", badge:"Default", maxZoom:19,
+        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+        url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png"
       },
       lightDark: {
         label:"Dark", maxZoom:20, subdomains:"abcd",
@@ -1185,7 +1185,7 @@
         url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
       }
     };
-    var BASE_ORDER = ["light", "lightDark", "esriSat"];
+    var BASE_ORDER = ["osm", "lightDark", "esriSat"];
 
     var currentBase = null;
     var currentBaseName = null;
@@ -1243,7 +1243,7 @@
       row.className = "row";
       row.innerHTML =
         '<input type="radio" name="base" id="base-' + name + '" value="' + name + '"' +
-          (name === "light" ? " checked" : "") + ' />' +
+          (name === "osm" ? " checked" : "") + ' />' +
         '<label class="bl" for="base-' + name + '">' + cfg.label + '</label>' +
         (cfg.badge ? '<span class="badge">' + cfg.badge + '</span>' : "");
       baseListEl.appendChild(row);
@@ -1256,7 +1256,7 @@
     baseListEl.appendChild(statusP);
     baseStatusEl = statusP;
 
-    setBase("light");
+    setBase("osm");
 
     /* ---------------- Viet Nam archipelagos — Hoang Sa & Truong Sa ---------------- */
     var ARCHIPELAGOS = [
