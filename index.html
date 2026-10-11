@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <!--
   Renewable Viet Nam — homepage (four domain cards)
+  Rev 0.33  The Hub card drops its document count (it read "N documents · M collections"); it now
+            shows only the collections count.
   Rev 0.32  Contact email corrected to info@renewablevietnam.com.
   Rev 0.31  Contact email changed to infor@renewablevietnam.com and the footer line
             right-aligned instead of centred.
@@ -22,7 +24,7 @@
   Rev 0.24  Refined the icon-box contents: smaller balanced icon, centred metric label.
   Rev 0.23  Key parameters moved inside the icon box, below the icon.
   Rev 0.20  Each domain card carries a key-parameter summary line (projects, stations,
-            connectors, facilities, operators, documents, collections).
+            connectors, facilities, operators, collections).
 -->
 <html lang="en" class="h-full">
 <head>
@@ -349,7 +351,7 @@
             <line x1="8.35" y1="16.9" x2="10.3" y2="14.3" stroke-linecap="round" />
             <line x1="6.35" y1="9.8" x2="9.6" y2="10.9" stroke-linecap="round" />
           </svg>
-          <span id="statHub" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors">12 documents &middot; 12 collections</span>
+          <span id="statHub" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors">12 collections</span>
         </div>
       </div>
 
@@ -408,8 +410,6 @@
   <!-- Live domain stats: re-derives each card's key parameters from its page's own data -->
   <script>
   (function () {
-    var SUPA_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
-    var SUPA_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
     var CACHE_KEY = "rvn_domain_stats_v1";
     var TTL = 10 * 60 * 1000;
 
@@ -466,15 +466,7 @@
         txt("/datacenter/").then(function (h) { out.dc = fromDc(h); }).catch(function () {}),
         txt("/hub/").then(function (h) {
           var b = fromHub(h);
-          return fetch(SUPA_URL + "/rest/v1/hub_documents?select=id", { headers: { apikey: SUPA_KEY } })
-            .then(function (r) { return r.ok ? r.json() : null; })
-            .then(function (rows) {
-              var docs = b ? b[0] : 12;
-              if (rows && rows.length) docs = Math.max(docs, rows.length);   // shared store supersedes the seed set
-              var cols = b ? b[1] : 12;
-              out.hub = fmt(docs) + " documents \u00b7 " + fmt(cols) + " collections";
-            })
-            .catch(function () { if (b) out.hub = fmt(b[0]) + " documents \u00b7 " + fmt(b[1]) + " collections"; });
+          out.hub = fmt(b ? b[1] : 12) + " collections";
         }).catch(function () {})
       ]).then(function () {
         paint(out);
