@@ -213,9 +213,6 @@
                             check the server so a user cannot be duplicated: "Create User" refuses an
                             email that is already registered, or a key already tied to another email,
                             and signing in refuses when the email does not match the key.
-    Rev 0.53  (2026-10-11)  The search box sits on a line of its own, full width, with the toolbar's
-                            action buttons (Add document, Export links, Create User, Private key) on
-                            the line below it.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -335,9 +332,8 @@
   .stats b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
 
   /* ---------------- Toolbar ---------------- */
-  .toolbar { display:flex; flex-direction:column; gap:10px; margin:22px 0 12px; }
-  .search { position:relative; width:100%; }
-  .toolbar-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:22px 0 12px; }
+  .search { position:relative; flex:1 1 260px; min-width:200px; }
   .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--faint); pointer-events:none; }
   .search input { width:100%; padding:10px 12px 10px 36px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
   .search input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); background:var(--surface); }
@@ -717,12 +713,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
         <input type="search" id="q" placeholder="Search title, author, summary, collection…" autocomplete="off" />
       </label>
-      <div class="toolbar-actions">
-        <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
-        <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
-        <button class="btn" id="keyBtn" type="button" title="Create a user with a name, email and private key">Create User</button>
-        <button class="btn" id="keyReBtn" type="button" title="Sign in by re-entering the private key you created">Private key</button>
-      </div>
+      <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
+      <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
+      <button class="btn" id="keyBtn" type="button" title="Create a user with a name, email and private key">Create User</button>
+      <button class="btn" id="keyReBtn" type="button" title="Sign in by re-entering the private key you created">Private key</button>
     </div>
 
     <div class="filterbar">
@@ -1040,7 +1034,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.53 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.52 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
