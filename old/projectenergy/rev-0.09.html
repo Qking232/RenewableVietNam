@@ -26,8 +26,6 @@
                             remembered in the browser. Each revision now ships as its own file.
     Rev 0.09  (2026-10-07)  Headline renamed to "Renewable Energy in Viet Nam" (brand, sidebar
                             heading, page title and footer).
-    Rev 0.10  (2026-10-07)  Moved the Zones panel above the Companies & projects panel. Removed a
-                            duplicate (stale) Companies & projects panel left over from Rev 0.05.
 
   Single self-contained file. No build step, no server. Open directly in a browser.
   Leaflet is bundled in vendor/leaflet/; map tiles load over the internet.
@@ -39,7 +37,7 @@
 <title>Renewable Energy in Viet Nam — Energy Potential Map</title>
 <meta name="description" content="Interactive map of Viet Nam showing potential areas for solar, wind, hydropower, LNG and nuclear, with layer toggles, a legend and company projects." />
 
-<link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
+<link rel="stylesheet" href="/projectenergy/vendor/leaflet/leaflet.css" />
 
 <style>
   :root {
@@ -300,7 +298,7 @@
 
   <header class="site">
     <div class="nav">
-      <a class="brand" href="index.html">
+      <a class="brand" href="/projectenergy/">
         <span class="mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="#ffcd00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2v6"/><path d="M5 12a7 7 0 0 0 14 0"/><path d="M12 19v3"/><path d="M8 22h8"/>
@@ -330,15 +328,9 @@
     <!-- ===== Sidebar ===== -->
     <aside class="side">
       <h2>Renewable Energy in Viet Nam</h2>
-      <p class="sub">Toggle a resource to show its potential zones, then pick a company to pin its projects — or add your own.</p>
+      <p class="sub">Pick a company to pin its projects, or add your own. Toggle zones and basemap as needed.</p>
 
-      <!-- ===== Zones (top) ===== -->
-      <div class="card">
-        <h3>Zones</h3>
-        <ul class="zone-list" id="zone-list"></ul>
-      </div>
-
-      <!-- ===== Companies & projects ===== -->
+      <!-- ===== Companies & projects (top) ===== -->
       <div class="card">
         <h3>Companies &amp; projects</h3>
         <input type="text" id="company-search" class="co-search" placeholder="Search company or project…" autocomplete="off" />
@@ -452,6 +444,23 @@
         </div>
       </div>
 
+      <!-- ===== Companies & projects ===== -->
+      <div class="card">
+        <h3>Companies &amp; projects</h3>
+        <input type="text" id="company-search" class="co-search" placeholder="Search company or project…" autocomplete="off" />
+        <div class="co-actions">
+          <button class="btn mini" id="co-all" type="button">Show all</button>
+          <button class="btn mini" id="co-clear" type="button">Clear</button>
+        </div>
+        <ul class="co-list" id="company-list"></ul>
+        <p class="co-hint" id="co-hint">Select a company (or a project) to mark it on the map.</p>
+      </div>
+
+      <div class="card">
+        <h3>Zones</h3>
+        <ul class="zone-list" id="zone-list"></ul>
+      </div>
+
       <details class="adv">
         <summary>Advanced — commercial tile server &amp; API key</summary>
         <div class="adv-body">
@@ -501,12 +510,12 @@
 
   <footer class="site">
     <span>For study &amp; research only — non-commercial. Basemaps: OpenStreetMap (France) · Esri satellite · rendered with Leaflet</span>
-    <span class="rev">Renewable Energy in Viet Nam · Rev 0.10</span>
+    <span class="rev">Renewable Energy in Viet Nam · Rev 0.09</span>
   </footer>
 
   <!-- Leaflet is bundled locally so the page works even if CDNs are blocked.
        If the local copy is missing, fall back to a CDN on the fly. -->
-  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="/projectenergy/vendor/leaflet/leaflet.js"></script>
   <script>
     if (typeof L === "undefined") {
       document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">');

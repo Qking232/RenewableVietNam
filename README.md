@@ -11,6 +11,7 @@ static tools served from subfolders.
 | `/hub/` | **The Library** — documents (reports, datasets, policy, maps) with files, summaries and comments |
 | `/blog/` | Jekyll blog posts |
 | `/presskit/` | Press kit |
+| `/old/` | Archive: previous page revisions, the retired `worldmap/` build and `presskit-src/`. Not part of the site — kept for reference only. |
 
 Deployment is automatic: pushing to `main` builds with Jekyll
 (`.github/workflows/jekyll-build.yml`) and publishes to GitHub Pages.
@@ -99,9 +100,16 @@ pings the API once a day to keep the project awake.
 
 `hub/index.html` is a single self-contained file — no build step, no
 dependencies, no CDN. It can be opened directly from disk. Revisions are kept
-side by side (`rev-0.01.html`, `rev-0.02.html`, …) with the current version in
-`index.html`. `rev-0.10.html` is the first document-library build; `rev-0.11.html`
-makes each shelf row open the document in **its own window** (`/hub/#/doc/<id>`)
-as a full page, with the inline preview panel removed.
+side by side under `old/hub/` (`old/hub/rev-0.01.html`, `old/hub/rev-0.02.html`,
+…) with the current version in `index.html`. `old/hub/rev-0.10.html` is the first
+document-library build; `old/hub/rev-0.11.html` makes each shelf row open the
+document in **its own window** (`/hub/#/doc/<id>`) as a full page, with the
+inline preview panel removed.
 Without Supabase keys it runs local-only (small files inline, export/import as
 JSON); with them, documents and files are shared for everyone.
+
+The same convention applies to every page: earlier revisions of the homepage,
+`/projectenergy/`, and the retired `worldmap/` map all live under `old/` (mirroring
+their original folder structure), with the current version in place as `index.html`.
+`old/presskit-src/` holds the presskit.html generator sources and unused theme
+assets are parked in `old/assets/`.

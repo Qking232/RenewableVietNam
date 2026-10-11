@@ -27,14 +27,34 @@
                             live from the same Ember API as the map, with the
                             2024 values embedded as fallback. The four domain
                             cards are unchanged.
+    Rev 0.15  (2026-10-09)  Page divided into three separately bordered zones,
+                            each independently collapsible from the header:
+                            Zone 1 "Left table" (the map side panel, shown/hidden
+                            via postMessage — worldmap/rev-0.12.html), Zone 2 the
+                            four domain flashcards, Zone 3 the Vietnam
+                            electricity-mix table. All three are open on load; the
+                            map keeps its own dark theme as before.
+    Rev 0.16  (2026-10-09)  Zones laid out as three full-height columns filling
+                            the width: Zone 1 (map panel) a fixed 30% on the left,
+                            Zone 2 20%, Zone 3 the remaining 50%. The homepage
+                            measures the 30% column and drives the map panel's
+                            width over postMessage (worldmap/rev-0.13.html); each
+                            zone scrolls internally so all three stay on screen.
+    Rev 0.17  (2026-10-09)  The Vietnam map is removed — the map iframe now loads
+                            with ?nomap (worldmap/rev-0.14.html), which hides the
+                            map canvas and makes the page transparent, leaving only
+                            the Zone 1 side panel. The three zones are maximized to
+                            fill the whole window (no page padding, header is a slim
+                            bar, footer floats) and stretch to fill the viewport on
+                            any window size.
 -->
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Renewable Infrastructure + Renewable Viet Nam</title>
-  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
-  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="apple-touch-icon" href="/assets/images/favicon.png">
 
   <!-- Tailwind CSS CDN configured with class-based dark mode & SF Pro typography stack -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -167,6 +187,49 @@
     .mix-table .total td { font-weight: 700; border-top: 1px solid rgba(0, 0, 0, 0.14); border-bottom: none; }
     .dark .mix-table .total td { border-top-color: rgba(255, 255, 255, 0.18); }
     .mix-swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+
+    /* ===== Three zones ===== */
+    /* Zone 1 is the map side panel; its content is controlled via postMessage. */
+    .zone { transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+    .zone-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      cursor: pointer; user-select: none;
+    }
+    .zone-chevron { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .zone.collapsed .zone-body { display: none; }
+    .zone.collapsed .zone-chevron { transform: rotate(-90deg); }
+    .zone-collapsed-note { display: none; }
+    .zone.collapsed .zone-collapsed-note { display: block; }
+
+    /* Header zone chips */
+    .zone-chip { transition: color 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease; }
+    .zone-chip[data-active="false"] { opacity: 0.5; }
+    .zone-chip[data-active="false"] .zone-chip-dot { background: #a1a1aa !important; }
+
+    /* Large screens: three full-height columns filling the width —
+       Zone 1 (map panel) 30% on the left, Zone 2 20%, Zone 3 the rest (50%). */
+    @media (min-width: 1024px) {
+      body { height: 100vh; overflow: hidden; }
+      #zoneStack {
+        display: grid;
+        grid-template-columns: 30% 20% 50%;
+        grid-template-rows: minmax(0, 1fr);
+        width: 100vw;
+        max-width: none;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        gap: 0;
+        padding: 0;
+        min-height: 0;
+        align-items: stretch;
+      }
+      #zone1Spacer { display: block; grid-column: 1; }
+      .zone-cell { display: flex; min-height: 0; }
+      .zone-cell-2 { grid-column: 2; padding: 0 6px; }
+      .zone-cell-3 { grid-column: 3; padding: 0 40px 0 6px; }
+      .zone-cell > .zone { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+      .zone-cell .zone-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+    }
   </style>
 
   <script>
@@ -183,16 +246,30 @@
   </script>
 </head>
 
-<body class="min-h-screen text-zinc-900 dark:text-zinc-100 antialiased relative overflow-x-hidden flex flex-col justify-between p-5 sm:p-8 lg:p-10 bg-obsidian font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+<body class="min-h-screen text-zinc-900 dark:text-zinc-100 antialiased relative overflow-x-hidden flex flex-col bg-obsidian font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
 
   <!-- ===== Background: the live Energy World Map (interactive, with indicators) ===== -->
   <iframe id="mapbg"
-          src="worldmap/rev-0.06.html?embed=1"
+          src="worldmap/rev-0.14.html?embed=1&nomap=1"
           title="Vietnam energy — Energy World Map"
           class="fixed inset-0 z-0 w-full h-full border-0"></iframe>
 
-  <!-- Header: theme toggle only -->
-  <header class="relative z-10 w-full flex items-center justify-end gap-3 pb-4 sm:pb-6 max-w-5xl mx-auto lg:max-w-none">
+  <!-- Header: three zone toggles (left) + theme toggle (right) -->
+  <header class="relative z-20 w-full flex items-center justify-between gap-3 px-3 py-2">
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="1" data-active="true" aria-pressed="true" title="Show / hide Zone 1 — the left table">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-zinc-500" style="background:#8b5cf6"></span>
+        Zone 1 · Left table
+      </button>
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="2" data-active="true" aria-pressed="true" title="Show / hide Zone 2 — the four flashcards">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        Zone 2 · Cards
+      </button>
+      <button type="button" class="zone-chip chrome-pill flex items-center gap-1.5 rounded-full pl-2.5 pr-3 py-1.5 text-[11px] font-mono tracking-wide text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white cursor-pointer" data-zone="3" data-active="true" aria-pressed="true" title="Show / hide Zone 3 — the Vietnam electricity-mix table">
+        <span class="zone-chip-dot w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+        Zone 3 · Mix
+      </button>
+    </div>
     <button id="themeToggleBtn" aria-label="Toggle Theme" class="chrome-pill flex items-center justify-center w-9 h-9 rounded-xl text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white transition-all duration-300 cursor-pointer">
       <svg id="sunIcon" class="hidden w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
@@ -203,8 +280,27 @@
     </button>
   </header>
 
-  <!-- ===== 4 compact metric cards floating over the map (right of the panel on lg) ===== -->
-  <main class="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch my-auto py-2 lg:max-w-none lg:pl-[336px] lg:pr-2">
+  <!-- ===== Zone stack: Zone 2 (cards) + Zone 3 (mix) in the right column; Zone 1 is the map panel ===== -->
+  <div id="zoneStack" class="relative z-10 w-full flex-1 flex flex-col justify-center gap-3 px-3 pb-3 max-w-5xl mx-auto">
+
+    <!-- Zone 1 spacer: the map side panel sits over this 30% column (lg) -->
+    <div id="zone1Spacer" aria-hidden="true" class="hidden lg:block"></div>
+
+    <!-- ZONE 2: the four domain flashcards -->
+    <div class="zone-cell zone-cell-2">
+    <section id="zone2" class="zone rounded-2xl border border-black/[0.08] dark:border-white/[0.1] bg-white/70 dark:bg-darkSurface/70 backdrop-blur-xl shadow-[0_18px_45px_-14px_rgba(0,0,0,0.5)] p-3 sm:p-4">
+      <div class="zone-head px-1 pb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">ZONE 2</span>
+          <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Domain flashcards</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="zone-collapsed-note text-[10px] font-mono text-zinc-400 dark:text-zinc-500">collapsed</span>
+          <svg class="zone-chevron w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="zone-body">
+        <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 sm:gap-4 items-stretch">
 
     <!-- CARD 01: ENERGY PROJECTS -->
     <a href="/projectenergy/" class="domain-card card-emerald group relative flex flex-col justify-between min-h-[210px] p-4 rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] cursor-pointer overflow-hidden">
@@ -374,13 +470,16 @@
       </div>
     </a>
 
-  </main>
+      </main>
+      </div>
+    </section>
+    </div>
 
-  <!-- ===== Vietnam electricity mix: 4 group flashcards + full fuel table ===== -->
-  <section class="relative z-10 w-full max-w-5xl mx-auto mt-5 sm:mt-7 lg:max-w-none lg:pl-[336px] lg:pr-2">
-    <div class="rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] p-4 sm:p-5">
+  <!-- ===== ZONE 3: Vietnam electricity mix — 4 group flashcards + full fuel table ===== -->
+  <div class="zone-cell zone-cell-3">
+  <section id="zone3" class="zone rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] p-4 sm:p-5">
 
-      <div class="flex items-center justify-between gap-3 mb-3">
+      <div class="zone-head mb-3">
         <div class="flex items-center gap-2.5">
           <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
@@ -391,15 +490,24 @@
             </svg>
           </span>
           <div>
-            <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Vietnam electricity mix</h2>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] tracking-widest text-zinc-400 dark:text-zinc-500">ZONE 3</span>
+              <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Vietnam electricity mix</h2>
+            </div>
             <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light">Generation share · <span id="mixYearLabel">2024</span> · Ember live data</p>
           </div>
         </div>
-        <span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <div class="flex items-center gap-2">
+          <span class="zone-collapsed-note text-[10px] font-mono text-zinc-400 dark:text-zinc-500">collapsed</span>
+          <span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <svg class="zone-chevron w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+        </div>
       </div>
 
+      <div class="zone-body">
+
       <!-- 4 group flashcards -->
-      <div id="mixCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div id="mixCards" class="grid grid-cols-2 gap-3">
         <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
         <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
         <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
@@ -423,11 +531,14 @@
       </div>
 
       <p class="mt-3 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500 font-mono tracking-wide">Source: Ember (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised.</p>
-    </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="relative z-10 w-full flex items-center justify-center pt-4 sm:pt-6 max-w-5xl mx-auto">
+      </div>
+  </section>
+    </div>
+  </div>
+
+  <!-- Footer (floating, so the zones fill the whole window) -->
+  <footer class="absolute bottom-2 left-1/2 -translate-x-1/2 z-30">
     <p class="chrome-pill rounded-full px-3.5 py-1.5 text-[11px] font-mono tracking-wider text-zinc-700 dark:text-zinc-200">@renewablevietnam.com</p>
   </footer>
 
@@ -453,6 +564,56 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       updateIcons(isDark);
     });
+  </script>
+
+  <script>
+    /* ===== Three zones: Zone 1 = map panel (postMessage), Zones 2 & 3 = page panels ===== */
+    (function () {
+      const frame = document.getElementById('mapbg');
+      const chips = Array.from(document.querySelectorAll('.zone-chip'));
+      const state = { 1: true, 2: true, 3: true };
+      const isLg = () => window.matchMedia('(min-width: 1024px)').matches;
+
+      function setZone1(visible) {
+        document.body.classList.toggle('zone1-hidden', !visible);
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'rvn-zone1', hidden: !visible }, '*');
+        }
+      }
+      function syncZone1Width() {
+        const spacer = document.getElementById('zone1Spacer');
+        const lg = window.matchMedia('(min-width: 1024px)').matches;
+        const width = (lg && spacer) ? Math.round(spacer.getBoundingClientRect().width) : null;
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'rvn-zone1-width', width }, '*');
+        }
+      }
+      function setPanel(zone, visible) {
+        const el = document.getElementById('zone' + zone);
+        if (el) el.classList.toggle('collapsed', !visible);
+      }
+      function apply() {
+        setZone1(state[1] && isLg());
+        setPanel(2, state[2]);
+        setPanel(3, state[3]);
+        chips.forEach((c) => {
+          c.dataset.active = state[c.dataset.zone] ? 'true' : 'false';
+          c.setAttribute('aria-pressed', c.dataset.active);
+        });
+      }
+      function toggle(zone) { state[zone] = !state[zone]; apply(); }
+
+      chips.forEach((c) => c.addEventListener('click', () => toggle(c.dataset.zone)));
+      [2, 3].forEach((z) => {
+        const el = document.getElementById('zone' + z);
+        const head = el && el.querySelector('.zone-head');
+        if (head) head.addEventListener('click', () => toggle(z));
+      });
+      frame.addEventListener('load', () => { setZone1(state[1] && isLg()); syncZone1Width(); });
+      window.addEventListener('resize', () => { apply(); syncZone1Width(); });
+      apply();
+      syncZone1Width();
+    })();
   </script>
 
   <script>

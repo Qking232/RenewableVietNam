@@ -122,16 +122,16 @@ body.embed #panel{ padding-top: calc(50px + env(safe-area-inset-top)); }
 
 /* ---------- access flashcards (same card style as the Viet Nam readout) ---------- */
 .fc-table{ }
-.fc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
-a.fc{ display:flex; flex-direction:column; gap:5px; text-decoration:none; color:var(--fg); cursor:pointer; transition:border-color .2s ease, transform .2s ease; }
+.fc-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; justify-content:center; }
+a.fc{ display:flex; flex-direction:column; gap:4px; padding:9px 7px; text-decoration:none; color:var(--fg); cursor:pointer; text-align:center; transition:border-color .2s ease, transform .2s ease; }
 a.fc:hover{ border-color:var(--accent); transform:translateY(-2px); }
-.fc-head{ display:flex; align-items:center; justify-content:space-between; gap:6px; }
-.fc-name{ font-size:12px; font-weight:700; }
-.fc-idx{ font-size:9.5px; font-weight:700; letter-spacing:.08em; color:var(--muted); }
-.fc-val{ font-size:19px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
-.fc-val .fc-unit{ font-size:10px; font-weight:600; color:var(--muted); margin-left:4px; }
-.fc-sub{ font-size:10px; color:var(--muted); }
-.spark{ width:100%; height:24px; display:block; }
+.fc-head{ display:flex; align-items:baseline; justify-content:center; gap:5px; flex-wrap:wrap; }
+.fc-name{ font-size:10.5px; font-weight:700; }
+.fc-idx{ font-size:8.5px; font-weight:700; letter-spacing:.08em; color:var(--muted); }
+.fc-val{ font-size:15px; font-weight:700; line-height:1.05; font-variant-numeric:tabular-nums; }
+.fc-val .fc-unit{ display:block; font-size:9px; font-weight:600; color:var(--muted); margin-left:0; }
+.fc-sub{ font-size:8.5px; color:var(--muted); line-height:1.25; }
+.spark{ width:100%; height:18px; display:block; }
 .spark polyline{ fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
 </style>
 </head>
@@ -172,28 +172,28 @@ a.fc:hover{ border-color:var(--accent); transform:translateY(-2px); }
   <div class="card fc-table">
     <h2>Explore</h2>
     <div class="fc-grid">
-      <a class="card fc" href="../projectenergy/">
+      <a class="card fc" href="/projectenergy/">
         <div class="fc-head"><span class="fc-name">Energy Projects</span><span class="fc-idx">01</span></div>
-        <div class="fc-val">128<span class="fc-unit">projects</span></div>
-        <div class="fc-sub">12.4 GW pipeline</div>
+        <div class="fc-val">104<span class="fc-unit">projects</span></div>
+        <div class="fc-sub">≈79 GW across 5 technologies</div>
         <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><polyline stroke="#34d399" points="0,20 14,17 28,18 42,13 56,14 70,9 84,11 98,7 120,4"></polyline></svg>
       </a>
-      <a class="card fc" href="../evcharging/">
+      <a class="card fc" href="/evcharging/">
         <div class="fc-head"><span class="fc-name">EV Charging</span><span class="fc-idx">02</span></div>
-        <div class="fc-val">1,842<span class="fc-unit">connectors</span></div>
-        <div class="fc-sub">312 stations · 63 provinces</div>
+        <div class="fc-val">2,077<span class="fc-unit">connectors</span></div>
+        <div class="fc-sub">952 stations · 23 networks</div>
         <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><polyline stroke="#fbbf24" points="0,17 14,19 28,15 42,16 56,12 70,13 84,8 98,9 120,5"></polyline></svg>
       </a>
-      <a class="card fc" href="../datacenter/">
+      <a class="card fc" href="/datacenter/">
         <div class="fc-head"><span class="fc-name">Data Center</span><span class="fc-idx">03</span></div>
-        <div class="fc-val">6<span class="fc-unit">facilities</span></div>
-        <div class="fc-sub">320 MW committed load</div>
+        <div class="fc-val">23<span class="fc-unit">facilities</span></div>
+        <div class="fc-sub">8 operators · ≈1.5 GW · APAC</div>
         <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><polyline stroke="#818cf8" points="0,19 14,16 28,18 42,14 56,15 70,10 84,12 98,8 120,6"></polyline></svg>
       </a>
-      <a class="card fc" href="../hub/">
+      <a class="card fc" href="/hub/">
         <div class="fc-head"><span class="fc-name">Hub</span><span class="fc-idx">04</span></div>
-        <div class="fc-val">20<span class="fc-unit">documents</span></div>
-        <div class="fc-sub">5 collections · 1.2k views</div>
+        <div class="fc-val">12<span class="fc-unit">documents</span></div>
+        <div class="fc-sub">12 collections · briefs &amp; reports</div>
         <svg class="spark" viewBox="0 0 120 24" preserveAspectRatio="none"><polyline stroke="#38bdf8" points="0,16 14,18 28,14 42,15 56,11 70,12 84,8 98,9 120,5"></polyline></svg>
       </a>
     </div>
@@ -218,7 +218,7 @@ a.fc:hover{ border-color:var(--accent); transform:translateY(-2px); }
   </div>
 
   <div class="card">
-    <div class="disclaimer">Data: <b>Ember</b> (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised. Boundaries schematic. <span style="opacity:.7">rev 0.09</span></div>
+    <div class="disclaimer">Data: <b>Ember</b> (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised. Boundaries schematic. <span style="opacity:.7">rev 0.11</span></div>
   </div>
 </aside>
 

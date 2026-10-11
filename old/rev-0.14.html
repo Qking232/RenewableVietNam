@@ -17,14 +17,24 @@
                             are placeholders to make the hub look live. The
                             "RENEWABLE INFRASTRUCTURE" header button is removed,
                             leaving only the theme toggle.
+    Rev 0.13  (2026-10-09)  New baseline restarted from Rev 0.07 (the final one).
+                            Rev 0.08–0.12 (cards moved inside the map panel /
+                            "Explore" box) set aside.
+    Rev 0.14  (2026-10-09)  New "Vietnam electricity mix" section below the map:
+                            four group flashcards (Renewables / Fossil /
+                            Nuclear + Other / Net imports) plus a full table of
+                            every fuel (generation TWh + share %). Figures load
+                            live from the same Ember API as the map, with the
+                            2024 values embedded as fallback. The four domain
+                            cards are unchanged.
 -->
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Renewable Infrastructure + Renewable Viet Nam</title>
-  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
-  <link rel="apple-touch-icon" href="assets/images/favicon.png">
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="apple-touch-icon" href="/assets/images/favicon.png">
 
   <!-- Tailwind CSS CDN configured with class-based dark mode & SF Pro typography stack -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -125,6 +135,38 @@
       background: rgba(10, 12, 16, 0.6);
       border-color: rgba(255, 255, 255, 0.13);
     }
+
+    /* Vietnam electricity-mix group flashcard */
+    .mix-card {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.35s ease, box-shadow 0.35s ease;
+      will-change: transform;
+    }
+    .mix-card:hover { transform: translateY(-4px); }
+
+    /* Vietnam electricity-mix table */
+    .mix-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .mix-table th {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #71717a; text-align: left; padding: 6px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+    }
+    .dark .mix-table th { color: #a1a1aa; border-bottom-color: rgba(255, 255, 255, 0.11); }
+    .mix-table td {
+      font-size: 12px; padding: 6px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .dark .mix-table td { border-bottom-color: rgba(255, 255, 255, 0.06); }
+    .mix-table .num { text-align: right; }
+    .mix-table .grp td {
+      font-weight: 600; background: rgba(127, 127, 127, 0.07);
+      border-bottom-color: rgba(0, 0, 0, 0.09);
+    }
+    .dark .mix-table .grp td { background: rgba(255, 255, 255, 0.04); border-bottom-color: rgba(255, 255, 255, 0.1); }
+    .mix-table .indent { padding-left: 22px; }
+    .mix-table .total td { font-weight: 700; border-top: 1px solid rgba(0, 0, 0, 0.14); border-bottom: none; }
+    .dark .mix-table .total td { border-top-color: rgba(255, 255, 255, 0.18); }
+    .mix-swatch { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
   </style>
 
   <script>
@@ -334,6 +376,56 @@
 
   </main>
 
+  <!-- ===== Vietnam electricity mix: 4 group flashcards + full fuel table ===== -->
+  <section class="relative z-10 w-full max-w-5xl mx-auto mt-5 sm:mt-7 lg:max-w-none lg:pl-[336px] lg:pr-2">
+    <div class="rounded-2xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-xl border border-black/[0.08] dark:border-white/[0.1] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.55)] p-4 sm:p-5">
+
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#F4F5F7] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-zinc-700 dark:text-zinc-300">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/>
+              <rect x="7" y="11" width="2.4" height="6" rx="0.6"/>
+              <rect x="12" y="7" width="2.4" height="10" rx="0.6"/>
+              <rect x="17" y="9" width="2.4" height="8" rx="0.6"/>
+            </svg>
+          </span>
+          <div>
+            <h2 class="text-[13px] font-medium tracking-tight text-zinc-900 dark:text-zinc-100">Vietnam electricity mix</h2>
+            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light">Generation share · <span id="mixYearLabel">2024</span> · Ember live data</p>
+          </div>
+        </div>
+        <span class="live-dot w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      </div>
+
+      <!-- 4 group flashcards -->
+      <div id="mixCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+        <div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] p-3.5 animate-pulse h-[132px]"></div>
+      </div>
+
+      <!-- Full table of every fuel -->
+      <div class="mt-4 overflow-x-auto">
+        <table class="mix-table min-w-[420px]">
+          <thead>
+            <tr>
+              <th>Fuel / source</th>
+              <th class="num">Generation (TWh)</th>
+              <th class="num">Share</th>
+            </tr>
+          </thead>
+          <tbody id="mixTableBody">
+            <tr><td colspan="3" class="text-zinc-400 dark:text-zinc-500">Loading live data…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-3 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500 font-mono tracking-wide">Source: Ember (ember-energy.org) live API · CC BY 4.0. For study / research use, non-commercial. Independent verification advised.</p>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="relative z-10 w-full flex items-center justify-center pt-4 sm:pt-6 max-w-5xl mx-auto">
     <p class="chrome-pill rounded-full px-3.5 py-1.5 text-[11px] font-mono tracking-wider text-zinc-700 dark:text-zinc-200">@renewablevietnam.com</p>
@@ -361,6 +453,98 @@
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       updateIcons(isDark);
     });
+  </script>
+
+  <script>
+    /* ===== Vietnam electricity mix: group flashcards + full fuel table ===== */
+    (function () {
+      const MIX_YEAR = 2024;
+      const API = "https://api.ember-energy.org/v1";
+      const KEY = "a238cbd2-8582-6f08-4e27-03dd861af820";
+
+      const COLORS = {
+        "Coal": "#5b6472", "Gas": "#ef8a3c", "Other fossil": "#9a6a4a", "Nuclear": "#a855f7",
+        "Hydro": "#3b82f6", "Bioenergy": "#7cb342", "Solar": "#f4c430", "Wind": "#2dd4bf",
+        "Other renewables": "#a3e635", "Net imports": "#94a3b8"
+      };
+      const GROUPS = [
+        { label: "Renewables",     sub: "Hydro · bio · solar · wind", dot: "bg-emerald-500", tint: "hover:border-emerald-500/45 dark:hover:border-emerald-400/35", fuels: ["Hydro", "Bioenergy", "Solar", "Wind"] },
+        { label: "Fossil",         sub: "Coal · gas · other fossil",  dot: "bg-zinc-500",    tint: "hover:border-zinc-500/45 dark:hover:border-zinc-400/35",       fuels: ["Coal", "Gas", "Other fossil"] },
+        { label: "Nuclear + Other", sub: "Nuclear · other renewables", dot: "bg-indigo-500",  tint: "hover:border-indigo-500/45 dark:hover:border-indigo-400/35",   fuels: ["Nuclear", "Other renewables"] },
+        { label: "Net imports",    sub: "Cross-border power",         dot: "bg-sky-500",     tint: "hover:border-sky-500/45 dark:hover:border-sky-400/35",          fuels: ["Net imports"] }
+      ];
+      // Ember 2024 values — shown immediately, replaced by the live fetch below
+      const FALLBACK = [
+        ["Coal", 152.78, 49.18], ["Gas", 21.83, 7.03], ["Other fossil", 0.62, 0.20],
+        ["Nuclear", 0, 0], ["Hydro", 88.72, 28.56], ["Bioenergy", 1.03, 0.33],
+        ["Solar", 32.91, 10.59], ["Wind", 12.75, 4.10], ["Net imports", 3.60, 1.16]
+      ];
+
+      const fmtTWh = (v) => (v == null || isNaN(v)) ? "—" : (v >= 100 ? v.toFixed(1) : v.toFixed(2));
+      const fmtPct = (v) => (v == null || isNaN(v)) ? "—" : v.toFixed(2) + "%";
+      const fmtPct1 = (v) => (v == null || isNaN(v)) ? "—" : v.toFixed(1) + "%";
+
+      function render(S) {
+        document.getElementById("mixCards").innerHTML = GROUPS.map((g) => {
+          let tSum = 0, sSum = 0, parts = "";
+          for (const f of g.fuels) {
+            if (!S[f]) continue;
+            tSum += S[f].twh || 0; sSum += S[f].share || 0;
+            parts += `<div class="flex items-center justify-between gap-2 text-[10px] text-zinc-500 dark:text-zinc-400">
+              <span class="flex items-center gap-1.5 min-w-0"><i class="w-1.5 h-1.5 rounded-[2px] shrink-0" style="background:${COLORS[f] || "#888"}"></i><span class="truncate">${f}</span></span>
+              <span class="font-mono tabular-nums text-zinc-600 dark:text-zinc-300">${fmtPct1(S[f].share)}</span>
+            </div>`;
+          }
+          return `<div class="mix-card rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-[#F7F7F8] dark:bg-white/[0.03] ${g.tint} p-3.5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="flex items-center gap-1.5 text-[11px] font-medium tracking-tight text-zinc-800 dark:text-zinc-200"><i class="w-1.5 h-1.5 rounded-full ${g.dot}"></i>${g.label}</span>
+                <span class="font-mono text-[9px] text-zinc-400 dark:text-zinc-500">${fmtTWh(tSum)} TWh</span>
+              </div>
+              <div class="mt-2 text-[26px] leading-none font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">${fmtPct1(sSum)}</div>
+              <p class="mt-1 text-[10px] text-zinc-500 dark:text-zinc-400 font-light">${g.sub}</p>
+            </div>
+            <div class="mt-2.5 pt-2 border-t border-black/[0.06] dark:border-white/[0.08] flex flex-col gap-1">${parts}</div>
+          </div>`;
+        }).join("");
+
+        let html = "";
+        for (const g of GROUPS) {
+          const gT = g.fuels.reduce((a, f) => a + (S[f] ? S[f].twh : 0), 0);
+          const gS = g.fuels.reduce((a, f) => a + (S[f] ? S[f].share : 0), 0);
+          html += `<tr class="grp"><td><span class="mix-swatch" style="background:${COLORS[g.fuels[0]] || "#888"}"></span>${g.label}</td><td class="num">${fmtTWh(gT)}</td><td class="num">${fmtPct(gS)}</td></tr>`;
+          for (const f of g.fuels) {
+            if (!S[f]) continue;
+            html += `<tr><td class="indent"><span class="mix-swatch" style="background:${COLORS[f] || "#888"}"></span>${f}</td><td class="num">${fmtTWh(S[f].twh)}</td><td class="num">${fmtPct(S[f].share)}</td></tr>`;
+          }
+        }
+        const tot = S["Total generation"] || { twh: 310.63, share: 100 };
+        html += `<tr class="total"><td>Total generation</td><td class="num">${fmtTWh(tot.twh)} TWh</td><td class="num">${fmtPct(tot.share)}</td></tr>`;
+        document.getElementById("mixTableBody").innerHTML = html;
+      }
+
+      // instant paint from embedded values
+      const fb = {};
+      for (const [f, t, s] of FALLBACK) fb[f] = { twh: t, share: s };
+      fb["Total generation"] = { twh: 310.63, share: 100 };
+      document.getElementById("mixYearLabel").textContent = MIX_YEAR;
+      render(fb);
+
+      // then refresh from the live Ember API
+      const u = new URL(API + "/electricity-generation/yearly");
+      u.searchParams.set("entity_code", "VNM");
+      u.searchParams.set("start_date", MIX_YEAR);
+      u.searchParams.set("end_date", MIX_YEAR);
+      u.searchParams.set("api_key", KEY);
+      fetch(u.toString())
+        .then((r) => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+        .then((j) => {
+          const S = {};
+          for (const r of j.data || []) S[r.series] = { twh: r.generation_twh, share: r.share_of_generation_pct };
+          if (Object.keys(S).length) render(S);
+        })
+        .catch((e) => console.warn("Ember live mix unavailable, showing embedded 2024 values:", e));
+    })();
   </script>
 </body>
 </html>
