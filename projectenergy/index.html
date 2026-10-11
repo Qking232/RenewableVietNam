@@ -472,6 +472,16 @@
   @media (max-width:820px) {
     .side { top: 8px; left: 8px; right: 8px; width: auto !important; max-width: none; max-height: 64vh; }
     .resizer { display: none; }
+    /* Phones: the menu is hidden until the "Energy Map" wordmark is tapped. */
+    .side .side-body { display: none; }
+    .side.menu-open .side-body { display: block; }
+    .side .brand { cursor: pointer; }
+    /* Phones: the Layers panel collapses to its heading. */
+    .grid-panel .gp-body { display: none; }
+    .grid-panel.gp-open .gp-body { display: block; }
+    .grid-panel .gp-toggle { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .grid-panel .gp-toggle::after { content: "▾"; font-size: 12px; color: var(--muted); }
+    .grid-panel:not(.gp-open) .gp-toggle::after { content: "▸"; }
   }
 
   /* ============================================================
@@ -2127,25 +2137,31 @@
     gridPanel.onAdd = function () {
       var div = L.DomUtil.create("div", "leaflet-control grid-panel");
       div.innerHTML =
-        "<h4>Layers</h4>" +
-        '<div class="row"><span class="grid-swatch g500"></span>' +
-          '<label for="t-grid-500">500 kV Transmission Lines</label>' +
-          '<span class="count" id="c-grid-500"></span>' +
-          '<input type="checkbox" id="t-grid-500" checked /></div>' +
-        '<div class="row"><span class="grid-swatch g220"></span>' +
-          '<label for="t-grid-220">220 kV Regional Lines</label>' +
-          '<span class="count" id="c-grid-220"></span>' +
-          '<input type="checkbox" id="t-grid-220" checked /></div>' +
-        '<div class="row">' +
-          '<span class="grid-swatch subst"></span>' +
-          '<label for="t-substations">Substations (500kV / 220kV)</label>' +
-          '<span class="count" id="c-substations"></span>' +
-          '<input type="checkbox" id="t-substations" checked /></div>' +
-        '<div class="row" style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px;">' +
-          '<span class="swatch sw" style="background:var(--primary); border-radius:50%;"></span>' +
-          '<label for="t-projects">Company projects</label>' +
-          '<span class="count" id="c-projects"></span>' +
-          '<input type="checkbox" id="t-projects" checked /></div>';
+        '<h4 class="gp-toggle">Layers</h4>' +
+        '<div class="gp-body">' +
+          '<div class="row"><span class="grid-swatch g500"></span>' +
+            '<label for="t-grid-500">500 kV Transmission Lines</label>' +
+            '<span class="count" id="c-grid-500"></span>' +
+            '<input type="checkbox" id="t-grid-500" checked /></div>' +
+          '<div class="row"><span class="grid-swatch g220"></span>' +
+            '<label for="t-grid-220">220 kV Regional Lines</label>' +
+            '<span class="count" id="c-grid-220"></span>' +
+            '<input type="checkbox" id="t-grid-220" checked /></div>' +
+          '<div class="row">' +
+            '<span class="grid-swatch subst"></span>' +
+            '<label for="t-substations">Substations (500kV / 220kV)</label>' +
+            '<span class="count" id="c-substations"></span>' +
+            '<input type="checkbox" id="t-substations" checked /></div>' +
+          '<div class="row" style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px;">' +
+            '<span class="swatch sw" style="background:var(--primary); border-radius:50%;"></span>' +
+            '<label for="t-projects">Company projects</label>' +
+            '<span class="count" id="c-projects"></span>' +
+            '<input type="checkbox" id="t-projects" checked /></div>' +
+        '</div>';
+      /* On phones the panel collapses to its heading; tapping it toggles the layer rows. */
+      div.querySelector(".gp-toggle").addEventListener("click", function () {
+        div.classList.toggle("gp-open");
+      });
       L.DomEvent.disableClickPropagation(div);
       L.DomEvent.disableScrollPropagation(div);
       return div;
@@ -2286,6 +2302,20 @@
     Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.card.always-open > summary"), function (s) {
       s.addEventListener("click", function (e) { e.preventDefault(); });
     });
+  </script>
+  <script>
+    // Phones: tapping the "Energy Map" wordmark opens / closes the menu.
+    (function () {
+      var brand = document.querySelector(".side .brand");
+      var side = document.querySelector(".side");
+      if (!brand || !side) return;
+      brand.addEventListener("click", function (e) {
+        if (window.matchMedia("(max-width:820px)").matches) {
+          e.preventDefault();
+          side.classList.toggle("menu-open");
+        }
+      });
+    })();
   </script>
 </body>
 </html>
