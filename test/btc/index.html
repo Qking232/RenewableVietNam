@@ -297,7 +297,8 @@
       body: JSON.stringify(row),
       signal: AbortSignal.timeout(12000),
     });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    // 409 = the coin is already in the shared list; that is not a failure.
+    if (!r.ok && r.status !== 409) throw new Error('HTTP ' + r.status);
   }
   async function sbRemove(pair) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_TABLE}?pair=eq.${encodeURIComponent(pair)}`, {
