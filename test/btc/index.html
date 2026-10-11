@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.06</title>
+<title>Coin Search + 16 Models — Rev 0.07</title>
 <style>
   :root{
     --accent:#3b82f6; --up:#16c784; --down:#ea3943; --amber:#e0a83a;
@@ -161,11 +161,17 @@
   <div class="section show" id="portfolio">
     <div class="panel">
       <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
-      <div class="sub">Coin price, today's final decision + score, and the run of correct/incorrect days vs yesterday.</div>
+      <div class="sub">Coin price, today's final decision + score, and the run of correct/incorrect days vs yesterday. Private to you — keyed to your code.</div>
       <div class="pf-form">
         <input type="text" id="p-name" placeholder="Add a coin (e.g. BTC, solana, ARB)" autocomplete="off" spellcheck="false">
         <button class="go" id="p-add">Add</button>
       </div>
+      <div class="pf-form" id="p-code-row">
+        <input type="password" id="p-code" placeholder="Private code — only you know it" autocomplete="new-password" spellcheck="false">
+        <button class="go" id="p-code-save">Unlock</button>
+        <button class="chip" id="p-code-lock" style="display:none">Lock</button>
+      </div>
+      <div class="status" id="p-code-note" style="font-size:12px"></div>
       <div class="pf-actions">
         <button class="chip" id="p-export">Export JSON</button>
         <button class="chip" id="p-import-btn">Import JSON</button>
@@ -251,10 +257,11 @@
       a BUY is <span style="color:var(--up)">correct</span> if price rises, a SELL is correct if it falls, HOLD is neutral
       (<code>gradeVerdict</code>). Streaks count consecutive same-direction decisions (<code>decisionStreak</code>) and
       consecutive correct/incorrect days (<code>gradedRun</code> / <code>correctStreak</code>).</div>
-      <div style="margin-top:12px"><b>Portfolio</b> — a watchlist shared through Supabase (<code>btc_portfolio</code>), so a coin added
-      on one device appears on every device; it falls back to your browser's local storage if the cloud is unreachable. Each row shows
-      the coin's live price, today's decision, its score and the current correct/incorrect run; export/import as JSON.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.06.</div>
+      <div style="margin-top:12px"><b>Portfolio</b> — private to you. It is keyed to a code you choose: the page hashes it and Supabase's
+      row-level security only ever returns rows for that hash, so nobody else can read your list, and the same code on another device
+      gives the same portfolio. With no code it stays local to this browser. Each row shows the coin's live price, today's decision,
+      its score and the current correct/incorrect run; export/import as JSON.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.07.</div>
     </div>
   </details>
 </main>
@@ -268,19 +275,31 @@
   const INDEX_TTL_MS = 24 * 60 * 60 * 1000;
   const INDEX_KEY = 'coinsearch.index.v1';
   const PF_KEY = 'coinsearch.portfolio.v3';
+  const OWNER_KEY = 'coinsearch.owner.code';
   const HISTORY_DAYS = 180;
 
-  // Supabase shared store — same project as the Hub (/hub/). The portfolio is a
-  // shared list, so a coin added on one device shows up on every device. If the
-  // table is missing or the network is down the page silently uses localStorage.
+  // Supabase store — PRIVATE per person. Each device sets a private code; the
+  // page hashes it and sends the hash as the x-owner-hash header, and RLS keys
+  // every row to that hash, so one visitor can never read another's portfolio.
+  // The code itself is never sent to or stored on the server. The same code on
+  // another device gives the same portfolio, with no login. With no code the
+  // tool still works, local to the browser only.
   const SUPABASE_URL = 'https://nkkwegvplpozirrjcxsn.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU';
   const SB_TABLE = 'btc_portfolio';
   let cloudOn = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  let ownerHash = null;
+
+  async function sha256hex(s) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  const ownerHashOf = (code) => sha256hex('btc-portfolio:' + code);
 
   function sbHeaders(extra) {
     const h = Object.assign({ apikey: SUPABASE_ANON_KEY }, extra || {});
     if (SUPABASE_ANON_KEY.indexOf('sb_') !== 0) h.Authorization = 'Bearer ' + SUPABASE_ANON_KEY;
+    if (ownerHash) h['x-owner-hash'] = ownerHash;
     return h;
   }
   async function sbList() {
@@ -757,14 +776,16 @@
   const pf = {
     list: [],
     results: new Map(),
+    // Local mirror is namespaced by owner, so switching code never mixes lists.
+    key() { return PF_KEY + (ownerHash ? '.' + ownerHash.slice(0, 16) : '.local'); },
     load() {
       try {
-        const r = JSON.parse(localStorage.getItem(PF_KEY) || '[]');
+        const r = JSON.parse(localStorage.getItem(this.key()) || '[]');
         this.list = (Array.isArray(r) ? r : []).filter((x) => x && x.pair)
           .map((x) => ({ pair: String(x.pair), base: String(x.base || x.pair), name: String(x.name || x.base || x.pair) }));
       } catch { this.list = []; }
     },
-    save() { localStorage.setItem(PF_KEY, JSON.stringify(this.list)); },
+    save() { localStorage.setItem(this.key(), JSON.stringify(this.list)); },
   };
 
   function pfSetStatus(msg, isError) {
@@ -776,6 +797,27 @@
     const el = $('p-cloud');
     el.textContent = label;
     el.className = 'cloud ' + state;
+  }
+
+  // Swaps the code row between "unlock me" and "locked" states.
+  function applyOwner() {
+    const locked = !!ownerHash;
+    $('p-code').style.display = locked ? 'none' : '';
+    $('p-code-save').style.display = locked ? 'none' : '';
+    $('p-code-lock').style.display = locked ? '' : 'none';
+    $('p-code-note').textContent = locked
+      ? 'Locked to your private code. Use the same code on another device to see this portfolio.'
+      : 'Set a private code to keep this portfolio to yourself (and to reach it from your other devices). Leave it empty to stay local to this browser.';
+  }
+
+  async function useCode(code) {
+    ownerHash = code ? await ownerHashOf(code) : null;
+    pf.list = [];
+    pf.results.clear();
+    pf.load();
+    applyOwner();
+    renderPortfolio();
+    await refreshPortfolio();
   }
 
   function runBadge(gr) {
@@ -825,7 +867,7 @@
         pf.list = pf.list.filter((x) => x.pair !== pair);
         pf.save();
         renderPortfolio();
-        if (cloudOn) {
+        if (ownerHash && cloudOn) {
           try { await sbRemove(pair); } catch { cloudOn = false; setCloud('off', 'local only'); }
         }
       };
@@ -848,7 +890,7 @@
   }
 
   async function refreshPortfolio() {
-    if (cloudOn) {
+    if (ownerHash && cloudOn) {
       setCloud('busy', 'syncing');
       try {
         const rows = await sbList();
@@ -857,15 +899,17 @@
           pf.results.clear();
           pf.save();
         } else if (pf.list.length) {
-          // Shared list is empty but this device has coins — seed it.
+          // Nobody under this code on the server yet but this device has coins.
           for (const r of pf.list) { try { await sbAdd(r); } catch {} }
         }
-        setCloud('ok', 'cloud');
+        setCloud('ok', 'private');
       } catch {
         cloudOn = false;
         setCloud('off', 'local only');
       }
-    } else setCloud('off', 'local only');
+    } else {
+      setCloud('off', 'local only');
+    }
     pfSetStatus('analysing…');
     await Promise.all(pf.list.map((r) => analyzePair(r.pair)));
     renderPortfolio();
@@ -884,8 +928,8 @@
     pf.save();
     $('p-name').value = '';
     renderPortfolio();
-    if (cloudOn) {
-      try { await sbAdd({ pair: meta.id, base: meta.base, name: meta.name }); }
+    if (ownerHash && cloudOn) {
+      try { await sbAdd({ pair: meta.id, base: meta.base, name: meta.name, owner_hash: ownerHash }); }
       catch { cloudOn = false; setCloud('off', 'local only'); }
     }
     await refreshPortfolio();
@@ -908,8 +952,8 @@
         const clean = data.filter((r) => r && r.pair)
           .map((r) => ({ pair: String(r.pair), base: String(r.base || r.pair), name: String(r.name || r.base || r.pair) }));
         pf.list = clean; pf.save(); pf.results.clear(); renderPortfolio();
-        if (cloudOn) {
-          for (const r of pf.list) { try { await sbAdd(r); } catch { cloudOn = false; setCloud('off', 'local only'); } }
+        if (ownerHash && cloudOn) {
+          for (const r of pf.list) { try { await sbAdd({ ...r, owner_hash: ownerHash }); } catch { cloudOn = false; setCloud('off', 'local only'); } }
         }
         refreshPortfolio();
         pfSetStatus(`imported ${clean.length} coin(s)`);
@@ -979,9 +1023,27 @@
   $('p-import-btn').onclick = () => $('p-import').click();
   $('p-import').addEventListener('change', (e) => { if (e.target.files[0]) importPortfolio(e.target.files[0]); e.target.value = ''; });
 
-  pf.load();
-  renderPortfolio();
-  refreshPortfolio();
+  $('p-code-save').onclick = async () => {
+    const code = $('p-code').value.trim();
+    if (code.length < 4) { pfSetStatus('Use a private code of at least 4 characters.', true); return; }
+    localStorage.setItem(OWNER_KEY, code);
+    $('p-code').value = '';
+    pfSetStatus('');
+    await useCode(code);
+  };
+  $('p-code').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('p-code-save').click(); });
+  $('p-code-lock').onclick = async () => {
+    localStorage.removeItem(OWNER_KEY);
+    pfSetStatus('');
+    await useCode('');
+  };
+
+  // Restore the saved code on this device; otherwise start local-only.
+  (async () => {
+    const saved = localStorage.getItem(OWNER_KEY);
+    if (saved) { await useCode(saved); }
+    else { applyOwner(); pf.load(); renderPortfolio(); await refreshPortfolio(); }
+  })();
 
   const initial = qs.get('q');
   if (initial) { $('q').value = initial; search(initial); }

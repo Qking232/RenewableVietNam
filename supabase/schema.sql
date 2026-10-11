@@ -343,38 +343,55 @@ revoke all on function public.hub_view_counts() from public;
 grant execute on function public.hub_view_counts() to anon, authenticated;
 
 -- ===========================================================================
---  BTC portfolio  (page: /test/btc/)
---  A small shared watchlist for the BTC model page. It is one list for
---  everyone, so a coin added on your phone shows up on your laptop. The
---  publishable key may read, add and remove rows — nothing else. No UPDATE:
---  a row is only ever added or removed.
+--  BTC portfolio  (page: /test/btc/)   — private per person
+--  Each device sets a private code. The page sends sha256(code) in the
+--  x-owner-hash request header and every row is keyed to it, so RLS lets the
+--  publishable key see and touch ONLY the rows for the hash it sends: one
+--  visitor cannot read another's list. The same code on another device gives
+--  the same portfolio, with no login. No UPDATE — rows are added or removed.
 -- ===========================================================================
 create table if not exists public.btc_portfolio (
   id         uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
+  owner_hash text not null,
   pair       text not null check (char_length(pair) between 3 and 40),
   base       text not null check (char_length(base) between 1 and 20),
   name       text          check (char_length(coalesce(name, '')) <= 120)
 );
 
--- One row per coin: re-adding the same coin is ignored, never duplicated.
-create unique index if not exists btc_portfolio_pair_idx on public.btc_portfolio (pair);
+-- Bring an older (shared) table up to date without touching existing rows.
+alter table public.btc_portfolio add column if not exists owner_hash text;
+
+-- One row per coin per owner. The earlier global-uniqueness index would stop
+-- two people both holding BTC, so it is replaced by the per-owner one.
+drop index if exists public.btc_portfolio_pair_idx;
+create unique index if not exists btc_portfolio_owner_pair_idx on public.btc_portfolio (owner_hash, pair);
+create index if not exists btc_portfolio_owner_idx on public.btc_portfolio (owner_hash, created_at);
 
 grant select, insert, delete on public.btc_portfolio to anon, authenticated;
 revoke update, truncate, references, trigger on public.btc_portfolio from anon, authenticated;
 
 alter table public.btc_portfolio enable row level security;
 
-drop policy if exists "public reads btc portfolio" on public.btc_portfolio;
-create policy "public reads btc portfolio"
-  on public.btc_portfolio for select using (true);
-
-drop policy if exists "public adds btc portfolio" on public.btc_portfolio;
-create policy "public adds btc portfolio"
-  on public.btc_portfolio for insert with check (true);
-
+-- Retire the shared-list policies.
+drop policy if exists "public reads btc portfolio"   on public.btc_portfolio;
+drop policy if exists "public adds btc portfolio"    on public.btc_portfolio;
 drop policy if exists "public removes btc portfolio" on public.btc_portfolio;
-create policy "public removes btc portfolio"
-  on public.btc_portfolio for delete using (true);
+
+drop policy if exists "owner reads own portfolio"   on public.btc_portfolio;
+drop policy if exists "owner adds own portfolio"    on public.btc_portfolio;
+drop policy if exists "owner removes own portfolio" on public.btc_portfolio;
+
+create policy "owner reads own portfolio"
+  on public.btc_portfolio for select
+  using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
+create policy "owner adds own portfolio"
+  on public.btc_portfolio for insert
+  with check (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
+create policy "owner removes own portfolio"
+  on public.btc_portfolio for delete
+  using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
 
 notify pgrst, 'reload schema';
