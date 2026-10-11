@@ -537,6 +537,36 @@ end $$;
 revoke all on function public.hub_admin_set_links(text, boolean) from public;
 grant execute on function public.hub_admin_set_links(text, boolean) to anon, authenticated;
 
+-- Three-way access to the download links: 'everyone' (any visitor), 'members'
+-- (signed-in only — the default) or 'nobody' (hidden even from members).
+create or replace function public.hub_links_mode()
+returns text language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select case when value->>'mode' in ('everyone','members','nobody') then value->>'mode'
+                 when coalesce((value->>'open')::boolean, true) then 'members' else 'nobody' end
+     from public.hub_settings where key = 'links'),
+    'members');
+$$;
+revoke all on function public.hub_links_mode() from public;
+grant execute on function public.hub_links_mode() to anon, authenticated;
+
+create or replace function public.hub_admin_set_links(pw text, p_mode text)
+returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  if p_mode not in ('everyone','members','nobody') then
+    raise exception 'bad mode' using errcode = '22023';
+  end if;
+  insert into public.hub_settings(key, value, updated)
+  values ('links', jsonb_build_object('mode', p_mode), now())
+  on conflict (key) do update set value = excluded.value, updated = now();
+  return true;
+end $$;
+revoke all on function public.hub_admin_set_links(text, text) from public;
+grant execute on function public.hub_admin_set_links(text, text) to anon, authenticated;
+
 -- The name/email saved for a key, so a new device that signs in with only the
 -- private key restores the same account (my name, my favourites) from the server.
 create or replace function public.hub_user_profile(p_hash text)

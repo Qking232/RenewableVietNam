@@ -235,6 +235,9 @@
     Rev 0.58  (2026-10-11)  A second admin switch, for the download links. The console can turn access
                             to the links on or off — while off, the per-row "Links" buttons, the
                             document's download links and "Export links" are hidden for everyone.
+    Rev 0.59  (2026-10-11)  Download-link access is now a three-way choice in the admin console:
+                            Everyone, Members only (the default — a private key is needed), or Nobody,
+                            which hides the links even from signed-in members.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -1070,7 +1073,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.58 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.59 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -1356,7 +1359,7 @@
   var creds = load(CREDS_KEY, null);          // {name,email,key,hash} once signed in with a private key
   var userRec = load(USER_KEY, null);         // the user created on this device {name,email,key}
   var signupOpen = true;                      // whether new sign-ups are allowed (set by the admin)
-  var linksOpen = true;                       // whether download links are open (set by the admin)
+  var linksMode = "members";                  // who may open the links: everyone | members | nobody
   var favs = load(FAV_KEY, {});               // doc id -> true (favourites, mirrored locally)
 
   /* -------------------------------------------------------------------------
@@ -1926,7 +1929,7 @@
           (dl(d) ? '<span class="snip">' + dl(d) + ' download' + (dl(d) === 1 ? "" : "s") + '</span>' : '') +
         '</span>' +
         '</div>' +
-        (unlocked() && linksOpen
+        (linksVisible()
           ? '<button class="linkbtn mob" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
             (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>'
           : '') +
@@ -1937,7 +1940,7 @@
         '<td class="dim">' + (d.updated ? esc(fmtDateTime(d.updated)) : "—") + '</td>' +
         '<td class="num dim">' + esc(d.rev || "1") + '</td>' +
         '<td class="num">' + viewCount(d) + '</td>' +
-        '<td class="lnk">' + (unlocked() && linksOpen
+        '<td class="lnk">' + (linksVisible()
           ? '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
             (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>'
           : '') + '</td>' +
@@ -2113,7 +2116,7 @@
   function renderFileBox(d) {
     var box = document.getElementById("mFile");
     var url = fileUrl(d);
-    var links = (unlocked() && linksOpen) ? linksOf(d) : [];
+    var links = linksVisible() ? linksOf(d) : [];
     var openBtn = document.getElementById("openBtn");
     var dlBtn = document.getElementById("downloadBtn");
     var srcBtn = document.getElementById("sourceBtn");
@@ -2121,14 +2124,14 @@
     openBtn.textContent = (!url && links.length) ? "Open link" : "Open file";
     if (!url) {
       var hasLinks = linksOf(d).length;
-      if (!linksOpen) {                                  // the admin has closed access to the links
+      if (linksMode === "nobody") {                      // the admin has closed the links to everyone
         box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
           '<span class="txt"><span class="nm">' + (hasLinks ? "Download links unavailable" : "No file attached") + '</span>' +
           '<span class="sz">' + (hasLinks ? "The library is not sharing download links right now."
             : esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection))) + '</span></span></div></div>';
         return;
       }
-      if (!unlocked() && hasLinks) {                     // links exist but the private key is required
+      if (linksMode === "members" && !unlocked() && hasLinks) {   // members only — a private key is required
         box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
           '<span class="txt"><span class="nm">Private key required</span>' +
           '<span class="sz">Enter your name, email and private key to see the download links.</span></span></div></div>';
@@ -2937,12 +2940,14 @@
   var keyForm = document.getElementById("keyForm");
   var reForm  = document.getElementById("reKeyForm");
   function unlocked() { return !!(creds && creds.key); }
+  // Who may open the download links — set by the admin in the console.
+  function linksVisible() { return linksMode === "everyone" || (linksMode === "members" && unlocked()); }
   // Sign-in gates the "Edit" button; both sign-in and the admin's link switch gate "Export links".
   function applyLocks() {
     var eb = document.getElementById("editDocBtn");
     if (eb) eb.hidden = !unlocked();
     var ex = document.getElementById("exportLinksBtn");
-    if (ex) ex.hidden = !unlocked() || !linksOpen;
+    if (ex) ex.hidden = !unlocked() || linksMode === "nobody";
   }
   // While the admin has sign-ups closed, "Sign Up" is disabled (sign-in still works).
   function applySignupGate() {
@@ -2961,8 +2966,9 @@
   }
   function loadLinksSetting() {
     if (!dbOn) return;
-    sbRpc("hub_links_open", {}).then(function (open) {
-      linksOpen = open !== false; applyLocks(); render();
+    sbRpc("hub_links_mode", {}).then(function (mode) {
+      linksMode = (mode === "everyone" || mode === "nobody") ? mode : "members";
+      applyLocks(); render();
     }).catch(function () { /* settings store not installed yet */ });
   }
   // Ask for the key: a returning user re-enters it, a new visitor creates a user.

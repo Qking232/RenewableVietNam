@@ -84,6 +84,8 @@
   .setting { padding:13px 14px; }
   .setting label { display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600; cursor:pointer; }
   .setting .hint { margin:8px 0 0; }
+  .seg { display:inline-flex; gap:6px; flex-wrap:wrap; }
+  .seg .btn.on { background:linear-gradient(180deg,#00A0E0,#0072BC); border-color:#005A96; color:#fff; }
   .pill { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); border:1px solid var(--line); color:var(--muted); }
   .sw { width:14px; height:14px; accent-color:var(--accent); vertical-align:middle; }
   .pager { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px; padding:14px; }
@@ -160,8 +162,13 @@
       <section class="panel">
         <h3>Download links <span class="sub" id="lkState"></span></h3>
         <div class="setting">
-          <label><input class="sw" type="checkbox" id="linksToggle" /> Allow visitors to open the download links</label>
-          <p class="hint">When off, the per-row "Links" buttons on the Library and the download links in a document are hidden for everyone, and "Export links" is hidden too. Takes effect for everyone.</p>
+          <p class="hint" style="margin:0 0 10px">Who can open the download links?</p>
+          <div class="seg" id="linksModes">
+            <button class="btn small" type="button" data-mode="everyone">Everyone</button>
+            <button class="btn small" type="button" data-mode="members">Members only</button>
+            <button class="btn small" type="button" data-mode="nobody">Nobody</button>
+          </div>
+          <p class="hint">"Members only" needs a private key; "Nobody" hides the links even from signed-in members. Takes effect for everyone.</p>
         </div>
       </section>
 
@@ -297,32 +304,51 @@
     }).catch(function () { cb.disabled = false; cb.checked = !can; toast("Could not save the permission"); });
   });
 
-  /* ---------------- site settings: sign-ups, download links ---------------- */
-  var SETTINGS = [
-    { id:"signupToggle", state:"suState", get:"hub_signup_open", set:"hub_admin_set_signup",
-      on:"New sign-ups are allowed", off:"New sign-ups are closed" },
-    { id:"linksToggle", state:"lkState", get:"hub_links_open", set:"hub_admin_set_links",
-      on:"Download links are open", off:"Download links are closed" }
-  ];
+  /* ---------------- site settings ---------------- */
+  // Sign-ups: a simple on/off switch.
+  var signupToggle = document.getElementById("signupToggle");
   function loadSettings() {
-    SETTINGS.forEach(function (s) {
-      rpc(s.get, {}).then(function (open) {
-        var isOpen = open !== false;
-        document.getElementById(s.id).checked = isOpen;
-        document.getElementById(s.state).textContent = isOpen ? "open" : "closed";
-      }).catch(function () { document.getElementById(s.state).textContent = "—"; });
-    });
+    rpc("hub_signup_open", {}).then(function (open) {
+      var isOpen = open !== false;
+      signupToggle.checked = isOpen;
+      document.getElementById("suState").textContent = isOpen ? "open" : "closed";
+    }).catch(function () { document.getElementById("suState").textContent = "—"; });
+    loadLinksMode();
   }
-  SETTINGS.forEach(function (s) {
-    document.getElementById(s.id).addEventListener("change", function () {
-      var on = this.checked, self = this;
-      self.disabled = true;
-      rpc(s.set, { pw:adminKey, p_open:on }).then(function () {
-        self.disabled = false;
-        document.getElementById(s.state).textContent = on ? "open" : "closed";
-        toast(on ? s.on : s.off);
-      }).catch(function () { self.disabled = false; self.checked = !on; toast("Could not save the setting"); });
+  signupToggle.addEventListener("change", function () {
+    var on = this.checked, self = this;
+    self.disabled = true;
+    rpc("hub_admin_set_signup", { pw:adminKey, p_open:on }).then(function () {
+      self.disabled = false;
+      document.getElementById("suState").textContent = on ? "open" : "closed";
+      toast(on ? "New sign-ups are allowed" : "New sign-ups are closed");
+    }).catch(function () { self.disabled = false; self.checked = !on; toast("Could not save the setting"); });
+  });
+
+  // Download links: everyone / members only / nobody.
+  var linksModes = document.getElementById("linksModes");
+  var linksMode = "members";
+  var LINKS_LABEL = { everyone:"everyone", members:"members only", nobody:"nobody" };
+  function paintLinksMode(mode) {
+    linksMode = mode;
+    Array.prototype.forEach.call(linksModes.querySelectorAll("[data-mode]"), function (b) {
+      b.classList.toggle("on", b.getAttribute("data-mode") === mode);
+      b.disabled = false;
     });
+    document.getElementById("lkState").textContent = LINKS_LABEL[mode] || "—";
+  }
+  function loadLinksMode() {
+    rpc("hub_links_mode", {}).then(function (mode) {
+      paintLinksMode((mode === "everyone" || mode === "nobody") ? mode : "members");
+    }).catch(function () { document.getElementById("lkState").textContent = "—"; });
+  }
+  linksModes.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mode]"); if (!b) return;
+    var mode = b.getAttribute("data-mode"), prev = linksMode;
+    Array.prototype.forEach.call(linksModes.querySelectorAll("[data-mode]"), function (x) { x.disabled = true; });
+    rpc("hub_admin_set_links", { pw:adminKey, p_mode:mode }).then(function () {
+      paintLinksMode(mode); toast("Download links: " + LINKS_LABEL[mode]);
+    }).catch(function () { paintLinksMode(prev); toast("Could not save the setting"); });
   });
 
   /* ---------------- documents ---------------- */
