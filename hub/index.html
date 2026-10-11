@@ -180,6 +180,13 @@
                             hidden, and the key replaces the per-action password prompt for editing
                             and deleting shared documents. The page also gains SEO meta tags, and the
                             site gains robots.txt and sitemap.xml.
+    Rev 0.48  (2026-10-11)  Sign in with a private key (name + email) — the key is the account.
+                            Favourites: a star on each row, a "Favourite" button in the document
+                            window, and a "Favourites" filter in Browse Docs. Favourites are keyed
+                            to sha256('hub:' + key) and stored in Supabase (hub_favourites) behind
+                            owner-hash row-level security, so the same key on another device gives
+                            the same list. The private key no longer has to match a fixed value, so
+                            each visitor can have their own account.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -526,6 +533,11 @@
   .docs td.lnk .linkbtn { margin-left:0; }
   .linkbtn:hover, .linkbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
   .linkbtn .n { background:var(--accent); color:#fff; border-radius:999px; padding:0 5px; font-size:9px; line-height:14px; }
+  /* Favourite star toggle on each row */
+  .docs td.favc { text-align:center; }
+  .favbtn { border:1px solid var(--line); background:transparent; color:var(--muted); border-radius:var(--radius); font-size:14px; line-height:1; padding:3px 7px; cursor:pointer; }
+  .favbtn:hover { color:var(--accent); border-color:var(--accent-border); }
+  .favbtn.on { color:var(--accent); border-color:var(--accent-border); background:var(--accent-soft); }
   /* A copy of the Links button shown under the title on small screens (desktop keeps the column) */
   .linkbtn.mob { display:none; }
   .linkpop { position:fixed; z-index:90; background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--radius); box-shadow:var(--shadow-hover); width:min(420px, 92vw); padding:10px 12px; }
@@ -562,14 +574,16 @@
     .docs colgroup col:nth-child(1) { width:32px !important; }
     .docs colgroup col:nth-child(2) { width:auto !important; }
     .docs colgroup col:nth-child(3), .docs colgroup col:nth-child(4), .docs colgroup col:nth-child(5),
-    .docs colgroup col:nth-child(6), .docs colgroup col:nth-child(7), .docs colgroup col:nth-child(9) { width:0 !important; }
+    .docs colgroup col:nth-child(6), .docs colgroup col:nth-child(7), .docs colgroup col:nth-child(9),
+    .docs colgroup col:nth-child(10) { width:0 !important; }
     .docs colgroup col:nth-child(8) { width:46px !important; }
     .docs thead th:nth-child(3), .docs tbody td:nth-child(3),
     .docs thead th:nth-child(4), .docs tbody td:nth-child(4),
     .docs thead th:nth-child(5), .docs tbody td:nth-child(5),
     .docs thead th:nth-child(6), .docs tbody td:nth-child(6),
     .docs thead th:nth-child(7), .docs tbody td:nth-child(7),
-    .docs thead th:nth-child(9), .docs tbody td:nth-child(9) { visibility:hidden; padding:0; }
+    .docs thead th:nth-child(9), .docs tbody td:nth-child(9),
+    .docs thead th:nth-child(10), .docs tbody td:nth-child(10) { visibility:hidden; padding:0; }
     .docs td, .docs thead th { padding:9px 6px; }
     .linkbtn.mob { display:inline-flex; margin:7px 0 0; }
     .docs .c-title { flex-wrap:wrap; }
@@ -666,8 +680,9 @@
       </label>
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
       <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
-      <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (password protected)">Delete selected</button>
-      <button class="btn" id="keyBtn" type="button" title="Enter your name, email and private key">Private key</button>
+      <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (private key required)">Delete selected</button>
+      <button class="btn" id="keyBtn" type="button" title="Create a user with a name, email and private key">Create User</button>
+      <button class="btn" id="keyReBtn" type="button" title="Sign in by re-entering the private key you created">Private key</button>
     </div>
 
     <div class="filterbar">
@@ -771,7 +786,7 @@
 
     <form class="add" id="keyForm" hidden>
       <h3>Private key</h3>
-      <p class="hint" id="keyHint">Enter your name, email and private key. The download links stay hidden until the key is accepted.</p>
+      <p class="hint" id="keyHint">Sign in with your name, email and a private key. It reveals the download links, unlocks editing, and keys your favourites on every device.</p>
       <div class="field three">
         <div>
           <label for="k-name">Name</label>
@@ -787,7 +802,7 @@
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn primary" type="submit" id="kSubmit">Unlock</button>
+        <button class="btn primary" type="submit" id="kSubmit">Sign in</button>
         <button class="btn ghost" type="button" id="kCancel">Cancel</button>
         <button class="btn ghost" type="button" id="kLock" hidden>Lock</button>
       </div>
@@ -932,6 +947,7 @@
               <button class="btn small" id="downloadBtn" type="button" hidden>Download</button>
               <button class="btn small" id="sourceBtn" type="button" hidden>Source ↗</button>
               <button class="btn small ghost" id="shareBtn" type="button">Copy link</button>
+              <button class="btn small ghost" id="favBtn" type="button">Favourite</button>
               <button class="btn small ghost" id="editDocBtn" type="button">Edit</button>
             </div>
             <div class="grp">
@@ -1090,12 +1106,11 @@
 
     { type:"brief", collection:"grid", title:"Grid bottlenecks and the 500 kV backbone",
       author:"Renewable Viet Nam", year:"", lang:"en", points:[],
-      summary:"Generation grew faster than the wires that carry it. New 500 kV and 220 kV circuits built by EVNNPT are the gate for nearly every new solar, wind or import project, and long delays ripple out into curtailment and investor risk.",
+      summary:"Generation grew faster than the wires that carry it. New 500 kV and 220 kV circuits on the national transmission network are the gate for nearly every new solar, wind or import project, and long delays ripple out into curtailment and investor risk.",
       points:[ "Should grid investment lead generation, or follow it?",
         "Is private or PPP ownership of transmission realistic in Viet Nam?",
         "How much new line can storage and flexible demand defer?" ],
-      refs:[ { label:"EVN — Viet Nam Electricity", url:"https://www.evn.com.vn" },
-        { label:"MOIT — Ministry of Industry and Trade", url:"https://moit.gov.vn" },
+      refs:[ { label:"MOIT — Ministry of Industry and Trade", url:"https://moit.gov.vn" },
         { label:"ADB — energy sector work in Viet Nam", url:"https://www.adb.org" } ] },
 
     { type:"policy", collection:"policy", title:"PDP8 — the road to 2030 and 2050",
@@ -1211,6 +1226,7 @@
   var EDIT_KEY       = "rvn_lib_doc_edits";
   var OWNER_KEY      = "rvn_lib_owner";
   var CREDS_KEY      = "rvn_lib_creds";
+  var FAV_KEY        = "rvn_lib_favs";
 
   var userDocs = load(DOC_KEY, []);
   var notes = load(NOTE_KEY, {});
@@ -1245,7 +1261,8 @@
   var query = "";
   var openId = null;
   var picked = {};                            // document ids ticked in the table (for export)
-  var creds = load(CREDS_KEY, null);          // {name,email,key} once the private key is accepted
+  var creds = load(CREDS_KEY, null);          // {name,email,key,hash} once signed in with a private key
+  var favs = load(FAV_KEY, {});               // doc id -> true (favourites, mirrored locally)
 
   /* -------------------------------------------------------------------------
      BACKEND — Supabase (Postgres rows + Storage files). Leave either value
@@ -1257,9 +1274,11 @@
   var BUCKET = "hub-docs";
   var dbOn = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
   var AUTO_APPROVE = true;
-  // Private key (with a name and email) required to reveal the download links and
-  // to authorise editing / deleting shared documents. Change it here to change it.
-  var PRIVATE_KEY = "123";
+  // Leave blank for self-service sign-in: each visitor enters their own private
+  // key, which becomes their account — it reveals the download links, unlocks
+  // editing/deleting, and keys their favourites across devices. Set it to a value
+  // to require that one shared key instead.
+  var PRIVATE_KEY = "";
 
   var sharedDocs = [];   // approved documents from the shared store
   var viewsCache = {};
@@ -1288,6 +1307,7 @@
       localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
       localStorage.setItem(EDIT_KEY, JSON.stringify(docEdits));
       localStorage.setItem(CREDS_KEY, JSON.stringify(creds));
+      localStorage.setItem(FAV_KEY, JSON.stringify(favs));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
 
@@ -1637,7 +1657,9 @@
     var list = all();
     var counts = {}; list.forEach(function (d) { counts[d.collection] = (counts[d.collection]||0)+1; });
     var html = '<li class="coll-row"><button type="button" data-t="all" class="coll-pick' + (activeTag==="all"?" on":"") + '" style="--tone:var(--accent)">' +
-      '<span class="sw"></span><span class="nm">All documents</span><span class="ct">' + list.length + '</span></button></li>';
+      '<span class="sw"></span><span class="nm">All documents</span><span class="ct">' + list.length + '</span></button></li>' +
+      '<li class="coll-row"><button type="button" data-t="__fav" class="coll-pick' + (activeTag==="__fav"?" on":"") + '" style="--tone:var(--accent)">' +
+      '<span class="sw"></span><span class="nm">Favourites</span><span class="ct" id="favCount">' + Object.keys(favs).length + '</span></button></li>';
     allTags().forEach(function (c) {
       var isBuiltin = COLLECTIONS.some(function (x) { return x.key === c.key; });
       var emptyCustom = !counts[c.key] && !isBuiltin &&
@@ -1680,7 +1702,8 @@
       (d.points||[]).join(" "), (d.refs||[]).map(function(r){return r.label;}).join(" ")].join(" ").toLowerCase();
   }
   function matches(d) {
-    if (activeTag !== "all" && d.collection !== activeTag) return false;
+    if (activeTag === "__fav") { if (!isFav(idOf(d))) return false; }
+    else if (activeTag !== "all" && d.collection !== activeTag) return false;
     if (typeFilter !== "all" && d.type !== typeFilter) return false;
     if (!query) return true;
     return haystack(d).indexOf(query) > -1;
@@ -1694,7 +1717,8 @@
     { key:"update",     label:"Update",               w:168 },
     { key:"rev",        label:"Rev",        num:true, w:56  },
     { key:"views",      label:"Views",      num:true, w:66  },
-    { key:"links",      label:"Links",      w:88, nosort:true }
+    { key:"links",      label:"Links",      w:88, nosort:true },
+    { key:"fav",        label:"",           w:44, nosort:true }
   ];
   function colValue(d, key) {
     switch (key) {
@@ -1771,6 +1795,7 @@
           ? '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
             (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>'
           : '') + '</td>' +
+        '<td class="favc"><button type="button" class="favbtn' + (isFav(id) ? " on" : "") + '" data-fav="' + esc(id) + '" title="' + (isFav(id) ? "Remove from favourites" : "Add to favourites") + '" aria-label="Favourite">' + (isFav(id) ? "\u2605" : "\u2606") + '</button></td>' +
       '</tr>';
     }).join("");
 
@@ -1785,6 +1810,7 @@
     document.getElementById("statMine").textContent = userDocs.length;
     markSort();
     syncPick();
+    renderFavourites();
   }
 
   /* =========================================================================
@@ -2008,6 +2034,7 @@
 
     renderFileBox(d);
     renderMeta(d);
+    renderFavourites();
 
     document.getElementById("mSummary").textContent = d.summary || "";
     document.getElementById("mPoints").innerHTML = (d.points||[]).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") ||
@@ -2691,7 +2718,84 @@
   });
 
   /* =========================================================================
-     PRIVATE KEY — reveal the download links; authorise edits and deletes
+     FAVOURITES — signed-in, private per person, synced across devices
+     ========================================================================= */
+  function simpleHash(s) { var h = 5381; for (var i=0;i<s.length;i++) h = ((h<<5)+h+s.charCodeAt(i))>>>0; return h.toString(16); }
+  function sha256hex(s) {
+    if (window.crypto && crypto.subtle && crypto.subtle.digest) {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(s)).then(function (b) {
+        return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join("");
+      });
+    }
+    return Promise.resolve("f" + simpleHash(s));
+  }
+  function favHeaders(extra) {
+    var h = { apikey:SUPABASE_ANON_KEY };
+    if (SUPABASE_ANON_KEY.indexOf("sb_") !== 0) h.Authorization = "Bearer " + SUPABASE_ANON_KEY;
+    if (creds && creds.hash) h["x-owner-hash"] = creds.hash;
+    if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; });
+    return h;
+  }
+  function isFav(id) { return !!favs[id]; }
+  function renderFavourites() {
+    var el = document.getElementById("favCount");
+    if (el) el.textContent = Object.keys(favs).length;
+    var btn = document.getElementById("favBtn");
+    if (btn) {
+      var on = !!(openId && isFav(openId));
+      btn.textContent = on ? "Favourited" : "Favourite";
+      btn.classList.toggle("on", on);
+    }
+  }
+  function toggleFav(id) {
+    if (!creds) { toast("Enter your private key first"); openKeyPanel("Enter your private key to save favourites and reach them from your other devices."); return; }
+    var on = !isFav(id);
+    if (on) favs[id] = true; else delete favs[id];
+    persist(); render();
+    if (dbOn) {
+      (on ? sbAddFav(id) : sbDeleteFav(id)).catch(function (e) {
+        toast("Saved here — syncs once the favourites store is set up");
+        console.warn("Library favourites:", e.message);
+      });
+    } else {
+      toast(on ? "Added to favourites" : "Removed from favourites");
+    }
+  }
+  function loadFavourites() {
+    if (!dbOn || !creds || !creds.hash) { renderFavourites(); return; }
+    fetch(SUPABASE_URL + "/rest/v1/hub_favourites?select=doc_id", { headers:favHeaders() })
+      .then(function (r) { if (!r.ok) throw new Error("GET hub_favourites → " + r.status); return r.json(); })
+      .then(function (rows) {
+        var f = {};
+        rows.forEach(function (row) { if (row && row.doc_id) f[row.doc_id] = true; });
+        favs = f; persist(); render();
+      })
+      .catch(function (e) { console.warn("Library favourites:", e.message); renderFavourites(); });
+  }
+  function sbAddFav(id) {
+    return fetch(SUPABASE_URL + "/rest/v1/hub_favourites", {
+      method:"POST",
+      headers:favHeaders({ "Content-Type":"application/json", Prefer:"return=minimal" }),
+      body:JSON.stringify({ owner_hash:creds.hash, doc_id:id, name:creds.name || "", email:creds.email || "" })
+    }).then(function (r) {
+      if (r.status === 409) return true;                 // already favourited for this account
+      if (!r.ok) throw new Error("POST hub_favourites → " + r.status);
+      return true;
+    });
+  }
+  function sbDeleteFav(id) {
+    return fetch(SUPABASE_URL + "/rest/v1/hub_favourites?doc_id=eq." + encodeURIComponent(id), {
+      method:"DELETE", headers:favHeaders({ Prefer:"return=minimal" })
+    }).then(function (r) { if (!r.ok) throw new Error("DELETE hub_favourites → " + r.status); return true; });
+  }
+  stackEl.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-fav]");
+    if (b) { e.preventDefault(); toggleFav(b.getAttribute("data-fav")); }
+  });
+  document.getElementById("favBtn").addEventListener("click", function () { if (openId) toggleFav(openId); });
+
+  /* =========================================================================
+     PRIVATE KEY — sign in; reveal the download links; authorise edits/deletes
      ========================================================================= */
   var keyForm = document.getElementById("keyForm");
   function unlocked() { return !!(creds && creds.key); }
@@ -2699,7 +2803,7 @@
     keyForm.hidden = false;
     if (creds) { document.getElementById("k-name").value = creds.name || ""; document.getElementById("k-email").value = creds.email || ""; }
     document.getElementById("keyHint").textContent = note ||
-      "Enter your name, email and private key. The download links stay hidden until the key is accepted.";
+      "Sign in with your name, email and a private key. It reveals the download links, unlocks editing, and keys your favourites on every device.";
     document.getElementById("kMsg").hidden = true;
     renderKeyPanel();
     if (!unlocked()) document.getElementById("k-key").focus();
@@ -2711,7 +2815,7 @@
     var submit = document.getElementById("kSubmit");
     var inputs = keyForm.querySelectorAll("input");
     if (unlocked()) {
-      btn.textContent = "Unlocked";
+      btn.textContent = "Signed in";
       lock.hidden = false;
       submit.hidden = true;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = true; });
@@ -2737,10 +2841,15 @@
     var key = document.getElementById("k-key").value;
     if (!name) { msg.hidden = false; msg.textContent = "Please enter your name."; return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.hidden = false; msg.textContent = "Please enter a valid email."; return; }
-    if (key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
-    creds = { name:name, email:email, key:key };
-    persist(); render(); renderKeyPanel(); closeKeyPanel();
-    toast("Unlocked — download links shown");
+    if (key.trim().length < 3) { msg.hidden = false; msg.textContent = "Please enter a private key of at least 3 characters."; return; }
+    if (PRIVATE_KEY && key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
+    msg.hidden = false; msg.textContent = "Signing in…";
+    sha256hex("hub:" + key).then(function (hash) {
+      creds = { name:name, email:email, key:key, hash:hash };
+      persist(); render(); renderKeyPanel(); closeKeyPanel();
+      loadFavourites();
+      toast("Signed in — favourites sync across your devices");
+    });
   });
 
   /* =========================================================================
@@ -2763,6 +2872,7 @@
   applyWrap();
   render();
   renderKeyPanel();
+  if (unlocked()) loadFavourites();
   loadShared();
   loadViewCounts();
   loadSharedLinks();

@@ -394,4 +394,45 @@ create policy "owner removes own portfolio"
   on public.btc_portfolio for delete
   using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
 
+-- ===========================================================================
+--  Hub favourites  (page: /hub/)   — private per person, cross-device
+--  Signing in on /hub/ with a private key derives sha256('hub:' + key) and
+--  sends it in the x-owner-hash request header. Each row is keyed to that hash,
+--  so RLS lets the publishable key see and touch ONLY the favourites for the
+--  hash it sends: one visitor cannot read another's list. The same private key
+--  on another device gives the same favourites, with no login server-side.
+-- ===========================================================================
+create table if not exists public.hub_favourites (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  owner_hash text not null check (char_length(owner_hash) between 1 and 80),
+  doc_id     text not null check (char_length(doc_id) between 1 and 160),
+  name       text          check (char_length(coalesce(name, '')) <= 120),
+  email      text          check (char_length(coalesce(email, '')) <= 200)
+);
+
+create unique index if not exists hub_favourites_owner_doc_idx on public.hub_favourites (owner_hash, doc_id);
+create index if not exists hub_favourites_owner_idx on public.hub_favourites (owner_hash, created_at);
+
+grant select, insert, delete on public.hub_favourites to anon, authenticated;
+revoke update, truncate, references, trigger on public.hub_favourites from anon, authenticated;
+
+alter table public.hub_favourites enable row level security;
+
+drop policy if exists "owner reads own favourites"   on public.hub_favourites;
+drop policy if exists "owner adds own favourites"    on public.hub_favourites;
+drop policy if exists "owner removes own favourites" on public.hub_favourites;
+
+create policy "owner reads own favourites"
+  on public.hub_favourites for select
+  using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
+create policy "owner adds own favourites"
+  on public.hub_favourites for insert
+  with check (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
+create policy "owner removes own favourites"
+  on public.hub_favourites for delete
+  using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
 notify pgrst, 'reload schema';
