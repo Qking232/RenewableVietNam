@@ -174,6 +174,12 @@
                             table (so Views keeps its 46px) and the per-row Links button moves
                             under the title instead of taking a column. View counts now come from
                             one aggregated call, so they no longer stop at the API's 1000-row page.
+    Rev 0.47  (2026-10-11)  The "No." column is removed from the shelf. A "Private key" button opens
+                            a form for a name, email and private key; until a correct key is accepted
+                            the per-row "Links" button and the document window's download links stay
+                            hidden, and the key replaces the per-action password prompt for editing
+                            and deleting shared documents. The page also gains SEO meta tags, and the
+                            site gains robots.txt and sitemap.xml.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -182,8 +188,43 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>The Library + Renewable Viet Nam</title>
-<meta name="description" content="A shared library of documents on Viet Nam's energy transition — reports, datasets, policy and maps, with summaries and a place to discuss." />
+<title>The Library — Viet Nam Energy Transition Documents | Renewable Viet Nam</title>
+<meta name="description" content="A shared library of documents on Viet Nam's energy transition — reports, datasets, policy and maps on solar, offshore wind, the power grid, LNG, nuclear, hydropower and EV charging, with summaries and a place to discuss." />
+<meta name="keywords" content="Vietnam renewable energy, solar power Vietnam, offshore wind Vietnam, EV charging Vietnam, Vietnam power grid, PDP8, LNG Vietnam, battery energy storage Vietnam, hydropower Mekong, nuclear power Vietnam, Vietnam electricity market, energy transition Vietnam" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<link rel="canonical" href="https://renewablevietnam.com/hub/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Renewable Vietnam" />
+<meta property="og:title" content="The Library — Viet Nam Energy Transition Documents" />
+<meta property="og:description" content="Reports, datasets, policy and maps on Viet Nam's energy transition — solar, offshore wind, grid, LNG, nuclear, hydropower and EV charging." />
+<meta property="og:url" content="https://renewablevietnam.com/hub/" />
+<meta property="og:image" content="https://renewablevietnam.com/assets/images/logo.svg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The Library — Viet Nam Energy Transition Documents" />
+<meta name="twitter:description" content="Reports, datasets, policy and maps on Viet Nam's energy transition — solar, offshore wind, grid, LNG, nuclear, hydropower and EV charging." />
+<meta name="twitter:image" content="https://renewablevietnam.com/assets/images/logo.svg" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "The Library — Renewable Viet Nam",
+  "url": "https://renewablevietnam.com/hub/",
+  "description": "A shared library of documents on Viet Nam's energy transition: reports, datasets, policy and maps on solar, offshore wind, the power grid, LNG, nuclear, hydropower and EV charging.",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Renewable Vietnam",
+    "url": "https://renewablevietnam.com/"
+  },
+  "about": [
+    "Vietnam renewable energy",
+    "solar power Vietnam",
+    "offshore wind Vietnam",
+    "Vietnam power grid",
+    "EV charging Vietnam",
+    "Vietnam energy transition"
+  ]
+}
+</script>
 
 <!-- Favicon: Hub domain mark — sky network of nodes -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230EA5E9'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.3' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='2.75'/%3E%3Ccircle cx='12' cy='4.25' r='1.75'/%3E%3Ccircle cx='19.25' cy='8.75' r='1.75'/%3E%3Ccircle cx='17' cy='18.25' r='1.75'/%3E%3Ccircle cx='7' cy='18.25' r='1.75'/%3E%3Ccircle cx='4.75' cy='8.75' r='1.75'/%3E%3Cline x1='12' y1='6' x2='12' y2='9.25'/%3E%3Cline x1='17.65' y1='9.8' x2='14.4' y2='10.9'/%3E%3Cline x1='15.65' y1='16.9' x2='13.7' y2='14.3'/%3E%3Cline x1='8.35' y1='16.9' x2='10.3' y2='14.3'/%3E%3Cline x1='6.35' y1='9.8' x2='9.6' y2='10.9'/%3E%3C/g%3E%3C/svg%3E" />
@@ -299,11 +340,9 @@
   .docs thead th .grip:hover, .docs thead th .grip.on { background:var(--accent); opacity:.3; }
   body.colresize { cursor:col-resize; user-select:none; }
   .docs th.num, .docs td.num { text-align:center; font-variant-numeric:tabular-nums; }
-  /* Every column is centred except the title (the tick box, No., Type, Collection,
+  /* Every column is centred except the title (the tick box, Type, Collection,
      Creator, Update, Rev, Views and Links all sit mid-cell) */
   .docs thead th:not(.pick):not([data-sort="title"]), .docs tbody td.dim, .docs td.lnk { text-align:center; }
-  /* The "No." column is centred */
-  .docs thead th[data-sort="num"], .docs td.idx { text-align:center; }
   .docs tbody tr { border-bottom:1px solid var(--line); }
   .docs tbody tr:hover { background:var(--surface-2); }
   .docs tbody td { padding:9px 10px; vertical-align:top; overflow:hidden; text-overflow:ellipsis; }
@@ -516,22 +555,21 @@
     .vdiv { display:none; }
     .browse-side { position:static; }
     .coll-list { max-height:none; }
-    /* Only the tick box, "No.", Title and Views stay in the table; the other
+    /* Only the tick box, Title and Views stay in the table; the other
        columns (and the Links column, which moves under the Title) are hidden.
        visibility:hidden keeps every cell in its column slot so the colgroup
        widths stay by true index — display:none re-flows the remaining cells. */
     .docs colgroup col:nth-child(1) { width:32px !important; }
-    .docs colgroup col:nth-child(2) { width:30px !important; }
-    .docs colgroup col:nth-child(3) { width:auto !important; }
-    .docs colgroup col:nth-child(4), .docs colgroup col:nth-child(5), .docs colgroup col:nth-child(6),
-    .docs colgroup col:nth-child(7), .docs colgroup col:nth-child(8), .docs colgroup col:nth-child(10) { width:0 !important; }
-    .docs colgroup col:nth-child(9) { width:46px !important; }
+    .docs colgroup col:nth-child(2) { width:auto !important; }
+    .docs colgroup col:nth-child(3), .docs colgroup col:nth-child(4), .docs colgroup col:nth-child(5),
+    .docs colgroup col:nth-child(6), .docs colgroup col:nth-child(7), .docs colgroup col:nth-child(9) { width:0 !important; }
+    .docs colgroup col:nth-child(8) { width:46px !important; }
+    .docs thead th:nth-child(3), .docs tbody td:nth-child(3),
     .docs thead th:nth-child(4), .docs tbody td:nth-child(4),
     .docs thead th:nth-child(5), .docs tbody td:nth-child(5),
     .docs thead th:nth-child(6), .docs tbody td:nth-child(6),
     .docs thead th:nth-child(7), .docs tbody td:nth-child(7),
-    .docs thead th:nth-child(8), .docs tbody td:nth-child(8),
-    .docs thead th:nth-child(10), .docs tbody td:nth-child(10) { visibility:hidden; padding:0; }
+    .docs thead th:nth-child(9), .docs tbody td:nth-child(9) { visibility:hidden; padding:0; }
     .docs td, .docs thead th { padding:9px 6px; }
     .linkbtn.mob { display:inline-flex; margin:7px 0 0; }
     .docs .c-title { flex-wrap:wrap; }
@@ -629,6 +667,7 @@
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
       <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
       <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (password protected)">Delete selected</button>
+      <button class="btn" id="keyBtn" type="button" title="Enter your name, email and private key">Private key</button>
     </div>
 
     <div class="filterbar">
@@ -728,6 +767,31 @@
         <button class="btn ghost" type="button" id="cancelBtn">Cancel</button>
       </div>
       <p class="hint" id="fMsg" style="margin-top:10px" hidden></p>
+    </form>
+
+    <form class="add" id="keyForm" hidden>
+      <h3>Private key</h3>
+      <p class="hint" id="keyHint">Enter your name, email and private key. The download links stay hidden until the key is accepted.</p>
+      <div class="field three">
+        <div>
+          <label for="k-name">Name</label>
+          <input type="text" id="k-name" placeholder="Your name" autocomplete="name" required />
+        </div>
+        <div>
+          <label for="k-email">Email</label>
+          <input type="email" id="k-email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <div>
+          <label for="k-key">Private key</label>
+          <input type="password" id="k-key" placeholder="Private key" autocomplete="off" required />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn primary" type="submit" id="kSubmit">Unlock</button>
+        <button class="btn ghost" type="button" id="kCancel">Cancel</button>
+        <button class="btn ghost" type="button" id="kLock" hidden>Lock</button>
+      </div>
+      <p class="hint" id="kMsg" style="margin-top:10px" hidden></p>
     </form>
 
     <div class="browse">
@@ -1035,7 +1099,7 @@
         { label:"ADB — energy sector work in Viet Nam", url:"https://www.adb.org" } ] },
 
     { type:"policy", collection:"policy", title:"PDP8 — the road to 2030 and 2050",
-      author:"Ministry of Industry and Trade", year:"2023", lang:"en", points:[],
+      author:"Renewable Viet Nam", year:"2023", lang:"en", points:[],
       summary:"The National Power Development Plan VIII (approved 2023 and revised since) frames capacity, fuels and emissions out to 2050, including a net-zero-by-2050 ambition and a shift away from new coal. Delivery depends on annual implementation plans and on pricing reform.",
       points:[ "Is PDP8 consistent with net zero by 2050?",
         "What does 'no new coal' mean for existing plants and the provinces that host them?",
@@ -1146,6 +1210,7 @@
   var LINK_KEY       = "rvn_lib_download_links";
   var EDIT_KEY       = "rvn_lib_doc_edits";
   var OWNER_KEY      = "rvn_lib_owner";
+  var CREDS_KEY      = "rvn_lib_creds";
 
   var userDocs = load(DOC_KEY, []);
   var notes = load(NOTE_KEY, {});
@@ -1180,6 +1245,7 @@
   var query = "";
   var openId = null;
   var picked = {};                            // document ids ticked in the table (for export)
+  var creds = load(CREDS_KEY, null);          // {name,email,key} once the private key is accepted
 
   /* -------------------------------------------------------------------------
      BACKEND — Supabase (Postgres rows + Storage files). Leave either value
@@ -1191,6 +1257,9 @@
   var BUCKET = "hub-docs";
   var dbOn = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
   var AUTO_APPROVE = true;
+  // Private key (with a name and email) required to reveal the download links and
+  // to authorise editing / deleting shared documents. Change it here to change it.
+  var PRIVATE_KEY = "123";
 
   var sharedDocs = [];   // approved documents from the shared store
   var viewsCache = {};
@@ -1218,6 +1287,7 @@
       localStorage.setItem(SIDE_KEY, String(sideW));
       localStorage.setItem(LINK_KEY, JSON.stringify(linkOverrides));
       localStorage.setItem(EDIT_KEY, JSON.stringify(docEdits));
+      localStorage.setItem(CREDS_KEY, JSON.stringify(creds));
     } catch (e) { /* storage unavailable — keep working in memory */ }
   }
 
@@ -1617,7 +1687,6 @@
   }
   // Table columns (order matches the header). num = right-aligned.
   var COLS = [
-    { key:"num",        label:"No.",        num:true, w:48  },
     { key:"title",      label:"Title",                w:360 },
     { key:"type",       label:"Type",                 w:96  },
     { key:"collection", label:"Collection",           w:150 },
@@ -1678,7 +1747,6 @@
       var lk = linksOf(d);
       return '<tr data-id="' + esc(id) + '" class="' + (picked[id] ? "picked" : "") + '" style="' + toneVars(d.collection) + '">' +
         '<td class="pick"><input type="checkbox" data-pick="' + esc(id) + '"' + (picked[id] ? " checked" : "") + ' aria-label="Select ' + esc(d.title) + '"></td>' +
-        '<td class="num idx">' + esc(d.n || "") + '</td>' +
         '<td><div class="c-title">' +
           '<span><a href="' + esc(docHref(id)) + '" target="_blank" rel="noopener">' + esc(d.title) + '</a>' +
           '<span class="c-meta">' + esc(typeLabel(d.type)) + ' · ' + esc(collectionLabel(d.collection)) +
@@ -1688,8 +1756,10 @@
           (dl(d) ? '<span class="snip">' + dl(d) + ' download' + (dl(d) === 1 ? "" : "s") + '</span>' : '') +
         '</span>' +
         '</div>' +
-        '<button class="linkbtn mob" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
-          (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>' +
+        (unlocked()
+          ? '<button class="linkbtn mob" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
+            (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>'
+          : '') +
         '</td>' +
         '<td><span class="badge">' + esc(typeLabel(d.type)) + '</span></td>' +
         '<td class="dim">' + esc(collectionLabel(d.collection)) + '</td>' +
@@ -1697,8 +1767,10 @@
         '<td class="dim">' + (d.updated ? esc(fmtDateTime(d.updated)) : "—") + '</td>' +
         '<td class="num dim">' + esc(d.rev || "1") + '</td>' +
         '<td class="num">' + viewCount(d) + '</td>' +
-        '<td class="lnk"><button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
-          (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button></td>' +
+        '<td class="lnk">' + (unlocked()
+          ? '<button class="linkbtn" type="button" data-links="' + esc(id) + '" title="Show the download links" aria-label="Show the download links">Links' +
+            (lk.length ? ' <span class="n">' + lk.length + '</span>' : '') + '</button>'
+          : '') + '</td>' +
       '</tr>';
     }).join("");
 
@@ -1867,13 +1939,19 @@
   function renderFileBox(d) {
     var box = document.getElementById("mFile");
     var url = fileUrl(d);
-    var links = linksOf(d);
+    var links = unlocked() ? linksOf(d) : [];
     var openBtn = document.getElementById("openBtn");
     var dlBtn = document.getElementById("downloadBtn");
     var srcBtn = document.getElementById("sourceBtn");
     openBtn.hidden = !(url || links.length); dlBtn.hidden = !url; srcBtn.hidden = !d.source;
     openBtn.textContent = (!url && links.length) ? "Open link" : "Open file";
     if (!url) {
+      if (!unlocked() && linksOf(d).length) {            // links exist but the private key is required
+        box.innerHTML = '<div class="filebox"><div class="filecard"><span class="g">' + esc(typeGlyph(d.type)) + '</span>' +
+          '<span class="txt"><span class="nm">Private key required</span>' +
+          '<span class="sz">Enter your name, email and private key to see the download links.</span></span></div></div>';
+        return;
+      }
       if (links.length) {                                // no uploaded file — list the download links
         var rows = links.map(function (l, i) {
           var tor = isTorrent(l.url);
@@ -2072,14 +2150,14 @@
       updated: new Date().toISOString()
     };
     if (dbOn && d.shared) {                       // a shared row — update it for everyone
-      var pw = prompt("Password to save changes to this shared document:");
-      if (pw === null) return;
+      if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to save changes to this shared document."); return; }
+      var pw = creds.key;
       msg.hidden = false; msg.textContent = "Saving…";
       sbRpc("hub_update_document", { p_id:String(d.id).replace(/^s-/, ""), pw:pw, p:rowFromFields(fields) })
         .then(function () { loadShared(); })
         .then(function () { closeEdit(); if (openId === id) openDoc(id, { silent:true }); toast("Saved — updated for everyone"); })
         .catch(function (e) {
-          if (/wrong password/i.test(e.message)) { msg.hidden = false; msg.textContent = "Wrong password."; return; }
+          if (/wrong password/i.test(e.message)) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
           applyLocalEdit(id, fields); closeEdit();   // shared write blocked → keep it in this browser
           toast("Saved in this browser (shared update failed)");
           console.warn("Library:", e.message);
@@ -2494,6 +2572,7 @@
   document.getElementById("exportLinksBtn").addEventListener("click", function () {
     var docs = all().filter(function (d) { return picked[idOf(d)]; });
     if (!docs.length) { toast("Tick some documents first"); return; }
+    if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to export download links."); return; }
     var rows = [["Title", "Type", "Collection", "Creator", "Update", "Document link", "Download link", "Link updated"]];
     docs.forEach(function (d) {
       var base = [d.title, typeLabel(d.type), collectionLabel(d.collection), d.author || "",
@@ -2579,7 +2658,7 @@
       : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
     if (!confirm(msg)) return;
     var pw = null;
-    if (d.shared && dbOn) { pw = prompt("Password to delete this shared document:"); if (pw === null) return; }
+    if (d.shared && dbOn) { if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to delete this shared document."); return; } pw = creds.key; }
     closeDoc();
     deleteDocs([d], pw);
   });
@@ -2589,11 +2668,9 @@
     var docs = all().filter(function (d) { return picked[idOf(d)]; });
     if (!docs.length) { toast("Tick some documents first"); return; }
     var n = docs.length;
-    var pw = prompt("Password to delete " + n + " selected document" + (n === 1 ? "" : "s") + ":");
-    if (pw === null) return;
-    if (pw !== "123") { toast("Wrong password"); return; }
+    if (!unlocked()) { toast("Enter your private key first"); openKeyPanel("Enter your private key to delete the selected documents."); return; }
     if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
-    deleteDocs(docs, pw);
+    deleteDocs(docs, creds.key);
     toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
   });
 
@@ -2611,6 +2688,59 @@
     document.documentElement.setAttribute("data-theme", next);
     try { localStorage.setItem("theme", next); } catch (e) {}
     paintIcons();
+  });
+
+  /* =========================================================================
+     PRIVATE KEY — reveal the download links; authorise edits and deletes
+     ========================================================================= */
+  var keyForm = document.getElementById("keyForm");
+  function unlocked() { return !!(creds && creds.key); }
+  function openKeyPanel(note) {
+    keyForm.hidden = false;
+    if (creds) { document.getElementById("k-name").value = creds.name || ""; document.getElementById("k-email").value = creds.email || ""; }
+    document.getElementById("keyHint").textContent = note ||
+      "Enter your name, email and private key. The download links stay hidden until the key is accepted.";
+    document.getElementById("kMsg").hidden = true;
+    renderKeyPanel();
+    if (!unlocked()) document.getElementById("k-key").focus();
+  }
+  function closeKeyPanel() { keyForm.hidden = true; }
+  function renderKeyPanel() {
+    var btn = document.getElementById("keyBtn");
+    var lock = document.getElementById("kLock");
+    var submit = document.getElementById("kSubmit");
+    var inputs = keyForm.querySelectorAll("input");
+    if (unlocked()) {
+      btn.textContent = "Unlocked";
+      lock.hidden = false;
+      submit.hidden = true;
+      Array.prototype.forEach.call(inputs, function (i) { i.disabled = true; });
+    } else {
+      btn.textContent = "Private key";
+      lock.hidden = true;
+      submit.hidden = false;
+      Array.prototype.forEach.call(inputs, function (i) { i.disabled = false; });
+    }
+  }
+  document.getElementById("keyBtn").addEventListener("click", function () {
+    if (keyForm.hidden) openKeyPanel(); else closeKeyPanel();
+  });
+  document.getElementById("kCancel").addEventListener("click", closeKeyPanel);
+  document.getElementById("kLock").addEventListener("click", function () {
+    creds = null; persist(); render(); renderKeyPanel(); toast("Locked — download links hidden");
+  });
+  keyForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = document.getElementById("kMsg");
+    var name = document.getElementById("k-name").value.trim();
+    var email = document.getElementById("k-email").value.trim();
+    var key = document.getElementById("k-key").value;
+    if (!name) { msg.hidden = false; msg.textContent = "Please enter your name."; return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.hidden = false; msg.textContent = "Please enter a valid email."; return; }
+    if (key !== PRIVATE_KEY) { msg.hidden = false; msg.textContent = "Wrong private key."; return; }
+    creds = { name:name, email:email, key:key };
+    persist(); render(); renderKeyPanel(); closeKeyPanel();
+    toast("Unlocked — download links shown");
   });
 
   /* =========================================================================
@@ -2632,6 +2762,7 @@
   paintIcons();
   applyWrap();
   render();
+  renderKeyPanel();
   loadShared();
   loadViewCounts();
   loadSharedLinks();

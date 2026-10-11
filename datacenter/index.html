@@ -297,6 +297,17 @@
   .company-pin svg { display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
   .company-pin.hi svg { transform: scale(1.25); transform-origin: 50% 100%; }
 
+  /* Viet Nam archipelago labels (Hoang Sa / Truong Sa) */
+  .island-tag { background: transparent; border: none; pointer-events: none; }
+  .island-tag span {
+    display: inline-block; transform: translate(-50%, -50%);
+    padding: 1px 7px; border-radius: 5px; white-space: nowrap;
+    font-size: 11px; font-weight: 700; letter-spacing: .02em;
+    color: #b91c1c; background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(218, 37, 29, 0.55);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  }
+
   .landing-station-icon {
     display: flex; align-items: center; justify-content: center;
     border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid #ffffff;
@@ -1161,6 +1172,39 @@
 
     /* SET DEFAULT BASEMAP TO OPENSTREETMAP (FRANCE)[cite: 1] */
     setBase("osmfr");
+
+    /* ---------------- Viet Nam archipelagos — Hoang Sa & Truong Sa ---------------- */
+    var ARCHIPELAGOS = [
+      { name:"Hoàng Sa", label:[17.45, 112.35],
+        islets:[[16.00,112.00],[16.45,112.35],[16.85,112.70],[17.10,112.15],[16.30,112.95]] },
+      { name:"Trường Sa", label:[7.75, 113.60],
+        islets:[[8.60,114.00],[9.40,114.50],[8.90,115.00],[10.00,113.90],[9.90,114.90],
+                [11.00,114.20],[10.40,115.50],[9.50,113.20],[11.30,115.10],[8.20,114.70],[8.90,113.60]] }
+    ];
+
+    function isletRing(lat, lng, r) {
+      var pts = [];
+      for (var i = 0; i < 6; i++) {
+        var a = Math.PI / 3 * i;
+        pts.push([lat + r * Math.sin(a), lng + r * Math.cos(a)]);
+      }
+      return pts;
+    }
+
+    var islandsLayer = L.layerGroup().addTo(map);
+
+    ARCHIPELAGOS.forEach(function (arch) {
+      arch.islets.forEach(function (p) {
+        L.polygon(isletRing(p[0], p[1], 0.3), {
+          color:"#f59e0b", weight:1.2, opacity:1,
+          fillColor:"#da251d", fillOpacity:1, interactive:false
+        }).addTo(islandsLayer);
+      });
+      L.marker(arch.label, {
+        interactive:false, keyboard:false,
+        icon:L.divIcon({ className:"island-tag", html:"<span>" + arch.name + "</span>", iconSize:null })
+      }).addTo(islandsLayer);
+    });
 
     var layers = {
       hyperscale: L.layerGroup().addTo(map),

@@ -109,6 +109,8 @@
   .leaflet-popup-tip{background:var(--panel)}
   .leaflet-popup-close-button{color:var(--muted)}
   .leaflet-popup-close-button:hover{color:var(--txt)}
+  .island-tag{background:transparent;border:none;pointer-events:none}
+  .island-tag span{display:inline-block;transform:translate(-50%,-50%);padding:1px 7px;border-radius:5px;white-space:nowrap;font-size:11px;font-weight:700;letter-spacing:.02em;color:#b91c1c;background:rgba(255,255,255,.92);border:1px solid rgba(218,37,29,.55);box-shadow:0 1px 4px rgba(0,0,0,.25)}
   .pop .pn{font-weight:650;font-size:13px;margin-bottom:4px}
   .pop .pb{display:inline-block;font-size:10.5px;font-weight:600;color:#fff;padding:2px 7px;border-radius:var(--radius);margin-bottom:6px}
   .pop .kv{font-size:11px;margin:1px 0}
@@ -270,6 +272,21 @@ function addTiles(){
   tileLayer.on("tileerror", ()=>{ tileErrors++; if(tileErrors>3 && pIdx<PROVIDERS.length-1){ map.removeLayer(tileLayer); pIdx++; addTiles(); } });
 }
 addTiles();
+
+/* ---- Vietnamese archipelagos (Hoang Sa / Truong Sa) — always shown, on every basemap ---- */
+const ARCHIPELAGOS = [
+  { name:"Hoàng Sa", label:[17.45,112.35],
+    islets:[[16.00,112.00],[16.45,112.35],[16.85,112.70],[17.10,112.15],[16.30,112.95]] },
+  { name:"Trường Sa", label:[7.75,113.60],
+    islets:[[8.60,114.00],[9.40,114.50],[8.90,115.00],[10.00,113.90],[9.90,114.90],[11.00,114.20],[10.40,115.50],[9.50,113.20],[11.30,115.10],[8.20,114.70],[8.90,113.60]] }
+];
+const isletRing = (lat,lng,r)=>{ const pts=[]; for(let i=0;i<6;i++){ const a=Math.PI/3*i; pts.push([lat+r*Math.sin(a), lng+r*Math.cos(a)]); } return pts; };
+const islandsLayer = L.layerGroup().addTo(map);
+ARCHIPELAGOS.forEach(arch=>{
+  arch.islets.forEach(p=> L.polygon(isletRing(p[0],p[1],0.22), {color:"#f59e0b", weight:1.2, opacity:1, fillColor:"#da251d", fillOpacity:1, interactive:false}).addTo(islandsLayer));
+  L.marker(arch.label, { interactive:false, keyboard:false, icon:L.divIcon({ className:"island-tag", html:"<span>"+arch.name+"</span>", iconSize:null }) }).addTo(islandsLayer);
+});
+
 const cluster = L.markerClusterGroup({showCoverageOnHover:false, maxClusterRadius:46, chunkedLoading:true});
 map.addLayer(cluster);
 const markersById = new Map();
@@ -750,7 +767,8 @@ document.getElementById("themeBtn").addEventListener("click", ()=>{
 
 renderTree(); refreshView();
 if(state.stations.length){
-  const b = L.latLngBounds(state.stations.map(s=>[s.lat,s.lng]));
+  const pts = state.stations.map(s=>[s.lat,s.lng]).concat(ARCHIPELAGOS.reduce((a,x)=>a.concat(x.islets),[]));
+  const b = L.latLngBounds(pts);
   if(b.isValid()) map.fitBounds(b.pad(0.08));
 }
 </script>
