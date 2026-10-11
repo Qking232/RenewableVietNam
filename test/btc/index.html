@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.07</title>
+<title>Coin Search + 16 Models — Rev 0.08</title>
 <style>
   :root{
     --accent:#3b82f6; --up:#16c784; --down:#ea3943; --amber:#e0a83a;
@@ -19,6 +19,7 @@
     --text:#0f1318; --muted:#5b6472; --border:#e2e5ea; --field:#ffffff;
   }
   *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
   html,body{margin:0;height:100%}
   body{
     background:var(--bg); color:var(--text); font-family:var(--font);
@@ -142,16 +143,89 @@
   ol{margin:8px 0 0; padding-left:20px} ol li{margin:3px 0}
   code{background:var(--field); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:12px}
   footer{color:var(--muted); font-size:11.5px; padding:6px var(--pad) 26px; opacity:.85}
-  @media (max-width:480px){
-    .price{font-size:26px} header{padding:10px 12px} main{padding:12px; gap:12px}
-    .cards{grid-template-columns:repeat(auto-fill,minmax(128px,1fr))}
-    table{font-size:12px}
+  /* ---------- phones: stacked table rows, tighter type, no sideways scroll ---------- */
+  @media (max-width: 640px){
+    header{padding:10px 12px; gap:8px}
+    .brand{font-size:13.5px}
+    .brand .tag{display:none}
+    .icon-btn{width:32px; min-width:32px; height:32px; font-size:15px}
+    main{padding:12px; gap:11px}
+    .panel{padding:12px; border-radius:10px}
+    .sub{font-size:12px}
+    .status{font-size:12.5px}
+
+    /* >=16px stops iOS zooming the page when a field is focused */
+    input[type="text"],input[type="password"]{font-size:16px}
+    .row{gap:8px}
+    button.go{padding:0 14px}
+    .chips{gap:6px}
+    .chip{font-size:12px; padding:5px 10px}
+
+    .price{font-size:26px}
+    .spark{height:46px}
+    .verdict-row{gap:8px}
+    .verdict{font-size:12px; padding:5px 10px}
+    .score{font-size:19px}
+    .counts{gap:10px; flex-wrap:wrap; font-size:12px}
+
+    .cards{grid-template-columns:repeat(auto-fill,minmax(116px,1fr)); gap:8px}
+    .fc{padding:10px; min-height:92px; gap:6px; border-radius:10px}
+    .fc .t{font-size:12.5px}
+    .fc .s{font-size:17px}
+    .fc .r{font-size:11px}
+    .fc .nm{font-size:10px}
+
+    details summary{padding:11px 12px; font-size:13px}
+    details .body{padding:0 12px 14px; font-size:12.5px}
+
+    .pf-form{flex-direction:column}
+    .pf-form input,.pf-form .go,.pf-form .chip{width:100%}
+    .pf-actions{gap:6px}
+    .pf-actions .chip{flex:1}
+    .pf-actions .status{flex-basis:100%}
+
+    /* tables become stacked rows */
+    .panel table,.panel tbody,.panel thead,.panel tr,.panel td,.panel th{display:block}
+    .panel thead{display:none}
+    .scroll{max-height:none; overflow:visible}
+
+    /* portfolio: each coin is a card */
+    #p-rows tr{border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px}
+    #p-rows tr:last-child{margin-bottom:0}
+    #p-rows td{padding:0; border:0}
+    #p-rows td[data-label="Name"]{font-weight:700; font-size:14px; margin-bottom:7px; overflow-wrap:anywhere}
+    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""]){display:flex; align-items:center; justify-content:space-between; gap:10px; padding:3px 0; font-size:13px}
+    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""])::before{content:attr(data-label); color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.4px}
+    #p-rows td[data-label=""]{margin-top:9px}
+    #p-rows td[data-label=""] .rm{width:100%; padding:7px 8px; font-size:12px}
+
+    /* 180-day log: two compact lines per day */
+    #h-rows tr{display:grid; grid-template-columns:1fr auto auto; grid-template-areas:"day value value" "decision score result"; gap:4px 10px; align-items:center; padding:9px 2px; border-bottom:1px solid var(--border)}
+    #h-rows td{padding:0; border:0}
+    #h-rows td[data-label="Day"]{grid-area:day; font-weight:600; font-size:12.5px}
+    #h-rows td[data-label="Coin value"]{grid-area:value; text-align:right; color:var(--muted); font-size:12.5px; font-weight:400}
+    #h-rows td[data-label="Decision"]{grid-area:decision}
+    #h-rows td[data-label="Score"]{grid-area:score; text-align:center; color:var(--muted); font-size:12px; font-weight:400}
+    #h-rows td[data-label="Result"]{grid-area:result; text-align:right}
+    #history .scroll{max-height:62vh; overflow:auto}
+  }
+
+  @media (max-width: 380px){
+    .brand{font-size:12.5px}
+    .cards{grid-template-columns:1fr 1fr}
+    .fc .r{font-size:10.5px}
+  }
+
+  @media (max-height: 460px) and (orientation: landscape){
+    header{padding:8px 12px}
+    main{padding:10px}
+    .spark{height:38px}
   }
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><span class="dot">₿</span> Coin Search <span style="color:var(--muted);font-weight:600">· 16 models</span></div>
+  <div class="brand"><span class="dot">₿</span> Coin Search <span class="tag" style="color:var(--muted);font-weight:600">· 16 models</span></div>
   <div class="spacer"></div>
   <button class="icon-btn" id="theme" title="Toggle theme">◐</button>
 </header>
@@ -261,7 +335,7 @@
       row-level security only ever returns rows for that hash, so nobody else can read your list, and the same code on another device
       gives the same portfolio. With no code it stays local to this browser. Each row shows the coin's live price, today's decision,
       its score and the current correct/incorrect run; export/import as JSON.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.07.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.08.</div>
     </div>
   </details>
 </main>
@@ -766,7 +840,7 @@
         : g.outcome === 'flat' ? '<span class="mini flat">flat</span>'
         : g.outcome === 'neutral' ? '<span class="mini flat">neutral</span>'
         : '<span class="mini">pending</span>';
-      rows.push(`<tr><td>${D.date}</td><td class="r">${usd(D.close)}</td><td class="c">${D.total > 0 ? '+' : ''}${D.total}</td><td>${verdictPill(D.verdict)}</td><td class="c">${res}</td></tr>`);
+      rows.push(`<tr><td data-label="Day">${D.date}</td><td class="r" data-label="Coin value">${usd(D.close)}</td><td class="c" data-label="Score">${D.total > 0 ? '+' : ''}${D.total}</td><td data-label="Decision">${verdictPill(D.verdict)}</td><td class="c" data-label="Result">${res}</td></tr>`);
     }
     $('h-rows').innerHTML = rows.join('');
     $('history').classList.add('show');
@@ -845,12 +919,12 @@
         run = runBadge(a.gr);
       }
       return `<tr>
-        <td><span class="link" data-query="${esc(r.base)}">${esc(r.name)} (${esc(r.base)})</span></td>
-        <td class="r">${price}</td>
-        <td class="c">${dec}</td>
-        <td class="c">${sc}</td>
-        <td class="c">${run}</td>
-        <td class="c"><button class="rm" data-remove="${esc(r.pair)}">Remove</button></td>
+        <td data-label="Name"><span class="link" data-query="${esc(r.base)}">${esc(r.name)} (${esc(r.base)})</span></td>
+        <td class="r" data-label="Coin price">${price}</td>
+        <td class="c" data-label="Final decision">${dec}</td>
+        <td class="c" data-label="Score">${sc}</td>
+        <td class="c" data-label="Run">${run}</td>
+        <td class="c" data-label=""><button class="rm" data-remove="${esc(r.pair)}">Remove</button></td>
       </tr>`;
     }).join('');
 
