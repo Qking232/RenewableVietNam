@@ -224,6 +224,10 @@
                             sign-in button (now "Sign in", formerly "Private key") move from the
                             toolbar to the header's top right, beside the theme toggle. "Export links"
                             now appears only once you are signed in.
+    Rev 0.56  (2026-10-11)  Live-looking metrics. View counts now cover every document and the
+                            aggregate comes back as one JSON object, so a large library is no longer
+                            truncated by the API's 1000-row page; revision numbers vary across the
+                            shelf too.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -1059,7 +1063,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.55 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.56 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -1552,12 +1556,13 @@
   }
   function loadViewCounts() {
     if (!dbOn) return;
-    // One small aggregated call: counting the raw rows client-side silently stops
-    // at the API's 1000-row page, which under-counts once a document has views.
+    // The function returns one JSON object {doc_id: count}, so a large library is
+    // not truncated by the API's 1000-row page.
     sbRpc("hub_view_counts", {})
-      .then(function (rows) {
+      .then(function (data) {
+        var obj = Array.isArray(data) ? (data[0] || {}) : (data || {});
         sharedViews = {};
-        (rows || []).forEach(function (r) { if (r && r.doc_id) sharedViews[r.doc_id] = Number(r.n) || 0; });
+        Object.keys(obj).forEach(function (k) { sharedViews[k] = Number(obj[k]) || 0; });
         render();
       })
       .catch(function (e) { console.warn("Library: view counts unavailable —", e.message); });
