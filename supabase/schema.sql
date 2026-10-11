@@ -462,11 +462,23 @@ begin
   insert into public.hub_users(owner_hash, name, email, last_seen)
   values (p_hash, left(coalesce(p_name, ''), 120), left(coalesce(p_email, ''), 200), now())
   on conflict (owner_hash) do update
-    set name = excluded.name, email = excluded.email, last_seen = now();
+    set name      = coalesce(nullif(excluded.name, ''), public.hub_users.name),
+        email     = coalesce(nullif(excluded.email, ''), public.hub_users.email),
+        last_seen = now();
   return true;
 end $$;
 revoke all on function public.hub_user_ping(text, text, text) from public;
 grant execute on function public.hub_user_ping(text, text, text) to anon, authenticated;
+
+-- The name/email saved for a key, so a new device that signs in with only the
+-- private key restores the same account (my name, my favourites) from the server.
+create or replace function public.hub_user_profile(p_hash text)
+returns table(name text, email text)
+language sql stable security definer set search_path = public as $$
+  select name, email from public.hub_users where owner_hash = p_hash;
+$$;
+revoke all on function public.hub_user_profile(text) from public;
+grant execute on function public.hub_user_profile(text) to anon, authenticated;
 
 -- May this user delete shared documents?
 create or replace function public.hub_user_can_delete(p_hash text)

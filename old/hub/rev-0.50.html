@@ -202,13 +202,6 @@
                             documents: deleting a shared document is allowed only for the admin key or
                             a user the admin has marked. The shared store now carries thousands of
                             demo documents.
-    Rev 0.51  (2026-10-11)  Deleting is admin-only. The shelf's "Delete selected" button and the
-                            document window's "Delete document" button are removed — documents are
-                            deleted only from the admin console (/hub/admin/), which now also carries
-                            multi-select with its own "Delete selected" control. The user list is saved
-                            on the server: every sign-in, on any device, records the user, and a new
-                            device that signs in with only the private key restores that account's
-                            saved name and email.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -711,6 +704,7 @@
       </label>
       <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
       <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
+      <button class="btn danger" id="deleteSelectedBtn" type="button" disabled title="Delete the selected documents (private key required)">Delete selected</button>
       <button class="btn" id="keyBtn" type="button" title="Create a user with a name, email and private key">Create User</button>
       <button class="btn" id="keyReBtn" type="button" title="Sign in by re-entering the private key you created">Private key</button>
     </div>
@@ -997,6 +991,7 @@
               <button class="btn small ghost" id="editDocBtn" type="button">Edit</button>
             </div>
             <div class="grp">
+              <button class="btn small ghost danger" id="deleteDocBtn" type="button">Delete document</button>
               <span class="saved" id="mSaved"></span>
             </div>
           </div>
@@ -1024,7 +1019,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.51 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.50 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -2672,6 +2667,8 @@
     var btn = document.getElementById("exportLinksBtn");
     var n = Object.keys(picked).length;
     if (btn) { btn.textContent = n ? "Export links (" + n + ")" : "Export links"; btn.disabled = !n; }
+    var del = document.getElementById("deleteSelectedBtn");
+    if (del) { del.textContent = n ? "Delete (" + n + ")" : "Delete selected"; del.disabled = !n; }
     var all = document.getElementById("pickAll");
     if (all) { all.checked = boxes.length > 0 && on === boxes.length; all.indeterminate = on > 0 && on < boxes.length; }
   }
@@ -2757,9 +2754,65 @@
   });
 
   /* =========================================================================
-     DELETE — moved to the admin console (/hub/admin/). Documents are removed
-     there with the admin key, so the public shelf carries no delete control.
+     DELETE
      ========================================================================= */
+  // Drop a document from this browser's view.
+  function removeLocal(d) {
+    var tid = idOf(d);
+    if (d.id && !d.shared) { userDocs = userDocs.filter(function (u) { return u.id !== d.id; }); delete notes[d.id]; }
+    else if (d.shared) { sharedDocs = sharedDocs.filter(function (s) { return idOf(s) !== tid; }); }
+    else { hidden.push(tid); }
+    delete docEdits[tid];
+    delete picked[tid];
+  }
+  // Delete documents. Shared rows are removed on the server through the
+  // password-checked function; local and built-in documents go from this browser.
+  function deleteDocs(docs, pw) {
+    var sharedIds = docs.filter(function (d) { return d.shared; })
+                        .map(function (d) { return String(idOf(d)).replace(/^s-/, ""); });
+    docs.forEach(removeLocal);
+    persist(); render();
+    if (sharedIds.length && dbOn) {
+      sbRpc("hub_delete_documents", { p_ids:sharedIds, pw:pw })
+        .then(function () { loadShared(); })
+        .catch(function (e) {
+          toast(/not allowed/i.test(e.message) ? "Not allowed to delete — ask the admin"
+              : (/wrong password/i.test(e.message) ? "Wrong password — removed here only" : "Removed in this browser (shared delete failed)"));
+          console.warn("Library:", e.message);
+        });
+    }
+  }
+
+  document.getElementById("deleteDocBtn").addEventListener("click", function () {
+    if (!openId) return;
+    var d = byId(openId);
+    if (!d) return;
+    var isLocal = !!(d.id && !d.shared);
+    var msg = d.shared
+      ? 'Remove "' + d.title + '" from the public library for everyone?'
+      : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
+    var pw = null;
+    if (d.shared && dbOn) {
+      if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete this shared document."); return; }
+      if (!creds.canDelete) { toast("Your user is not allowed to delete — ask the admin"); return; }
+      pw = creds.key;
+    }
+    if (!confirm(msg)) return;
+    closeDoc();
+    deleteDocs([d], pw);
+  });
+
+  // Delete every ticked document, gated behind a password.
+  document.getElementById("deleteSelectedBtn").addEventListener("click", function () {
+    var docs = all().filter(function (d) { return picked[idOf(d)]; });
+    if (!docs.length) { toast("Tick some documents first"); return; }
+    var n = docs.length;
+    if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete the selected documents."); return; }
+    if (docs.some(function (d) { return d.shared; }) && !creds.canDelete) { toast("Your user is not allowed to delete — ask the admin"); return; }
+    if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
+    deleteDocs(docs, creds.key);
+    toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
+  });
 
   /* =========================================================================
      THEME
@@ -2920,31 +2973,20 @@
   }
   function signIn(name, email, key) {
     return sha256hex("hub:" + key).then(function (hash) {
-      creds = { name:name || "", email:email || "", key:key, hash:hash };
+      creds = { name:name || "", email:email || "", key:key, hash:hash, canDelete:false };
       persist();
       syncUser();
       afterSignIn();
     });
   }
-  // Record the sign-in on the server (so the admin console can monitor the user
-  // from any device) and, when this device only holds the key, restore the saved
-  // name/email for that account — the same key gives the same user everywhere.
+  // Tell the database this user is here, and cache whether they may delete.
   function syncUser() {
     if (!dbOn || !creds || !creds.hash) return;
-    var ready = Promise.resolve();
-    if (!creds.name || !creds.email) {
-      ready = sbRpc("hub_user_profile", { p_hash:creds.hash }).then(function (row) {
-        var p = Array.isArray(row) ? row[0] : row;
-        if (!p) return;
-        if (!creds.name && p.name) creds.name = p.name;
-        if (!creds.email && p.email) creds.email = p.email;
-        persist(); renderKeyPanel();
-      }).catch(function () { /* users store not installed yet */ });
-    }
-    ready.then(function () {
-      sbRpc("hub_user_ping", { p_hash:creds.hash, p_name:creds.name || "", p_email:creds.email || "" })
-        .catch(function () { /* users store not installed yet */ });
-    });
+    sbRpc("hub_user_ping", { p_hash:creds.hash, p_name:creds.name || "", p_email:creds.email || "" })
+      .catch(function () { /* users store not installed yet */ });
+    sbRpc("hub_user_can_delete", { p_hash:creds.hash })
+      .then(function (can) { creds.canDelete = !!can; persist(); })
+      .catch(function () { /* not installed yet */ });
   }
   document.getElementById("keyBtn").addEventListener("click", function () {
     if (keyForm.hidden) openKeyPanel(); else closeKeyPanel();

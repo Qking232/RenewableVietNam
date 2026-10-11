@@ -148,6 +148,7 @@
 
       <section class="panel">
         <h3>Users <span class="sub" id="uCount"></span></h3>
+        <p class="hint" style="padding:12px 14px 0">Every user who signs in, on any device, is saved on the server. The same private key gives the same account (and the same favourites) everywhere.</p>
         <table class="grid" id="usersTable">
           <thead><tr>
             <th>Name</th><th>Email</th><th>Key</th><th>First seen</th><th>Last seen</th><th>Favourites</th><th>Can delete</th>
@@ -158,11 +159,13 @@
       </section>
 
       <section class="panel">
-        <h3>Documents <span class="sub" id="dCount"></span></h3>
+        <h3>Documents <span class="sub" id="dCount"></span>
+          <button class="btn small danger" id="delSel" type="button" disabled>Delete selected</button>
+        </h3>
         <label class="search"><input type="search" id="dq" placeholder="Search title, author, collection…" autocomplete="off" /></label>
         <table class="grid" id="docsTable">
           <thead><tr>
-            <th style="width:36px"></th><th>Title</th><th>Type</th><th>Collection</th><th>Creator</th><th>Update</th><th></th>
+            <th style="width:36px"><input class="sw" type="checkbox" id="pickAll" aria-label="Select all shown"></th><th>Title</th><th>Type</th><th>Collection</th><th>Creator</th><th>Update</th><th></th>
           </tr></thead>
           <tbody id="docsBody"></tbody>
         </table>
@@ -189,7 +192,7 @@
 
   var adminKey = "";
   try { adminKey = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
-  var users = [], docs = [], filtered = [], pageNo = 1, query = "";
+  var users = [], docs = [], filtered = [], pageNo = 1, query = "", picked = {};
 
   function esc(s) { return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
   function toast(msg) { var el = document.getElementById("toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("on"); }, 2400); }
@@ -313,7 +316,7 @@
     var list = filtered.slice((pageNo - 1) * PAGE_SIZE, pageNo * PAGE_SIZE);
     document.getElementById("docsBody").innerHTML = list.map(function (d) {
       return '<tr data-id="' + esc(d.id) + '">' +
-        '<td><input class="sw" type="checkbox" data-pick="' + esc(d.id) + '" aria-label="Select"></td>' +
+        '<td><input class="sw" type="checkbox" data-pick="' + esc(d.id) + '"' + (picked[d.id] ? " checked" : "") + ' aria-label="Select"></td>' +
         '<td class="t">' + esc(d.title) + "</td>" +
         "<td>" + esc(d.doc_type || "") + "</td>" +
         "<td>" + esc(d.collection || "") + "</td>" +
@@ -322,6 +325,7 @@
         '<td><button class="btn small danger" type="button" data-del="' + esc(d.id) + '">Delete</button></td>' +
       "</tr>";
     }).join("");
+    syncPickAll();
     var el = document.getElementById("pager");
     if (filtered.length === 0 || pages <= 1) { el.hidden = true; el.innerHTML = ""; return; }
     var html = '<button class="pg" type="button" data-pg="' + (pageNo - 1) + '"' + (pageNo <= 1 ? " disabled" : "") + ">‹ Prev</button>";
@@ -350,6 +354,43 @@
       document.getElementById("dCount").textContent = docs.length.toLocaleString() + " documents";
       renderStats(); toast("Document deleted");
     }).catch(function () { b.disabled = false; toast("Could not delete the document"); });
+  });
+  function syncPickAll() {
+    var boxes = document.querySelectorAll("#docsBody [data-pick]");
+    var on = 0;
+    Array.prototype.forEach.call(boxes, function (cb) { if (cb.checked) on++; });
+    var all = document.getElementById("pickAll");
+    if (all) { all.checked = boxes.length > 0 && on === boxes.length; all.indeterminate = on > 0 && on < boxes.length; }
+    var btn = document.getElementById("delSel");
+    var n = Object.keys(picked).length;
+    if (btn) { btn.textContent = n ? "Delete selected (" + n + ")" : "Delete selected"; btn.disabled = !n; }
+  }
+  document.getElementById("docsBody").addEventListener("change", function (e) {
+    var cb = e.target.closest("[data-pick]"); if (!cb) return;
+    var id = cb.getAttribute("data-pick");
+    if (cb.checked) picked[id] = true; else delete picked[id];
+    syncPickAll();
+  });
+  document.getElementById("pickAll").addEventListener("change", function () {
+    var on = this.checked;
+    Array.prototype.forEach.call(document.querySelectorAll("#docsBody [data-pick]"), function (cb) {
+      cb.checked = on;
+      var id = cb.getAttribute("data-pick");
+      if (on) picked[id] = true; else delete picked[id];
+    });
+    syncPickAll();
+  });
+  // Delete every ticked document (this is the library's only delete control).
+  document.getElementById("delSel").addEventListener("click", function () {
+    var ids = Object.keys(picked); if (!ids.length) return;
+    if (!confirm("Delete " + ids.length + " selected document" + (ids.length === 1 ? "" : "s") + " from the public library for everyone?")) return;
+    this.disabled = true;
+    rpc("hub_delete_documents", { p_ids:ids, pw:adminKey }).then(function () {
+      docs = docs.filter(function (x) { return !picked[x.id]; });
+      picked = {}; applyFilter();
+      document.getElementById("dCount").textContent = docs.length.toLocaleString() + " documents";
+      renderStats(); toast(ids.length + " document" + (ids.length === 1 ? "" : "s") + " deleted");
+    }).catch(function () { toast("Could not delete the selected documents"); syncPickAll(); });
   });
 
   /* ---------------- stats ---------------- */
