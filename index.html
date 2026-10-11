@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <!--
   Renewable Viet Nam — homepage (four domain cards)
+  Rev 0.34  New brand logo (tri-branch mark): shown in the header and used as the favicon (SVG, plus
+            regenerated 32px PNG, ICO and touch icon). The Hub card's "N collections" line is removed,
+            so the card now carries no count.
   Rev 0.33  The Hub card drops its document count (it read "N documents · M collections"); it now
             shows only the collections count.
   Rev 0.32  Contact email corrected to info@renewablevietnam.com.
@@ -31,6 +34,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Renewable Infrastructure + Renewable Viet Nam</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
   <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
@@ -182,7 +186,8 @@
 
   <!-- Header -->
   <header class="relative z-10 w-full flex items-center justify-between pb-6 sm:pb-8 max-w-5xl mx-auto">
-    <a href="/" class="flex items-center group" aria-label="Renewable Vietnam — home">
+    <a href="/" class="flex items-center gap-3 group" aria-label="Renewable Vietnam — home">
+      <img src="/assets/images/logo.svg" alt="" width="36" height="36" class="w-9 h-9 rounded-lg shrink-0" />
       <h1 class="text-xs sm:text-xs font-mono uppercase tracking-[0.25em] text-zinc-800 dark:text-zinc-200 font-semibold">
         RENEWABLE INFRASTRUCTURE
       </h1>
@@ -351,7 +356,6 @@
             <line x1="8.35" y1="16.9" x2="10.3" y2="14.3" stroke-linecap="round" />
             <line x1="6.35" y1="9.8" x2="9.6" y2="10.9" stroke-linecap="round" />
           </svg>
-          <span id="statHub" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors">12 collections</span>
         </div>
       </div>
 
@@ -449,13 +453,10 @@
       var f = 0; a.forEach(function (o) { f += (o.projects || []).length; });
       return fmt(f) + " facilities \u00b7 " + fmt(a.length) + " operators";
     }
-    function fromHub(h) { var l = grab(h, "LIBRARY"), c = grab(h, "COLLECTIONS"); return (l && c) ? [l.length, c.length] : null; }
-
     function paint(v) {
       if (v.energy) set("statEnergy", v.energy);
       if (v.ev) set("statEv", v.ev);
       if (v.dc) set("statDc", v.dc);
-      if (v.hub) set("statHub", v.hub);
     }
 
     function refresh() {
@@ -463,11 +464,7 @@
       return Promise.all([
         txt("/projectenergy/").then(function (h) { out.energy = fromEnergy(h); }).catch(function () {}),
         txt("/evcharging/").then(function (h) { out.ev = fromEv(h); }).catch(function () {}),
-        txt("/datacenter/").then(function (h) { out.dc = fromDc(h); }).catch(function () {}),
-        txt("/hub/").then(function (h) {
-          var b = fromHub(h);
-          out.hub = fmt(b ? b[1] : 12) + " collections";
-        }).catch(function () {})
+        txt("/datacenter/").then(function (h) { out.dc = fromDc(h); }).catch(function () {})
       ]).then(function () {
         paint(out);
         try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
