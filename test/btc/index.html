@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.05</title>
+<title>Coin Search + 16 Models — Rev 0.06</title>
 <style>
   :root{
     --accent:#3b82f6; --up:#16c784; --down:#ea3943; --amber:#e0a83a;
@@ -65,6 +65,9 @@
   .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px}
   .panel h2{margin:0 0 2px; font-size:14px; font-weight:700; letter-spacing:.2px; display:flex; align-items:center; gap:8px}
   .panel .sub{color:var(--muted); font-size:12.5px}
+  .cloud{font-size:10.5px; font-weight:700; letter-spacing:.3px; border:1px solid var(--border); border-radius:999px; padding:2px 8px; color:var(--muted); text-transform:uppercase}
+  .cloud.ok{color:var(--up); border-color:var(--up)}
+  .cloud.busy{color:var(--amber); border-color:var(--amber)}
   .divider{height:1px; background:var(--border); border:0; margin:16px 0}
 
   /* combined crypto value + final decision */
@@ -157,7 +160,7 @@
   <!-- PORTFOLIO -->
   <div class="section show" id="portfolio">
     <div class="panel">
-      <h2>Portfolio</h2>
+      <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
       <div class="sub">Coin price, today's final decision + score, and the run of correct/incorrect days vs yesterday.</div>
       <div class="pf-form">
         <input type="text" id="p-name" placeholder="Add a coin (e.g. BTC, solana, ARB)" autocomplete="off" spellcheck="false">
@@ -248,9 +251,10 @@
       a BUY is <span style="color:var(--up)">correct</span> if price rises, a SELL is correct if it falls, HOLD is neutral
       (<code>gradeVerdict</code>). Streaks count consecutive same-direction decisions (<code>decisionStreak</code>) and
       consecutive correct/incorrect days (<code>gradedRun</code> / <code>correctStreak</code>).</div>
-      <div style="margin-top:12px"><b>Portfolio</b> — a watchlist. Each row shows the coin's live price, today's decision and the
-      current correct/incorrect run. Saved in your browser; export/import as JSON.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.05.</div>
+      <div style="margin-top:12px"><b>Portfolio</b> — a watchlist shared through Supabase (<code>btc_portfolio</code>), so a coin added
+      on one device appears on every device; it falls back to your browser's local storage if the cloud is unreachable. Each row shows
+      the coin's live price, today's decision, its score and the current correct/incorrect run; export/import as JSON.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.06.</div>
     </div>
   </details>
 </main>
@@ -265,6 +269,42 @@
   const INDEX_KEY = 'coinsearch.index.v1';
   const PF_KEY = 'coinsearch.portfolio.v3';
   const HISTORY_DAYS = 180;
+
+  // Supabase shared store — same project as the Hub (/hub/). The portfolio is a
+  // shared list, so a coin added on one device shows up on every device. If the
+  // table is missing or the network is down the page silently uses localStorage.
+  const SUPABASE_URL = 'https://nkkwegvplpozirrjcxsn.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU';
+  const SB_TABLE = 'btc_portfolio';
+  let cloudOn = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+
+  function sbHeaders(extra) {
+    const h = Object.assign({ apikey: SUPABASE_ANON_KEY }, extra || {});
+    if (SUPABASE_ANON_KEY.indexOf('sb_') !== 0) h.Authorization = 'Bearer ' + SUPABASE_ANON_KEY;
+    return h;
+  }
+  async function sbList() {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_TABLE}?select=pair,base,name&order=created_at.asc`, {
+      headers: sbHeaders(), signal: AbortSignal.timeout(12000),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+  async function sbAdd(row) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_TABLE}`, {
+      method: 'POST',
+      headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'resolution=ignore-duplicates,return=minimal' }),
+      body: JSON.stringify(row),
+      signal: AbortSignal.timeout(12000),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  }
+  async function sbRemove(pair) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${SB_TABLE}?pair=eq.${encodeURIComponent(pair)}`, {
+      method: 'DELETE', headers: sbHeaders({ Prefer: 'return=minimal' }), signal: AbortSignal.timeout(12000),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  }
 
   const COIN_NAMES = {
     BTC:'Bitcoin',ETH:'Ethereum',BNB:'BNB',XRP:'XRP',SOL:'Solana',ADA:'Cardano',DOGE:'Dogecoin',
@@ -731,6 +771,11 @@
     el.textContent = msg || '';
     el.style.color = isError ? 'var(--down)' : 'var(--muted)';
   }
+  function setCloud(state, label) {
+    const el = $('p-cloud');
+    el.textContent = label;
+    el.className = 'cloud ' + state;
+  }
 
   function runBadge(gr) {
     if (!gr || !gr.kind) return '<span class="mini">—</span>';
@@ -774,7 +819,15 @@
       };
     }
     for (const el of tbody.querySelectorAll('.rm')) {
-      el.onclick = () => { pf.list = pf.list.filter((x) => x.pair !== el.dataset.remove); pf.save(); renderPortfolio(); };
+      el.onclick = async () => {
+        const pair = el.dataset.remove;
+        pf.list = pf.list.filter((x) => x.pair !== pair);
+        pf.save();
+        renderPortfolio();
+        if (cloudOn) {
+          try { await sbRemove(pair); } catch { cloudOn = false; setCloud('off', 'local only'); }
+        }
+      };
     }
   }
 
@@ -794,6 +847,24 @@
   }
 
   async function refreshPortfolio() {
+    if (cloudOn) {
+      setCloud('busy', 'syncing');
+      try {
+        const rows = await sbList();
+        if (rows.length) {
+          pf.list = rows.map((r) => ({ pair: String(r.pair), base: String(r.base || r.pair), name: String(r.name || r.base || r.pair) }));
+          pf.results.clear();
+          pf.save();
+        } else if (pf.list.length) {
+          // Shared list is empty but this device has coins — seed it.
+          for (const r of pf.list) { try { await sbAdd(r); } catch {} }
+        }
+        setCloud('ok', 'cloud');
+      } catch {
+        cloudOn = false;
+        setCloud('off', 'local only');
+      }
+    } else setCloud('off', 'local only');
     pfSetStatus('analysing…');
     await Promise.all(pf.list.map((r) => analyzePair(r.pair)));
     renderPortfolio();
@@ -812,6 +883,10 @@
     pf.save();
     $('p-name').value = '';
     renderPortfolio();
+    if (cloudOn) {
+      try { await sbAdd({ pair: meta.id, base: meta.base, name: meta.name }); }
+      catch { cloudOn = false; setCloud('off', 'local only'); }
+    }
     await refreshPortfolio();
   }
 
@@ -825,13 +900,17 @@
   }
   function importPortfolio(file) {
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
         const data = JSON.parse(String(reader.result));
         if (!Array.isArray(data)) throw new Error('expected a JSON array');
         const clean = data.filter((r) => r && r.pair)
           .map((r) => ({ pair: String(r.pair), base: String(r.base || r.pair), name: String(r.name || r.base || r.pair) }));
-        pf.list = clean; pf.save(); pf.results.clear(); renderPortfolio(); refreshPortfolio();
+        pf.list = clean; pf.save(); pf.results.clear(); renderPortfolio();
+        if (cloudOn) {
+          for (const r of pf.list) { try { await sbAdd(r); } catch { cloudOn = false; setCloud('off', 'local only'); } }
+        }
+        refreshPortfolio();
         pfSetStatus(`imported ${clean.length} coin(s)`);
       } catch (err) { pfSetStatus('Import failed: ' + err.message, true); }
     };

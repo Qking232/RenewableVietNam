@@ -342,4 +342,39 @@ $$;
 revoke all on function public.hub_view_counts() from public;
 grant execute on function public.hub_view_counts() to anon, authenticated;
 
+-- ===========================================================================
+--  BTC portfolio  (page: /test/btc/)
+--  A small shared watchlist for the BTC model page. It is one list for
+--  everyone, so a coin added on your phone shows up on your laptop. The
+--  publishable key may read, add and remove rows — nothing else. No UPDATE:
+--  a row is only ever added or removed.
+-- ===========================================================================
+create table if not exists public.btc_portfolio (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  pair       text not null check (char_length(pair) between 3 and 40),
+  base       text not null check (char_length(base) between 1 and 20),
+  name       text          check (char_length(coalesce(name, '')) <= 120)
+);
+
+-- One row per coin: re-adding the same coin is ignored, never duplicated.
+create unique index if not exists btc_portfolio_pair_idx on public.btc_portfolio (pair);
+
+grant select, insert, delete on public.btc_portfolio to anon, authenticated;
+revoke update, truncate, references, trigger on public.btc_portfolio from anon, authenticated;
+
+alter table public.btc_portfolio enable row level security;
+
+drop policy if exists "public reads btc portfolio" on public.btc_portfolio;
+create policy "public reads btc portfolio"
+  on public.btc_portfolio for select using (true);
+
+drop policy if exists "public adds btc portfolio" on public.btc_portfolio;
+create policy "public adds btc portfolio"
+  on public.btc_portfolio for insert with check (true);
+
+drop policy if exists "public removes btc portfolio" on public.btc_portfolio;
+create policy "public removes btc portfolio"
+  on public.btc_portfolio for delete using (true);
+
 notify pgrst, 'reload schema';
