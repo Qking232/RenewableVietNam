@@ -288,7 +288,7 @@ $$;
 
 -- Update one document's fields, addressed by uuid. Returns true if a row changed.
 create or replace function public.hub_update_document(p_id uuid, pw text, p jsonb)
-returns boolean language plpgsql security definer set search_path = public as $$
+returns boolean language plpgsql security definer set search_path = public, extensions as $$
 begin
   if not public.hub_admin_ok(pw) then
     raise exception 'wrong password' using errcode = '42501';
@@ -314,7 +314,7 @@ end $$;
 
 -- Delete documents by uuid list. Returns how many rows were removed.
 create or replace function public.hub_delete_documents(p_ids uuid[], pw text)
-returns integer language plpgsql security definer set search_path = public as $$
+returns integer language plpgsql security definer set search_path = public, extensions as $$
 declare n integer;
 begin
   if not public.hub_admin_ok(pw) then
@@ -434,5 +434,122 @@ create policy "owner adds own favourites"
 create policy "owner removes own favourites"
   on public.hub_favourites for delete
   using (owner_hash = coalesce(current_setting('request.headers', true), '{}')::json ->> 'x-owner-hash');
+
+-- ===========================================================================
+--  Hub users & admin console  (page: /hub/admin/)  — presence + who may delete
+--  Signing in on /hub/ records the user (owner_hash = sha256('hub:' + key)), and
+--  each sign-in updates last_seen, so the admin console can monitor who is using
+--  the library. hub_users is not readable or writable with the publishable key —
+--  only through these SECURITY DEFINER functions.
+-- ===========================================================================
+create table if not exists public.hub_users (
+  owner_hash text primary key check (char_length(owner_hash) between 1 and 80),
+  name       text          check (char_length(coalesce(name, '')) <= 120),
+  email      text          check (char_length(coalesce(email, '')) <= 200),
+  can_delete boolean not null default false,
+  first_seen timestamptz not null default now(),
+  last_seen  timestamptz not null default now()
+);
+
+alter table public.hub_users enable row level security;
+-- Deliberately no policies: the publishable key cannot touch this table directly.
+
+-- Record a sign-in (called by /hub/ once the private key is accepted).
+create or replace function public.hub_user_ping(p_hash text, p_name text, p_email text)
+returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if char_length(coalesce(p_hash, '')) < 1 then return false; end if;
+  insert into public.hub_users(owner_hash, name, email, last_seen)
+  values (p_hash, left(coalesce(p_name, ''), 120), left(coalesce(p_email, ''), 200), now())
+  on conflict (owner_hash) do update
+    set name = excluded.name, email = excluded.email, last_seen = now();
+  return true;
+end $$;
+revoke all on function public.hub_user_ping(text, text, text) from public;
+grant execute on function public.hub_user_ping(text, text, text) to anon, authenticated;
+
+-- May this user delete shared documents?
+create or replace function public.hub_user_can_delete(p_hash text)
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce((select can_delete from public.hub_users where owner_hash = p_hash), false);
+$$;
+revoke all on function public.hub_user_can_delete(text) from public;
+grant execute on function public.hub_user_can_delete(text) to anon, authenticated;
+
+-- Admin console: list every user, with their favourites count.
+create or replace function public.hub_admin_users(pw text)
+returns table(owner_hash text, name text, email text, can_delete boolean,
+              first_seen timestamptz, last_seen timestamptz, favourites bigint)
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  return query
+    select u.owner_hash, u.name, u.email, u.can_delete, u.first_seen, u.last_seen,
+           (select count(*) from public.hub_favourites f where f.owner_hash = u.owner_hash)::bigint
+    from public.hub_users u
+    order by u.last_seen desc;
+end $$;
+revoke all on function public.hub_admin_users(text) from public;
+grant execute on function public.hub_admin_users(text) to anon, authenticated;
+
+-- Admin console: allow or stop one user from deleting documents.
+create or replace function public.hub_admin_set_delete(pw text, p_hash text, p_can boolean)
+returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if not public.hub_admin_ok(pw) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  update public.hub_users set can_delete = coalesce(p_can, false) where owner_hash = p_hash;
+  return found;
+end $$;
+revoke all on function public.hub_admin_set_delete(text, text, boolean) from public;
+grant execute on function public.hub_admin_set_delete(text, text, boolean) to anon, authenticated;
+
+-- Editing a shared document: allowed for the admin key, or any user who has signed in.
+create or replace function public.hub_update_document(p_id uuid, pw text, p jsonb)
+returns boolean language plpgsql security definer set search_path = public, extensions as $$
+declare h text;
+begin
+  h := encode(digest('hub:' || coalesce(pw, ''), 'sha256'), 'hex');
+  if not public.hub_admin_ok(pw)
+     and not exists (select 1 from public.hub_users u where u.owner_hash = h) then
+    raise exception 'wrong password' using errcode = '42501';
+  end if;
+  update public.hub_documents set
+    doc_type   = coalesce(p->>'doc_type', doc_type),
+    collection = coalesce(p->>'collection', collection),
+    title      = coalesce(p->>'title', title),
+    author     = coalesce(p->>'author', author),
+    year       = coalesce(p->>'year', year),
+    lang       = coalesce(p->>'lang', lang),
+    summary    = coalesce(p->>'summary', summary),
+    source     = coalesce(p->>'source', source),
+    license    = coalesce(p->>'license', license),
+    points     = coalesce(p->'points', points),
+    refs       = coalesce(p->'refs', refs),
+    links      = coalesce(p->'links', links),
+    rev        = coalesce(p->>'rev', rev),
+    updated    = now()
+  where id = p_id;
+  return found;
+end $$;
+
+-- Deleting documents: allowed for the admin key, or a user the admin marked
+-- "can delete". Calls are rejected with 'not allowed' otherwise.
+create or replace function public.hub_delete_documents(p_ids uuid[], pw text)
+returns integer language plpgsql security definer set search_path = public, extensions as $$
+declare n integer; h text;
+begin
+  h := encode(digest('hub:' || coalesce(pw, ''), 'sha256'), 'hex');
+  if not public.hub_admin_ok(pw)
+     and not exists (select 1 from public.hub_users u where u.owner_hash = h and u.can_delete) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  delete from public.hub_documents where id = any(p_ids);
+  get diagnostics n = row_count;
+  return n;
+end $$;
 
 notify pgrst, 'reload schema';

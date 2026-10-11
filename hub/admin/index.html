@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<!--
+  Renewable Viet Nam — The Library · Admin console  (revision history: see /hub/)
+  Monitor who is using the library and control who may delete documents.
+  Self-contained: no CDN, no build step. Not linked from search engines.
+  The admin key is the same password the database uses for edits/deletes.
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Admin — The Library | Renewable Viet Nam</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230EA5E9'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.3' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='2.75'/%3E%3Ccircle cx='12' cy='4.25' r='1.75'/%3E%3Ccircle cx='19.25' cy='8.75' r='1.75'/%3E%3Ccircle cx='17' cy='18.25' r='1.75'/%3E%3Ccircle cx='7' cy='18.25' r='1.75'/%3E%3Ccircle cx='4.75' cy='8.75' r='1.75'/%3E%3Cline x1='12' y1='6' x2='12' y2='9.25'/%3E%3Cline x1='17.65' y1='9.8' x2='14.4' y2='10.9'/%3E%3Cline x1='15.65' y1='16.9' x2='13.7' y2='14.3'/%3E%3Cline x1='8.35' y1='16.9' x2='10.3' y2='14.3'/%3E%3Cline x1='6.35' y1='9.8' x2='9.6' y2='10.9'/%3E%3C/g%3E%3C/svg%3E" />
+<style>
+  :root {
+    --bg:#FFFFFF; --surface:#FFFFFF; --surface-2:#F2F2F4; --chip:#E7E7EA;
+    --text:#000000; --muted:#000000; --faint:#2F2F35;
+    --line:rgba(0,0,0,.14); --line-strong:rgba(0,0,0,.34);
+    --accent:#0072BC; --accent-2:#0092CC; --accent-soft:rgba(0,114,188,.10); --accent-border:rgba(0,114,188,.50);
+    --notify:#C8102E; --ok:#0a8f5b;
+    --shadow:0 1px 2px rgba(0,0,0,.06);
+    --radius:2px; --btn-face:linear-gradient(180deg,#FFFFFF,#ECECEF);
+  }
+  [data-theme="dark"] {
+    --bg:#000000; --surface:#0C0C0E; --surface-2:#141416; --chip:#1D1D21;
+    --text:#FFFFFF; --muted:#9DA0A6; --faint:#666A70;
+    --line:rgba(255,255,255,.15); --line-strong:rgba(255,255,255,.34);
+    --accent:#0092CC; --accent-2:#3FC0F5; --accent-soft:rgba(0,146,204,.16); --accent-border:rgba(0,146,204,.60);
+    --notify:#FF2D3F; --ok:#3ddc97;
+    --shadow:0 1px 2px rgba(0,0,0,.70);
+    --btn-face:linear-gradient(180deg,#1E1E22,#141416);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--text); line-height:1.55; background:var(--bg);
+    font-family:"Slate Pro","Slate",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; letter-spacing:-.004em; }
+  a { color:var(--accent); }
+  button { font:inherit; cursor:pointer; }
+  .mono { font-family:"SF Mono",SFMono-Regular,ui-monospace,Menlo,Consolas,monospace; }
+  .wrap { width:100%; padding:0 26px; }
+  header.top { position:sticky; top:0; z-index:30; background:color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top); }
+  header.top::before { content:""; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg,#0072BC,#00A0E0 55%,#3FC0F5); }
+  .top-inner { display:flex; align-items:center; justify-content:space-between; gap:14px; min-height:58px; padding:8px 26px; }
+  .top-left { display:flex; align-items:center; gap:10px; }
+  .brand { font-weight:700; font-size:11.5px; letter-spacing:.24em; text-transform:uppercase; }
+  .link-btn { text-decoration:none; color:var(--muted); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:7px 11px; border-radius:var(--radius); border:1px solid transparent; }
+  .link-btn:hover { color:var(--text); background:var(--chip); border-color:var(--line); }
+  .icon-btn { display:grid; place-items:center; width:36px; height:36px; border-radius:var(--radius); background:var(--surface); border:1px solid var(--line); color:var(--muted); }
+  .icon-btn svg { width:16px; height:16px; }
+  main { padding-bottom:50px; }
+  .hero { padding:30px 0 6px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--faint); font-weight:700; margin:0 0 12px; }
+  .eyebrow::before { content:""; width:10px; height:10px; border-radius:1px; background:linear-gradient(135deg,#00A0E0,#0072BC); }
+  .hero h1 { font-size:clamp(26px,4vw,40px); font-weight:200; letter-spacing:-.02em; margin:0 0 10px; }
+  .lede { color:var(--muted); font-size:14px; font-weight:300; max-width:78ch; }
+  form.add { margin:16px 0 22px; padding:18px; border:1px solid var(--accent-border); border-top:3px solid var(--accent); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); max-width:520px; }
+  form.add h3 { margin:0 0 4px; font-size:15px; font-weight:600; }
+  .hint { margin:8px 0 0; font-size:12px; color:var(--muted); }
+  .field { margin:12px 0; }
+  .field label { display:block; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:5px; }
+  .field input, .search input { width:100%; padding:10px 12px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
+  .field input:focus, .search input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); }
+  .btn { font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:10px 16px; border-radius:var(--radius); border:1px solid var(--line-strong); background:var(--btn-face); color:var(--text); white-space:nowrap; }
+  .btn:hover { border-color:var(--accent); }
+  .btn.primary { background:linear-gradient(180deg,#00A0E0,#0072BC); border-color:#005A96; color:#fff; }
+  .btn.small { font-size:11px; padding:7px 11px; }
+  .btn.danger { color:var(--notify); border-color:color-mix(in srgb,var(--notify) 40%,transparent); background:transparent; }
+  .btn.danger:hover { background:color-mix(in srgb,var(--notify) 12%,transparent); border-color:var(--notify); }
+  .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .stats { display:flex; gap:22px; flex-wrap:wrap; margin:18px 0 8px; font-size:12px; color:var(--muted); }
+  .stats b { color:var(--text); font-weight:700; font-variant-numeric:tabular-nums; }
+  .offline { color:var(--faint); }
+  .online { color:var(--ok); font-weight:700; }
+  .panel { margin:20px 0; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); overflow:hidden; }
+  .panel h3 { margin:0; padding:12px 14px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); font-weight:700; border-bottom:1px solid var(--line); box-shadow:inset 0 3px 0 var(--accent); display:flex; justify-content:space-between; gap:10px; }
+  .panel h3 .sub { color:var(--muted); letter-spacing:.04em; }
+  .panel .search { display:block; padding:12px 14px 0; }
+  table.grid { width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.grid th { text-align:left; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:700; padding:10px 12px; border-bottom:1px solid var(--line-strong); white-space:nowrap; }
+  table.grid td { padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; overflow-wrap:anywhere; }
+  table.grid tr:hover td { background:var(--surface-2); }
+  table.grid .t { font-weight:600; }
+  .pill { font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); border:1px solid var(--line); color:var(--muted); }
+  .sw { width:14px; height:14px; accent-color:var(--accent); vertical-align:middle; }
+  .pager { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px; padding:14px; }
+  .pager[hidden] { display:none; }
+  .pager .pg { font-size:11px; font-weight:700; min-width:34px; padding:8px 10px; text-align:center; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--btn-face); color:var(--text); }
+  .pager .pg:hover:not(:disabled) { border-color:var(--accent); }
+  .pager .pg.on { background:linear-gradient(180deg,#00A0E0,#0072BC); border-color:#005A96; color:#fff; }
+  .pager .pg:disabled { opacity:.4; cursor:not-allowed; }
+  .pager .pg-gap { color:var(--faint); }
+  .toast { position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(12px); background:var(--text); color:var(--bg); padding:9px 15px; border-radius:var(--radius); font-size:12px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .22s, transform .22s; z-index:80; max-width:90vw; }
+  .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+  footer.site { border-top:1px solid var(--line); margin-top:40px; padding:20px 0 calc(28px + env(safe-area-inset-bottom)); font-size:11.5px; color:var(--faint); }
+  @media (max-width:700px) {
+    .wrap, .top-inner { padding-left:14px; padding-right:14px; }
+    table.grid th:nth-child(4), table.grid td:nth-child(4),
+    table.grid th:nth-child(5), table.grid td:nth-child(5) { display:none; }
+    form.add { max-width:none; }
+  }
+</style>
+<script>
+  (function () {
+    var t = null; try { t = localStorage.getItem('theme'); } catch (e) {}
+    if (t !== 'dark' && t !== 'light') t = 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+</head>
+<body>
+
+  <header class="top">
+    <div class="top-inner">
+      <div class="top-left">
+        <a class="link-btn" href="/hub/">Home</a>
+        <span class="brand">The Library · Admin</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light / dark theme">
+          <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg>
+          <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Renewable Viet Nam</p>
+      <h1>Admin console</h1>
+      <p class="lede">Monitor who is using the library, and control who may delete documents.</p>
+    </section>
+
+    <form class="add" id="gate">
+      <h3>Admin key</h3>
+      <p class="hint" id="gHint">Enter the admin key to open the console.</p>
+      <div class="field">
+        <label for="akey">Admin key</label>
+        <input type="password" id="akey" placeholder="Admin key" autocomplete="off" required />
+      </div>
+      <div class="form-actions"><button class="btn primary" type="submit" id="gSubmit">Unlock</button></div>
+      <p class="hint" id="gMsg" hidden></p>
+    </form>
+
+    <div id="console" hidden>
+      <div class="stats" id="stats"></div>
+
+      <section class="panel">
+        <h3>Users <span class="sub" id="uCount"></span></h3>
+        <table class="grid" id="usersTable">
+          <thead><tr>
+            <th>Name</th><th>Email</th><th>Key</th><th>First seen</th><th>Last seen</th><th>Favourites</th><th>Can delete</th>
+          </tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+        <p class="hint" id="usersMsg" style="padding:12px 14px"></p>
+      </section>
+
+      <section class="panel">
+        <h3>Documents <span class="sub" id="dCount"></span></h3>
+        <label class="search"><input type="search" id="dq" placeholder="Search title, author, collection…" autocomplete="off" /></label>
+        <table class="grid" id="docsTable">
+          <thead><tr>
+            <th style="width:36px"></th><th>Title</th><th>Type</th><th>Collection</th><th>Creator</th><th>Update</th><th></th>
+          </tr></thead>
+          <tbody id="docsBody"></tbody>
+        </table>
+        <nav class="pager" id="pager" hidden></nav>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <span>For study &amp; discussion only — non-commercial. <a href="/hub/">← Back to the Library</a></span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+  var SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
+  var SESSION_KEY = "rvn_hub_admin";
+  var PAGE_SIZE = 30, ONLINE_MS = 5 * 60 * 1000;
+
+  var adminKey = "";
+  try { adminKey = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
+  var users = [], docs = [], filtered = [], pageNo = 1, query = "";
+
+  function esc(s) { return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function toast(msg) { var el = document.getElementById("toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("on"); }, 2400); }
+  function headers(extra) { var h = { apikey:SUPABASE_ANON_KEY, "Content-Type":"application/json" }; if (extra) for (var k in extra) h[k] = extra[k]; return h; }
+  function rpc(fn, args) {
+    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + fn, { method:"POST", headers:headers(), body:JSON.stringify(args) })
+      .then(function (r) {
+        if (r.status === 404) throw new Error("missing");
+        return r.text().then(function (t) {
+          if (!r.ok) throw new Error(t || ("RPC " + fn + " → " + r.status));
+          try { return JSON.parse(t); } catch (e) { return null; }
+        });
+      });
+  }
+  function fmtDate(s) { try { return s ? new Date(s).toLocaleString(undefined, { year:"numeric", month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "—"; } catch (e) { return "—"; } }
+  function shortHash(h) { return h ? h.slice(0, 8) + "…" + h.slice(-6) : "—"; }
+
+  /* ---------------- theme ---------------- */
+  var sun = document.getElementById("iconSun"), moon = document.getElementById("iconMoon");
+  function paintIcons() { var dark = document.documentElement.getAttribute("data-theme") === "dark"; sun.style.display = dark ? "" : "none"; moon.style.display = dark ? "none" : ""; }
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    paintIcons();
+  });
+
+  /* ---------------- unlock ---------------- */
+  var gate = document.getElementById("gate");
+  function showConsole() {
+    gate.hidden = true;
+    document.getElementById("console").hidden = false;
+    loadUsers(); loadDocs();
+  }
+  gate.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var msg = document.getElementById("gMsg"), key = document.getElementById("akey").value;
+    if (!key) return;
+    msg.hidden = false; msg.textContent = "Checking…";
+    rpc("hub_admin_users", { pw:key }).then(function () {
+      adminKey = key; try { sessionStorage.setItem(SESSION_KEY, key); } catch (e2) {}
+      showConsole();
+    }).catch(function (err) {
+      if (err.message === "missing") msg.textContent = "The admin functions are not installed on the database yet (run supabase/schema.sql).";
+      else msg.textContent = /wrong password/i.test(err.message) ? "Wrong admin key." : "Could not open the console.";
+    });
+  });
+
+  /* ---------------- users ---------------- */
+  function loadUsers() {
+    rpc("hub_admin_users", { pw:adminKey }).then(function (rows) {
+      users = rows || [];
+      document.getElementById("uCount").textContent = users.length + " user" + (users.length === 1 ? "" : "s");
+      document.getElementById("usersMsg").textContent = users.length ? "" : "No one has signed in yet.";
+      renderUsers(); renderStats();
+    }).catch(function (err) {
+      document.getElementById("usersMsg").textContent = err.message === "missing"
+        ? "Not installed — run supabase/schema.sql." : "Could not load users.";
+    });
+  }
+  function renderUsers() {
+    document.getElementById("usersBody").innerHTML = users.map(function (u) {
+      var online = u.last_seen && (Date.now() - new Date(u.last_seen).getTime() < ONLINE_MS);
+      return "<tr>" +
+        '<td class="t">' + esc(u.name || "—") + '</td>' +
+        "<td>" + esc(u.email || "—") + "</td>" +
+        '<td class="mono">' + esc(shortHash(u.owner_hash)) + "</td>" +
+        "<td>" + esc(fmtDate(u.first_seen)) + "</td>" +
+        "<td>" + (online ? '<span class="online">online</span> · ' : "") + esc(fmtDate(u.last_seen)) + "</td>" +
+        "<td>" + esc(String(u.favourites || 0)) + "</td>" +
+        '<td><label><input class="sw" type="checkbox" data-hash="' + esc(u.owner_hash) + '"' + (u.can_delete ? " checked" : "") + " /> allow</label></td>" +
+      "</tr>";
+    }).join("");
+  }
+  document.getElementById("usersBody").addEventListener("change", function (e) {
+    var cb = e.target.closest("[data-hash]"); if (!cb) return;
+    var hash = cb.getAttribute("data-hash"), can = cb.checked;
+    cb.disabled = true;
+    rpc("hub_admin_set_delete", { pw:adminKey, p_hash:hash, p_can:can }).then(function () {
+      cb.disabled = false;
+      for (var i=0;i<users.length;i++) if (users[i].owner_hash === hash) users[i].can_delete = can;
+      toast(can ? "This user may now delete documents" : "This user may no longer delete");
+    }).catch(function () { cb.disabled = false; cb.checked = !can; toast("Could not save the permission"); });
+  });
+
+  /* ---------------- documents ---------------- */
+  function fetchDocs() {
+    var out = [], PAGE = 1000;
+    function page(from) {
+      return fetch(SUPABASE_URL + "/rest/v1/hub_documents?status=eq.approved&select=id,title,doc_type,collection,author,updated,created_at&order=created_at.desc", {
+        headers:headers({ Range:from + "-" + (from + PAGE - 1) })
+      }).then(function (r) { if (!r.ok) throw new Error("docs " + r.status); return r.json(); })
+        .then(function (rows) { out = out.concat(rows); return rows.length === PAGE ? page(from + PAGE) : out; });
+    }
+    return page(0);
+  }
+  function loadDocs() {
+    fetchDocs().then(function (rows) {
+      docs = rows || []; applyFilter();
+      document.getElementById("dCount").textContent = docs.length.toLocaleString() + " documents";
+      renderStats();
+    }).catch(function () { toast("Could not load documents"); });
+  }
+  function applyFilter() {
+    var q = query.trim().toLowerCase();
+    filtered = !q ? docs.slice() : docs.filter(function (d) {
+      return [d.title, d.author, d.collection, d.doc_type].join(" ").toLowerCase().indexOf(q) > -1;
+    });
+    pageNo = 1; renderDocs();
+  }
+  function pageWindow(cur, pages) {
+    var set = {}; set[1] = 1; set[pages] = 1;
+    for (var d = -2; d <= 2; d++) { var n = cur + d; if (n >= 1 && n <= pages) set[n] = 1; }
+    var nums = Object.keys(set).map(Number).sort(function (a, b) { return a - b; }), out = [], last = 0;
+    nums.forEach(function (n) { if (last && n - last > 1) out.push("…"); out.push(n); last = n; });
+    return out;
+  }
+  function renderDocs() {
+    var pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (pageNo > pages) pageNo = pages; if (pageNo < 1) pageNo = 1;
+    var list = filtered.slice((pageNo - 1) * PAGE_SIZE, pageNo * PAGE_SIZE);
+    document.getElementById("docsBody").innerHTML = list.map(function (d) {
+      return '<tr data-id="' + esc(d.id) + '">' +
+        '<td><input class="sw" type="checkbox" data-pick="' + esc(d.id) + '" aria-label="Select"></td>' +
+        '<td class="t">' + esc(d.title) + "</td>" +
+        "<td>" + esc(d.doc_type || "") + "</td>" +
+        "<td>" + esc(d.collection || "") + "</td>" +
+        "<td>" + esc(d.author || "—") + "</td>" +
+        "<td>" + esc(fmtDate(d.updated || d.created_at)) + "</td>" +
+        '<td><button class="btn small danger" type="button" data-del="' + esc(d.id) + '">Delete</button></td>' +
+      "</tr>";
+    }).join("");
+    var el = document.getElementById("pager");
+    if (filtered.length === 0 || pages <= 1) { el.hidden = true; el.innerHTML = ""; return; }
+    var html = '<button class="pg" type="button" data-pg="' + (pageNo - 1) + '"' + (pageNo <= 1 ? " disabled" : "") + ">‹ Prev</button>";
+    pageWindow(pageNo, pages).forEach(function (n) {
+      if (n === "…") html += '<span class="pg-gap">…</span>';
+      else html += '<button class="pg' + (n === pageNo ? " on" : "") + '" type="button" data-pg="' + n + '">' + n + "</button>";
+    });
+    html += '<button class="pg" type="button" data-pg="' + (pageNo + 1) + '"' + (pageNo >= pages ? " disabled" : "") + ">Next ›</button>";
+    el.innerHTML = html; el.hidden = false;
+  }
+  document.getElementById("dq").addEventListener("input", function () { query = this.value; applyFilter(); });
+  document.getElementById("pager").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-pg]"); if (!b || b.disabled) return;
+    var n = parseInt(b.getAttribute("data-pg"), 10); if (!n) return;
+    pageNo = n; renderDocs();
+    document.getElementById("docsTable").scrollIntoView({ behavior:"smooth", block:"start" });
+  });
+  document.getElementById("docsBody").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-del]"); if (!b) return;
+    var id = b.getAttribute("data-del");
+    var d = docs.filter(function (x) { return x.id === id; })[0] || {};
+    if (!confirm('Delete "' + (d.title || id) + '" from the public library for everyone?')) return;
+    b.disabled = true;
+    rpc("hub_delete_documents", { p_ids:[id], pw:adminKey }).then(function () {
+      docs = docs.filter(function (x) { return x.id !== id; }); applyFilter();
+      document.getElementById("dCount").textContent = docs.length.toLocaleString() + " documents";
+      renderStats(); toast("Document deleted");
+    }).catch(function () { b.disabled = false; toast("Could not delete the document"); });
+  });
+
+  /* ---------------- stats ---------------- */
+  function renderStats() {
+    var online = users.filter(function (u) { return u.last_seen && (Date.now() - new Date(u.last_seen).getTime() < ONLINE_MS); }).length;
+    document.getElementById("stats").innerHTML =
+      "<span><b>" + docs.length.toLocaleString() + "</b> documents</span>" +
+      "<span><b>" + users.length + "</b> users</span>" +
+      '<span><b class="' + (online ? "online" : "offline") + '">' + online + "</b> online now</span>" +
+      "<span><b>" + users.filter(function (u) { return u.can_delete; }).length + "</b> may delete</span>";
+  }
+
+  paintIcons();
+  if (adminKey) showConsole(); else document.getElementById("akey").focus();
+})();
+</script>
+</body>
+</html>

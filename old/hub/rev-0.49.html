@@ -194,14 +194,6 @@
                             asks for the key too. The shelf loads past the API's 1000-row page so a
                             large library shows in full, and every document that mentioned EVN is
                             revised (its EVN/EVNNPT reference dropped) or removed.
-    Rev 0.50  (2026-10-11)  Paging and the admin console. The shelf shows 30 documents a page with a
-                            page-number strip under it; searching, filtering or sorting returns to page
-                            1. Signing in now records the user (hub_users) so their presence can be
-                            monitored. A new /hub/admin/ console — opened with the admin key — lists
-                            every user (last seen, favourites) and lets the admin choose who may delete
-                            documents: deleting a shared document is allowed only for the admin key or
-                            a user the admin has marked. The shared store now carries thousands of
-                            demo documents.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -383,15 +375,6 @@
   .c-meta { display:none; }
   .badge { font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; padding:2px 7px; border-radius:var(--radius); color:var(--tone); background:var(--tone-soft); border:1px solid var(--tone-border); white-space:nowrap; }
 
-  /* Pagination — 30 rows a page, with page numbers at the foot of the shelf */
-  .pager { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px; margin:16px 0 4px; }
-  .pager[hidden] { display:none; }
-  .pager .pg { font-size:11px; font-weight:700; letter-spacing:.06em; min-width:34px; padding:8px 10px; text-align:center; border:1px solid var(--line-strong); border-radius:var(--radius); background:var(--btn-face); color:var(--text); }
-  .pager .pg:hover:not(:disabled) { border-color:var(--accent); }
-  .pager .pg.on { background:linear-gradient(180deg,#00A0E0,#0072BC); border-color:#005A96; color:#fff; }
-  .pager .pg:disabled { opacity:.4; cursor:not-allowed; }
-  .pager .pg-gap { color:var(--faint); padding:0 2px; }
-
   /* ---------------- Browse Docs — quick collection access (right column) ---------------- */
   .browse { display:grid; grid-template-columns:minmax(0, 1fr) 9px minmax(220px, var(--side-w, 290px)); gap:8px; align-items:stretch; }
   .browse-main { min-width:0; }
@@ -429,7 +412,7 @@
   body.docmode .preview { display:block; position:static; max-height:none; overflow:hidden; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
   body.docmode .sheet-top { position:static; box-shadow:inset 0 3px 0 var(--tone, var(--accent)); }
   body.docmode .hero, body.docmode .toolbar, body.docmode .filterbar,
-  body.docmode .docs, body.docmode #empty, body.docmode .pager,
+  body.docmode .docs, body.docmode #empty,
   body.docmode .browse-side { display:none; }
   body.docmode .browse { display:block; }
   body.docmode .preview .close-x { display:none; }
@@ -855,8 +838,6 @@
         <tbody id="stack"></tbody>
       </table>
 
-      <nav class="pager" id="pager" hidden aria-label="Pages"></nav>
-
       <aside class="preview" id="previewPanel" aria-live="polite">
         <div class="placeholder" id="placeholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h7L20 10.5v7A2.5 2.5 0 0 1 17.5 20h-11A2.5 2.5 0 0 1 4 17.5v-11Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 4v6.5h7"/></svg>
@@ -1019,7 +1000,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.50 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.49</span>
     </div>
   </footer>
 
@@ -1820,45 +1801,13 @@
     LIBRARY.forEach(function (d, i) { if (!d.n) d.n = String(i+1).padStart(2, "0"); });
   }
 
-  var PAGE_SIZE = 30;                          // rows shown per page
-  var pageNo = 1;                              // current page
-
-  // The page-number strip at the foot of the shelf: first, last and a window
-  // around the current page, with "…" where pages are skipped.
-  function pageWindow(cur, pages) {
-    var set = {};
-    set[1] = 1; set[pages] = 1;
-    for (var d = -2; d <= 2; d++) { var n = cur + d; if (n >= 1 && n <= pages) set[n] = 1; }
-    var nums = Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
-    var out = [], last = 0;
-    nums.forEach(function (n) { if (last && n - last > 1) out.push("…"); out.push(n); last = n; });
-    return out;
-  }
-  function renderPager(total, pages) {
-    var el = document.getElementById("pager");
-    if (!el) return;
-    if (total === 0 || pages <= 1) { el.hidden = true; el.innerHTML = ""; return; }
-    var html = '<button class="pg" type="button" data-pg="' + (pageNo - 1) + '"' + (pageNo <= 1 ? " disabled" : "") + '>‹ Prev</button>';
-    pageWindow(pageNo, pages).forEach(function (n) {
-      if (n === "…") html += '<span class="pg-gap">…</span>';
-      else html += '<button class="pg' + (n === pageNo ? " on" : "") + '" type="button" data-pg="' + n + '"' + (n === pageNo ? ' aria-current="page"' : "") + ">" + n + "</button>";
-    });
-    html += '<button class="pg" type="button" data-pg="' + (pageNo + 1) + '"' + (pageNo >= pages ? " disabled" : "") + '>Next ›</button>';
-    el.innerHTML = html;
-    el.hidden = false;
-  }
-
   function render() {
     assignNumbers();
     renderTypeFilter();
     renderBrowseCols();
     var list = sorted(all().filter(matches));
-    var pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-    if (pageNo > pages) pageNo = pages;
-    if (pageNo < 1) pageNo = 1;
-    var pageList = list.slice((pageNo - 1) * PAGE_SIZE, pageNo * PAGE_SIZE);
 
-    stackEl.innerHTML = pageList.map(function (d) {
+    stackEl.innerHTML = list.map(function (d) {
       var id = idOf(d);
       var lk = linksOf(d);
       return '<tr data-id="' + esc(id) + '" class="' + (picked[id] ? "picked" : "") + '" style="' + toneVars(d.collection) + '">' +
@@ -1890,8 +1839,6 @@
         '<td class="favc"><button type="button" class="favbtn' + (isFav(id) ? " on" : "") + '" data-fav="' + esc(id) + '" title="' + (isFav(id) ? "Remove from favourites" : "Add to favourites") + '" aria-label="Favourite">' + (isFav(id) ? "\u2605" : "\u2606") + '</button></td>' +
       '</tr>';
     }).join("");
-
-    renderPager(list.length, pages);
 
     splitEl.hidden = list.length === 0;
     emptyEl.hidden = list.length > 0;
@@ -2564,12 +2511,11 @@
   /* =========================================================================
      SEARCH + FILTERS
      ========================================================================= */
-  document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); pageNo = 1; render(); });
-  typeFilterEl.addEventListener("change", function () { typeFilter = this.value; pageNo = 1; render(); });
+  document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); render(); });
+  typeFilterEl.addEventListener("change", function () { typeFilter = this.value; render(); });
   document.getElementById("sortBy").addEventListener("change", function () {
     sortBy = this.value;
     sortDir = (sortBy === "title" || sortBy === "creator") ? "asc" : "desc";
-    pageNo = 1;
     render();
   });
   // Sortable column headers (▲/▼ on the active column).
@@ -2581,16 +2527,7 @@
     else { sortBy = key; sortDir = (key === "title" || key === "type" || key === "collection" || key === "creator") ? "asc" : "desc"; }
     var sel = document.getElementById("sortBy");
     if (sel && sel.querySelector('option[value="' + key + '"]')) sel.value = key;
-    pageNo = 1;
     render();
-  });
-  // Pagination — jump to a page. (30 rows a page; the strip sits under the shelf.)
-  document.getElementById("pager").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-pg]"); if (!b || b.disabled) return;
-    var n = parseInt(b.getAttribute("data-pg"), 10); if (!n) return;
-    pageNo = n; render();
-    var top = docsTable.getBoundingClientRect().top + window.pageYOffset - 70;
-    window.scrollTo({ top:top, behavior:"smooth" });
   });
   /* ---------------- quick links popover (the "Links" button on each row) ---------------- */
   var linkPopEl = document.getElementById("linkPop"), linkBtnActive = null;
@@ -2725,7 +2662,7 @@
       return;
     }
     var b = e.target.closest(".coll-pick"); if (!b) return;
-    activeTag = b.getAttribute("data-t"); pageNo = 1; render();
+    activeTag = b.getAttribute("data-t"); render();
   });
   document.getElementById("collHead").addEventListener("click", function () {
     browseOpen = !browseOpen;
@@ -2776,8 +2713,7 @@
       sbRpc("hub_delete_documents", { p_ids:sharedIds, pw:pw })
         .then(function () { loadShared(); })
         .catch(function (e) {
-          toast(/not allowed/i.test(e.message) ? "Not allowed to delete — ask the admin"
-              : (/wrong password/i.test(e.message) ? "Wrong password — removed here only" : "Removed in this browser (shared delete failed)"));
+          toast(/wrong password/i.test(e.message) ? "Wrong password — removed here only" : "Removed in this browser (shared delete failed)");
           console.warn("Library:", e.message);
         });
     }
@@ -2791,13 +2727,9 @@
     var msg = d.shared
       ? 'Remove "' + d.title + '" from the public library for everyone?'
       : (isLocal ? 'Delete your document "' + d.title + '"?' : 'Hide "' + d.title + '" from your shelf? The built-in document stays for other visitors.');
-    var pw = null;
-    if (d.shared && dbOn) {
-      if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete this shared document."); return; }
-      if (!creds.canDelete) { toast("Your user is not allowed to delete — ask the admin"); return; }
-      pw = creds.key;
-    }
     if (!confirm(msg)) return;
+    var pw = null;
+    if (d.shared && dbOn) { if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete this shared document."); return; } pw = creds.key; }
     closeDoc();
     deleteDocs([d], pw);
   });
@@ -2808,7 +2740,6 @@
     if (!docs.length) { toast("Tick some documents first"); return; }
     var n = docs.length;
     if (!unlocked()) { toast("Enter your private key first"); requestKey("Enter your private key to delete the selected documents."); return; }
-    if (docs.some(function (d) { return d.shared; }) && !creds.canDelete) { toast("Your user is not allowed to delete — ask the admin"); return; }
     if (!confirm("Delete " + n + " selected document" + (n === 1 ? "" : "s") + "? This cannot be undone.")) return;
     deleteDocs(docs, creds.key);
     toast(n + " document" + (n === 1 ? "" : "s") + " deleted");
@@ -2973,20 +2904,9 @@
   }
   function signIn(name, email, key) {
     return sha256hex("hub:" + key).then(function (hash) {
-      creds = { name:name || "", email:email || "", key:key, hash:hash, canDelete:false };
-      persist();
-      syncUser();
-      afterSignIn();
+      creds = { name:name || "", email:email || "", key:key, hash:hash };
+      persist(); afterSignIn();
     });
-  }
-  // Tell the database this user is here, and cache whether they may delete.
-  function syncUser() {
-    if (!dbOn || !creds || !creds.hash) return;
-    sbRpc("hub_user_ping", { p_hash:creds.hash, p_name:creds.name || "", p_email:creds.email || "" })
-      .catch(function () { /* users store not installed yet */ });
-    sbRpc("hub_user_can_delete", { p_hash:creds.hash })
-      .then(function (can) { creds.canDelete = !!can; persist(); })
-      .catch(function () { /* not installed yet */ });
   }
   document.getElementById("keyBtn").addEventListener("click", function () {
     if (keyForm.hidden) openKeyPanel(); else closeKeyPanel();
@@ -3050,7 +2970,7 @@
   applyWrap();
   render();
   renderKeyPanel();
-  if (unlocked()) { syncUser(); loadFavourites(); }
+  if (unlocked()) loadFavourites();
   loadShared();
   loadViewCounts();
   loadSharedLinks();
