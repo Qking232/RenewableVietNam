@@ -216,10 +216,6 @@
     Rev 0.53  (2026-10-11)  The search box sits on a line of its own, full width, with the toolbar's
                             action buttons (Add document, Export links, Create User, Private key) on
                             the line below it.
-    Rev 0.54  (2026-10-11)  Search is a button. The search box gains a "Search" button (Enter works
-                            too) — the shelf filters when you search rather than on every keystroke —
-                            and a spinner in the box plus a pulse over the results run while it
-                            searches.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -340,17 +336,11 @@
 
   /* ---------------- Toolbar ---------------- */
   .toolbar { display:flex; flex-direction:column; gap:10px; margin:22px 0 12px; }
-  .search-row { display:flex; gap:10px; align-items:stretch; }
-  .search { position:relative; flex:1 1 auto; min-width:0; }
+  .search { position:relative; width:100%; }
   .toolbar-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   .search svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--faint); pointer-events:none; }
-  .search input { width:100%; padding:10px 36px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
+  .search input { width:100%; padding:10px 12px 10px 36px; font:inherit; font-size:13.5px; color:var(--text); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); outline:none; }
   .search input:focus { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft); background:var(--surface); }
-  /* Searching — a spinner in the box and a pulse across the results */
-  .search .spin { position:absolute; right:12px; top:50%; width:15px; height:15px; margin-top:-8px; border:2px solid var(--line-strong); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  #stack.searching, #pager.searching { animation:pulse .9s ease-in-out infinite; pointer-events:none; }
-  @keyframes pulse { 0%,100% { opacity:.35; } 50% { opacity:.85; } }
   .btn { font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; padding:10px 16px; border-radius:var(--radius); border:1px solid var(--line-strong); background:var(--btn-face); color:var(--text); white-space:nowrap; transition:border-color .2s ease, background .2s ease, transform .1s ease; }
   .btn:hover { border-color:var(--accent); }
   .btn:active { transform:translateY(1px); }
@@ -723,14 +713,10 @@
     </section>
 
     <div class="toolbar">
-      <div class="search-row">
-        <label class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
-          <input type="search" id="q" placeholder="Search title, author, summary, collection…" autocomplete="off" />
-          <span class="spin" id="qSpin" hidden aria-hidden="true"></span>
-        </label>
-        <button class="btn primary" id="searchBtn" type="button" title="Search the library">Search</button>
-      </div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+        <input type="search" id="q" placeholder="Search title, author, summary, collection…" autocomplete="off" />
+      </label>
       <div class="toolbar-actions">
         <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
         <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
@@ -1054,7 +1040,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.54 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.53 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -2599,26 +2585,7 @@
   /* =========================================================================
      SEARCH + FILTERS
      ========================================================================= */
-  // Search runs on the button or Enter, with a short animation (a spinner in
-  // the box and a pulse over the results) so the search is visible.
-  function runSearch() {
-    var input = document.getElementById("q");
-    var next = input.value.trim().toLowerCase();
-    var spin = document.getElementById("qSpin");
-    var btn = document.getElementById("searchBtn");
-    var stack = document.getElementById("stack");
-    var pager = document.getElementById("pager");
-    spin.hidden = false; btn.disabled = true;
-    stack.classList.add("searching"); pager.classList.add("searching");
-    if (runSearch._t) clearTimeout(runSearch._t);
-    runSearch._t = setTimeout(function () {
-      query = next; pageNo = 1; render();
-      spin.hidden = true; btn.disabled = false;
-      stack.classList.remove("searching"); pager.classList.remove("searching");
-    }, 450);
-  }
-  document.getElementById("searchBtn").addEventListener("click", runSearch);
-  document.getElementById("q").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runSearch(); } });
+  document.getElementById("q").addEventListener("input", function () { query = this.value.trim().toLowerCase(); pageNo = 1; render(); });
   typeFilterEl.addEventListener("change", function () { typeFilter = this.value; pageNo = 1; render(); });
   document.getElementById("sortBy").addEventListener("change", function () {
     sortBy = this.value;
