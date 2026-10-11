@@ -220,6 +220,10 @@
                             too) — the shelf filters when you search rather than on every keystroke —
                             and a spinner in the box plus a pulse over the results run while it
                             searches.
+    Rev 0.55  (2026-10-11)  Sign Up / Sign in. "Create User" is renamed "Sign Up", and it and the
+                            sign-in button (now "Sign in", formerly "Private key") move from the
+                            toolbar to the header's top right, beside the theme toggle. "Export links"
+                            now appears only once you are signed in.
 
   Single self-contained file. No CDN, no build step. The shared store is optional —
   with no keys configured, the page works offline. Study / research only.
@@ -650,7 +654,8 @@
   }
   @media (max-width:560px) {
     .wrap { padding-left:calc(10px + env(safe-area-inset-left)); padding-right:calc(10px + env(safe-area-inset-right)); }
-    .top-inner { padding:8px 14px; }
+    .top-inner { padding:8px 14px; flex-wrap:wrap; row-gap:8px; }
+    .top-actions .btn { padding:6px 9px; font-size:9.5px; letter-spacing:.04em; }
     .hero { padding-top:22px; }
     .hero h1 { font-size:clamp(24px, 7vw, 32px); }
     .hero p.lede { font-size:13.5px; }
@@ -693,6 +698,8 @@
         <a class="brand" href="/"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="2.75"/><circle cx="12" cy="4.25" r="1.75"/><circle cx="19.25" cy="8.75" r="1.75"/><circle cx="17" cy="18.25" r="1.75"/><circle cx="7" cy="18.25" r="1.75"/><circle cx="4.75" cy="8.75" r="1.75"/><line x1="12" y1="6" x2="12" y2="9.25"/><line x1="17.65" y1="9.8" x2="14.4" y2="10.9"/><line x1="15.65" y1="16.9" x2="13.7" y2="14.3"/><line x1="8.35" y1="16.9" x2="10.3" y2="14.3"/><line x1="6.35" y1="9.8" x2="9.6" y2="10.9"/></svg></span> The Library</a>
       </div>
       <div class="top-actions">
+        <button class="btn small" id="keyBtn" type="button" title="Sign up with a name, email and private key">Sign Up</button>
+        <button class="btn small" id="keyReBtn" type="button" title="Sign in with the email and private key you registered">Sign in</button>
         <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle light / dark theme">
           <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="display:none">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
@@ -733,9 +740,7 @@
       </div>
       <div class="toolbar-actions">
         <button class="btn primary" id="uploadBtn" type="button">＋ Add document</button>
-        <button class="btn" id="exportLinksBtn" type="button" disabled title="Export the links of the selected documents">Export links</button>
-        <button class="btn" id="keyBtn" type="button" title="Create a user with a name, email and private key">Create User</button>
-        <button class="btn" id="keyReBtn" type="button" title="Sign in by re-entering the private key you created">Private key</button>
+        <button class="btn" id="exportLinksBtn" type="button" hidden disabled title="Export the links of the selected documents">Export links</button>
       </div>
     </div>
 
@@ -839,8 +844,8 @@
     </form>
 
     <form class="add" id="keyForm" hidden>
-      <h3>Create user</h3>
-      <p class="hint" id="keyHint">Create a user with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.</p>
+      <h3>Sign up</h3>
+      <p class="hint" id="keyHint">Sign up with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.</p>
       <div class="field three">
         <div>
           <label for="k-name">Name</label>
@@ -856,7 +861,7 @@
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn primary" type="submit" id="kSubmit">Create user</button>
+        <button class="btn primary" type="submit" id="kSubmit">Sign up</button>
         <button class="btn ghost" type="button" id="kCancel">Cancel</button>
         <button class="btn ghost" type="button" id="kLock" hidden>Sign out</button>
       </div>
@@ -864,7 +869,7 @@
     </form>
 
     <form class="add" id="reKeyForm" hidden>
-      <h3>Private key</h3>
+      <h3>Sign in</h3>
       <p class="hint" id="reKeyHint">Sign in with the email and private key you registered. It reveals the download links and unlocks editing, comments and your favourites.</p>
       <div class="field two">
         <div>
@@ -1054,7 +1059,7 @@
   <footer class="site">
     <div class="wrap foot-inner">
       <span>For study &amp; discussion only — non-commercial. AI-assisted compilation; verify independently.</span>
-      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.54 · <a href="/hub/admin/">Admin</a></span>
+      <span class="mono"><a href="/">@renewablevietnam.com</a> · The Library · Rev 0.55 · <a href="/hub/admin/">Admin</a></span>
     </div>
   </footer>
 
@@ -2910,10 +2915,12 @@
   var keyForm = document.getElementById("keyForm");
   var reForm  = document.getElementById("reKeyForm");
   function unlocked() { return !!(creds && creds.key); }
-  // The "Edit" button is reachable only once a private key is accepted.
+  // Sign-in gates the "Edit" button and the "Export links" button.
   function applyLocks() {
     var eb = document.getElementById("editDocBtn");
     if (eb) eb.hidden = !unlocked();
+    var ex = document.getElementById("exportLinksBtn");
+    if (ex) ex.hidden = !unlocked();
   }
   // Ask for the key: a returning user re-enters it, a new visitor creates a user.
   function requestKey(note) { if (userRec) openRePanel(note); else openKeyPanel(note); }
@@ -2925,7 +2932,7 @@
     document.getElementById("k-name").value = src.name || "";
     document.getElementById("k-email").value = src.email || "";
     document.getElementById("keyHint").textContent = note ||
-      "Create a user with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.";
+      "Sign up with your name, email and a private key. The key is the account — it reveals the download links, unlocks editing and comments, and keeps your favourites on every device.";
     document.getElementById("kMsg").hidden = true;
     renderKeyPanel();
     if (!unlocked()) document.getElementById("k-key").focus();
@@ -2955,7 +2962,7 @@
       submit.hidden = true;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = true; });
     } else {
-      btn.textContent = "Create User";
+      btn.textContent = "Sign Up";
       lock.hidden = true;
       submit.hidden = false;
       Array.prototype.forEach.call(inputs, function (i) { i.disabled = false; });
@@ -3011,7 +3018,7 @@
     if (openId) openDoc(openId, { silent:true }); else render();
     toast("Signed out — download links hidden");
   });
-  // Create a user (name + email + private key). One email and one key per account,
+  // Sign up (name + email + private key). One email and one key per account,
   // so the same person cannot end up with two users.
   keyForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -3073,7 +3080,7 @@
         return signIn(userRec.name, userRec.email, key);
       });
     }).catch(function (err) {
-      if (err.message === "no-account") msg.textContent = "No account for that email and private key — use “Create User” first.";
+      if (err.message === "no-account") msg.textContent = "No account for that email and private key — use “Sign Up” first.";
       else if (err.message === "email-mismatch") msg.textContent = "That email does not match this private key.";
       else msg.textContent = "Could not sign in — please try again.";
     });
