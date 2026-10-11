@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coin Search + 16 Models — Rev 0.05</title>
+<style>
+  :root{
+    --accent:#3b82f6; --up:#16c784; --down:#ea3943; --amber:#e0a83a;
+    --radius:8px; --pad:16px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  html[data-theme="dark"]{
+    --bg:#0b0d10; --panel:rgba(20,23,29,.72); --card:#14171d;
+    --text:#e7ebf0; --muted:#96a0ad; --border:#262b33; --field:#0f1216;
+  }
+  html[data-theme="light"]{
+    --bg:#f6f7f9; --panel:rgba(255,255,255,.8); --card:#ffffff;
+    --text:#0f1318; --muted:#5b6472; --border:#e2e5ea; --field:#ffffff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font);
+    -webkit-font-smoothing:antialiased; line-height:1.45;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  header{
+    position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:12px;
+    padding:12px var(--pad); background:var(--panel);
+    backdrop-filter:saturate(160%) blur(12px); -webkit-backdrop-filter:saturate(160%) blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  header::after{content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--accent); opacity:.9}
+  .brand{font-weight:700; font-size:15px; letter-spacing:.2px}
+  .brand .dot{color:var(--accent)}
+  .spacer{flex:1}
+  .icon-btn{
+    background:transparent; color:var(--text); border:1px solid var(--border);
+    height:36px; min-width:36px; padding:0 10px; border-radius:var(--radius); cursor:pointer; font-size:14px; line-height:1;
+  }
+  .icon-btn:hover{border-color:var(--accent)}
+  main{padding:var(--pad); display:flex; flex-direction:column; gap:14px}
+  .row{display:flex; gap:10px}
+  input[type="text"]{
+    flex:1; min-width:0; background:var(--field); color:var(--text);
+    border:1px solid var(--border); border-radius:var(--radius);
+    padding:12px 13px; font-size:15px; font-family:var(--font);
+  }
+  input::placeholder{color:var(--muted)}
+  input:focus{outline:none; border-color:var(--accent); caret-color:var(--accent)}
+  button.go{
+    background:var(--accent); color:#fff; border:0; border-radius:var(--radius);
+    padding:0 18px; font-size:15px; font-weight:600; cursor:pointer;
+  }
+  button.go:active{transform:translateY(1px)}
+  .chips{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{
+    background:transparent; color:var(--muted); border:1px solid var(--border);
+    border-radius:999px; padding:5px 11px; font-size:12.5px; cursor:pointer; font-family:var(--font);
+  }
+  .chip:hover{color:var(--text); border-color:var(--accent)}
+  .status{color:var(--muted); font-size:13.5px; min-height:20px}
+  .status.error{color:var(--down)}
+  .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px}
+  .panel h2{margin:0 0 2px; font-size:14px; font-weight:700; letter-spacing:.2px; display:flex; align-items:center; gap:8px}
+  .panel .sub{color:var(--muted); font-size:12.5px}
+  .divider{height:1px; background:var(--border); border:0; margin:16px 0}
+
+  /* combined crypto value + final decision */
+  .ctop{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap}
+  .ctop .name{font-size:18px; font-weight:700}
+  .ctop .base{color:var(--muted); font-size:13px; font-weight:600}
+  .price{font-size:30px; font-weight:700; letter-spacing:-.5px; margin-top:2px}
+  .chg{font-size:14px; font-weight:600}
+  .chg.up{color:var(--up)} .chg.down{color:var(--down)}
+  .hl{color:var(--muted); font-size:13.5px}
+  .meta{color:var(--muted); font-size:12px; margin-top:4px}
+  .spark{width:100%; height:54px; display:block; margin-top:8px}
+
+  .section{display:none; flex-direction:column; gap:12px}
+  .section.show{display:flex}
+
+  .verdict-row{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px}
+  .verdict{font-size:13px; font-weight:700; letter-spacing:.3px; padding:6px 12px; border-radius:999px; border:1px solid transparent}
+  .verdict.green{color:var(--up); border-color:var(--up); background:color-mix(in srgb, var(--up) 12%, transparent)}
+  .verdict.red{color:var(--down); border-color:var(--down); background:color-mix(in srgb, var(--down) 12%, transparent)}
+  .verdict.amber{color:var(--amber); border-color:var(--amber); background:color-mix(in srgb, var(--amber) 12%, transparent)}
+  .score{font-size:22px; font-weight:700}
+  .score .max{color:var(--muted); font-size:14px; font-weight:600}
+  .streaks{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .badge{font-size:12px; font-weight:600; border:1px solid var(--border); border-radius:999px; padding:3px 10px; color:var(--muted)}
+  .badge.up{color:var(--up); border-color:var(--up)} .badge.down{color:var(--down); border-color:var(--down)}
+  .note{margin-top:10px; font-size:13px; color:var(--muted); border-left:2px solid var(--accent); padding-left:10px}
+  .bar{display:flex; height:10px; border-radius:6px; overflow:hidden; border:1px solid var(--border); margin-top:12px}
+  .bar span{display:block; height:100%}
+  .bar .b-up{background:var(--up)} .bar .b-flat{background:var(--muted)} .bar .b-down{background:var(--down)}
+  .counts{display:flex; gap:14px; margin-top:8px; color:var(--muted); font-size:12.5px}
+  .counts b{color:var(--text)}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:10px}
+  .fc{
+    background:var(--card); border:1px solid var(--border); border-left-width:3px; border-radius:12px;
+    padding:12px; display:flex; flex-direction:column; gap:8px; min-height:104px; justify-content:space-between;
+  }
+  .fc.up{border-left-color:var(--up)} .fc.down{border-left-color:var(--down)} .fc.zero{border-left-color:var(--muted)}
+  .fc .h{display:flex; align-items:center; justify-content:space-between; gap:6px}
+  .fc .t{font-weight:700; font-size:13.5px}
+  .fc .s{font-size:19px; font-weight:700}
+  .fc.up .s{color:var(--up)} .fc.down .s{color:var(--down)} .fc.zero .s{color:var(--muted)}
+  .fc .r{font-size:11.5px; color:var(--muted); line-height:1.35}
+  .fc .nm{font-size:10.5px; color:var(--muted); opacity:.75}
+  .new{color:var(--accent); font-size:10px; font-weight:700}
+
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  thead th{
+    text-align:left; color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase;
+    letter-spacing:.4px; padding:0 8px 8px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--card);
+  }
+  tbody td{padding:9px 8px; border-bottom:1px solid var(--border); vertical-align:middle}
+  tbody tr:last-child td{border-bottom:0}
+  th.c,td.c{text-align:center}
+  th.r,td.r{text-align:right}
+  .scroll{max-height:340px; overflow:auto}
+  .mini{font-size:11px; font-weight:700; padding:2px 7px; border-radius:999px; border:1px solid var(--border); color:var(--muted); white-space:nowrap}
+  .mini.up{color:var(--up); border-color:var(--up)} .mini.down{color:var(--down); border-color:var(--down)}
+  .mini.ok{color:var(--up); border-color:var(--up)} .mini.bad{color:var(--down); border-color:var(--down)}
+  .mini.flat{color:var(--amber); border-color:var(--amber)}
+  .link{color:var(--accent); cursor:pointer; text-decoration:none; font-weight:600}
+  .rm{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:6px;cursor:pointer;font-size:11px;padding:3px 8px}
+  .rm:hover{border-color:var(--down);color:var(--down)}
+  .pf-form{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .pf-form input[type="text"]{flex:1;min-width:180px}
+  .pf-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+
+  details{border:1px solid var(--border); border-radius:var(--radius); background:var(--card)}
+  summary{cursor:pointer; padding:12px 16px; font-size:13.5px; font-weight:600; color:var(--text)}
+  details .body{padding:0 16px 16px; color:var(--muted); font-size:13px}
+  ol{margin:8px 0 0; padding-left:20px} ol li{margin:3px 0}
+  code{background:var(--field); border:1px solid var(--border); border-radius:4px; padding:1px 5px; font-size:12px}
+  footer{color:var(--muted); font-size:11.5px; padding:6px var(--pad) 26px; opacity:.85}
+  @media (max-width:480px){
+    .price{font-size:26px} header{padding:10px 12px} main{padding:12px; gap:12px}
+    .cards{grid-template-columns:repeat(auto-fill,minmax(128px,1fr))}
+    table{font-size:12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="dot">₿</span> Coin Search <span style="color:var(--muted);font-weight:600">· 16 models</span></div>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="theme" title="Toggle theme">◐</button>
+</header>
+
+<main>
+  <!-- PORTFOLIO -->
+  <div class="section show" id="portfolio">
+    <div class="panel">
+      <h2>Portfolio</h2>
+      <div class="sub">Coin price, today's final decision + score, and the run of correct/incorrect days vs yesterday.</div>
+      <div class="pf-form">
+        <input type="text" id="p-name" placeholder="Add a coin (e.g. BTC, solana, ARB)" autocomplete="off" spellcheck="false">
+        <button class="go" id="p-add">Add</button>
+      </div>
+      <div class="pf-actions">
+        <button class="chip" id="p-export">Export JSON</button>
+        <button class="chip" id="p-import-btn">Import JSON</button>
+        <input type="file" id="p-import" accept="application/json,.json" style="display:none">
+        <span class="status" id="p-status" style="font-size:12px"></span>
+      </div>
+      <div class="scroll" style="margin-top:12px">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th class="r">Coin price</th><th class="c">Final decision</th>
+              <th class="c">Score</th><th class="c">Correct / incorrect run</th><th class="c"></th>
+            </tr>
+          </thead>
+          <tbody id="p-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <input type="text" id="q" placeholder="Search coin name…" autocomplete="off" spellcheck="false" enterkeyhint="search">
+    <button class="go" id="go">Search</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+  <div class="status" id="status">Type a coin name or ticker — e.g. pepe, ARB, solana.</div>
+
+  <!-- COMBINED: crypto value + final decision -->
+  <div class="section" id="overview">
+    <div class="panel">
+      <div class="ctop"><span class="name" id="c-name"></span><span class="base" id="c-base"></span></div>
+      <div class="price" id="c-price"></div>
+      <div class="chg" id="c-chg"></div>
+      <div class="hl" id="c-hl"></div>
+      <div class="meta" id="c-meta"></div>
+      <svg class="spark" id="spark" viewBox="0 0 300 54" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+      <hr class="divider">
+
+      <h2>Final decision · today</h2>
+      <div class="sub">Latest daily candle. Score sums all 16 models.</div>
+      <div class="verdict-row">
+        <span class="verdict amber" id="d-verdict">—</span>
+        <span class="score"><span id="d-score">—</span><span class="max" id="d-max"></span></span>
+      </div>
+      <div class="streaks" id="d-streaks"></div>
+      <div class="note" id="d-note"></div>
+      <div class="bar" id="d-bar"><span class="b-up"></span><span class="b-flat"></span><span class="b-down"></span></div>
+      <div class="counts">
+        <span>Bullish <b id="d-bull">0</b></span>
+        <span>Neutral <b id="d-flat">0</b></span>
+        <span>Bearish <b id="d-bear">0</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="models">
+    <div class="panel"><h2>Model flashcards</h2><div class="sub">16 models · each scores −2…+2</div></div>
+    <div class="cards" id="m-cards"></div>
+  </div>
+
+  <div class="section" id="history">
+    <div class="panel">
+      <h2>Final decision · each day <span style="color:var(--muted);font-weight:600;font-size:12px">· 180 days</span></h2>
+      <div class="sub">Each day's call is graded against the next day's close (app's <code>gradeDecision</code>).</div>
+      <div class="scroll" style="margin-top:10px">
+        <table>
+          <thead><tr><th>Day</th><th class="r">Coin value</th><th class="c">Score</th><th>Decision</th><th class="c">Result</th></tr></thead>
+          <tbody id="h-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <details>
+    <summary>How the search, the models and the decisions work</summary>
+    <div class="body">
+      <b>Search</b> — the reference app's ladder (<code>Repository.resolveCoinId</code>): local list first, then CoinGecko <code>/search</code>.
+      <div style="margin-top:12px"><b>Models</b> — the app's 10 (<code>QuantKt.MODEL_NAMES</code>) + 6 added, each scoring −2…+2
+      (<code>computeDay</code>). Verdict thresholds are normalised to the score range.</div>
+      <div style="margin-top:12px"><b>Final decision</b> — the day's verdict, graded against the <i>next</i> day's close:
+      a BUY is <span style="color:var(--up)">correct</span> if price rises, a SELL is correct if it falls, HOLD is neutral
+      (<code>gradeVerdict</code>). Streaks count consecutive same-direction decisions (<code>decisionStreak</code>) and
+      consecutive correct/incorrect days (<code>gradedRun</code> / <code>correctStreak</code>).</div>
+      <div style="margin-top:12px"><b>Portfolio</b> — a watchlist. Each row shows the coin's live price, today's decision and the
+      current correct/incorrect run. Saved in your browser; export/import as JSON.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.05.</div>
+    </div>
+  </details>
+</main>
+
+<footer id="foot">Data: Binance public API · CoinGecko. Model scores are a study aid, not financial advice.</footer>
+
+<script>
+(() => {
+  const BINANCE = 'https://data-api.binance.vision';
+  const COINGECKO = 'https://api.coingecko.com/api/v3';
+  const INDEX_TTL_MS = 24 * 60 * 60 * 1000;
+  const INDEX_KEY = 'coinsearch.index.v1';
+  const PF_KEY = 'coinsearch.portfolio.v3';
+  const HISTORY_DAYS = 180;
+
+  const COIN_NAMES = {
+    BTC:'Bitcoin',ETH:'Ethereum',BNB:'BNB',XRP:'XRP',SOL:'Solana',ADA:'Cardano',DOGE:'Dogecoin',
+    TRX:'TRON',AVAX:'Avalanche',LINK:'Chainlink',DOT:'Polkadot',POL:'Polygon Ecosystem Token',
+    LTC:'Litecoin',BCH:'Bitcoin Cash',XLM:'Stellar',ATOM:'Cosmos',ETC:'Ethereum Classic',
+    FIL:'Filecoin',APT:'Aptos',ARB:'Arbitrum',OP:'Optimism',NEAR:'NEAR Protocol',
+    ICP:'Internet Computer',ALGO:'Algorand',VET:'VeChain',HBAR:'Hedera',FTM:'Fantom',
+    SAND:'The Sandbox',MANA:'Decentraland',AXS:'Axie Infinity',GALA:'Gala',AAVE:'Aave',
+    UNI:'Uniswap',MKR:'Maker',CRV:'Curve DAO',COMP:'Compound',SNX:'Synthetix',SUSHI:'SushiSwap',
+    CAKE:'PancakeSwap',RUNE:'THORChain',INJ:'Injective',SEI:'Sei',SUI:'Sui',TIA:'Celestia',
+    PYTH:'Pyth Network',JUP:'Jupiter',RAY:'Raydium',BONK:'Bonk',WIF:'dogwifhat',PEPE:'Pepe',
+    SHIB:'Shiba Inu',FLOKI:'Floki',TON:'Toncoin',TAO:'Bittensor',RENDER:'Render',
+    FET:'Artificial Superintelligence',GRT:'The Graph',IMX:'Immutable',STX:'Stacks',LDO:'Lido DAO',
+    ENA:'Ethena',ONDO:'Ondo',PENDLE:'Pendle',EIGEN:'EigenLayer',WLD:'Worldcoin',STRK:'Starknet',
+    ZK:'zkSync',BLUR:'Blur',ORDI:'ORDI',TRUMP:'OFFICIAL TRUMP',XAUT:'Tether Gold',PAXG:'PAX Gold',
+    ZEC:'Zcash',DASH:'Dash',NEO:'Neo',QTUM:'Qtum',IOTA:'IOTA',ONE:'Harmony',ZIL:'Zilliqa',
+    THETA:'Theta Network',EOS:'EOS',XTZ:'Tezos',FLOW:'Flow',CHZ:'Chiliz',ENJ:'Enjin Coin',
+    KSM:'Kusama',KAVA:'Kava',CFX:'Conflux',LSK:'Lisk',MINA:'Mina',APE:'ApeCoin',GMT:'STEPN',
+    VIRTUAL:'Virtuals Protocol',MORPHO:'Morpho',ETHFI:'Ether.fi',PLUME:'Plume',PUMP:'Pump.fun',
+    ASTER:'Aster',WLFI:'World Liberty Financial',BERA:'Berachain',PENGU:'Pudgy Penguins',U:'U',
+    BABY:'Babylon',SAGA:'Saga',W:'Wormhole',JTO:'Jito',EGLD:'MultiversX'
+  };
+
+  const EXCLUDED = new Set(['USDC','FDUSD','TUSD','BUSD','DAI','USDP','AEUR','USD1','XUSD','USDE','SUSD','USDS','PYUSD','EURI','EUR','GBP','TRY','BRL','ARS','JPY','BIDR','IDRT','RUB','UAH','NGN','ZAR','PLN','RON','CZK','BKRW','VAI','USTC','UST','BFUSD','RLUSD','USDY','USDT']);
+  const LEVERAGE = /(UP|DOWN|BULL|BEAR)$/;
+  const isExcluded = (b) => EXCLUDED.has(b) || LEVERAGE.test(b);
+
+  const FALLBACK = [
+    ['BTCUSDT','BTC','Bitcoin'],['ETHUSDT','ETH','Ethereum'],['BNBUSDT','BNB','BNB'],
+    ['SOLUSDT','SOL','Solana'],['XRPUSDT','XRP','XRP'],['ADAUSDT','ADA','Cardano'],
+    ['DOGEUSDT','DOGE','Dogecoin'],['AVAXUSDT','AVAX','Avalanche'],['LINKUSDT','LINK','Chainlink'],
+    ['TONUSDT','TON','Toncoin'],['TAOUSDT','TAO','Bittensor'],['PEPEUSDT','PEPE','Pepe']
+  ].map(([id, base, name]) => ({ id, base, name }));
+
+  const $ = (id) => document.getElementById(id);
+  const qs = new URLSearchParams(location.search);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+
+  // ---- theme --------------------------------------------------------------
+  const savedTheme = localStorage.getItem('coinsearch.theme');
+  if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+  $('theme').onclick = () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('coinsearch.theme', next);
+  };
+
+  // ---- coin index ---------------------------------------------------------
+  let index = null;
+  async function loadIndex() {
+    if (index) return index;
+    try {
+      const cached = JSON.parse(localStorage.getItem(INDEX_KEY) || 'null');
+      if (cached && Date.now() - cached.savedAt < INDEX_TTL_MS && cached.coins.length) { index = cached.coins; return index; }
+    } catch {}
+    try {
+      const res = await fetch(`${BINANCE}/api/v3/exchangeInfo?permissions=SPOT`, { signal: AbortSignal.timeout(12000) });
+      const data = await res.json();
+      const coins = [];
+      for (const s of data.symbols || []) {
+        if (s.quoteAsset !== 'USDT' || s.status !== 'TRADING' || s.isSpotTradingAllowed === false) continue;
+        const base = s.baseAsset;
+        if (isExcluded(base)) continue;
+        coins.push({ id: s.symbol, base, name: COIN_NAMES[base] || base });
+      }
+      if (coins.length) { index = coins; localStorage.setItem(INDEX_KEY, JSON.stringify({ savedAt: Date.now(), coins })); return index; }
+    } catch {}
+    index = FALLBACK;
+    return index;
+  }
+
+  async function cgSearch(query) {
+    const res = await fetch(`${COINGECKO}/search?query=${encodeURIComponent(query)}`, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const out = [];
+    for (const c of data.coins || []) {
+      const base = String(c.symbol || '').toUpperCase();
+      if (base) out.push({ id: base + 'USDT', base, name: String(c.name || base), cg: c.id });
+    }
+    return out;
+  }
+
+  async function resolveCoin(text) {
+    const raw = String(text || '').trim();
+    if (!raw) return null;
+    const up = raw.toUpperCase(), low = raw.toLowerCase();
+    const list = await loadIndex();
+    const by = (fn) => list.find(fn);
+    let hit = by(c => c.id.toUpperCase() === up) || by(c => c.base.toUpperCase() === up) || by(c => c.name.toLowerCase() === low);
+    if (!hit && /^[A-Z0-9]{2,12}$/.test(up) && !up.endsWith('USDT')) hit = by(c => c.id.toUpperCase() === up + 'USDT');
+    if (!hit) hit = by(c => c.name.toLowerCase().includes(low));
+    if (!hit) hit = by(c => c.base.toLowerCase().includes(low));
+    if (hit) return hit;
+    const results = await cgSearch(raw);
+    if (!results.length) return null;
+    return results.find(c => c.base.toLowerCase() === low) || results.find(c => c.name.toLowerCase() === low) || results[0];
+  }
+
+  async function ticker(pair) {
+    const res = await fetch(`${BINANCE}/api/v3/ticker/24hr?symbol=${pair}`, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+  async function klines(pair) {
+    const res = await fetch(`${BINANCE}/api/v3/klines?symbol=${pair}&interval=1d&limit=1000`, { signal: AbortSignal.timeout(12000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    return {
+      t: rows.map(r => r[0]), c: rows.map(r => Number(r[4])), h: rows.map(r => Number(r[2])),
+      l: rows.map(r => Number(r[3])), v: rows.map(r => Number(r[5])),
+    };
+  }
+
+  /* ===================== indicators (ported from Indicators.kt) ===================== */
+  const sma = (v, i, w) => { if (i + 1 < w) return null; let s = 0; for (let j = i - w + 1; j <= i; j++) s += v[j]; return s / w; };
+  const ema = (v, i, w) => { if (i + 1 < w) return null; const k = 2 / (w + 1); let e = v[i - w + 1]; for (let j = i - w + 2; j <= i; j++) e += (v[j] - e) * k; return e; };
+  const stdev = (v, i, w) => { const m = sma(v, i, w); if (m === null) return null; let q = 0; for (let j = i - w + 1; j <= i; j++) { const d = v[j] - m; q += d * d; } return Math.sqrt(q / w); };
+  const rsi = (v, i, w = 14) => { if (i < w) return null; let g = 0, l = 0; for (let j = i - w + 1; j <= i; j++) { const d = v[j] - v[j - 1]; if (d > 0) g += d; else l -= d; } const ag = g / w, al = l / w; return al === 0 ? 100 : 100 - 100 / (1 + ag / al); };
+  const stochK = (h, l, c, i, w = 14) => { if (i + 1 < w) return null; let hi = -Infinity, lo = Infinity; for (let j = i - w + 1; j <= i; j++) { if (h[j] > hi) hi = h[j]; if (l[j] < lo) lo = l[j]; } return hi === lo ? 50 : ((c[i] - lo) / (hi - lo)) * 100; };
+  const cci = (h, l, c, i, w = 20) => {
+    if (i + 1 < w) return null;
+    const tp = []; let sum = 0;
+    for (let j = i - w + 1; j <= i; j++) { const t = (h[j] + l[j] + c[j]) / 3; tp.push(t); sum += t; }
+    const m = sum / w; let md = 0; for (const t of tp) md += Math.abs(t - m); md /= w;
+    return md === 0 ? 0 : (tp[tp.length - 1] - m) / (0.015 * md);
+  };
+  const obvVal = (c, v, i) => { let o = 0; for (let j = 1; j <= i; j++) { if (c[j] > c[j - 1]) o += v[j]; else if (c[j] < c[j - 1]) o -= v[j]; } return o; };
+  const wilder = (w, arr) => { let s = 0; for (let k = 0; k < w; k++) s += arr[k]; const out = [s]; for (let k = w; k < arr.length; k++) { s = s - s / w + arr[k]; out.push(s); } return out; };
+  const adx = (h, l, c, i, w = 14) => {
+    if (i < w * 2) return null;
+    const n = i, tr = new Array(n).fill(0), pdm = new Array(n).fill(0), ndm = new Array(n).fill(0);
+    for (let j = 1; j <= i; j++) {
+      const up = h[j] - h[j - 1], dn = l[j - 1] - l[j];
+      pdm[j - 1] = (up <= dn || up <= 0) ? 0 : up;
+      ndm[j - 1] = (dn <= up || dn <= 0) ? 0 : dn;
+      tr[j - 1] = Math.max(h[j] - l[j], Math.abs(h[j] - c[j - 1]), Math.abs(l[j] - c[j - 1]));
+    }
+    const str = wilder(w, tr), spdm = wilder(w, pdm), sndm = wilder(w, ndm);
+    if (str.length < w || str[str.length - 1] === 0) return null;
+    const dx = str.map((s, k) => {
+      const pdi = s !== 0 ? spdm[k] * 100 / s : 0, ndi = s !== 0 ? sndm[k] * 100 / s : 0;
+      return (pdi + ndi) !== 0 ? 100 * Math.abs(pdi - ndi) / (pdi + ndi) : 0;
+    });
+    let av = 0; for (let k = 0; k < w; k++) av += dx[k];
+    let a = av / w;
+    for (let k = w; k < dx.length; k++) a = ((w - 1) * a + dx[k]) / w;
+    const last = str.length - 1;
+    return { adx: a, pdi: str[last] !== 0 ? 100 * spdm[last] / str[last] : 0, ndi: str[last] !== 0 ? 100 * sndm[last] / str[last] : 0 };
+  };
+  const williamsR = (h, l, c, i, w = 14) => { if (i + 1 < w) return null; let hi = -Infinity, lo = Infinity; for (let j = i - w + 1; j <= i; j++) { if (h[j] > hi) hi = h[j]; if (l[j] < lo) lo = l[j]; } return hi === lo ? -50 : ((hi - c[i]) / (hi - lo)) * -100; };
+  const mfi = (h, l, c, v, i, w = 14) => {
+    if (i < w) return null;
+    let pos = 0, neg = 0;
+    for (let j = i - w + 1; j <= i; j++) {
+      const tp = (h[j] + l[j] + c[j]) / 3, ptp = (h[j - 1] + l[j - 1] + c[j - 1]) / 3, f = tp * v[j];
+      if (tp > ptp) pos += f; else if (tp < ptp) neg += f;
+    }
+    return neg === 0 ? 100 : 100 - 100 / (1 + pos / neg);
+  };
+  const roc = (c, i, w = 10) => { if (i < w || !c[i - w]) return null; return ((c[i] - c[i - w]) / c[i - w]) * 100; };
+  const ichimoku = (h, l, i) => {
+    if (i < 52) return null;
+    const mid = (w) => { let hi = -Infinity, lo = Infinity; for (let j = i - w + 1; j <= i; j++) { if (h[j] > hi) hi = h[j]; if (l[j] < lo) lo = l[j]; } return (hi + lo) / 2; };
+    const tenkan = mid(9), kijun = mid(26), spanB = mid(52), spanA = (tenkan + kijun) / 2;
+    return { top: Math.max(spanA, spanB), bot: Math.min(spanA, spanB) };
+  };
+  const aroon = (h, l, i, w = 25) => {
+    if (i < w) return null;
+    let hiIdx = i, loIdx = i;
+    for (let j = i - w; j <= i; j++) { if (h[j] >= h[hiIdx]) hiIdx = j; if (l[j] <= l[loIdx]) loIdx = j; }
+    const up = ((w - (i - hiIdx)) / w) * 100, dn = ((w - (i - loIdx)) / w) * 100;
+    return { up, dn, osc: up - dn };
+  };
+  const vwap = (h, l, c, v, i, w = 20) => {
+    if (i + 1 < w) return null;
+    let pv = 0, vol = 0;
+    for (let j = i - w + 1; j <= i; j++) { pv += ((h[j] + l[j] + c[j]) / 3) * v[j]; vol += v[j]; }
+    return vol === 0 ? null : pv / vol;
+  };
+
+  const f1 = (n) => n.toFixed(1), f2 = (n) => n.toFixed(2);
+  const signed = (n) => (n >= 0 ? '+' : '') + f2(n);
+
+  const MODEL_NAMES = [
+    'Trend SMA (20/50)', 'RSI Momentum (14)', 'Mean Reversion (BB)', 'Volatility Breakout',
+    'EMA Crossover (MACD)', 'Stochastic (14)', 'OBV Volume Trend', 'Donchian Breakout (20)',
+    'ADX / DMI (14)', 'CCI Momentum (20)',
+    'Williams %R (14)', 'Money Flow Index (14)', 'Rate of Change (10)',
+    'Ichimoku Cloud (9/26/52)', 'Aroon Oscillator (25)', 'VWAP (20)',
+  ];
+  const MODEL_MAX = [1,2,2,1,1,2,1,1,2,2, 2,2,1,2,2,1];
+  const SCORE_MAX = MODEL_MAX.reduce((a, b) => a + b, 0); // 25
+  const N = MODEL_MAX.length;                              // 16
+
+  function computeModels(H, i) {
+    const { c, h, l, v } = H;
+    const price = c[i], prev = i > 0 ? c[i - 1] : price;
+    const pct = prev !== 0 ? ((price - prev) / prev) * 100 : 0;
+    const out = [];
+    const add = (short, reading, score) => out.push({ short, reading, score });
+
+    const s20 = sma(c, i, 20), s50 = sma(c, i, 50);
+    add('Trend', s20 === null || s50 === null ? 'NEUTRAL (no history)' : s20 > s50 ? 'BULLISH (20D > 50D)' : 'BEARISH (20D < 50D)',
+      s20 === null || s50 === null ? 0 : s20 > s50 ? 1 : -1);
+    const r = rsi(c, i, 14);
+    add('RSI', r === null ? 'NEUTRAL' : r < 30 ? `OVERSOLD (RSI ${f1(r)})` : r > 70 ? `OVERBOUGHT (RSI ${f1(r)})` : `NEUTRAL (RSI ${f1(r)})`,
+      r === null ? 0 : r < 30 ? 2 : r > 70 ? -2 : 0);
+    const m20 = sma(c, i, 20), sd20 = stdev(c, i, 20);
+    if (m20 !== null && sd20 !== null && sd20 > 0) {
+      const z = (price - m20) / sd20;
+      add('BB', z <= -2 ? `OVERSOLD (Z ${f2(z)})` : z >= 2 ? `OVERBOUGHT (Z ${f2(z)})` : `NEUTRAL (Z ${f2(z)})`, z <= -2 ? 2 : z >= 2 ? -2 : 0);
+    } else add('BB', 'NEUTRAL (low vol)', 0);
+    add('Vol', pct >= 4 ? `BULLISH BREAKOUT (+${f2(pct)}%)` : pct <= -4 ? `BEARISH BREAKDOWN (${f2(pct)}%)` : `RANGE-BOUND (${signed(pct)}%)`,
+      pct >= 4 ? 1 : pct <= -4 ? -1 : 0);
+    const e12 = ema(c, i, 12), e26 = ema(c, i, 26);
+    if (e12 !== null && e26 !== null) {
+      const macd = e12 - e26;
+      add('MACD', macd > 0 ? `BULLISH (MACD +${f2(macd)})` : `BEARISH (MACD -${f2(Math.abs(macd))})`, macd > 0 ? 1 : -1);
+    } else add('MACD', 'NEUTRAL', 0);
+    const k = stochK(h, l, c, i, 14);
+    add('Stoch', k === null ? 'NEUTRAL' : k < 20 ? `OVERSOLD (%K ${f1(k)})` : k > 80 ? `OVERBOUGHT (%K ${f1(k)})` : `NEUTRAL (%K ${f1(k)})`,
+      k === null ? 0 : k < 20 ? 2 : k > 80 ? -2 : 0);
+    if (i >= 10) { const d3 = obvVal(c, v, i) - obvVal(c, v, i - 10); add('OBV', d3 > 0 ? 'OBV RISING' : d3 < 0 ? 'OBV FALLING' : 'OBV FLAT', d3 > 0 ? 1 : d3 < 0 ? -1 : 0); }
+    else add('OBV', 'OBV FLAT', 0);
+    if (i < 20) add('Donchian', 'INSIDE CHANNEL', 0);
+    else {
+      let hi = -Infinity, lo = Infinity;
+      for (let j = i - 20; j < i; j++) { if (h[j] > hi) hi = h[j]; if (l[j] < lo) lo = l[j]; }
+      add('Donchian', price >= hi ? '20D HIGH BREAKOUT' : price <= lo ? '20D LOW BREAKDOWN' : 'INSIDE CHANNEL', price >= hi ? 1 : price <= lo ? -1 : 0);
+    }
+    const a = adx(h, l, c, i, 14);
+    if (a === null) add('ADX', 'NEUTRAL (no history)', 0);
+    else if (a.adx >= 25) add('ADX', a.pdi > a.ndi ? `STRONG UPTREND (ADX ${f1(a.adx)})` : `STRONG DOWNTREND (ADX ${f1(a.adx)})`, a.pdi > a.ndi ? 2 : -2);
+    else if (a.adx < 20) add('ADX', `NO TREND (ADX ${f1(a.adx)})`, 0);
+    else add('ADX', a.pdi > a.ndi ? `WEAK UPTREND (ADX ${f1(a.adx)})` : `WEAK DOWNTREND (ADX ${f1(a.adx)})`, a.pdi > a.ndi ? 1 : -1);
+    const cc = cci(h, l, c, i, 20);
+    add('CCI', cc === null ? 'NEUTRAL' : cc <= -100 ? `OVERSOLD (CCI ${cc.toFixed(0)})` : cc >= 100 ? `OVERBOUGHT (CCI ${cc.toFixed(0)})` : `NEUTRAL (CCI ${cc.toFixed(0)})`,
+      cc === null ? 0 : cc <= -100 ? 2 : cc >= 100 ? -2 : 0);
+
+    const wr = williamsR(h, l, c, i, 14);
+    add('W%R', wr === null ? 'NEUTRAL' : wr <= -80 ? `OVERSOLD (%R ${f1(wr)})` : wr >= -20 ? `OVERBOUGHT (%R ${f1(wr)})` : `NEUTRAL (%R ${f1(wr)})`,
+      wr === null ? 0 : wr <= -80 ? 2 : wr >= -20 ? -2 : 0);
+    const mf = mfi(h, l, c, v, i, 14);
+    add('MFI', mf === null ? 'NEUTRAL' : mf < 20 ? `OVERSOLD (MFI ${f1(mf)})` : mf > 80 ? `OVERBOUGHT (MFI ${f1(mf)})` : `NEUTRAL (MFI ${f1(mf)})`,
+      mf === null ? 0 : mf < 20 ? 2 : mf > 80 ? -2 : 0);
+    const rc = roc(c, i, 10);
+    add('ROC', rc === null ? 'NEUTRAL' : rc >= 5 ? `BULLISH MOMENTUM (${signed(rc)}%)` : rc <= -5 ? `BEARISH MOMENTUM (${signed(rc)}%)` : `FLAT MOMENTUM (${signed(rc)}%)`,
+      rc === null ? 0 : rc >= 5 ? 1 : rc <= -5 ? -1 : 0);
+    const ich = ichimoku(h, l, i);
+    add('Ichimoku', ich === null ? 'NEUTRAL' : price > ich.top ? 'ABOVE CLOUD' : price < ich.bot ? 'BELOW CLOUD' : 'INSIDE CLOUD',
+      ich === null ? 0 : price > ich.top ? 2 : price < ich.bot ? -2 : 0);
+    const ar = aroon(h, l, i, 25);
+    add('Aroon', ar === null ? 'NEUTRAL' : ar.osc >= 50 ? `STRONG UPTREND (${ar.osc.toFixed(0)})` : ar.osc <= -50 ? `STRONG DOWNTREND (${ar.osc.toFixed(0)})`
+      : ar.osc >= 25 ? 'WEAK UPTREND' : ar.osc <= -25 ? 'WEAK DOWNTREND' : 'NO TREND',
+      ar === null ? 0 : ar.osc >= 50 ? 2 : ar.osc <= -50 ? -2 : ar.osc >= 25 ? 1 : ar.osc <= -25 ? -1 : 0);
+    const vw = vwap(h, l, c, v, i, 20);
+    add('VWAP', vw === null ? 'NEUTRAL' : price >= vw ? 'ABOVE VWAP (20D)' : 'BELOW VWAP (20D)', vw === null ? 0 : price >= vw ? 1 : -1);
+
+    return out;
+  }
+
+  const verdictClass = (v) => (v.includes('BUY') ? 'green' : v.includes('SELL') ? 'red' : 'amber');
+
+  function verdictFromTotal(total) {
+    const f = total / SCORE_MAX;
+    if (f >= 8 / 15) return 'STRONG BUY';
+    if (f >= 4 / 15) return 'BUY / ACCUMULATE';
+    if (f >= 1 / 15) return 'WEAK BUY';
+    if (f > -1 / 15) return 'HOLD / DO NOTHING';
+    if (f >= -3 / 15) return 'WEAK SELL / TRIM';
+    if (f >= -7 / 15) return 'SELL / REDUCE';
+    return 'STRONG SELL';
+  }
+
+  function noteFor(models, total, bull, bear) {
+    const s1 = models[0].score, s3 = models[2].score, s7 = models[6].score;
+    const mixed = ((total <= 0 || bear <= bull) && (total >= 0 || bull <= bear)) ? 0 : 1;
+    if (mixed) return 'Vote count and weighted score disagree — signals conflict, cut position size.';
+    if (s1 < 0 && s3 > 0) return 'Downtrend but oversold — bounces likely, avoid new longs.';
+    if (s1 > 0 && s3 < 0) return 'Uptrend but reversion stretched — scale in, do not chase.';
+    if (s1 > 0 && s7 < 0) return 'Price up while OBV distributes — weak conviction.';
+    if (s1 < 0 && s7 > 0) return 'Price down while OBV accumulates — stealth support.';
+    if (bull === N) return `All ${N} models aligned bullish — strong conviction.`;
+    if (bear === N) return `All ${N} models aligned bearish — strong conviction.`;
+    if (bull > bear) return 'Bullish majority, no major internal conflicts.';
+    if (bear > bull) return 'Bearish majority, no major internal conflicts.';
+    return 'Models conflict — no directional edge, preserve capital.';
+  }
+
+  function day(H, i) {
+    const models = computeModels(H, i);
+    const total = models.reduce((s, m) => s + m.score, 0);
+    const bull = models.filter((m) => m.score > 0).length;
+    const bear = models.filter((m) => m.score < 0).length;
+    const flat = models.length - bull - bear;
+    let verdict = verdictFromTotal(total);
+    if ((total > 0 && bull <= bear) || (total < 0 && bear <= bull)) {
+      verdict = total > 0 ? 'MIXED · SLIGHT BUY BIAS' : 'MIXED · SLIGHT SELL BIAS';
+    }
+    return {
+      i, date: new Date(H.t[i]).toISOString().slice(0, 10), close: H.c[i], models, total, bull, bear, flat,
+      verdict, cls: verdictClass(verdict), note: noteFor(models, total, bull, bear),
+    };
+  }
+
+  function gradeVerdict(verdict, fromPx, toPx) {
+    const cls = verdictClass(verdict);
+    if (fromPx > 0 && toPx != null) {
+      const move = ((toPx - fromPx) / fromPx) * 100;
+      let outcome = 'incorrect';
+      if (cls === 'green') { if (move > 0) outcome = 'correct'; else if (move >= 0) outcome = 'flat'; }
+      else if (cls !== 'red') outcome = 'neutral';
+      else if (move < 0) outcome = 'correct'; else if (move <= 0) outcome = 'flat';
+      return { cls, move, outcome };
+    }
+    return { cls, move: null, outcome: 'pending' };
+  }
+  function gradeDecision(H, i) {
+    if (i < 0 || i >= H.c.length) return { cls: 'amber', move: null, outcome: 'pending' };
+    const v = day(H, i).verdict;
+    const toPx = i + 1 < H.c.length ? H.c[i + 1] : null;
+    return gradeVerdict(v, H.c[i], toPx);
+  }
+
+  function decisionStreak(H) {
+    let kind = null, streak = 0;
+    for (let i = H.c.length - 1; i > 49; i--) {
+      const cls = verdictClass(day(H, i).verdict);
+      const k = cls === 'green' ? 'buy' : cls === 'red' ? 'sell' : null;
+      if (k === null) break;
+      if (kind === null) kind = k;
+      if (k !== kind) break;
+      streak++;
+    }
+    return { kind, count: streak };
+  }
+  function gradedRun(H) {
+    let kind = null, run = 0;
+    for (let i = H.c.length - 2; i > 49; i--) {
+      const outcome = gradeDecision(H, i).outcome;
+      const k = outcome === 'correct' ? 'correct' : outcome === 'incorrect' ? 'incorrect' : null;
+      if (k === null) break;
+      if (kind === null) kind = k;
+      if (k !== kind) break;
+      run++;
+    }
+    return { kind, count: run };
+  }
+
+  /* ===================== rendering ===================== */
+  const usd = (n) => {
+    const v = Number(n);
+    if (!Number.isFinite(v)) return '—';
+    const d = v >= 1 ? 2 : v >= 0.01 ? 4 : 8;
+    return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: d });
+  };
+  const clock = (d) => new Date(d).toLocaleTimeString('en-US', { hour12: false });
+
+  function setStatus(text, isError) {
+    const el = $('status');
+    el.textContent = text;
+    el.className = 'status' + (isError ? ' error' : '');
+  }
+  function sparkline(closes) {
+    const pts = closes.slice(-90);
+    const svg = $('spark');
+    if (pts.length < 2) { svg.innerHTML = ''; return; }
+    const min = Math.min(...pts), max = Math.max(...pts), span = max - min || 1, step = 300 / (pts.length - 1);
+    const d = pts.map((p, k) => `${(k * step).toFixed(2)},${(54 - ((p - min) / span) * 50 - 2).toFixed(2)}`).join(' ');
+    const up = pts[pts.length - 1] >= pts[0];
+    svg.innerHTML = `<polyline points="${d}" fill="none" stroke="var(--${up ? 'up' : 'down'})" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  function verdictPill(v) {
+    const cls = v.includes('BUY') ? 'green' : v.includes('SELL') ? 'red' : 'amber';
+    return `<span class="verdict ${cls}">${esc(v)}</span>`;
+  }
+
+  // Fills the top (crypto value) half of the combined panel.
+  function showValue(meta, t) {
+    const pct = Number(t.priceChangePercent), up = pct >= 0;
+    $('c-name').textContent = meta.name;
+    $('c-base').textContent = meta.base;
+    $('c-price').textContent = usd(t.lastPrice);
+    const chg = $('c-chg');
+    chg.textContent = `${up ? '▲' : '▼'} ${up ? '+' : ''}${pct.toFixed(2)}% (24h)`;
+    chg.className = 'chg ' + (up ? 'up' : 'down');
+    $('c-hl').textContent = `High ${usd(t.highPrice)}   ·   Low ${usd(t.lowPrice)}`;
+    $('c-meta').textContent = `Updated ${clock(Date.now())} · data-api.binance.vision` + (meta.cg ? ` · CoinGecko: ${meta.cg}` : '');
+  }
+
+  // Fills the bottom (final decision) half of the combined panel.
+  function showDecision(H) {
+    const D = day(H, H.c.length - 1);
+    $('d-verdict').textContent = D.verdict;
+    $('d-verdict').className = 'verdict ' + D.cls;
+    $('d-score').textContent = (D.total > 0 ? '+' : '') + D.total;
+    $('d-max').textContent = ` / ${SCORE_MAX}`;
+    $('d-note').textContent = D.note;
+    $('d-bull').textContent = D.bull;
+    $('d-flat').textContent = D.flat;
+    $('d-bear').textContent = D.bear;
+    const bar = $('d-bar');
+    bar.children[0].style.width = (D.bull / N) * 100 + '%';
+    bar.children[1].style.width = (D.flat / N) * 100 + '%';
+    bar.children[2].style.width = (D.bear / N) * 100 + '%';
+
+    const ds = decisionStreak(H), gr = gradedRun(H);
+    const bits = [];
+    if (ds.kind) bits.push(`<span class="badge ${ds.kind === 'buy' ? 'up' : 'down'}">${ds.kind === 'buy' ? '▲ BUY' : '▼ SELL'} streak · ${ds.count}d</span>`);
+    else bits.push('<span class="badge">no directional streak</span>');
+    if (gr.kind === 'correct') bits.push(`<span class="badge up">✅ correct · ${gr.count}d</span>`);
+    else if (gr.kind === 'incorrect') bits.push(`<span class="badge down">❌ incorrect · ${gr.count}d</span>`);
+    else bits.push('<span class="badge">no graded run</span>');
+    $('d-streaks').innerHTML = bits.join('');
+  }
+
+  function showModels(H) {
+    const D = day(H, H.c.length - 1);
+    $('m-cards').innerHTML = D.models.map((m, idx) => {
+      const cls = m.score > 0 ? 'up' : m.score < 0 ? 'down' : 'zero';
+      return `<div class="fc ${cls}">
+        <div>
+          <div class="h"><span class="t">${esc(m.short)}${idx >= 10 ? ' <span class="new">NEW</span>' : ''}</span><span class="s">${m.score > 0 ? '+' : ''}${m.score}</span></div>
+          <div class="nm">${esc(MODEL_NAMES[idx])} · max ±${MODEL_MAX[idx]}</div>
+        </div>
+        <div class="r">${esc(m.reading)}</div>
+      </div>`;
+    }).join('');
+    $('models').classList.add('show');
+  }
+
+  function showHistory(H) {
+    const rows = [];
+    for (let i = H.c.length - 1; i > 49 && rows.length < HISTORY_DAYS; i--) {
+      const D = day(H, i), g = gradeDecision(H, i);
+      const res = g.outcome === 'correct' ? '<span class="mini ok">correct</span>'
+        : g.outcome === 'incorrect' ? '<span class="mini bad">incorrect</span>'
+        : g.outcome === 'flat' ? '<span class="mini flat">flat</span>'
+        : g.outcome === 'neutral' ? '<span class="mini flat">neutral</span>'
+        : '<span class="mini">pending</span>';
+      rows.push(`<tr><td>${D.date}</td><td class="r">${usd(D.close)}</td><td class="c">${D.total > 0 ? '+' : ''}${D.total}</td><td>${verdictPill(D.verdict)}</td><td class="c">${res}</td></tr>`);
+    }
+    $('h-rows').innerHTML = rows.join('');
+    $('history').classList.add('show');
+  }
+
+  /* ===================== portfolio ===================== */
+  const pf = {
+    list: [],
+    results: new Map(),
+    load() {
+      try {
+        const r = JSON.parse(localStorage.getItem(PF_KEY) || '[]');
+        this.list = (Array.isArray(r) ? r : []).filter((x) => x && x.pair)
+          .map((x) => ({ pair: String(x.pair), base: String(x.base || x.pair), name: String(x.name || x.base || x.pair) }));
+      } catch { this.list = []; }
+    },
+    save() { localStorage.setItem(PF_KEY, JSON.stringify(this.list)); },
+  };
+
+  function pfSetStatus(msg, isError) {
+    const el = $('p-status');
+    el.textContent = msg || '';
+    el.style.color = isError ? 'var(--down)' : 'var(--muted)';
+  }
+
+  function runBadge(gr) {
+    if (!gr || !gr.kind) return '<span class="mini">—</span>';
+    return gr.kind === 'correct'
+      ? `<span class="mini ok">✅ correct · ${gr.count}d</span>`
+      : `<span class="mini bad">❌ incorrect · ${gr.count}d</span>`;
+  }
+
+  function renderPortfolio() {
+    const tbody = $('p-rows');
+    if (!pf.list.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted)">No coins yet — add one above.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = pf.list.map((r) => {
+      const a = pf.results.get(r.pair);
+      let price = '<span class="mini">…</span>', dec = '<span class="mini">…</span>', sc = '<span class="mini">…</span>', run = '<span class="mini">…</span>';
+      if (a === null) { price = '<span class="mini">n/a</span>'; dec = '<span class="mini">n/a</span>'; sc = '<span class="mini">n/a</span>'; run = '<span class="mini">no data</span>'; }
+      else if (a) {
+        const t = a.D.total, cls = t > 0 ? 'up' : t < 0 ? 'down' : '';
+        price = usd(a.price);
+        dec = verdictPill(a.D.verdict);
+        sc = `<span class="mini ${cls}">${t > 0 ? '+' : ''}${t}<span style="opacity:.55"> /${SCORE_MAX}</span></span>`;
+        run = runBadge(a.gr);
+      }
+      return `<tr>
+        <td><span class="link" data-query="${esc(r.base)}">${esc(r.name)} (${esc(r.base)})</span></td>
+        <td class="r">${price}</td>
+        <td class="c">${dec}</td>
+        <td class="c">${sc}</td>
+        <td class="c">${run}</td>
+        <td class="c"><button class="rm" data-remove="${esc(r.pair)}">Remove</button></td>
+      </tr>`;
+    }).join('');
+
+    for (const el of tbody.querySelectorAll('.link')) {
+      el.onclick = () => {
+        $('q').value = el.dataset.query;
+        $('q').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        search(el.dataset.query);
+      };
+    }
+    for (const el of tbody.querySelectorAll('.rm')) {
+      el.onclick = () => { pf.list = pf.list.filter((x) => x.pair !== el.dataset.remove); pf.save(); renderPortfolio(); };
+    }
+  }
+
+  async function analyzePair(pair) {
+    if (pf.results.has(pair)) return pf.results.get(pair);
+    let a = null;
+    try {
+      const H = await klines(pair);
+      if (H.c.length > 50) {
+        let price = H.c[H.c.length - 1];
+        try { const t = await ticker(pair); const lp = Number(t.lastPrice); if (Number.isFinite(lp)) price = lp; } catch {}
+        a = { D: day(H, H.c.length - 1), gr: gradedRun(H), price };
+      }
+    } catch { a = null; }
+    pf.results.set(pair, a);
+    return a;
+  }
+
+  async function refreshPortfolio() {
+    pfSetStatus('analysing…');
+    await Promise.all(pf.list.map((r) => analyzePair(r.pair)));
+    renderPortfolio();
+    pfSetStatus('');
+  }
+
+  async function addHolding() {
+    const name = $('p-name').value.trim();
+    if (!name) { pfSetStatus('Enter a coin name first.', true); return; }
+    pfSetStatus('looking up “' + name + '”…');
+    let meta;
+    try { meta = await resolveCoin(name); } catch (err) { pfSetStatus(err.message, true); return; }
+    if (!meta) { pfSetStatus(`No coin found matching “${name}”.`, true); return; }
+    if (pf.list.some((r) => r.pair === meta.id)) { pfSetStatus(`${meta.base} is already in the portfolio.`, true); return; }
+    pf.list.push({ pair: meta.id, base: meta.base, name: meta.name });
+    pf.save();
+    $('p-name').value = '';
+    renderPortfolio();
+    await refreshPortfolio();
+  }
+
+  function exportPortfolio() {
+    const blob = new Blob([JSON.stringify(pf.list, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'portfolio.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  function importPortfolio(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        if (!Array.isArray(data)) throw new Error('expected a JSON array');
+        const clean = data.filter((r) => r && r.pair)
+          .map((r) => ({ pair: String(r.pair), base: String(r.base || r.pair), name: String(r.name || r.base || r.pair) }));
+        pf.list = clean; pf.save(); pf.results.clear(); renderPortfolio(); refreshPortfolio();
+        pfSetStatus(`imported ${clean.length} coin(s)`);
+      } catch (err) { pfSetStatus('Import failed: ' + err.message, true); }
+    };
+    reader.readAsText(file);
+  }
+
+  /* ===================== search ===================== */
+  let busy = false;
+  function hideSections() {
+    for (const id of ['overview', 'models', 'history']) $(id).classList.remove('show');
+  }
+  async function search(raw) {
+    if (busy) return;
+    const text = String(raw || '').trim();
+    if (!text) {
+      hideSections();
+      setStatus('Type a coin name or ticker first — e.g. pepe, ARB, solana.');
+      return;
+    }
+    busy = true;
+    hideSections();
+    setStatus(`Looking up “${text}”…`);
+
+    let meta;
+    try { meta = await resolveCoin(text); }
+    catch (err) { busy = false; setStatus('⚠️ Search is unavailable right now. ' + err.message, true); return; }
+    if (!meta) {
+      busy = false;
+      setStatus(`No coin found matching “${text}”. Try the full name (e.g. "Arbitrum") or ticker (e.g. "ARB").`, true);
+      return;
+    }
+    try {
+      const t = await ticker(meta.id);
+      setStatus(`${meta.name} (${meta.base}) — ${meta.id}`);
+      showValue(meta, t);
+      $('overview').classList.add('show');
+      history.replaceState(null, '', '?q=' + encodeURIComponent(text));
+    } catch {
+      setStatus(`🔎 ${meta.name} (${meta.base}) — no live Binance market for ${meta.id}.`, true);
+    }
+    try {
+      const H = await klines(meta.id);
+      sparkline(H.c);
+      if (H.c.length > 50) { showDecision(H); showModels(H); showHistory(H); }
+      else setStatus('Not enough history for the models yet.', true);
+    } catch {}
+    busy = false;
+  }
+
+  /* ===================== wire up ===================== */
+  const QUICK = ['BTC', 'ETH', 'SOL', 'ARB', 'PEPE', 'DOGE', 'bitcoin', 'dogwifhat'];
+  for (const q of QUICK) {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.textContent = q;
+    b.onclick = () => { $('q').value = q; search(q); };
+    $('chips').appendChild(b);
+  }
+  const run = () => search($('q').value);
+  $('go').onclick = run;
+  $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
+
+  $('p-add').onclick = addHolding;
+  $('p-name').addEventListener('keydown', (e) => { if (e.key === 'Enter') addHolding(); });
+  $('p-export').onclick = exportPortfolio;
+  $('p-import-btn').onclick = () => $('p-import').click();
+  $('p-import').addEventListener('change', (e) => { if (e.target.files[0]) importPortfolio(e.target.files[0]); e.target.value = ''; });
+
+  pf.load();
+  renderPortfolio();
+  refreshPortfolio();
+
+  const initial = qs.get('q');
+  if (initial) { $('q').value = initial; search(initial); }
+})();
+</script>
+</body>
+</html>
