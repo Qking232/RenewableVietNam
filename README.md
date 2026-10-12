@@ -99,33 +99,40 @@ pings the API once a day to keep the project awake.
 
 ## The EV map's shared store (Supabase)
 
-`/evcharging/` ships with the whole station list baked into the page. The admin
-console's **Live Query** refreshes it from the three Google My Maps sources, and
-anything that changes is written to the same Supabase project, so every device
-shows the latest on its next load.
+`/evcharging/` keeps no station data in the page at all. All 20,822 stations
+live in Postgres and the page fetches **only the 40 km around the visitor** —
+around Hanoi that is ~3,750 stations and ~235 KB compressed, against a 6 MB page
+(before this, the page and its data were one file, so every visitor downloaded
+everything and built 20,822 markers).
 
 | What | Where |
 | --- | --- |
-| Stations that differ from the baked-in copy (new or updated) | Postgres table `ev_delta` |
-| One row per run: station count, added/updated counts, last sync time | Postgres table `ev_sync` |
+| Every station, one row per physical site | Postgres table `ev_stations`, keyed `norm(name)|lat3,lng3` |
+| One row per run: station count and last sync time | Postgres table `ev_sync` |
+
+The page asks for a lat/lng bounding box (indexed) and then trims to a true
+40 km circle in the browser. PostgREST caps one response at 1000 rows, so the
+page pages through with `Range` headers.
 
 Reads are public. **Writes are not** — there is no INSERT/UPDATE policy for
-`anon`. The page writes through `ev_push(p_key, p_rows, p_meta)`, a
+`anon`. The page writes through `ev_push_stations(p_key, p_rows)`, a
 `security definer` function that rejects anything whose `p_key` doesn't hash to
-the admin password, so the publishable key in the page can read but never write.
-`ev_reset(p_key)` clears the synced changes. Re-run
-[`supabase/ev_schema.sql`](supabase/ev_schema.sql) to (re)create them — it is
-idempotent.
+the admin password. On conflict it keeps the existing port/operator and merges
+the connector list, so a site in both the DC and AC maps ends up with both
+connectors instead of a duplicate row. `ev_reset_stations(p_key)` wipes the
+table for a re-seed. Re-run
+[`supabase/ev_schema.sql`](supabase/ev_schema.sql) to (re)create all of it — it
+is idempotent, and its footer explains how the 20,822 rows were seeded.
 
 The console (the **Admin** button, password-gated) offers **Live Query** per
 source, **Live Query all**, **Import KML** (for a source whose KML export Google
-blocks), **Export KML** (the whole dataset back out) and **Pull shared**. The
-typed password is only kept in memory for the session — the page itself stores
-just its SHA-256.
+blocks), **Export KML** (every station back out as KML) and **Pull shared**. The
+typed password is only ever held in memory for the session — the page itself
+stores just its SHA-256.
 
 Changing the admin password means updating its SHA-256 in two places: the
 `PASS_SHA` constant in `evcharging/index.html`, and the hash compared inside
-`ev_push`/`ev_reset` in `supabase/ev_schema.sql`.
+`ev_push_stations`/`ev_reset_stations` in `supabase/ev_schema.sql`.
 
 ---
 
