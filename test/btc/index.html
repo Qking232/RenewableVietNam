@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.11</title>
+<title>Coin Search + 16 Models — Rev 0.12</title>
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
      BlackBerry-blue accent (#0072BC → #0092CC), black surfaces. Ported from the
@@ -218,6 +218,8 @@
   .mx-cell{display:block; cursor:pointer; border-radius:var(--radius); padding:5px 4px;
     font-weight:700; font-variant-numeric:tabular-nums; border:1px solid transparent}
   .mx-cell:hover{border-color:var(--accent)}
+  .chart-lg{height:200px}
+  .chart-tip.wrap{white-space:normal; max-width:230px; line-height:1.5}
 
   details{border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   summary{cursor:pointer; padding:12px 16px; font-size:10.5px; font-weight:700; letter-spacing:.18em;
@@ -466,8 +468,8 @@
   <!-- TREND LINES -->
   <div class="section" id="trend">
     <div class="panel">
-      <h2>Trend lines &amp; breakouts <span class="cloud">auto-detected</span></h2>
-      <div class="sub">Swing highs and lows are connected into support (green) and resistance (red) lines. A close beyond a line is a breakout — ▲ above resistance, ▼ below support. Dashed lines extend to the break.</div>
+      <h2>Trend lines &amp; breakouts <span class="cloud">candle chart</span></h2>
+      <div class="sub">Candlestick chart with volume. Swing highs and lows are connected into support (green) and resistance (red) lines. A close beyond a line is a breakout — ▲ above resistance, ▼ below support. Hover for OHLC + crosshair.</div>
       <div class="bt-controls" id="trend-k">
         <button class="chip" data-k="5">5</button>
         <button class="chip on" data-k="10">10</button>
@@ -476,8 +478,8 @@
       </div>
       <div class="status" id="trend-summary"></div>
       <div class="chart-wrap">
-        <svg class="chart" id="trend-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
-        <div class="chart-tip"></div>
+        <svg class="chart chart-lg" id="trend-chart" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="chart-tip wrap"></div>
       </div>
       <div class="legend">
         <span><i style="background:var(--accent)"></i>Price</span>
@@ -538,13 +540,15 @@
       exact date and both equity curves. Past performance does not predict future results.</div>
       <div style="margin-top:12px"><b>Matrix backtest</b> — the same strategy across the major coins (plus your portfolio coins)
       and every window, as a color-coded grid. Hover a cell for hold &amp; difference; click one to open that coin at that window.</div>
-      <div style="margin-top:12px"><b>Trend lines &amp; breakouts</b> — swing highs and lows (pivot lookback 5/10/20) are connected into
-      support and resistance lines on a date + price chart. A close beyond a line is a breakout (▲ above resistance, ▼ below support),
-      dashed lines extend to the break, and every break is listed with price, line value and distance.</div>
+      <div style="margin-top:12px"><b>Trend lines &amp; breakouts</b> — a candlestick chart (OHLC + volume,
+      right price axis, last-price tag, hover crosshair with O/H/L/C) over the same window. Swing highs and lows
+      (pivot lookback 5/10/20) are connected into support and resistance lines. A close beyond a line is a breakout
+      (▲ above resistance, ▼ below support), dashed lines extend to the break, and every break is listed with price,
+      line value and distance.</div>
       <div style="margin-top:12px"><b>Demo trading</b> — a paper wallet (virtual 10,000 USDT) per coin, stored in this browser and
       keyed to your private code like the portfolio. Buy and sell at the live Binance price, or press <b>Trade the signal</b> to execute
       what today's verdict implies. Nothing real is at stake.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.11.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.12.</div>
     </div>
   </details>
 </main>
@@ -717,8 +721,8 @@
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const rows = await res.json();
     return {
-      t: rows.map(r => r[0]), c: rows.map(r => Number(r[4])), h: rows.map(r => Number(r[2])),
-      l: rows.map(r => Number(r[3])), v: rows.map(r => Number(r[5])),
+      t: rows.map(r => r[0]), o: rows.map(r => Number(r[1])), h: rows.map(r => Number(r[2])),
+      l: rows.map(r => Number(r[3])), c: rows.map(r => Number(r[4])), v: rows.map(r => Number(r[5])),
     };
   }
 
@@ -1563,6 +1567,121 @@
     return segs;
   }
 
+  /* ===================== candle chart (TradingView-style) ===================== */
+  const CD_W = 300, CD_H = 200, CD_PL = 4, CD_PR = 42, CD_PT = 4, CD_PB = 16;
+  const volFmt = (v) => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'K' : String(Math.round(v));
+
+  function drawCandleChart(svg, H, start, end, sup, res, evs) {
+    const n = end - start + 1;
+    const plotW = CD_W - CD_PL - CD_PR;
+    const plotH = CD_H - CD_PT - CD_PB;
+    const volH = Math.round(plotH * 0.18);
+    const priceH = plotH - volH;
+    const plotBot = CD_PT + plotH;
+    let min = Infinity, max = -Infinity, vmax = 0;
+    for (let i = start; i <= end; i++) {
+      if (H.l[i] < min) min = H.l[i];
+      if (H.h[i] > max) max = H.h[i];
+      if (H.v[i] > vmax) vmax = H.v[i];
+    }
+    for (const s of sup.concat(res)) {
+      const a = Math.max(s.i1, start), b = Math.min(s.i2, end);
+      for (let i = a; i <= b; i++) {
+        const lv = H.c[s.i1] + s.slope * (i - s.i1);
+        if (lv < min) min = lv;
+        if (lv > max) max = lv;
+      }
+      if (s.broken && s.broken.j <= end) {
+        if (s.broken.lv < min) min = s.broken.lv;
+        if (s.broken.lv > max) max = s.broken.lv;
+      }
+    }
+    const padY = (max - min) * 0.06 || 1;
+    min -= padY; max += padY;
+    const cw = plotW / n;
+    const bw = Math.max(0.8, cw * 0.68);
+    const X = (i) => CD_PL + ((i - start) / n) * plotW + cw / 2;
+    const Y = (v) => CD_PT + (1 - (v - min) / (max - min)) * priceH;
+    const Yv = (v) => CD_PT + priceH + (1 - v / (vmax || 1)) * volH;
+    let out = '';
+    for (let g = 0; g <= 4; g++) {
+      const v = min + ((max - min) * g) / 4, yy = Y(v);
+      out += '<line x1="' + CD_PL + '" y1="' + yy.toFixed(1) + '" x2="' + (CD_PL + plotW) + '" y2="' + yy.toFixed(1) + '" stroke="var(--line)" stroke-width="0.5"/>';
+      out += '<text x="' + (CD_PL + plotW + 4) + '" y="' + (yy + 2).toFixed(1) + '" fill="var(--faint)" font-size="7">' + fmtAx(v) + '</text>';
+    }
+    for (let g = 0; g <= 3; g++) {
+      const i = Math.round(start + ((n - 1) * g) / 3);
+      out += '<text x="' + X(i).toFixed(1) + '" y="' + (CD_H - 4) + '" fill="var(--faint)" font-size="7" text-anchor="middle">' + shortDate(H.t[i]) + '</text>';
+    }
+    out += '<line x1="' + CD_PL + '" y1="' + (CD_PT + priceH) + '" x2="' + (CD_PL + plotW) + '" y2="' + (CD_PT + priceH) + '" stroke="var(--line)" stroke-width="0.5"/>';
+    for (let i = start; i <= end; i++) {
+      const up = H.c[i] >= H.o[i];
+      const col = up ? 'var(--up)' : 'var(--down)';
+      const x = X(i);
+      out += '<line x1="' + x.toFixed(1) + '" y1="' + Y(H.h[i]).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + Y(H.l[i]).toFixed(1) + '" stroke="' + col + '" stroke-width="0.75"/>';
+      const yTop = Y(Math.max(H.o[i], H.c[i])), yBot = Y(Math.min(H.o[i], H.c[i]));
+      out += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + yTop.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, yBot - yTop).toFixed(1) + '" fill="' + col + '"/>';
+      const vy = Yv(H.v[i]);
+      out += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + vy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (plotBot - vy).toFixed(1) + '" fill="' + col + '" opacity="0.22"/>';
+    }
+    for (const s of sup) {
+      if (s.i2 < start) continue;
+      const a = Math.max(s.i1, start);
+      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--up)" stroke-width="1" opacity="0.9"/>';
+      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--up)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+    }
+    for (const s of res) {
+      if (s.i2 < start) continue;
+      const a = Math.max(s.i1, start);
+      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--down)" stroke-width="1" opacity="0.9"/>';
+      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--down)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+    }
+    for (const e of evs) {
+      out += '<text x="' + X(e.j).toFixed(1) + '" y="' + (Y(e.price) + (e.type === 'up' ? -4 : 8)).toFixed(1) + '" fill="' + (e.type === 'up' ? 'var(--up)' : 'var(--down)') + '" font-size="8" text-anchor="middle">' + (e.type === 'up' ? '▲' : '▼') + '</text>';
+    }
+    const lastPx = H.c[end];
+    const ly = Y(lastPx);
+    out += '<line x1="' + CD_PL + '" y1="' + ly.toFixed(1) + '" x2="' + (CD_PL + plotW) + '" y2="' + ly.toFixed(1) + '" stroke="var(--amber)" stroke-width="0.75" stroke-dasharray="3 2"/>';
+    out += '<rect x="' + (CD_PL + plotW) + '" y="' + (ly - 6).toFixed(1) + '" width="' + CD_PR + '" height="12" fill="var(--amber)"/>';
+    out += '<text x="' + (CD_PL + plotW + CD_PR / 2).toFixed(1) + '" y="' + (ly + 2.5).toFixed(1) + '" fill="#000" font-size="7" font-weight="700" text-anchor="middle">' + fmtAx(lastPx) + '</text>';
+    out += '<line class="cx-v" y1="' + CD_PT + '" y2="' + plotBot + '" stroke="var(--faint)" stroke-width="0.5" style="display:none"/>';
+    out += '<line class="cx-h" x1="' + CD_PL + '" x2="' + (CD_PL + plotW) + '" stroke="var(--faint)" stroke-width="0.5" style="display:none"/>';
+    svg.innerHTML = out;
+
+    const tip = svg.parentElement && svg.parentElement.querySelector('.chart-tip');
+    const cv = svg.querySelector('.cx-v'), ch = svg.querySelector('.cx-h');
+    if (!tip || !cv || !ch) return;
+    svg.onmousemove = (e) => {
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width || n < 2) return;
+      const fx = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const fy = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+      const k = Math.round(fx * (n - 1));
+      const i = start + k;
+      cv.style.display = '';
+      cv.setAttribute('x1', X(i).toFixed(1));
+      cv.setAttribute('x2', X(i).toFixed(1));
+      ch.style.display = '';
+      const chy = Math.max(CD_PT, Math.min(plotBot, fy * CD_H));
+      ch.setAttribute('y1', chy.toFixed(1));
+      ch.setAttribute('y2', chy.toFixed(1));
+      const hoverPx = max - ((chy - CD_PT) / priceH) * (max - min);
+      tip.innerHTML = '<b>' + new Date(H.t[i]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + '</b><br>' +
+        'O ' + usd(H.o[i]) + ' &nbsp;H ' + usd(H.h[i]) + '<br>' +
+        'L ' + usd(H.l[i]) + ' &nbsp;C ' + usd(H.c[i]) + '<br>' +
+        'Vol ' + volFmt(H.v[i]) + ' &nbsp;·&nbsp; ' + usd(Math.max(min, Math.min(max, hoverPx)));
+      tip.style.display = 'block';
+      const px = (X(i) / CD_W) * 100;
+      tip.style.left = Math.max(0, Math.min(px, 100 - 60)) + '%';
+      tip.style.top = '2px';
+    };
+    svg.onmouseleave = () => {
+      tip.style.display = 'none';
+      cv.style.display = 'none';
+      ch.style.display = 'none';
+    };
+  }
+
   function renderTrend() {
     const svg = $('trend-chart'), summary = $('trend-summary'), events = $('trend-events');
     if (!btHistory || btHistory.c.length < 52) {
@@ -1573,6 +1692,7 @@
     }
     const H = btHistory, n = H.c.length;
     const start = btDays === 0 ? 51 : Math.max(51, n - 1 - btDays);
+    const end = n - 1;
     const piv = findPivots(H, trendK);
     const sup = trendSegments(H, piv.lows, true);
     const res = trendSegments(H, piv.highs, false);
@@ -1581,44 +1701,7 @@
     for (const s of res) if (s.broken && s.broken.j >= start) evs.push({ j: s.broken.j, type: 'up', price: H.c[s.broken.j], line: s.broken.lv });
     evs.sort((a, b) => b.j - a.j);
 
-    let min = Infinity, max = -Infinity;
-    for (let i = start; i < n; i++) { if (H.c[i] < min) min = H.c[i]; if (H.c[i] > max) max = H.c[i]; }
-    for (const s of sup.concat(res)) {
-      for (const i of [s.i1, s.i2]) {
-        if (i < start) continue;
-        if (H.c[i] < min) min = H.c[i];
-        if (H.c[i] > max) max = H.c[i];
-      }
-    }
-    const padY = (max - min) * 0.08 || 1;
-    min -= padY; max += padY;
-    const frame = chartFrame(svg, n - start, min, max, (k) => shortDate(H.t[start + k]));
-    const X = (i) => frame.x(i - start);
-    const Y = (v) => frame.y(v);
-    let out = '';
-    for (const s of sup) {
-      if (s.i2 < start) continue;
-      const a = Math.max(s.i1, start);
-      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--up)" stroke-width="1" opacity="0.8"/>';
-      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(s.broken.j).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--up)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
-    }
-    for (const s of res) {
-      if (s.i2 < start) continue;
-      const a = Math.max(s.i1, start);
-      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--down)" stroke-width="1" opacity="0.8"/>';
-      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(s.broken.j).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--down)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
-    }
-    const pts = [];
-    for (let i = start; i < n; i++) pts.push(X(i).toFixed(1) + ',' + Y(H.c[i]).toFixed(1));
-    out += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--accent)" stroke-width="1.25"/>';
-    for (const e of evs) {
-      out += '<text x="' + X(e.j).toFixed(1) + '" y="' + (Y(e.price) + (e.type === 'up' ? -4 : 8)).toFixed(1) + '" fill="' + (e.type === 'up' ? 'var(--up)' : 'var(--down)') + '" font-size="8" text-anchor="middle">' + (e.type === 'up' ? '▲' : '▼') + '</text>';
-    }
-    svg.innerHTML += out;
-    attachChartHover(svg, n - start, (k) => {
-      const d = new Date(H.t[start + k]);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · ' + usd(H.c[start + k]);
-    });
+    drawCandleChart(svg, H, start, end, sup, res, evs);
 
     const j = n - 1;
     const bits = [];
