@@ -169,10 +169,28 @@
   @keyframes evslide{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
   /* High-contrast cluster bubbles: white number on a dark disc with a white ring */
   .evcluster .cc{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;color:#fff;font-weight:800;font-size:12.5px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;box-shadow:0 0 0 2px #fff,0 1px 5px rgba(0,0,0,.55)}
+  .evcluster .cc{position:relative}
+  .evcluster .cc-ring{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;border:1.5px solid #fff;
+           animation:evripple3 2.8s ease-out infinite;pointer-events:none}
+  .evcluster .cc.sm .cc-ring{border-color:#0b6b45}
+  .evcluster .cc.md .cc-ring{border-color:#b45309}
+  .evcluster .cc.lg .cc-ring{border-color:#b91c1c}
+  #map.nopulse .evcluster .cc-ring{display:none}
+  @keyframes evripple3{0%{transform:scale(1);opacity:.45}100%{transform:scale(1.55);opacity:0}}
   .evcluster .cc.sm{background:#0b6b45}
   .evcluster .cc.md{background:#b45309}
   .evcluster .cc.lg{background:#b91c1c}
   .evcluster .cc span{line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  /* Station charging points — same ripple treatment as the location dot, but in the
+     port colour and smaller; the ripple switches off automatically when the map is
+     showing a lot of them, so a dense city stays smooth. */
+  .stn{background:none;border:0;overflow:visible;display:flex;align-items:center;justify-content:center}
+  .stn-dot{position:relative;width:13px;height:13px;border-radius:50%;border:2px solid #fff;
+           box-shadow:0 0 0 1px rgba(0,0,0,.35),0 1px 2px rgba(0,0,0,.3)}
+  .stn-dot::after{content:"";position:absolute;left:50%;top:50%;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;
+           border-radius:50%;border:1.5px solid currentColor;animation:evripple2 2.8s ease-out infinite}
+  #map.nopulse .stn-dot::after{display:none}
+  @keyframes evripple2{0%{transform:scale(.7);opacity:.5}100%{transform:scale(1.9);opacity:0}}
   /* My location — Google Maps style: blue dot, white ring, soft ripple */
   .myloc{background:none;border:0;display:flex;align-items:center;justify-content:center}
   .myloc-dot{position:relative;width:16px;height:16px;border-radius:50%;background:#4285F4;border:2.5px solid #fff;
@@ -441,7 +459,7 @@ const cluster = L.markerClusterGroup({
     var n=c.getChildCount();
     var cls = n<100 ? "sm" : (n<1000 ? "md" : "lg");
     var size = n<10 ? 30 : (n<100 ? 36 : (n<1000 ? 42 : 46));
-    return L.divIcon({ html:'<div class="cc '+cls+'"><span>'+n+'</span></div>', className:'evcluster', iconSize:L.point(size,size) });
+    return L.divIcon({ html:'<div class="cc '+cls+'"><i class="cc-ring"></i><span>'+n+'</span></div>', className:'evcluster', iconSize:L.point(size,size) });
   }
 });
 map.addLayer(cluster);
@@ -461,9 +479,20 @@ function popupHtml(s){
     '<a href="'+g+'" target="_blank" rel="noopener">Google Maps</a></div></div>';
 }
 function markerFor(s){
-  const m = L.circleMarker([s.lat,s.lng], {radius:6, color:"#0b1220", weight:1.6, fillColor:portColor(s.port), fillOpacity:1});
+  const col = portColor(s.port);
+  const m = L.marker([s.lat,s.lng], {
+    icon: L.divIcon({ className:"stn", iconSize:[16,16], iconAnchor:[8,8],
+                      html:'<div class="stn-dot" style="background:'+col+';color:'+col+'"></div>' }),
+    keyboard:false, riseOnHover:true
+  });
   m.bindPopup(popupHtml(s), {maxWidth:280}); m._st = s;
   m.on("click", ()=>{ selected = s; }); return m;
+}
+/* keep the ripple only while the map is showing a manageable number of dots */
+function updatePulse(){
+  var el=document.getElementById("map"); if(!el) return;
+  var n=el.querySelectorAll(".stn").length + el.querySelectorAll(".evcluster").length;
+  el.classList.toggle("nopulse", n > 350);
 }
 const netMatch = s => state.net === "all" || (state.net === "vinfast" ? s.cpo === "VinFast" : s.cpo !== "VinFast");
 const isVisible = s => netMatch(s) && (state.loaded === null || state.loaded.has(keyOf(s)));
@@ -736,7 +765,7 @@ function wireColResize(){
     grip.addEventListener("click", function(e){ e.stopPropagation(); });
   });
 }
-function refreshView(){ renderMarkers(); renderList(); }
+function refreshView(){ renderMarkers(); renderList(); setTimeout(updatePulse, 0); }
 
 /* ---------------- my location & directions ---------------- */
 let selected=null, myLoc=null, myMarker=null, myAcc=null, routeLine=null, routeBar=null, picking=false, pendingRoute=null, pendingNearest=false;
@@ -848,6 +877,7 @@ map.getContainer().addEventListener("click", e=>{
 
 /* ---------------- filter dropdown + mobile ---------------- */
 function isMobile(){ return window.matchMedia("(max-width:720px)").matches; }
+map.on("moveend zoomend", function(){ setTimeout(updatePulse, 80); });
 function wireDropdown(dropId, headId, ignoreSel){
   var drop=document.getElementById(dropId), head=document.getElementById(headId);
   if(!drop||!head) return;
