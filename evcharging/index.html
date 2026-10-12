@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>EV Charging Stations - OpenStreetMap</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -107,6 +107,11 @@
   .routebar a{color:var(--accent);text-decoration:none;font-weight:600}
   .routebar .x{cursor:pointer;color:var(--muted)}
   .routebar .x:hover{color:#e11d48}
+  /* Admin trigger: a discreet gear tucked in the bottom-right corner */
+  #adminBtn{position:fixed;right:12px;bottom:12px;z-index:1050;width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+            border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:50%;cursor:pointer;font-size:14px;line-height:1;
+            opacity:.42;box-shadow:var(--shadow);padding:0}
+  #adminBtn:hover{opacity:1;color:var(--accent);border-color:var(--accent)}
   /* Admin console (password-gated Live Query) */
   #adminModal{position:fixed;inset:0;z-index:1100;display:none;align-items:center;justify-content:center;background:rgba(4,10,16,.6);padding:14px}
   #adminModal.on{display:flex}
@@ -168,6 +173,13 @@
   .evcluster .cc.md{background:#b45309}
   .evcluster .cc.lg{background:#b91c1c}
   .evcluster .cc span{line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  /* My location — Google Maps style: blue dot, white ring, soft ripple */
+  .myloc{background:none;border:0;display:flex;align-items:center;justify-content:center}
+  .myloc-dot{position:relative;width:16px;height:16px;border-radius:50%;background:#4285F4;border:2.5px solid #fff;
+             box-shadow:0 0 0 1px rgba(0,0,0,.28),0 1px 4px rgba(0,0,0,.45)}
+  .myloc-dot::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;
+             border:2px solid rgba(66,133,244,.65);animation:evripple 1.9s ease-out infinite}
+  @keyframes evripple{0%{transform:scale(.55);opacity:.9}100%{transform:scale(2.9);opacity:0}}
   .drop .tree{display:none}
   .drop.open .tree{display:block;max-height:46vh}
   .drop > .dropbody{display:none}
@@ -237,76 +249,77 @@
 <body>
 <div id="app">
   <header>
-    <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Back to renewablevietnam.com">Home</a>
-    <button class="btn" id="toggleSide" title="Show / hide the panel">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt">EV Charging</span></div>
+    <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
+    <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span></div>
     <div class="spacer"></div>
-    <button class="btn" id="adminBtn" title="Admin console">Admin</button>
-    <button class="btn" id="nearBtn" title="Show the stations nearest to me">Near me</button>
-    <button class="btn" id="themeBtn" title="Toggle light / dark">&#9788;</button>
+    <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
+    <button class="btn" id="langBtn" title="Ngôn ngữ" data-i18n-title="lang_t">EN</button>
+    <button class="btn" id="themeBtn" title="Đổi sáng / tối" data-i18n-title="theme_t">&#9788;</button>
   </header>
   <main>
     <aside id="side">
       <div class="netdrop" id="netDrop">
         <button class="netbtn" id="netBtn" aria-haspopup="listbox" aria-expanded="false">
-          <span class="netlbl">EV type</span><span class="netval" id="netVal">All EV</span><span class="caret" aria-hidden="true">&#9662;</span>
+          <span class="netlbl" data-i18n="evtype">Loại xe</span><span class="netval" id="netVal">Tất cả EV</span><span class="caret" aria-hidden="true">&#9662;</span>
         </button>
         <div class="netmenu" id="netMenu" role="listbox" aria-label="EV type">
-          <button class="netopt active" data-net="all" role="option">All EV</button>
-          <button class="netopt" data-net="vinfast" role="option">VinFast only</button>
-          <button class="netopt" data-net="other" role="option">Non-VinFast</button>
+          <button class="netopt active" data-net="all" role="option">Tất cả EV</button>
+          <button class="netopt" data-net="vinfast" role="option">Chỉ VinFast</button>
+          <button class="netopt" data-net="other" role="option">Khác VinFast</button>
         </div>
       </div>
       <div class="hintwrap" id="locHint" hidden>
-        <span>Turn on location to see stations within 40 km.</span>
-        <button id="locBtn">Use my location</button>
+        <span data-i18n="hint_loc">Bật vị trí để xem các trạm trong bán kính 40 km.</span>
+        <button id="locBtn" data-i18n="hint_btn">Dùng vị trí của tôi</button>
       </div>
       <div class="drop open" id="listDrop">
-        <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Show / hide the station list">
+        <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Ẩn / hiện danh sách trạm" data-i18n-title="list_t">
           <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm">Stations</span>
+          <span class="nm" data-i18n="stations">Danh sách trạm</span>
           <span class="spacer" style="flex:1"></span>
-          <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Choose which columns to show">Columns <span class="caret" aria-hidden="true">&#9662;</span></span>
+          <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Chọn cột hiển thị" data-i18n-title="cols_t"><span data-i18n="cols">Cột</span> <span class="caret" aria-hidden="true">&#9662;</span></span>
         </div>
         <div class="dropbody">
           <div class="colwrap" id="colBody"></div>
-          <input class="search" id="search" placeholder="Search name, provider, address...">
+          <input class="search" id="search" placeholder="Tìm theo tên, nhà cung cấp, địa chỉ..." data-i18n-ph="search_ph">
           <div id="list"></div>
         </div>
       </div>
       <div class="drop" id="filterDrop">
-        <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Show / hide the port and provider filters">
+        <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp" data-i18n-title="filters_t">
           <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm">Filters</span>
+          <span class="nm" data-i18n="filters">Bộ lọc</span>
           <span class="spacer" style="flex:1"></span>
-          <a id="allLnk">All</a><a id="noneLnk">None</a>
+          <a id="allLnk" data-i18n="all">Tất cả</a><a id="noneLnk" data-i18n="none">Bỏ chọn</a>
         </div>
         <div class="tree" id="tree"></div>
       </div>
-      <div class="tinyfoot">Data &copy; Google My Maps &ldquo;EV charging station map&rdquo; (incl. VinFast network) &mdash; for studying / research purposes only, non-commercial. Base map: OpenStreetMap France tiles. Chargers = installed connectors (count &times; power), not live availability.</div>
+      <div class="tinyfoot" data-i18n="foot">Dữ liệu &copy; Google My Maps &ldquo;Bản đồ trạm sạc EV&rdquo; (gồm hệ thống VinFast) &mdash; chỉ dùng cho mục đích học tập / nghiên cứu, phi thương mại. Nền bản đồ: OpenStreetMap France. Số cổng = cổng đã lắp (số lượng &times; công suất), không phải tình trạng trống.</div>
     </aside>
-    <div id="drag" title="Drag to resize the panel"></div>
+    <div id="drag" title="Kéo để đổi kích thước bảng" data-i18n-title="drag_t"></div>
     <div id="mapWrap">
       <div id="map"></div>
       <div id="toast"></div>
       <div id="loadbar"><i></i></div>
+      <button id="adminBtn" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
     </div>
   </main>
-  <div id="adminModal" role="dialog" aria-modal="true" aria-label="Admin console">
+  <div id="adminModal" role="dialog" aria-modal="true" aria-label="Bảng quản trị">
     <div class="card">
       <div id="adminLock">
-        <h3>Admin access</h3>
-        <input type="password" id="adminPass" placeholder="Password" autocomplete="off" spellcheck="false">
-        <button id="adminUnlock">Unlock</button>
+        <h3 data-i18n="admin_access">Truy cập quản trị</h3>
+        <input type="password" id="adminPass" placeholder="Mật khẩu" data-i18n-ph="password" autocomplete="off" spellcheck="false">
+        <button id="adminUnlock" data-i18n="unlock">Mở khóa</button>
         <div class="err" id="adminErr"></div>
       </div>
       <div id="adminConsole" hidden>
-        <div class="ahead"><b>Admin &middot; Live Query</b><span class="spacer"></span>
-          <button class="btn" id="adminLockBtn">Lock</button>
-          <button class="btn" id="adminClose">Close</button>
+        <div class="ahead"><b data-i18n="admin_head">Quản trị &middot; Live Query</b><span class="spacer"></span>
+          <button class="btn" id="adminLockBtn" data-i18n="lock">Khóa</button>
+          <button class="btn" id="adminClose" data-i18n="close">Đóng</button>
         </div>
         <div id="adminSrcs"></div>
-        <div class="arun"><button class="btn" id="adminRunAll">Live Query all</button> <button class="btn" id="adminExport">Export KML</button> <button class="btn" id="adminPull">Pull shared</button></div>
+        <div class="arun"><button class="btn" id="adminRunAll" data-i18n="lq_all">Live Query tất cả</button> <button class="btn" id="adminExport" data-i18n="export">Xuất KML</button> <button class="btn" id="adminPull" data-i18n="pull">Tải lại từ máy chủ</button></div>
         <pre id="adminLog"></pre>
       </div>
     </div>
@@ -317,6 +330,83 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 const STATIONS = [];   /* stations now live in Supabase and load on demand */
+
+/* ---------------- language (Vietnamese is the default) ---------------- */
+var I18N = {
+  vi: {
+    page_title:"Trạm sạc EV – Bản đồ trạm sạc",
+    home:"Trang chủ", home_t:"Về renewablevietnam.com", panel_t:"Ẩn / hiện bảng", mark:"Trạm sạc EV",
+    near:"Gần tôi", near_t:"Các trạm gần vị trí của tôi", theme_t:"Đổi sáng / tối", lang_t:"Ngôn ngữ",
+    evtype:"Loại xe", net_all:"Tất cả EV", net_vinfast:"Chỉ VinFast", net_other:"Khác VinFast",
+    hint_loc:"Bật vị trí để xem các trạm trong bán kính 40 km.", hint_btn:"Dùng vị trí của tôi",
+    list_t:"Ẩn / hiện danh sách trạm", stations:"Danh sách trạm", cols:"Cột", cols_t:"Chọn cột hiển thị",
+    search_ph:"Tìm theo tên, nhà cung cấp, địa chỉ...",
+    filters_t:"Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp", filters:"Bộ lọc", all:"Tất cả", none:"Bỏ chọn",
+    foot:'Dữ liệu © Google My Maps “Bản đồ trạm sạc EV” (gồm hệ thống VinFast) — chỉ dùng cho mục đích học tập / nghiên cứu, phi thương mại. Nền bản đồ: OpenStreetMap France. Số cổng = cổng đã lắp (số lượng × công suất), không phải tình trạng trống.',
+    drag_t:"Kéo để đổi kích thước bảng",
+    provider:"Nhà cung cấp", address:"Địa chỉ", connector:"Đầu sạc", coords:"Tọa độ",
+    directions:"Chỉ đường", myloc:"Vị trí của tôi",
+    geo_unavail:"Không lấy được vị trí — bấm lên bản đồ để chọn vị trí.", locating:"Đang định vị…",
+    geo_fail:"Không lấy được GPS. Bấm lên bản đồ để chọn vị trí.",
+    no_match:"Không có trạm nào phù hợp bộ lọc.", nearest:"Gần nhất: ", away:" km",
+    pick_station:"Hãy chọn một trạm trong danh sách hoặc trên bản đồ.",
+    routing:"Đang tìm đường…", routing_fail:"Không tìm được đường: ",
+    by_car:"xe hơi", open_gmaps:"Mở trong Google Maps", clear:"Xóa",
+    cta_nearest:" trạm gần nhất", empty:"Không có trạm phù hợp.",
+    col_name:"Tên", col_port:"Cổng sạc", col_cpo:"Nhà cung cấp", col_chg:"Trụ sạc", col_status:"Trạng thái", col_dist:"Khoảng cách",
+    tip_chg:"Số cổng đã lắp (số lượng × công suất) — không phải tình trạng trực tiếp",
+    tip_status:"Tình trạng trực tiếp. Các mạng này không có API công khai nên hiển thị — cho tới khi cấu hình nguồn.",
+    no_feed:"Chưa cấu hình nguồn trực tiếp", new_tag:"MỚI", click_map:"Bấm lên bản đồ để chọn vị trí",
+    load_fail:"Không tải được trạm: ",
+    fast_note:"Không có trạm sạc nhanh trong 30 km — hiển thị trạm sạc chậm",
+    slow_only:"Khu vực này chỉ có trạm sạc chậm",
+    admin_t:"Bảng quản trị", admin_access:"Truy cập quản trị", password:"Mật khẩu", unlock:"Mở khóa",
+    admin_head:"Quản trị · Live Query", lock:"Khóa", close:"Đóng",
+    lq_all:"Live Query tất cả", export:"Xuất KML", pull:"Tải lại từ máy chủ"
+  },
+  en: {
+    page_title:"EV Charging Stations - OpenStreetMap",
+    home:"Home", home_t:"Back to renewablevietnam.com", panel_t:"Show / hide the panel", mark:"EV Charging",
+    near:"Near me", near_t:"Show the stations nearest to me", theme_t:"Toggle light / dark", lang_t:"Language",
+    evtype:"EV type", net_all:"All EV", net_vinfast:"VinFast only", net_other:"Non-VinFast",
+    hint_loc:"Turn on location to see stations within 40 km.", hint_btn:"Use my location",
+    list_t:"Show / hide the station list", stations:"Stations", cols:"Columns", cols_t:"Choose which columns to show",
+    search_ph:"Search name, provider, address...",
+    filters_t:"Show / hide the port and provider filters", filters:"Filters", all:"All", none:"None",
+    foot:'Data © Google My Maps “EV charging station map” (incl. VinFast network) — for studying / research purposes only, non-commercial. Base map: OpenStreetMap France tiles. Chargers = installed connectors (count × power), not live availability.',
+    drag_t:"Drag to resize the panel",
+    provider:"Provider", address:"Address", connector:"Connector", coords:"Coords",
+    directions:"Directions", myloc:"My location",
+    geo_unavail:"Geolocation unavailable — click the map to set your location.", locating:"Locating…",
+    geo_fail:"Couldn't get GPS. Click the map to set your location.",
+    no_match:"No stations match the current filter.", nearest:"Nearest: ", away:" km",
+    pick_station:"Click a station in the list or on the map first.",
+    routing:"Routing…", routing_fail:"Routing failed: ",
+    by_car:"by car", open_gmaps:"Open in Google Maps", clear:"Clear",
+    cta_nearest:" nearest", empty:"No matching stations.",
+    col_name:"Name", col_port:"Port", col_cpo:"Provider", col_chg:"Chargers", col_status:"Status", col_dist:"Distance",
+    tip_chg:"Installed connectors (count × power) — not live availability",
+    tip_status:"Live availability. These networks publish no public API, so this shows — until a source is configured.",
+    no_feed:"No live feed configured", new_tag:"NEW", click_map:"Click the map to set your location",
+    load_fail:"Couldn't load stations: ",
+    fast_note:"No fast charger within 30 km — showing slow chargers",
+    slow_only:"Slow chargers only here",
+    admin_t:"Admin console", admin_access:"Admin access", password:"Password", unlock:"Unlock",
+    admin_head:"Admin · Live Query", lock:"Lock", close:"Close",
+    lq_all:"Live Query all", export:"Export KML", pull:"Pull shared"
+  }
+};
+var LANG = "vi";
+try{ var savedLang = localStorage.getItem("evmap-lang"); if(savedLang==="en"||savedLang==="vi") LANG=savedLang; }catch(e){}
+function tr(k){ return (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k; }
+function applyI18n(){
+  document.documentElement.lang = LANG;
+  document.title = tr("page_title");
+  document.querySelectorAll("[data-i18n]").forEach(function(el){ var s=tr(el.dataset.i18n); if(s) el.textContent=s; });
+  document.querySelectorAll("[data-i18n-title]").forEach(function(el){ var s=tr(el.dataset.i18nTitle); if(s) el.title=s; });
+  document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ var s=tr(el.dataset.i18nPh); if(s) el.placeholder=s; });
+  var lb=document.getElementById("langBtn"); if(lb) lb.textContent = (LANG==="vi" ? "EN" : "VI");
+}
 
 const PORTS = {};                       // port name -> color
 ["Charging port: Type 2","Charging port: CCS2","Charging port: GBT & CCS2",
@@ -361,19 +451,17 @@ function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;
 const mkKey = s => s.id || (s.name+"|"+s.lat+","+s.lng);
 function popupHtml(s){
   const g="https://www.google.com/maps/search/?api=1&query="+s.lat+","+s.lng;
-  const o="https://www.openstreetmap.org/?mlat="+s.lat+"&mlon="+s.lng+"#map=17/"+s.lat+"/"+s.lng;
-  let rows = '<div class="kv"><b>Provider:</b> '+esc(s.cpo||"-")+'</div>';
-  if(s.addr) rows += '<div class="kv"><b>Address:</b> '+esc(s.addr)+'</div>';
-  if(s.conn) rows += '<div class="kv"><b>Connector:</b> '+esc(s.conn)+'</div>';
-  rows += '<div class="kv"><b>Coords:</b> '+s.lat.toFixed(6)+', '+s.lng.toFixed(6)+'</div>';
+  let rows = '<div class="kv"><b>'+esc(tr("provider"))+':</b> '+esc(s.cpo||"-")+'</div>';
+  if(s.addr) rows += '<div class="kv"><b>'+esc(tr("address"))+':</b> '+esc(s.addr)+'</div>';
+  if(s.conn) rows += '<div class="kv"><b>'+esc(tr("connector"))+':</b> '+esc(s.conn)+'</div>';
+  rows += '<div class="kv"><b>'+esc(tr("coords"))+':</b> '+s.lat.toFixed(6)+', '+s.lng.toFixed(6)+'</div>';
   return '<div class="pop"><div class="pn">'+esc(s.name)+'</div>'+
     '<span class="pb" style="background:'+portColor(s.port)+'">'+esc(s.port)+'</span>'+ rows +
-    '<div class="lnks"><a href="#" data-route="'+esc(mkKey(s))+'">Directions</a>'+
-    '<a href="'+g+'" target="_blank" rel="noopener">Google Maps</a>'+
-    '<a href="'+o+'" target="_blank" rel="noopener">OpenStreetMap</a></div></div>';
+    '<div class="lnks"><a href="#" data-route="'+esc(mkKey(s))+'">'+esc(tr("directions"))+'</a>'+
+    '<a href="'+g+'" target="_blank" rel="noopener">Google Maps</a></div></div>';
 }
 function markerFor(s){
-  const m = L.circleMarker([s.lat,s.lng], {radius:6, color:"#fff", weight:1.4, fillColor:portColor(s.port), fillOpacity:1});
+  const m = L.circleMarker([s.lat,s.lng], {radius:6, color:"#0b1220", weight:1.6, fillColor:portColor(s.port), fillOpacity:1});
   m.bindPopup(popupHtml(s), {maxWidth:280}); m._st = s;
   m.on("click", ()=>{ selected = s; }); return m;
 }
@@ -477,7 +565,7 @@ function loadCols(){ try{ var v=JSON.parse(localStorage.getItem("evmap-cols")||"
 function saveCols(){ try{ localStorage.setItem("evmap-cols", JSON.stringify(state.cols)); }catch(e){} }
 function cellFor(x, key){
   const s = x.s;
-  if(key==="name")   return '<td class="nm" title="'+esc(s.name)+'"><span class="pin" style="background:'+portColor(s.port)+'"></span>'+esc(s.name)+(state.newIds.has(s.id)?' <span class="tag newtag">NEW</span>':'')+'</td>';
+  if(key==="name")   return '<td class="nm" title="'+esc(s.name)+'"><span class="pin" style="background:'+portColor(s.port)+'"></span>'+esc(s.name)+(state.newIds.has(s.id)?' <span class="tag newtag">'+esc(tr("new_tag"))+'</span>':'')+'</td>';
   if(key==="port")   return '<td><span class="ptag" style="background:'+portColor(s.port)+'">'+esc(portShort(s.port))+'</span></td>';
   if(key==="cpo")    return '<td title="'+esc(s.cpo||"")+'">'+esc(s.cpo||"\u2014")+'</td>';
   if(key==="chg")    return '<td class="num" title="'+esc(chargerInfo(s).label||"")+'">'+chargerCell(s)+'</td>';
@@ -489,7 +577,7 @@ function renderColPicker(){
   const box = document.getElementById("colBody");
   if(box){
     box.innerHTML = COLS.map(function(c){
-      return '<label><input type="checkbox" data-colpick="'+c.key+'"'+(state.cols.indexOf(c.key)>-1?" checked":"")+'>'+esc(c.label)+'</label>';
+      return '<label><input type="checkbox" data-colpick="'+c.key+'"'+(state.cols.indexOf(c.key)>-1?" checked":"")+'>'+esc(tr(c.lk))+'</label>';
     }).join("");
     box.querySelectorAll("input[data-colpick]").forEach(function(inp){
       inp.addEventListener("change", function(){
@@ -505,7 +593,7 @@ function renderColPicker(){
     });
   }
   const subEl = document.getElementById("colSub");
-  if(subEl) subEl.textContent = COLS.filter(function(c){ return state.cols.indexOf(c.key)>-1; }).map(function(c){ return c.label; }).join(" \u00b7 ");
+  if(subEl) subEl.textContent = COLS.filter(function(c){ return state.cols.indexOf(c.key)>-1; }).map(function(c){ return tr(c.lk); }).join(" \u00b7 ");
 }
 // Installed connectors, parsed from "AC:2*7", "GBT:1*22+1*7", "CCS2:1*60" ...
 function chargerInfo(s){
@@ -541,17 +629,17 @@ async function refreshStatus(){
 }
 function statusCell(s){
   var st = state.status && state.status[s.id];
-  if(!st) return '<span class="st-na" title="No live feed configured">\u2014</span>';
+  if(!st) return '<span class="st-na" title="'+esc(tr("no_feed"))+'">\u2014</span>';
   var cls = st.state==="AVAILABLE" ? "ok" : (st.state==="IN_USE" ? "busy" : (st.state==="OFFLINE" ? "off" : ""));
   return '<span class="st-tag '+cls+'" title="'+esc(st.state||"")+'">'+st.available+"/"+st.total+'</span>';
 }
 const COLS = [
-  {key:"name", label:"Name",     w:"auto"},
-  {key:"port", label:"Port",     w:82},
-  {key:"cpo",  label:"Provider", w:118},
-  {key:"chg",  label:"Chargers", w:104, cls:"num", tip:"Installed connectors (count \u00d7 power) \u2014 not live availability"},
-  {key:"status", label:"Status", w:84, tip:"Live availability. These networks publish no public API, so this shows \u2014 until a source is configured."},
-  {key:"dist", label:"Distance", w:80,  cls:"num"}
+  {key:"name", lk:"col_name",   w:"auto"},
+  {key:"port", lk:"col_port",   w:82},
+  {key:"cpo",  lk:"col_cpo",    w:118},
+  {key:"chg",  lk:"col_chg",    w:104, cls:"num", tk:"tip_chg"},
+  {key:"status", lk:"col_status", w:84, tk:"tip_status"},
+  {key:"dist", lk:"col_dist",   w:80,  cls:"num"}
 ];
 const SORTS = {
   idx:  function(){ return 0; },
@@ -579,14 +667,14 @@ function renderList(){
   else if(myLoc && k==="dist"){ rows = rows.slice(0, NEAREST_N); }
 
   const cta = '<div class="row cta" id="locCta"><span class="pin" style="background:var(--accent)"></span>'+
-    '<div class="t"><div class="n">\uD83D\uDCCD '+(isMobile()?PHONE_N:NEAREST_N)+' nearest</div></div></div>';
+    '<div class="t"><div class="n">'+(isMobile()?PHONE_N:NEAREST_N)+esc(tr("cta_nearest"))+'</div></div></div>';
 
   const active = COLS.filter(function(c){ return state.cols.indexOf(c.key) > -1; });
   const head = '<tr>' + active.map(function(c){
     const on = state.sort.key===c.key;
     const ar = (on && c.key!=="idx") ? (state.sort.dir>0 ? " \u25B2" : " \u25BC") : "";
     const w = state.colW[c.key] != null ? state.colW[c.key]+"px" : c.w;
-    return '<th data-key="'+c.key+'"'+(c.cls?' class="'+c.cls+'"':'')+(c.tip?' title="'+esc(c.tip)+'"':'')+' style="width:'+w+'">'+c.label+ar+
+    return '<th data-key="'+c.key+'"'+(c.cls?' class="'+c.cls+'"':'')+(c.tk?' title="'+esc(tr(c.tk))+'"':'')+' style="width:'+w+'">'+esc(tr(c.lk))+ar+
       '<span class="rgrip" data-col="'+c.key+'" title="Drag to resize"></span></th>';
   }).join("") + '</tr>';
 
@@ -597,7 +685,7 @@ function renderList(){
   let html = "";
   if(!myLoc) html += cta;
   html += '<table class="grid"><thead>'+head+'</thead><tbody>'+
-    (body || '<tr><td class="emptyrow" colspan="'+active.length+'">No matching stations.</td></tr>')+'</tbody></table>';
+    (body || '<tr><td class="emptyrow" colspan="'+active.length+'">'+esc(tr("empty"))+'</td></tr>')+'</tbody></table>';
   listEl.innerHTML = html;
   renderColPicker();
 
@@ -660,9 +748,12 @@ function setMyLoc(lat,lng,acc){
   myLoc={lat:lat,lng:lng};
   if(myMarker) map.removeLayer(myMarker);
   if(myAcc) map.removeLayer(myAcc);
-  if(acc>0) myAcc=L.circle([lat,lng],{radius:acc,color:"#e11d48",weight:1,fillColor:"#e11d48",fillOpacity:.12}).addTo(map);
-  myMarker=L.circleMarker([lat,lng],{radius:8,color:"#fff",weight:2,fillColor:"#e11d48",fillOpacity:1}).addTo(map)
-    .bindPopup("<b>My location</b><br>"+lat.toFixed(5)+", "+lng.toFixed(5));
+  if(acc>0) myAcc=L.circle([lat,lng],{radius:acc,color:"#4285F4",weight:1,fillColor:"#4285F4",fillOpacity:.15}).addTo(map);
+  myMarker=L.marker([lat,lng],{
+      icon:L.divIcon({className:"myloc", html:'<div class="myloc-dot"></div>', iconSize:[18,18], iconAnchor:[9,9]}),
+      zIndexOffset:1000, keyboard:false
+    }).addTo(map)
+    .bindPopup("<b>"+esc(tr("myloc"))+"</b><br>"+lat.toFixed(5)+", "+lng.toFixed(5));
   map.setView([lat,lng], 10);
   myMarker.openPopup(); setMsg("");
   if(state.sort.key === "name") state.sort = {key:"dist", dir:1};
@@ -673,11 +764,11 @@ function setMyLoc(lat,lng,acc){
 function startPick(msg){ picking=true; map.getContainer().style.cursor="crosshair"; setMsg(msg); }
 map.on("click", e=>{ if(!picking) return; picking=false; map.getContainer().style.cursor=""; setMyLoc(e.latlng.lat, e.latlng.lng, 0); });
 function locateMe(){
-  if(!navigator.geolocation){ startPick("Geolocation unavailable \u2014 click the map to set your location."); return; }
-  setMsg("Locating\u2026");
+  if(!navigator.geolocation){ startPick(tr("geo_unavail")); return; }
+  setMsg(tr("locating"));
   navigator.geolocation.getCurrentPosition(
     p=>setMyLoc(p.coords.latitude,p.coords.longitude,p.coords.accuracy||0),
-    ()=>startPick("Couldn't get GPS (file:// blocks it). Click the map to set your location."),
+    ()=>startPick(tr("geo_fail")),
     {enableHighAccuracy:true, timeout:10000, maximumAge:60000});
 }
 function haversine(a,b){
@@ -701,10 +792,10 @@ function highlightRow(id){
 function findNearest(prefix){
   if(!myLoc){ pendingNearest=true; locateMe(); return; }
   const s=nearestStation();
-  if(!s){ setMsg("No stations match the current filter."); setTimeout(()=>setMsg(""),3200); return; }
+  if(!s){ setMsg(tr("no_match")); setTimeout(()=>setMsg(""),3200); return; }
   selected=s;
   const km=haversine(myLoc,s);
-  setMsg((prefix?prefix+" \u2014 ":"")+"Nearest: "+s.name+" \u2014 "+km.toFixed(1)+" km away");
+  setMsg((prefix?prefix+" \u2014 ":"")+tr("nearest")+s.name+" \u2014 "+km.toFixed(1)+tr("away"));
   const m=markersById.get(mkKey(s));
   if(m) cluster.zoomToShowLayer(m, ()=>{ m.openPopup(); });
   else map.setView([s.lat,s.lng],14);
@@ -719,13 +810,13 @@ function openGoogleDir(st){
 }
 function directions(st){
   st = st || selected || nearestStation();
-  if(!st){ setMsg("Click a station in the list or on the map first."); setTimeout(()=>setMsg(""),3200); return; }
+  if(!st){ setMsg(tr("pick_station")); setTimeout(()=>setMsg(""),3200); return; }
   openGoogleDir(st);                        // open Google Maps directions in a new tab
   if(!myLoc){ pendingRoute=st; locateMe(); return; }
   doRoute(st);                              // and draw the in-app route as well
 }
 async function doRoute(st){
-  setMsg("Routing\u2026");
+  setMsg(tr("routing"));
   try{
     const url="https://router.project-osrm.org/route/v1/driving/"+myLoc.lng+","+myLoc.lat+";"+st.lng+","+st.lat+"?overview=full&geometries=geojson";
     const j = await (await fetch(url)).json();
@@ -737,14 +828,14 @@ async function doRoute(st){
     map.fitBounds(routeLine.getBounds().pad(0.15));
     showRouteBar(st, r.distance, r.duration);
     setMsg("");
-  }catch(e){ setMsg("Routing failed: "+e.message); setTimeout(()=>setMsg(""),3800); }
+  }catch(e){ setMsg(tr("routing_fail")+e.message); setTimeout(()=>setMsg(""),3800); }
 }
 function showRouteBar(st,dist,dur){
   clearRoute();
   const g="https://www.google.com/maps/dir/?api=1&origin="+myLoc.lat+","+myLoc.lng+"&destination="+st.lat+","+st.lng+"&travelmode=driving";
   routeBar=document.createElement("div"); routeBar.className="routebar";
-  routeBar.innerHTML='<b>'+esc(st.name)+'</b><div>'+fmtKm(dist)+' &middot; '+fmtMin(dur)+' by car</div>'+
-    '<div class="rb"><a href="'+g+'" target="_blank" rel="noopener">Open in Google Maps</a><span class="x" id="clearRoute">Clear</span></div>';
+  routeBar.innerHTML='<b>'+esc(st.name)+'</b><div>'+fmtKm(dist)+' &middot; '+fmtMin(dur)+' '+esc(tr("by_car"))+'</div>'+
+    '<div class="rb"><a href="'+g+'" target="_blank" rel="noopener">'+esc(tr("open_gmaps"))+'</a><span class="x" id="clearRoute">'+esc(tr("clear"))+'</span></div>';
   document.getElementById("mapWrap").appendChild(routeBar);
   routeBar.querySelector("#clearRoute").addEventListener("click", clearRoute);
 }
@@ -813,11 +904,11 @@ document.getElementById("toggleSide").addEventListener("click", ()=>{ document.g
 })();
 document.getElementById("allLnk").addEventListener("click", ()=>{ state.loaded=null; renderTree(); refreshView(); });
 document.getElementById("noneLnk").addEventListener("click", ()=>{ state.loaded=new Set(); renderTree(); refreshView(); });
-var NET_LABEL={all:"All EV", vinfast:"VinFast only", other:"Non-VinFast"};
+var NET_LABEL={all:"net_all", vinfast:"net_vinfast", other:"net_other"};
 var NEAR_FAST_KM = 30, loadedAt = null, nearNote = "";
 function isFastPort(p){ return /^Charging port: DC/.test(String(p||"")); }
 function paintNet(){
-  var v=document.getElementById("netVal"); if(v) v.textContent=NET_LABEL[state.net]||"All EV";
+  var v=document.getElementById("netVal"); if(v) v.textContent=tr(NET_LABEL[state.net]||"net_all");
   var m=document.getElementById("netMenu"); if(!m) return;
   m.querySelectorAll(".netopt").forEach(function(x){ x.classList.toggle("active", x.dataset.net===state.net); });
 }
@@ -832,7 +923,7 @@ function applyVinFastBand(){
   fast.forEach(function(s){ var d=haversine(myLoc,s); if(d<bd) bd=d; });
   var useFast = fast.length && bd<=NEAR_FAST_KM;
   state.loaded = new Set((useFast?fast:slow).map(keyOf));
-  if(!useFast) nearNote = fast.length ? ("No fast charger within "+NEAR_FAST_KM+" km - showing slow chargers") : "Slow chargers only here";
+  if(!useFast) nearNote = fast.length ? tr("fast_note") : tr("slow_only");
 }
 function applyNet(){
   paintNet();
@@ -863,7 +954,7 @@ function applyNet(){
 function showLoad(on){ var b=document.getElementById("loadbar"); if(b) b.classList.toggle("on", !!on); }
 function showHint(on){
   var el=document.getElementById("locHint"); if(el) el.hidden=!on;
-  if(on){ startPick("Click the map to set your location"); }
+  if(on){ startPick(tr("click_map")); }
   else { picking=false; map.getContainer().style.cursor=""; setMsg(""); }
 }
 function ensureLoaded(){
@@ -884,13 +975,13 @@ function ensureLoaded(){
     renderTree(); refreshView();
     if(nearNote){ setMsg(nearNote); setTimeout(function(){ setMsg(""); }, 5000); }
   }).catch(function(e){
-    setMsg("Couldn't load stations: "+(e&&e.message||e));
+    setMsg(tr("load_fail")+(e&&e.message||e));
     setTimeout(function(){ setMsg(""); }, 6000);
   }).then(function(){ showLoad(false); });
 }
 function locateAndLoad(){
   if(!navigator.geolocation){ showHint(true); return; }
-  setMsg("Locating\u2026");
+  setMsg(tr("locating"));
   navigator.geolocation.getCurrentPosition(function(pos){
     showHint(false);
     setMyLoc(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy||0);
@@ -906,6 +997,15 @@ searchEl.addEventListener("input", function(){          // debounce: 20k rows re
   clearTimeout(searchTimer);
   searchTimer=setTimeout(function(){ state.q=searchEl.value; renderList(); }, 180);
 });
+applyI18n();
+document.getElementById("langBtn").addEventListener("click", function(){
+  saveLang(LANG==="vi" ? "en" : "vi");
+});
+function saveLang(l){
+  LANG=l; try{ localStorage.setItem("evmap-lang", l); }catch(e){}
+  applyI18n();
+  renderColPicker(); renderTree(); renderList();
+}
 document.getElementById("themeBtn").addEventListener("click", ()=>{
   const cur=document.documentElement.getAttribute("data-theme")==="light"?"dark":"light";
   document.documentElement.setAttribute("data-theme", cur);
