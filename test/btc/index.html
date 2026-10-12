@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.09</title>
+<title>Coin Search + 16 Models — Rev 0.10</title>
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
      BlackBerry-blue accent (#0072BC → #0092CC), black surfaces. Ported from the
@@ -198,6 +198,18 @@
   .pf-form input[type="text"],.pf-form input[type="password"]{flex:1; min-width:180px}
   .pf-actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px}
 
+  .bt-controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px}
+  .bt-controls .chip.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  .bt-controls input[type="number"]{flex:0 0 120px; min-width:110px}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:10px; margin-top:12px}
+  .stat{background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px}
+  .stat .k{font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--faint)}
+  .stat .v{font-size:17px; font-weight:200; font-variant-numeric:tabular-nums; margin-top:2px; overflow-wrap:anywhere}
+  .stat .v.up{color:var(--up)} .stat .v.down{color:var(--down)} .stat .v.faint{color:var(--faint)}
+  .chart{width:100%; height:150px; display:block; margin-top:12px}
+  .legend{display:flex; gap:14px; margin-top:6px; color:var(--faint); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase}
+  .legend i{display:inline-block; width:14px; height:2px; vertical-align:middle; margin-right:5px}
+
   details{border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   summary{cursor:pointer; padding:12px 16px; font-size:10.5px; font-weight:700; letter-spacing:.18em;
     text-transform:uppercase; color:var(--faint); box-shadow:inset 0 3px 0 var(--accent)}
@@ -246,6 +258,11 @@
     .pf-actions{gap:6px}
     .pf-actions .chip{flex:1}
     .pf-actions .status{flex-basis:100%}
+
+    .bt-controls{gap:6px}
+    .bt-controls .chip{flex:1}
+    .bt-controls input[type="number"],.bt-controls .go{flex-basis:100%; width:100%}
+    .bt-controls .go{flex:1}
 
     /* tables become stacked rows */
     .panel table,.panel tbody,.panel thead,.panel tr,.panel td,.panel th{display:block}
@@ -386,6 +403,59 @@
     </div>
   </div>
 
+  <!-- BACKTEST -->
+  <div class="section" id="backtest">
+    <div class="panel">
+      <h2>Backtest <span class="cloud" id="bt-cloud">16-model strategy</span></h2>
+      <div class="sub">Replays the daily verdicts over the coin's history: a BUY invests fully at that day's close, a SELL moves to cash, HOLD keeps the current allocation. Compared against buy &amp; hold.</div>
+      <div class="bt-controls" id="bt-windows">
+        <button class="chip" data-days="90">90d</button>
+        <button class="chip on" data-days="180">180d</button>
+        <button class="chip" data-days="365">1y</button>
+        <button class="chip" data-days="730">2y</button>
+        <button class="chip" data-days="0">All</button>
+        <input type="number" id="bt-capital" value="10000" min="1" step="any" inputmode="decimal" aria-label="Starting capital in USDT">
+        <button class="go" id="bt-run">Run</button>
+      </div>
+      <div class="status" id="bt-status"></div>
+      <div class="stat-grid" id="bt-stats"></div>
+      <svg class="chart" id="bt-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Strategy</span>
+        <span><i style="background:var(--line-strong)"></i>Buy &amp; hold</span>
+      </div>
+      <div class="scroll" style="margin-top:12px; max-height:260px">
+        <table>
+          <thead><tr><th>#</th><th>Day</th><th class="c">Side</th><th class="r">Price</th><th class="r">Value</th><th class="r">P&amp;L</th></tr></thead>
+          <tbody id="bt-trades"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO TRADING -->
+  <div class="section" id="demo">
+    <div class="panel">
+      <h2>Demo trading <span class="cloud">paper · virtual USDT</span></h2>
+      <div class="sub">A paper wallet for this coin, private to your code. Buy and sell at the live Binance price — nothing real is at stake.</div>
+      <div class="stat-grid" id="dm-stats"></div>
+      <div class="pf-actions">
+        <button class="go" id="dm-buy">Buy</button>
+        <button class="chip" id="dm-sell">Sell</button>
+        <button class="chip" id="dm-signal">Trade the signal</button>
+        <button class="chip" id="dm-refresh">Refresh price</button>
+        <button class="rm" id="dm-reset">Reset</button>
+      </div>
+      <div class="status" id="dm-status"></div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Time</th><th class="c">Side</th><th class="r">Qty</th><th class="r">Price</th><th class="r">Value</th></tr></thead>
+          <tbody id="dm-log"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <details>
     <summary>How the search, the models and the decisions work</summary>
     <div class="body">
@@ -400,7 +470,13 @@
       row-level security only ever returns rows for that hash, so nobody else can read your list, and the same code on another device
       gives the same portfolio. With no code it stays local to this browser. Each row shows the coin's live price, today's decision,
       its score and the current correct/incorrect run; export/import as JSON.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.09.</div>
+      <div style="margin-top:12px"><b>Backtest</b> — replays the daily verdicts over up to ~1,000 days of Binance daily klines:
+      a BUY invests fully at that day's close, a SELL moves to cash, HOLD keeps the current allocation. Compares against buy &amp; hold
+      with round-trip trades, win rate, max drawdown and exposure. Past performance does not predict future results.</div>
+      <div style="margin-top:12px"><b>Demo trading</b> — a paper wallet (virtual 10,000 USDT) per coin, stored in this browser and
+      keyed to your private code like the portfolio. Buy and sell at the live Binance price, or press <b>Trade the signal</b> to execute
+      what today's verdict implies. Nothing real is at stake.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.10.</div>
     </div>
   </details>
 </main>
@@ -955,6 +1031,7 @@
     pf.results.clear();
     pf.load();
     applyOwner();
+    demo.load(); renderDemo();
     renderPortfolio();
     await refreshPortfolio();
   }
@@ -1101,10 +1178,247 @@
     reader.readAsText(file);
   }
 
+  /* ===================== backtest ===================== */
+  let btHistory = null, btDays = 180;
+
+  function btCapital() {
+    const v = Number($('bt-capital').value);
+    return Number.isFinite(v) && v > 0 ? v : 10000;
+  }
+
+  function runBacktest(H, days) {
+    const n = H.c.length;
+    if (n < 52) return null;
+    const start = days === 0 ? 51 : Math.max(51, n - 1 - days);
+    if (n - 1 - start < 2) return null;
+    const capital = btCapital();
+    let alloc = 0; // 0 = cash, 1 = fully long
+    let cash = 1, pos = 0, entryPx = 0;
+    const curve = [{ s: 1, h: 1 }];
+    const trades = [];
+    let wins = 0, losses = 0, peak = 1, mdd = 0, invested = 0, dWin = 0, dLoss = 0;
+    for (let i = start; i < n - 1; i++) {
+      const D = day(H, i);
+      const target = D.cls === 'green' ? 1 : D.cls === 'red' ? 0 : alloc;
+      if (target !== alloc) {
+        const px = H.c[i];
+        if (target === 1) {
+          pos = cash / px; entryPx = px;
+          trades.push({ i, side: 'BUY', px, val: cash });
+          cash = 0;
+        } else {
+          cash = pos * px;
+          const pnl = (px - entryPx) * pos;
+          trades.push({ i, side: 'SELL', px, val: cash, pnl });
+          if (pnl > 0) wins++; else if (pnl < 0) losses++;
+          pos = 0; entryPx = 0;
+        }
+        alloc = target;
+      }
+      const eq = cash + pos * H.c[i + 1];
+      if (alloc === 1) {
+        invested++;
+        const dr = eq - curve[curve.length - 1].s;
+        if (dr > 0) dWin++; else if (dr < 0) dLoss++;
+      }
+      peak = Math.max(peak, eq);
+      if (eq / peak - 1 < mdd) mdd = eq / peak - 1;
+      curve.push({ s: eq, h: H.c[i + 1] / H.c[start] });
+    }
+    const eqFinal = cash + pos * H.c[n - 1];
+    const stratRet = (eqFinal - 1) * 100;
+    const holdRet = (H.c[n - 1] / H.c[start] - 1) * 100;
+    return {
+      curve, trades, start, end: n - 1,
+      stratRet, holdRet, diff: stratRet - holdRet,
+      finalBal: capital * eqFinal,
+      trips: wins + losses, wins, losses,
+      winRate: wins + losses ? (wins / (wins + losses)) * 100 : null,
+      mdd: mdd * 100,
+      exposure: (invested / (n - 1 - start)) * 100,
+    };
+  }
+
+  function drawBtChart(R) {
+    const svg = $('bt-chart');
+    if (!R || R.curve.length < 2) { svg.innerHTML = ''; return; }
+    const W = 300, Hh = 150, pad = 6;
+    let min = Infinity, max = -Infinity;
+    for (const p of R.curve) {
+      if (p.s < min) min = p.s;
+      if (p.h < min) min = p.h;
+      if (p.s > max) max = p.s;
+      if (p.h > max) max = p.h;
+    }
+    if (max - min < 1e-9) max = min + 1e-9;
+    const x = (k) => pad + (k / (R.curve.length - 1)) * (W - 2 * pad);
+    const y = (v) => Hh - pad - ((v - min) / (max - min)) * (Hh - 2 * pad);
+    const line = (key) => R.curve.map((p, k) => x(k).toFixed(1) + ',' + y(p[key]).toFixed(1)).join(' ');
+    const base = y(1).toFixed(1);
+    svg.innerHTML =
+      '<line x1="' + pad + '" y1="' + base + '" x2="' + (W - pad) + '" y2="' + base + '" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="2 2"/>' +
+      '<polyline points="' + line('h') + '" fill="none" stroke="var(--line-strong)" stroke-width="1"/>' +
+      '<polyline points="' + line('s') + '" fill="none" stroke="var(--accent)" stroke-width="1.5"/>';
+  }
+
+  function renderBacktest(R) {
+    const stats = $('bt-stats');
+    if (!R) {
+      stats.innerHTML = '';
+      $('bt-trades').innerHTML = '';
+      drawBtChart(null);
+      $('bt-status').textContent = 'Not enough history to backtest yet (need 52+ daily candles).';
+      return;
+    }
+    const pct = (v) => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+    const tile = (k, v, cls) => '<div class="stat"><div class="k">' + k + '</div><div class="v' + (cls ? ' ' + cls : '') + '">' + v + '</div></div>';
+    const sd = new Date(btHistory.t[R.start]).toISOString().slice(0, 10);
+    const ed = new Date(btHistory.t[R.end]).toISOString().slice(0, 10);
+    stats.innerHTML =
+      tile('Strategy', pct(R.stratRet), R.stratRet >= 0 ? 'up' : 'down') +
+      tile('Buy &amp; hold', pct(R.holdRet), R.holdRet >= 0 ? 'up' : 'down') +
+      tile('Difference', pct(R.diff), R.diff >= 0 ? 'up' : 'down') +
+      tile('Final balance', usd(R.finalBal)) +
+      tile('Round trips', String(R.trips), 'faint') +
+      tile('Win rate', R.winRate === null ? '—' : R.winRate.toFixed(0) + '%', R.winRate === null ? 'faint' : R.winRate >= 50 ? 'up' : 'down') +
+      tile('Max drawdown', R.mdd.toFixed(1) + '%', 'down') +
+      tile('Exposure', R.exposure.toFixed(0) + '%', 'faint');
+    $('bt-status').textContent = (btDays === 0 ? 'All history' : btDays + ' days') + ' · ' + sd + ' → ' + ed + ' · trades fill at each day\'s close · starting capital ' + usd(btCapital());
+    drawBtChart(R);
+    const cap = btCapital();
+    const rows = R.trades.slice(-100).reverse();
+    $('bt-trades').innerHTML = rows.map((t, k) => {
+      const pnl = t.pnl == null ? '<span class="mini">—</span>'
+        : '<span class="mini ' + (t.pnl > 0 ? 'ok' : t.pnl < 0 ? 'bad' : 'flat') + '">' + (t.pnl > 0 ? '+' : '−') + '$' + Math.abs(cap * t.pnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
+      return '<tr><td>' + (R.trades.length - rows.length + k + 1) + '</td><td>' + new Date(btHistory.t[t.i]).toISOString().slice(0, 10) + '</td>' +
+        '<td class="c">' + (t.side === 'BUY' ? '<span class="mini ok">buy</span>' : '<span class="mini bad">sell</span>') + '</td>' +
+        '<td class="r">' + usd(t.px) + '</td><td class="r">' + usd(cap * t.val) + '</td><td class="r">' + pnl + '</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="color:var(--muted)">No trades in this window — the verdicts never flipped.</td></tr>';
+  }
+
+  function showBacktest(H) {
+    btHistory = H;
+    renderBacktest(runBacktest(H, btDays));
+    $('backtest').classList.add('show');
+  }
+
+  /* ===================== demo trading ===================== */
+  const demo = {
+    pair: null, price: null,
+    cash: 10000, pos: 0, avg: 0, realized: 0, log: [],
+    key() { return 'coinsearch.demo.' + (ownerHash ? ownerHash.slice(0, 16) : 'local') + '.' + (this.pair || 'none'); },
+    load() {
+      this.cash = 10000; this.pos = 0; this.avg = 0; this.realized = 0; this.log = [];
+      try {
+        const r = JSON.parse(localStorage.getItem(this.key()) || 'null');
+        if (r && typeof r.cash === 'number') {
+          this.cash = r.cash; this.pos = Number(r.pos) || 0; this.avg = Number(r.avg) || 0;
+          this.realized = Number(r.realized) || 0; this.log = Array.isArray(r.log) ? r.log : [];
+        }
+      } catch {}
+    },
+    save() {
+      try { localStorage.setItem(this.key(), JSON.stringify({ cash: this.cash, pos: this.pos, avg: this.avg, realized: this.realized, log: this.log.slice(0, 200) })); } catch {}
+    },
+  };
+
+  function dmStatus(msg, isErr) {
+    const el = $('dm-status');
+    el.textContent = msg || '';
+    el.className = 'status' + (isErr ? ' error' : '');
+  }
+  const pnlUsd = (n) => (n < 0 ? '-$' : '+$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const qtyFmt = (q) => q.toLocaleString('en-US', { maximumFractionDigits: 8 });
+
+  function renderDemo() {
+    const hasPx = demo.price !== null && Number.isFinite(demo.price);
+    const posVal = hasPx ? demo.pos * demo.price : 0;
+    const equity = demo.cash + posVal;
+    const pnl = equity - 10000;
+    const pnlPct = (pnl / 10000) * 100;
+    const tile = (k, v, cls) => '<div class="stat"><div class="k">' + k + '</div><div class="v' + (cls ? ' ' + cls : '') + '">' + v + '</div></div>';
+    $('dm-stats').innerHTML =
+      tile('Cash', usd(demo.cash)) +
+      tile('Position', demo.pos > 0 ? qtyFmt(demo.pos) + ' ' + (demo.pair ? demo.pair.replace('USDT', '') : '') : '—', 'faint') +
+      tile('Avg entry', demo.pos > 0 && demo.avg > 0 ? usd(demo.avg) : '—', 'faint') +
+      tile('Equity', hasPx ? usd(equity) : '—') +
+      tile('Total P&amp;L', hasPx ? pnlUsd(pnl) : '—', hasPx ? (pnl >= 0 ? 'up' : 'down') : 'faint') +
+      tile('Return', hasPx ? (pnlPct >= 0 ? '+' : '') + pnlPct.toFixed(2) + '%' : '—', hasPx ? (pnlPct >= 0 ? 'up' : 'down') : 'faint') +
+      tile('Realized', pnlUsd(demo.realized), demo.realized >= 0 ? 'up' : 'down') +
+      tile('Trades', String(demo.log.length), 'faint');
+    const rows = demo.log.slice(-100).reverse();
+    $('dm-log').innerHTML = rows.map((t) =>
+      '<tr><td>' + new Date(t.t).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + '</td>' +
+      '<td class="c">' + (t.side === 'BUY' ? '<span class="mini ok">buy</span>' : '<span class="mini bad">sell</span>') + '</td>' +
+      '<td class="r">' + qtyFmt(t.qty) + '</td><td class="r">' + usd(t.price) + '</td><td class="r">' + usd(t.value) + '</td></tr>'
+    ).join('') || '<tr><td colspan="5" style="color:var(--muted)">No trades yet.</td></tr>';
+    $('dm-buy').disabled = !hasPx;
+    $('dm-sell').disabled = !hasPx || demo.pos <= 0;
+    $('dm-signal').disabled = !hasPx || !btHistory;
+  }
+
+  function demoTrade(side) {
+    if (demo.price === null || !Number.isFinite(demo.price)) { dmStatus('No live price for this coin yet.', true); return; }
+    const px = demo.price;
+    if (side === 'BUY') {
+      if (demo.cash <= 0) { dmStatus('Wallet is already fully invested.', true); return; }
+      const qty = demo.cash / px;
+      demo.avg = demo.pos > 0 ? (demo.avg * demo.pos + demo.cash) / (demo.pos + qty) : px;
+      demo.pos += qty;
+      demo.log.push({ t: Date.now(), side: 'BUY', qty, price: px, value: qty * px });
+      demo.cash = 0;
+      dmStatus('Bought ' + qtyFmt(qty) + ' at ' + usd(px) + '.');
+    } else {
+      if (demo.pos <= 0) { dmStatus('Wallet is already in cash.', true); return; }
+      const value = demo.pos * px;
+      const pnl = (px - demo.avg) * demo.pos;
+      demo.realized += pnl;
+      demo.log.push({ t: Date.now(), side: 'SELL', qty: demo.pos, price: px, value });
+      demo.pos = 0; demo.avg = 0; demo.cash += value;
+      dmStatus('Sold at ' + usd(px) + ' — ' + pnlUsd(pnl) + ' P&L.');
+    }
+    demo.save();
+    renderDemo();
+  }
+
+  function demoSignal() {
+    if (!btHistory) return;
+    const D = day(btHistory, btHistory.c.length - 1);
+    if (D.cls === 'green') {
+      if (demo.pos > 0) { dmStatus('Signal is ' + D.verdict + ' — already long.'); return; }
+      demoTrade('BUY');
+    } else if (D.cls === 'red') {
+      if (demo.pos <= 0) { dmStatus('Signal is ' + D.verdict + ' — already in cash.'); return; }
+      demoTrade('SELL');
+    } else {
+      dmStatus('Signal is ' + D.verdict + ' — hold, no trade.');
+    }
+  }
+
+  async function demoRefresh() {
+    if (!demo.pair) return;
+    dmStatus('refreshing price…');
+    try {
+      const t = await ticker(demo.pair);
+      demo.price = Number(t.lastPrice);
+      renderDemo();
+      dmStatus('Price updated ' + clock(Date.now()) + '.');
+    } catch {
+      dmStatus('Could not refresh the price right now.', true);
+    }
+  }
+
+  function setDemoPair(pair) {
+    demo.pair = pair;
+    demo.price = null;
+    demo.load();
+    renderDemo();
+  }
+
   /* ===================== search ===================== */
   let busy = false;
   function hideSections() {
-    for (const id of ['overview', 'models', 'history']) $(id).classList.remove('show');
+    for (const id of ['overview', 'models', 'history', 'backtest', 'demo']) $(id).classList.remove('show');
   }
   async function search(raw) {
     if (busy) return;
@@ -1126,8 +1440,10 @@
       setStatus(`No coin found matching “${text}”. Try the full name (e.g. "Arbitrum") or ticker (e.g. "ARB").`, true);
       return;
     }
+    let liveT = null;
     try {
       const t = await ticker(meta.id);
+      liveT = t;
       setStatus(`${meta.name} (${meta.base}) — ${meta.id}`);
       showValue(meta, t);
       $('overview').classList.add('show');
@@ -1138,7 +1454,12 @@
     try {
       const H = await klines(meta.id);
       sparkline(H.c);
-      if (H.c.length > 50) { showDecision(H); showModels(H); showHistory(H); }
+      if (H.c.length > 50) {
+        showDecision(H); showModels(H); showHistory(H);
+        showBacktest(H);
+        setDemoPair(meta.id);
+        if (liveT) { demo.price = Number(liveT.lastPrice); renderDemo(); }
+      }
       else setStatus('Not enough history for the models yet.', true);
     } catch {}
     busy = false;
@@ -1175,6 +1496,27 @@
     localStorage.removeItem(OWNER_KEY);
     pfSetStatus('');
     await useCode('');
+  };
+
+  $('bt-run').onclick = () => { if (btHistory) renderBacktest(runBacktest(btHistory, btDays)); };
+  $('bt-capital').addEventListener('change', () => { if (btHistory) renderBacktest(runBacktest(btHistory, btDays)); });
+  for (const b of $('bt-windows').querySelectorAll('.chip')) {
+    b.onclick = () => {
+      btDays = Number(b.dataset.days);
+      for (const x of $('bt-windows').querySelectorAll('.chip')) x.classList.toggle('on', x === b);
+      if (btHistory) renderBacktest(runBacktest(btHistory, btDays));
+    };
+  }
+  $('dm-buy').onclick = () => demoTrade('BUY');
+  $('dm-sell').onclick = () => demoTrade('SELL');
+  $('dm-signal').onclick = demoSignal;
+  $('dm-refresh').onclick = demoRefresh;
+  $('dm-reset').onclick = () => {
+    if (!confirm('Reset this demo wallet to 10,000 virtual USDT?')) return;
+    demo.cash = 10000; demo.pos = 0; demo.avg = 0; demo.realized = 0; demo.log = [];
+    demo.save();
+    dmStatus('Wallet reset to 10,000 virtual USDT.');
+    renderDemo();
   };
 
   // Restore the saved code on this device; otherwise start local-only.
