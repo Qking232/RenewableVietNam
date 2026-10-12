@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.10</title>
+<title>Coin Search + 16 Models — Rev 0.11</title>
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
      BlackBerry-blue accent (#0072BC → #0092CC), black surfaces. Ported from the
@@ -207,8 +207,17 @@
   .stat .v{font-size:17px; font-weight:200; font-variant-numeric:tabular-nums; margin-top:2px; overflow-wrap:anywhere}
   .stat .v.up{color:var(--up)} .stat .v.down{color:var(--down)} .stat .v.faint{color:var(--faint)}
   .chart{width:100%; height:150px; display:block; margin-top:12px}
+  .chart-wrap{position:relative; margin-top:12px}
+  .chart-wrap .chart{margin-top:0}
+  .chart-tip{position:absolute; display:none; pointer-events:none; z-index:5;
+    background:var(--card); border:1px solid var(--line-strong); border-radius:var(--radius);
+    box-shadow:var(--shadow-hover); padding:6px 9px; font-size:11px; color:var(--text);
+    white-space:nowrap; font-variant-numeric:tabular-nums}
   .legend{display:flex; gap:14px; margin-top:6px; color:var(--faint); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase}
   .legend i{display:inline-block; width:14px; height:2px; vertical-align:middle; margin-right:5px}
+  .mx-cell{display:block; cursor:pointer; border-radius:var(--radius); padding:5px 4px;
+    font-weight:700; font-variant-numeric:tabular-nums; border:1px solid transparent}
+  .mx-cell:hover{border-color:var(--accent)}
 
   details{border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   summary{cursor:pointer; padding:12px 16px; font-size:10.5px; font-weight:700; letter-spacing:.18em;
@@ -419,7 +428,10 @@
       </div>
       <div class="status" id="bt-status"></div>
       <div class="stat-grid" id="bt-stats"></div>
-      <svg class="chart" id="bt-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="chart-wrap">
+        <svg class="chart" id="bt-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="chart-tip"></div>
+      </div>
       <div class="legend">
         <span><i style="background:var(--accent)"></i>Strategy</span>
         <span><i style="background:var(--line-strong)"></i>Buy &amp; hold</span>
@@ -428,6 +440,56 @@
         <table>
           <thead><tr><th>#</th><th>Day</th><th class="c">Side</th><th class="r">Price</th><th class="r">Value</th><th class="r">P&amp;L</th></tr></thead>
           <tbody id="bt-trades"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATRIX BACKTEST -->
+  <div class="section" id="matrix">
+    <div class="panel">
+      <h2>Matrix backtest <span class="cloud">coins × windows</span></h2>
+      <div class="sub">The same 16-model strategy across the major coins and every window. Cells are the strategy return — greener is better; hover a cell for hold &amp; difference. Click a cell to open that coin at that window.</div>
+      <div class="pf-actions">
+        <button class="go" id="mx-run">Run matrix</button>
+        <span class="status" id="mx-status"></span>
+      </div>
+      <div class="scroll" style="margin-top:12px; max-height:420px">
+        <table id="mx-table">
+          <thead><tr><th>Coin</th><th class="c">90d</th><th class="c">180d</th><th class="c">1y</th><th class="c">2y</th><th class="c">All</th></tr></thead>
+          <tbody id="mx-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREND LINES -->
+  <div class="section" id="trend">
+    <div class="panel">
+      <h2>Trend lines &amp; breakouts <span class="cloud">auto-detected</span></h2>
+      <div class="sub">Swing highs and lows are connected into support (green) and resistance (red) lines. A close beyond a line is a breakout — ▲ above resistance, ▼ below support. Dashed lines extend to the break.</div>
+      <div class="bt-controls" id="trend-k">
+        <button class="chip" data-k="5">5</button>
+        <button class="chip on" data-k="10">10</button>
+        <button class="chip" data-k="20">20</button>
+        <span class="sub" style="margin-left:auto">pivot lookback</span>
+      </div>
+      <div class="status" id="trend-summary"></div>
+      <div class="chart-wrap">
+        <svg class="chart" id="trend-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="chart-tip"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Price</span>
+        <span><i style="background:var(--up)"></i>Support</span>
+        <span><i style="background:var(--down)"></i>Resistance</span>
+        <span>▲ break out</span>
+        <span>▼ break down</span>
+      </div>
+      <div class="scroll" style="margin-top:12px; max-height:220px">
+        <table>
+          <thead><tr><th>Day</th><th class="c">Break</th><th class="r">Price</th><th class="r">Line</th><th class="r">Distance</th></tr></thead>
+          <tbody id="trend-events"></tbody>
         </table>
       </div>
     </div>
@@ -472,11 +534,17 @@
       its score and the current correct/incorrect run; export/import as JSON.</div>
       <div style="margin-top:12px"><b>Backtest</b> — replays the daily verdicts over up to ~1,000 days of Binance daily klines:
       a BUY invests fully at that day's close, a SELL moves to cash, HOLD keeps the current allocation. Compares against buy &amp; hold
-      with round-trip trades, win rate, max drawdown and exposure. Past performance does not predict future results.</div>
+      with round-trip trades, win rate, max drawdown and exposure. The chart shows dates and dollar values — hover it for the
+      exact date and both equity curves. Past performance does not predict future results.</div>
+      <div style="margin-top:12px"><b>Matrix backtest</b> — the same strategy across the major coins (plus your portfolio coins)
+      and every window, as a color-coded grid. Hover a cell for hold &amp; difference; click one to open that coin at that window.</div>
+      <div style="margin-top:12px"><b>Trend lines &amp; breakouts</b> — swing highs and lows (pivot lookback 5/10/20) are connected into
+      support and resistance lines on a date + price chart. A close beyond a line is a breakout (▲ above resistance, ▼ below support),
+      dashed lines extend to the break, and every break is listed with price, line value and distance.</div>
       <div style="margin-top:12px"><b>Demo trading</b> — a paper wallet (virtual 10,000 USDT) per coin, stored in this browser and
       keyed to your private code like the portfolio. Buy and sell at the live Binance price, or press <b>Trade the signal</b> to execute
       what today's verdict implies. Nothing real is at stake.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.10.</div>
+      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.11.</div>
     </div>
   </details>
 </main>
@@ -1239,26 +1307,74 @@
     };
   }
 
+  /* ===================== charts ===================== */
+  const CH_W = 300, CH_H = 150, CH_PL = 38, CH_PR = 4, CH_PT = 4, CH_PB = 16;
+  const shortDate = (t) => new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const fmtAx = (v) => {
+    const a = Math.abs(v);
+    if (a >= 10000) return '$' + (v / 1000).toFixed(0) + 'k';
+    if (a >= 1000) return '$' + (v / 1000).toFixed(1) + 'k';
+    if (a >= 100) return '$' + v.toFixed(0);
+    if (a >= 1) return '$' + v.toFixed(2);
+    return '$' + v.toFixed(4);
+  };
+
+  function chartFrame(svg, n, yMin, yMax, xfmt) {
+    const plotW = CH_W - CH_PL - CH_PR, plotH = CH_H - CH_PT - CH_PB;
+    const span = (yMax - yMin) || 1e-9;
+    const x = (k) => CH_PL + (n <= 1 ? plotW / 2 : (k / (n - 1)) * plotW);
+    const y = (v) => CH_PT + (1 - (v - yMin) / span) * plotH;
+    let out = '';
+    for (let g = 0; g <= 3; g++) {
+      const v = yMin + (span * g) / 3, yy = y(v);
+      out += '<line x1="' + CH_PL + '" y1="' + yy.toFixed(1) + '" x2="' + (CH_W - CH_PR) + '" y2="' + yy.toFixed(1) + '" stroke="var(--line)" stroke-width="0.5"/>';
+      out += '<text x="' + (CH_PL - 3) + '" y="' + (yy + 2).toFixed(1) + '" fill="var(--faint)" font-size="7" text-anchor="end">' + fmtAx(v) + '</text>';
+    }
+    for (let g = 0; g <= 3; g++) {
+      const k = Math.round(((n - 1) * g) / 3);
+      out += '<text x="' + x(k).toFixed(1) + '" y="' + (CH_H - 4) + '" fill="var(--faint)" font-size="7" text-anchor="middle">' + xfmt(k) + '</text>';
+    }
+    svg.innerHTML = out;
+    return { x, y };
+  }
+
+  function attachChartHover(svg, n, tipFn) {
+    const tip = svg.parentElement && svg.parentElement.querySelector('.chart-tip');
+    if (!tip) return;
+    svg.onmousemove = (e) => {
+      const rect = svg.getBoundingClientRect();
+      if (!rect.width || n < 2) return;
+      const fx = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const k = Math.round(fx * (n - 1));
+      tip.textContent = tipFn(k);
+      tip.style.display = 'block';
+      const px = ((CH_PL + (k / (n - 1)) * (CH_W - CH_PL - CH_PR)) / CH_W) * 100;
+      tip.style.left = Math.max(0, Math.min(px, 100 - 55)) + '%';
+      tip.style.top = '2px';
+    };
+    svg.onmouseleave = () => { tip.style.display = 'none'; };
+  }
+
   function drawBtChart(R) {
     const svg = $('bt-chart');
     if (!R || R.curve.length < 2) { svg.innerHTML = ''; return; }
-    const W = 300, Hh = 150, pad = 6;
-    let min = Infinity, max = -Infinity;
-    for (const p of R.curve) {
-      if (p.s < min) min = p.s;
-      if (p.h < min) min = p.h;
-      if (p.s > max) max = p.s;
-      if (p.h > max) max = p.h;
-    }
-    if (max - min < 1e-9) max = min + 1e-9;
-    const x = (k) => pad + (k / (R.curve.length - 1)) * (W - 2 * pad);
-    const y = (v) => Hh - pad - ((v - min) / (max - min)) * (Hh - 2 * pad);
-    const line = (key) => R.curve.map((p, k) => x(k).toFixed(1) + ',' + y(p[key]).toFixed(1)).join(' ');
-    const base = y(1).toFixed(1);
-    svg.innerHTML =
-      '<line x1="' + pad + '" y1="' + base + '" x2="' + (W - pad) + '" y2="' + base + '" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="2 2"/>' +
-      '<polyline points="' + line('h') + '" fill="none" stroke="var(--line-strong)" stroke-width="1"/>' +
-      '<polyline points="' + line('s') + '" fill="none" stroke="var(--accent)" stroke-width="1.5"/>';
+    const cap = btCapital();
+    const sVals = R.curve.map((p) => p.s * cap);
+    const hVals = R.curve.map((p) => p.h * cap);
+    let min = Math.min.apply(null, sVals.concat(hVals));
+    let max = Math.max.apply(null, sVals.concat(hVals));
+    const padY = (max - min) * 0.06 || 1;
+    min -= padY; max += padY;
+    const frame = chartFrame(svg, R.curve.length, min, max, (k) => shortDate(btHistory.t[R.start + k]));
+    const line = (vals) => vals.map((v, k) => frame.x(k).toFixed(1) + ',' + frame.y(v).toFixed(1)).join(' ');
+    svg.innerHTML +=
+      '<polyline points="' + line(hVals) + '" fill="none" stroke="var(--line-strong)" stroke-width="1"/>' +
+      '<polyline points="' + line(sVals) + '" fill="none" stroke="var(--accent)" stroke-width="1.5"/>';
+    attachChartHover(svg, R.curve.length, (k) => {
+      const d = new Date(btHistory.t[R.start + k]);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+        ' · Strategy ' + usd(sVals[k]) + ' · Hold ' + usd(hVals[k]);
+    });
   }
 
   function renderBacktest(R) {
@@ -1415,10 +1531,180 @@
     renderDemo();
   }
 
+  /* ===================== trend lines ===================== */
+  let trendK = 10;
+
+  function findPivots(H, k) {
+    const n = H.c.length, lows = [], highs = [];
+    for (let i = k; i < n - k; i++) {
+      let lo = true, hi = true;
+      for (let j = i - k; j <= i + k; j++) {
+        if (H.l[j] < H.l[i]) lo = false;
+        if (H.h[j] > H.h[i]) hi = false;
+      }
+      if (lo) lows.push(i);
+      if (hi) highs.push(i);
+    }
+    return { lows, highs };
+  }
+
+  function trendSegments(H, idxs, isSupport) {
+    const segs = [];
+    for (let s = 0; s + 1 < idxs.length; s++) {
+      const i1 = idxs[s], i2 = idxs[s + 1];
+      const slope = (H.c[i2] - H.c[i1]) / (i2 - i1);
+      let broken = null;
+      for (let j = i2 + 1; j < H.c.length; j++) {
+        const lv = H.c[i2] + slope * (j - i2);
+        if (isSupport ? H.c[j] < lv : H.c[j] > lv) { broken = { j, lv }; break; }
+      }
+      segs.push({ i1, i2, slope, broken });
+    }
+    return segs;
+  }
+
+  function renderTrend() {
+    const svg = $('trend-chart'), summary = $('trend-summary'), events = $('trend-events');
+    if (!btHistory || btHistory.c.length < 52) {
+      svg.innerHTML = '';
+      summary.textContent = 'Search a coin first.';
+      events.innerHTML = '';
+      return;
+    }
+    const H = btHistory, n = H.c.length;
+    const start = btDays === 0 ? 51 : Math.max(51, n - 1 - btDays);
+    const piv = findPivots(H, trendK);
+    const sup = trendSegments(H, piv.lows, true);
+    const res = trendSegments(H, piv.highs, false);
+    const evs = [];
+    for (const s of sup) if (s.broken && s.broken.j >= start) evs.push({ j: s.broken.j, type: 'down', price: H.c[s.broken.j], line: s.broken.lv });
+    for (const s of res) if (s.broken && s.broken.j >= start) evs.push({ j: s.broken.j, type: 'up', price: H.c[s.broken.j], line: s.broken.lv });
+    evs.sort((a, b) => b.j - a.j);
+
+    let min = Infinity, max = -Infinity;
+    for (let i = start; i < n; i++) { if (H.c[i] < min) min = H.c[i]; if (H.c[i] > max) max = H.c[i]; }
+    for (const s of sup.concat(res)) {
+      for (const i of [s.i1, s.i2]) {
+        if (i < start) continue;
+        if (H.c[i] < min) min = H.c[i];
+        if (H.c[i] > max) max = H.c[i];
+      }
+    }
+    const padY = (max - min) * 0.08 || 1;
+    min -= padY; max += padY;
+    const frame = chartFrame(svg, n - start, min, max, (k) => shortDate(H.t[start + k]));
+    const X = (i) => frame.x(i - start);
+    const Y = (v) => frame.y(v);
+    let out = '';
+    for (const s of sup) {
+      if (s.i2 < start) continue;
+      const a = Math.max(s.i1, start);
+      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--up)" stroke-width="1" opacity="0.8"/>';
+      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(s.broken.j).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--up)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+    }
+    for (const s of res) {
+      if (s.i2 < start) continue;
+      const a = Math.max(s.i1, start);
+      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--down)" stroke-width="1" opacity="0.8"/>';
+      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(s.broken.j).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--down)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+    }
+    const pts = [];
+    for (let i = start; i < n; i++) pts.push(X(i).toFixed(1) + ',' + Y(H.c[i]).toFixed(1));
+    out += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="var(--accent)" stroke-width="1.25"/>';
+    for (const e of evs) {
+      out += '<text x="' + X(e.j).toFixed(1) + '" y="' + (Y(e.price) + (e.type === 'up' ? -4 : 8)).toFixed(1) + '" fill="' + (e.type === 'up' ? 'var(--up)' : 'var(--down)') + '" font-size="8" text-anchor="middle">' + (e.type === 'up' ? '▲' : '▼') + '</text>';
+    }
+    svg.innerHTML += out;
+    attachChartHover(svg, n - start, (k) => {
+      const d = new Date(H.t[start + k]);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' · ' + usd(H.c[start + k]);
+    });
+
+    const j = n - 1;
+    const bits = [];
+    const lastSup = sup[sup.length - 1], lastRes = res[res.length - 1];
+    if (lastSup) {
+      const lv = H.c[lastSup.i2] + lastSup.slope * (j - lastSup.i2);
+      bits.push('last support ' + (lastSup.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'above' : 'BELOW') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
+    }
+    if (lastRes) {
+      const lv = H.c[lastRes.i2] + lastRes.slope * (j - lastRes.i2);
+      bits.push('last resistance ' + (lastRes.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'ABOVE' : 'below') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
+    }
+    summary.textContent = (bits.join(' · ') || 'no pivots found at this lookback') + ' · ' + evs.length + ' breakout' + (evs.length === 1 ? '' : 's') + ' in window';
+    $('trend').classList.add('show');
+
+    events.innerHTML = evs.slice(0, 100).map((e) =>
+      '<tr><td>' + new Date(H.t[e.j]).toISOString().slice(0, 10) + '</td>' +
+      '<td class="c">' + (e.type === 'up' ? '<span class="mini ok">▲ resistance break</span>' : '<span class="mini bad">▼ support break</span>') + '</td>' +
+      '<td class="r">' + usd(e.price) + '</td><td class="r">' + usd(e.line) + '</td>' +
+      '<td class="r">' + (e.price >= e.line ? '+' : '−') + (Math.abs((e.price - e.line) / e.line) * 100).toFixed(2) + '%</td></tr>'
+    ).join('') || '<tr><td colspan="5" style="color:var(--muted)">No breakouts in this window.</td></tr>';
+  }
+
+  /* ===================== matrix backtest ===================== */
+  const MATRIX_COINS = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'PEPE'];
+  const MATRIX_WINDOWS = [90, 180, 365, 730, 0];
+  let matrixBusy = false;
+
+  async function runMatrix() {
+    if (matrixBusy) return;
+    matrixBusy = true;
+    const st = $('mx-status');
+    const coins = [...new Set(MATRIX_COINS.concat(pf.list.map((r) => r.base)))].slice(0, 14);
+    const rows = [];
+    for (let i = 0; i < coins.length; i++) {
+      const base = coins[i];
+      st.textContent = 'fetching ' + (i + 1) + '/' + coins.length + ' — ' + base + '…';
+      let H = null;
+      try { H = await klines(base + 'USDT'); } catch { H = null; }
+      if (!H || H.c.length < 52) { rows.push({ base, name: COIN_NAMES[base] || base, ok: false }); continue; }
+      const per = {};
+      for (const d of MATRIX_WINDOWS) per[d] = runBacktest(H, d);
+      rows.push({ base, name: COIN_NAMES[base] || base, ok: true, per });
+    }
+    renderMatrix(rows);
+    st.textContent = coins.length + ' coins × ' + MATRIX_WINDOWS.length + ' windows · click a cell to open it';
+    $('matrix').classList.add('show');
+    matrixBusy = false;
+  }
+
+  function renderMatrix(rows) {
+    const tb = $('mx-rows');
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="6" style="color:var(--muted)">No coins.</td></tr>'; return; }
+    tb.innerHTML = rows.map((r) => {
+      if (!r.ok) return '<tr><td>' + esc(r.name) + ' (' + esc(r.base) + ')</td><td colspan="5" style="color:var(--faint)">no data</td></tr>';
+      const cells = MATRIX_WINDOWS.map((d) => {
+        const R = r.per[d];
+        if (!R) return '<td class="c">—</td>';
+        const v = R.stratRet;
+        const tone = v >= 0 ? 'var(--up)' : 'var(--down)';
+        const tint = Math.min(32, Math.abs(v)).toFixed(0);
+        const tip = 'Strategy ' + (v >= 0 ? '+' : '') + v.toFixed(2) + '% · hold ' + (R.holdRet >= 0 ? '+' : '') + R.holdRet.toFixed(2) + '% · diff ' + (R.diff >= 0 ? '+' : '') + R.diff.toFixed(2) + '%';
+        return '<td class="c"><span class="mx-cell" style="background:color-mix(in srgb, ' + tone + ' ' + tint + '%, transparent)" title="' + tip + '" data-coin="' + esc(r.base) + '" data-days="' + d + '">' + (v >= 0 ? '+' : '') + v.toFixed(1) + '%</span></td>';
+      }).join('');
+      return '<tr><td><span class="link" data-coin="' + esc(r.base) + '">' + esc(r.name) + ' (' + esc(r.base) + ')</span></td>' + cells + '</tr>';
+    }).join('');
+    for (const el of tb.querySelectorAll('.mx-cell')) {
+      el.onclick = () => {
+        const base = el.dataset.coin, days = Number(el.dataset.days);
+        $('q').value = base;
+        search(base).then(() => {
+          btDays = days;
+          for (const x of $('bt-windows').querySelectorAll('.chip')) x.classList.toggle('on', Number(x.dataset.days) === days);
+          if (btHistory) { renderBacktest(runBacktest(btHistory, btDays)); renderTrend(); }
+        });
+      };
+    }
+    for (const el of tb.querySelectorAll('.link')) {
+      el.onclick = () => { $('q').value = el.dataset.coin; search(el.dataset.coin); };
+    }
+  }
+
   /* ===================== search ===================== */
   let busy = false;
   function hideSections() {
-    for (const id of ['overview', 'models', 'history', 'backtest', 'demo']) $(id).classList.remove('show');
+    for (const id of ['overview', 'models', 'history', 'backtest', 'matrix', 'trend', 'demo']) $(id).classList.remove('show');
   }
   async function search(raw) {
     if (busy) return;
@@ -1457,6 +1743,7 @@
       if (H.c.length > 50) {
         showDecision(H); showModels(H); showHistory(H);
         showBacktest(H);
+        renderTrend();
         setDemoPair(meta.id);
         if (liveT) { demo.price = Number(liveT.lastPrice); renderDemo(); }
       }
@@ -1504,7 +1791,7 @@
     b.onclick = () => {
       btDays = Number(b.dataset.days);
       for (const x of $('bt-windows').querySelectorAll('.chip')) x.classList.toggle('on', x === b);
-      if (btHistory) renderBacktest(runBacktest(btHistory, btDays));
+      if (btHistory) { renderBacktest(runBacktest(btHistory, btDays)); renderTrend(); }
     };
   }
   $('dm-buy').onclick = () => demoTrade('BUY');
@@ -1518,6 +1805,15 @@
     dmStatus('Wallet reset to 10,000 virtual USDT.');
     renderDemo();
   };
+
+  $('mx-run').onclick = runMatrix;
+  for (const b of $('trend-k').querySelectorAll('.chip')) {
+    b.onclick = () => {
+      trendK = Number(b.dataset.k);
+      for (const x of $('trend-k').querySelectorAll('.chip')) x.classList.toggle('on', x === b);
+      renderTrend();
+    };
+  }
 
   // Restore the saved code on this device; otherwise start local-only.
   (async () => {
