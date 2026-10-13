@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <!--
   Renewable Viet Nam — homepage (three domain cards)
+  Rev 0.37  EV Stations card now reports live totals aggregated from the shared Supabase store
+            instead of the stale hardcoded line. The old code read `STATIONS` out of the EV page,
+            but that page ships an empty array and only loads the ~40 km around the visitor, so the
+            counter silently kept its fallback. PostgREST refuses aggregates on this project
+            (PGRST123), so ev_stations is scanned by Range pages: rows give the station count and
+            each row's `conn` string gives its connectors. Result is cached with the other stats.
+            Labels: card 01 "Energy Projects" -> "Energy Map"; card 02 "EV Charging" -> "EV Stations".
+            Routes are unchanged (/projectenergy/ and /evcharging/ still serve those pages).
   Rev 0.36  APAC Data Center card hidden. The homepage now presents three domains (Energy Projects,
             EV Charging, Hub) in a single three-column row on large screens instead of four; the Hub
             card is renumbered 03. The dead Indigo wash CSS and the /datacenter/ stats fetch were
@@ -229,7 +237,7 @@
       <div class="flex items-end justify-between pt-4 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-emerald-500/25 dark:group-hover:border-emerald-400/20 gap-3 transition-colors">
         <div class="space-y-1">
           <h2 class="text-base sm:text-lg font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-950 dark:group-hover:text-white transition-colors">
-            Energy Projects
+            Energy Map
           </h2>
           <p class="text-[12px] text-zinc-500 dark:text-zinc-400 group-hover:text-emerald-900/80 dark:group-hover:text-emerald-200/75 font-light leading-relaxed transition-colors">
             Geospatial tracking of utility-scale solar, wind, and storage assets.
@@ -258,7 +266,7 @@
           <svg class="w-12 h-12 sm:w-14 sm:h-14 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.15">
             <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
           </svg>
-          <span id="statEv" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">952 stations &middot; 2,077 connectors</span>
+          <span id="statEv" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">22,055 stations &middot; 90,268 connectors</span>
         </div>
       </div>
 
@@ -266,7 +274,7 @@
       <div class="flex items-end justify-between pt-4 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-amber-500/25 dark:group-hover:border-amber-400/20 gap-3 transition-colors">
         <div class="space-y-1">
           <h2 class="text-base sm:text-lg font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-950 dark:group-hover:text-white transition-colors">
-            EV Charging
+            EV Stations
           </h2>
           <p class="text-[12px] text-zinc-500 dark:text-zinc-400 group-hover:text-amber-900/80 dark:group-hover:text-amber-200/75 font-light leading-relaxed transition-colors">
             High-power fleet hubs and ultra-fast charging corridors.
@@ -394,12 +402,72 @@
       a.forEach(function (p) { var m = String(p.cap || "").replace(/,/g, "").match(/([\d.]+)\s*(GW|MW)/i); if (m) { var v = parseFloat(m[1]); if (/GW/i.test(m[2])) v *= 1000; mw += v; } });
       return fmt(a.length) + " projects \u00b7 " + (mw / 1000).toFixed(1) + " GW";
     }
-    function fromEv(h) {
-      var a = grab(h, "STATIONS"); if (!a) return "";
-      var n = 0;
-      a.forEach(function (s) { (String(s.conn || "").match(/(\d+)\s*\*/g) || []).forEach(function (x) { n += parseInt(x, 10); }); });
-      return fmt(a.length) + " stations \u00b7 " + fmt(n) + " connectors";
+    /* EV totals come from the shared Supabase store, not from the EV page: since
+       the stations moved server-side, /evcharging/ ships `const STATIONS = []`
+       and only fetches the ~40 km around the visitor, so there is nothing on
+       that page to count. PostgREST refuses aggregates here (PGRST123: "Use of
+       aggregate functions is not allowed"), so the totals are scanned straight
+       off the table: each row is a station, and a station's `conn` string
+       ("DC:1*250+DC:8*60+AC:1*11") yields its connectors as the digits before
+       each "*", the same reading the EV page itself uses. */
+    var EV_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+    var EV_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
+    var EV_PAGE = 1000;    /* rows per request */
+    var EV_WAVE = 5;       /* pages fetched in parallel; measured 1.3s vs 3.1s sequential */
+    var EV_MAXQ = 40;      /* page ceiling (40k stations) so a bad response cannot loop forever */
+    var EV_TIMEOUT = 20000;
+
+    function fromEvLive() {
+      var stations = 0, connectors = 0, pages = 0, done = false;
+
+      function wave() {
+        if (done || pages >= EV_MAXQ) return Promise.resolve();
+        var first = pages, batch = [], i;
+        for (i = 0; i < EV_WAVE && first + i < EV_MAXQ; i++) batch.push(first + i);
+        pages += batch.length;
+
+        return Promise.all(batch.map(function (p) {
+          return fetch(EV_URL + "/rest/v1/ev_stations?select=conn", {
+            cache: "no-store",
+            headers: {
+              apikey: EV_KEY,
+              Authorization: "Bearer " + EV_KEY,
+              Accept: "application/json",
+              Range: (p * EV_PAGE) + "-" + (p * EV_PAGE + EV_PAGE - 1)
+            }
+          }).then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json().then(function (rows) { return { p: p, rows: rows }; });
+          });
+        })).then(function (res) {
+          /* Sort by page index so the short (last) page is detected correctly. */
+          res.sort(function (a, b) { return a.p - b.p; });
+          res.forEach(function (r) {
+            if (!r.rows.length) { done = true; return; }
+            r.rows.forEach(function (s) {
+              (String(s.conn || "").match(/(\d+)\s*\*/g) || []).forEach(function (x) { connectors += parseInt(x, 10); });
+            });
+            stations += r.rows.length;
+            if (r.rows.length < EV_PAGE) done = true;
+          });
+          if (!done) return wave();
+        });
+      }
+
+      return wave().then(function () {
+        if (!stations) return "";
+        return fmt(stations) + " stations \u00b7 " + fmt(connectors) + " connectors";
+      });
     }
+
+    function withTimeout(p, ms) {
+      return new Promise(function (resolve, reject) {
+        var t = setTimeout(function () { reject(new Error("timeout")); }, ms);
+        p.then(function (v) { clearTimeout(t); resolve(v); },
+               function (e) { clearTimeout(t); reject(e); });
+      });
+    }
+
     function paint(v) {
       if (v.energy) set("statEnergy", v.energy);
       if (v.ev) set("statEv", v.ev);
@@ -409,7 +477,7 @@
       var out = {};
       return Promise.all([
         txt("/projectenergy/").then(function (h) { out.energy = fromEnergy(h); }).catch(function () {}),
-        txt("/evcharging/").then(function (h) { out.ev = fromEv(h); }).catch(function () {})
+        withTimeout(fromEvLive(), EV_TIMEOUT).then(function (t) { out.ev = t; }).catch(function () {})
       ]).then(function () {
         paint(out);
         try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
