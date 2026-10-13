@@ -2370,11 +2370,31 @@
       companyModel.forEach(function (c) {
         c.projects.forEach(function (p) {
           var m = L.marker([p.lat, p.lon], { icon: pinIcon(p.type), riseOnHover:true });
-          m.bindPopup(projectPopup(p));
-          m.bindTooltip(p.name, { direction:"top" });
+          m._project = p;
+          /* Popup and tooltip HTML are built on first hover/click rather than
+             for all 960 markers up front — same result, far less startup work
+             on a slow device. zoomToProject() uses the same helpers, so a jump
+             from the project list still opens the popup. */
+          m.on("click", function () { openProjectPopup(m); });
+          m.on("mouseover", function () { bindProjectTooltip(m); });
           projectMarkers.push({ project:p, layer:m });
         });
       });
+    }
+
+    /* Bind-on-demand helpers, shared by the marker handlers and zoomToProject(). */
+    function openProjectPopup(m) {
+      if (!m._popupBound) {
+        m._popupBound = true;
+        m.bindPopup(projectPopup(m._project));
+      }
+      m.openPopup();
+    }
+
+    function bindProjectTooltip(m) {
+      if (m._tipBound) return;
+      m._tipBound = true;
+      m.bindTooltip(m._project.name, { direction:"top" });
     }
 
     var selectedCompanies = new Set();
@@ -2469,7 +2489,7 @@
       }
       hit.layer.addTo(layers.projects);
       map.setView([p.lat, p.lon], Math.max(map.getZoom(), 11));
-      hit.layer.openPopup();
+      openProjectPopup(hit.layer);
     }
 
     /* ---------------- Unified Details Modal ---------------- */
@@ -2579,8 +2599,7 @@
     }
 
     var _sentinel = null;
-    function _observeSentinel() {
-      if (!_sentinel) return;
+    function _observeSentinel() {      if (!_sentinel) return;
       if (_listObserver) { _listObserver.disconnect(); }
       if (typeof IntersectionObserver !== "function") return;
       var root = companyListEl.closest(".side-body") || null;
@@ -2590,6 +2609,61 @@
         }
       }, { root: root, rootMargin: "300px 0px" });
       _listObserver.observe(_sentinel);
+    }
+
+    /* Build one company's project rows into `ul`. Called the first time that
+       company is expanded, so collapsed companies cost nothing. */
+    function buildCompanyProjectRows(ul, c) {
+      c.projects.forEach(function (p) {
+        var pli = document.createElement("li");
+        /* Tagged so applySearch() can hide rows of unticked types. */
+        pli.setAttribute("data-type", p.type);
+        var row = document.createElement("div");
+        row.className = "co-proj-row";
+
+        var pb = document.createElement("button");
+        pb.type = "button";
+        pb.className = "p-target";
+        pb.innerHTML =
+          '<span class="pdot ' + p.type + '"></span>' +
+          '<span>' + p.name + '</span>' +
+          '<span class="pcap">' + p.cap + '</span>';
+        pb.addEventListener("click", function (e) {
+          e.stopPropagation();
+          zoomToProject(p);
+        });
+        row.appendChild(pb);
+
+        var pInfoBtn = document.createElement("button");
+        pInfoBtn.type = "button";
+        pInfoBtn.className = "btn-p-info";
+        pInfoBtn.textContent = "Details";
+        pInfoBtn.title = "View project specifications and details";
+        pInfoBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          showProjectDetails(p);
+        });
+        row.appendChild(pInfoBtn);
+
+        if (p.source === "user") {
+          var del = document.createElement("button");
+          del.type = "button";
+          del.className = "co-del";
+          del.title = "Delete this project";
+          del.innerHTML = "×";
+          del.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (!confirm('Delete "' + p.name + '"?')) return;
+            userProjects = userProjects.filter(function (u) { return u.id !== p.id; });
+            saveUserProjects();
+            rebuildAll(false);
+          });
+          row.appendChild(del);
+        }
+
+        pli.appendChild(row);
+        ul.appendChild(pli);
+      });
     }
 
     function buildCompanyList() {
@@ -2648,57 +2722,21 @@
         var proj = document.createElement("div");
         proj.className = "co-proj";
         var ul = document.createElement("ul");
-        c.projects.forEach(function (p) {
-          var pli = document.createElement("li");
-          /* Tagged so applySearch() can hide rows of unticked types. */
-          pli.setAttribute("data-type", p.type);
-          var row = document.createElement("div");
-          row.className = "co-proj-row";
-
-          var pb = document.createElement("button");
-          pb.type = "button";
-          pb.className = "p-target";
-          pb.innerHTML =
-            '<span class="pdot ' + p.type + '"></span>' +
-            '<span>' + p.name + '</span>' +
-            '<span class="pcap">' + p.cap + '</span>';
-          pb.addEventListener("click", function (e) {
-            e.stopPropagation();
-            zoomToProject(p);
-          });
-          row.appendChild(pb);
-
-          var pInfoBtn = document.createElement("button");
-          pInfoBtn.type = "button";
-          pInfoBtn.className = "btn-p-info";
-          pInfoBtn.textContent = "Details";
-          pInfoBtn.title = "View project specifications and details";
-          pInfoBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            showProjectDetails(p);
-          });
-          row.appendChild(pInfoBtn);
-
-          if (p.source === "user") {
-            var del = document.createElement("button");
-            del.type = "button";
-            del.className = "co-del";
-            del.title = "Delete this project";
-            del.innerHTML = "×";
-            del.addEventListener("click", function (e) {
-              e.stopPropagation();
-              if (!confirm('Delete "' + p.name + '"?')) return;
-              userProjects = userProjects.filter(function (u) { return u.id !== p.id; });
-              saveUserProjects();
-              rebuildAll(false);
-            });
-            row.appendChild(del);
-          }
-
-          pli.appendChild(row);
-          ul.appendChild(pli);
-        });
         proj.appendChild(ul);
+        /* Project rows are built on first expand, not at startup. There are 960
+           of them and most companies stay collapsed, so building them all up
+           front is pure DOM and layout cost — one company alone holds 452. */
+        (function () {
+          var built = false;
+          c._buildProjectRows = function () {
+            if (built) return;
+            built = true;
+            buildCompanyProjectRows(ul, c);
+          };
+          /* A rebuild can happen while the company is already expanded (e.g. the
+             user changes a filter), so fill it in immediately in that case. */
+          if (expandedCompanies.has(c.name)) c._buildProjectRows();
+        })();
 
         li.appendChild(head);
         li.appendChild(proj);
@@ -2724,7 +2762,12 @@
 
     function syncAccordionUI() {
       companyRows.forEach(function (row) {
-        row.li.classList.toggle("expanded", expandedCompanies.has(row.name));
+        var on = expandedCompanies.has(row.name);
+        row.li.classList.toggle("expanded", on);
+        /* Expanding a company for the first time is when its project rows get
+           built. Doing it here covers both a manual click and the auto-expand
+           that a search performs. */
+        if (on && row.company._buildProjectRows) row.company._buildProjectRows();
       });
     }
 
