@@ -144,8 +144,6 @@
   .tools { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .btn.menu-toggle { display: none; }
   .brand { display: flex; flex-direction: row; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
-  .brand-logo { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; flex: 0 0 auto; color: #10B981; background: #ECFDF5; border: 1px solid rgba(16,185,129,.32); }
-  .brand-logo svg { width: 22px; height: 22px; }
   .brand-text { display: flex; flex-direction: column; }
   .brand-text span { display: block; font-weight: 700; font-size: 15px; color: var(--ink); letter-spacing: -0.01em; }
 
@@ -230,9 +228,6 @@
   }
   .section:not([open]) > summary::after { transform: rotate(-90deg); }
   .section > .card-body { padding-bottom: 6px; }
-  /* The Energy Zone is always shown — no collapse affordance. */
-  .section.always-open > summary { cursor: default; }
-  .section.always-open > summary::after { display: none; }
   /* Energy Zone and Projects both use .section (see "Drawer sections" above). */
   /* Select all / Clear all sit in the Energy Zone header line, flush right. */
   .ez-head-actions { display: flex; align-items: center; gap: 7px; margin-left: 10px; }
@@ -264,7 +259,9 @@
   .grid-swatch.g220 { background: var(--grid-220); height: 1.5px; }
   .grid-swatch.subst { width: 7px; height: 7px; border-radius: 1.5px; background: #334155; border: 1px solid #fff; box-shadow: 0 0 0 1px #334155; }
 
-  .count { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* Carries "374 projects · 22,430 MW" now, so keep it on one line and let the
+     name take the remaining space. */
+  .count { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; flex: 0 0 auto; }
   input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; }
   
   #base-list .row { padding: 4px 0; }
@@ -525,8 +522,6 @@
      ============================================================ */
   body { font-family: "Slate Pro", "Slate", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif; background-color: var(--bg-page); }
 
-  .brand-logo { color: var(--primary); background: var(--primary-subtle); border: 1px solid var(--primary-border); }
-
   .btn { background: var(--btn-face); border-color: var(--line-strong); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; border-radius: var(--radius); }
   .btn:hover { background: var(--btn-face); border-color: var(--primary); color: var(--ink); }
   .btn.solid, .btn.live-sync { background: linear-gradient(180deg,#00A0E0,#0072BC); border-color: #005A96; color: #fff; }
@@ -600,12 +595,6 @@
   <aside class="side">
     <header class="side-head">
       <a class="brand" href="/">
-        <span class="brand-logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-            <circle cx="12" cy="10" r="1.75" />
-          </svg>
-        </span>
         <span class="brand-text">
           <span>Energy Map</span>
         </span>
@@ -635,9 +624,9 @@
 
     <div class="side-body">
       <!-- Energy Zone (energy type → relevant zones & projects).
-           .section spans the full width of the drawer; .always-open keeps it
-           expanded and hides its collapse affordance. -->
-      <details class="section always-open" open>
+           .section spans the full width of the drawer. Open by default, but the
+           user can fold it. -->
+      <details class="section" id="ez-box" open>
         <summary>
           <span>Energy Zone</span>
           <span class="ez-head-actions">
@@ -2870,19 +2859,43 @@
       syncProjectsBox();
     }
 
+    /* Installed capacity for one project, in MW, read from its cap string.
+       Handles the shapes present in the data:
+         "450 MW"                 -> 450
+         "2,400 MW"               -> 2400
+         "3×1200 MW (3600 MW)"    -> 3600   (parenthesised total wins)
+         "1×750 MW (750 MW)"      -> 750
+         "Not stated", "1 MTPA…"  -> 0      (not a MW figure)
+       Counts the leading figure as a fallback when there is no total. */
+    function capToMW(cap) {
+      if (!cap) return 0;
+      var s = String(cap);
+      var paren = s.match(/\(([\d.,]+)\s*MW\)/i);
+      if (paren) return parseFloat(paren[1].replace(/,/g, '')) || 0;
+      var first = s.match(/([\d.,]+)\s*MW/i);
+      if (first) return parseFloat(first[1].replace(/,/g, '')) || 0;
+      return 0;
+    }
+
     function updateResourceCounts() {
       /* Derived from EZ_TYPES rather than a hard-coded list, so adding a type
          cannot silently leave its count blank in the Energy Zone list. */
-      var counts = {};
-      EZ_TYPES.forEach(function (t) { counts[t.key] = 0; });
+      var counts = {}, mw = {};
+      EZ_TYPES.forEach(function (t) { counts[t.key] = 0; mw[t.key] = 0; });
       companyModel.forEach(function (c) {
         c.projects.forEach(function (p) {
-          if (counts[p.type] !== undefined) counts[p.type]++;
+          if (counts[p.type] === undefined) return;
+          counts[p.type]++;
+          mw[p.type] += capToMW(p.cap);
         });
       });
       EZ_TYPES.forEach(function (t) {
         var el = document.getElementById("c-" + t.key);
-        if (el) el.textContent = counts[t.key] + (t.key === "nuclear" ? " sites" : " projects");
+        if (!el) return;
+        var unit = t.key === "nuclear" ? " sites" : " projects";
+        var total = Math.round(mw[t.key]);
+        var capTxt = total > 0 ? " · " + total.toLocaleString("en-US") + " MW" : "";
+        el.textContent = counts[t.key] + unit + capTxt;
       });
     }
 
@@ -3475,12 +3488,18 @@
     })();
   </script>
   <script>
-    // The Energy Zone section is always expanded: the summary keeps its heading
-    // and the Select all / Clear all buttons. Clicks on those buttons are kept
-    // from reaching the summary, otherwise they would also toggle the section,
-    // and the toggle listener pins it open against keyboard activation, a
-    // details jump link or a stray "open" toggle. The Projects box still folds.
-    Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.section.always-open"), function (d) {
+    // Energy Zone open/close. It is a normal details element and carries the
+    // `open` attribute in the markup, so its default state is expanded on every
+    // load. Nothing else writes to it: no stored preference is consulted, so a
+    // previous collapse can never override that default. The summary toggles it
+    // and the caret rotates via .section:not([open]).
+    // The only thing that needs guarding is the Select all / Clear all pair
+    // sitting inside the summary: without this their clicks would bubble up and
+    // fold the section every time you used one. The buttons' own handlers still
+    // run — this only stops the event reaching the summary.
+    (function () {
+      var d = document.getElementById("ez-box");
+      if (!d) return;
       var s = d.querySelector("summary");
       if (s) {
         s.addEventListener("click", function (e) {
@@ -3490,10 +3509,7 @@
           }
         });
       }
-      d.addEventListener("toggle", function () {
-        if (!d.open && !d.hasAttribute("open")) d.setAttribute("open", "");
-      });
-    });
+    })();
   </script>
   <script>
     // Phones: the "Show / Close" button opens / closes the menu.
