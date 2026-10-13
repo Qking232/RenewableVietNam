@@ -219,9 +219,26 @@
   }
   details.card:not([open]) > summary::after { transform: rotate(-90deg); }
   details.card .card-body { padding-bottom: 13px; }
-  /* The Energy Zone section is always shown — no collapse affordance. */
-  .side-body > details.card.always-open > summary { cursor: default; }
-  .side-body > details.card.always-open > summary::after { display: none; }
+  /* The Energy Zone is the top-level section of the drawer, not a card nested
+     inside it: it spans the drawer edge to edge and separates itself with a
+     single bottom hairline. The negative margins cancel .side-body's padding;
+     the matching padding keeps the content off the drawer edge. */
+  .side-body > details.always-open {
+    margin: 0 -14px;
+    padding: 0 14px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+  }
+  .side-body > details.always-open > summary {
+    cursor: default;
+    padding: 9px 0;
+  }
+  .side-body > details.always-open > summary::after { display: none; }
   /* Select all / Clear all sit in the Energy Zone header line, flush right. */
   .ez-head-actions { display: flex; align-items: center; gap: 7px; margin-left: 10px; }
 
@@ -612,8 +629,9 @@
     </header>
 
     <div class="side-body">
-      <!-- Energy Zone (energy type → relevant zones & projects) -->
-      <details class="card always-open" open>
+      <!-- Energy Zone (energy type → relevant zones & projects).
+           Deliberately not a .card: it spans the full width of the drawer. -->
+      <details class="always-open" open>
         <summary>
           <span>Energy Zone</span>
           <span class="ez-head-actions">
@@ -3455,7 +3473,7 @@
     // from reaching the summary, otherwise they would also toggle the section,
     // and the toggle listener pins it open against keyboard activation, a
     // details jump link or a stray "open" toggle. The Projects box still folds.
-    Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.card.always-open"), function (d) {
+    Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.always-open"), function (d) {
       var s = d.querySelector("summary");
       if (s) {
         s.addEventListener("click", function (e) {
