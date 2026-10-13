@@ -203,42 +203,37 @@
 
   /* ---------- Sidebar Content ---------- */
   
-  .card {
-    border: 1px solid var(--line); border-radius: var(--radius); padding: 13px; margin-bottom: 12px;
-    background: var(--card-bg); box-shadow: var(--shadow-sm);
-  }
-  details.card { padding: 0 13px; }
-  details.card > summary {
-    cursor: pointer; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
-    font-weight: 700; list-style: none; display: flex; align-items: center; justify-content: space-between;
-    padding: 13px 0; user-select: none;
-  }
-  details.card > summary::-webkit-details-marker { display: none; }
-  details.card > summary::after {
-    content: "▾"; font-size: 14px; color: var(--muted); transition: transform 0.15s ease;
-  }
-  details.card:not([open]) > summary::after { transform: rotate(-90deg); }
-  details.card .card-body { padding-bottom: 13px; }
-  /* The Energy Zone is the top-level section of the drawer, not a card nested
-     inside it: it spans the drawer edge to edge and separates itself with a
-     single bottom hairline. The negative margins cancel .side-body's padding;
-     the matching padding keeps the content off the drawer edge. */
-  .side-body > details.always-open {
-    margin: 0 -14px;
-    padding: 0 14px;
+  /* ---------- Drawer sections ----------
+     .section is the full-bleed row unit of the drawer: it spans edge to edge
+     instead of sitting in an inset card, and separates itself with a bottom
+     hairline. The negative margins cancel .side-body's padding; the matching
+     padding keeps the content off the drawer edge, so the content is not
+     additionally inset (it used to be drawer 14px + card 13px + border). */
+  .section {
     border: 0;
-    border-bottom: 1px solid var(--line);
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    margin-bottom: 12px;
-    padding-bottom: 4px;
+    margin: 0 -14px 12px;
+    padding: 0 14px 4px;
+    border-bottom: 1px solid var(--line);
   }
-  .side-body > details.always-open > summary {
-    cursor: default;
-    padding: 9px 0;
+  .section > summary {
+    cursor: pointer;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    font-weight: 700; list-style: none; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; user-select: none;
   }
-  .side-body > details.always-open > summary::after { display: none; }
+  .section > summary::-webkit-details-marker { display: none; }
+  .section > summary::after {
+    content: "▾"; font-size: 14px; color: var(--muted); transition: transform 0.15s ease;
+  }
+  .section:not([open]) > summary::after { transform: rotate(-90deg); }
+  .section > .card-body { padding-bottom: 6px; }
+  /* The Energy Zone is always shown — no collapse affordance. */
+  .section.always-open > summary { cursor: default; }
+  .section.always-open > summary::after { display: none; }
+  /* Energy Zone and Projects both use .section (see "Drawer sections" above). */
   /* Select all / Clear all sit in the Energy Zone header line, flush right. */
   .ez-head-actions { display: flex; align-items: center; gap: 7px; margin-left: 10px; }
 
@@ -630,8 +625,9 @@
 
     <div class="side-body">
       <!-- Energy Zone (energy type → relevant zones & projects).
-           Deliberately not a .card: it spans the full width of the drawer. -->
-      <details class="always-open" open>
+           .section spans the full width of the drawer; .always-open keeps it
+           expanded and hides its collapse affordance. -->
+      <details class="section always-open" open>
         <summary>
           <span>Energy Zone</span>
           <span class="ez-head-actions">
@@ -644,8 +640,9 @@
         </div>
       </details>
 
-      <!-- Companies & projects (100+ Database) -->
-      <details class="card" id="projects-box" open>
+      <!-- Companies & projects. Also a .section at full drawer width, but
+           unlike the Energy Zone it stays foldable, so it keeps its caret. -->
+      <details class="section" id="projects-box" open>
         <summary>
           <span>Projects</span>
           <span class="badge-count" id="reg-count">960 loaded</span>
@@ -3473,7 +3470,7 @@
     // from reaching the summary, otherwise they would also toggle the section,
     // and the toggle listener pins it open against keyboard activation, a
     // details jump link or a stray "open" toggle. The Projects box still folds.
-    Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.always-open"), function (d) {
+    Array.prototype.forEach.call(document.querySelectorAll(".side-body > details.section.always-open"), function (d) {
       var s = d.querySelector("summary");
       if (s) {
         s.addEventListener("click", function (e) {
