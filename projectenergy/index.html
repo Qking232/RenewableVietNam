@@ -310,6 +310,8 @@
   }
   .btn.mini:hover { background: var(--bg-page); color: var(--ink); }
   .co-list { list-style: none; margin: 0; padding: 0; max-height: 280px; overflow: auto; }
+  /* Marks where the next chunk of company rows is appended (lazy loading). */
+  .co-sentinel { height: 1px; margin: 0; padding: 0; list-style: none; }
   .co-item { border-bottom: 1px solid var(--line-subtle); }
   .co-item:last-child { border-bottom: none; }
   
@@ -1990,6 +1992,51 @@
       { name:"Cà Mau", company:"Not stated", country:"Viet Nam", type:"solar", cap:"50 MW", loc:"Ca Mau", lat:8.61143, lon:105.01517, note:"Solar · commissioned 6/2019 · start 2018 · 73,9 GWh/yr · Xã Phan Ngọc Hiển · source: vi.wikipedia solar list" },
     ];
 
+    /* ---------------- Supabase: live project store ----------------
+       The array above is the guaranteed fallback, so the page paints instantly and
+       still works if Supabase is unreachable. Once the database answers we compare
+       it with the embedded copy and only rebuild when they actually differ, so a
+       typical visit does no extra rendering work.
+       Only the PUBLISHABLE key belongs here: the table grants anon SELECT and
+       nothing else, so this key cannot write. Never put a secret key in a page. */
+    var SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+    var SUPABASE_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
+    var _sbInFlight = false;
+
+    function syncProjectsFromSupabase() {
+      if (_sbInFlight) return;
+      _sbInFlight = true;
+      var url = SUPABASE_URL + "/rest/v1/energy_projects" +
+                "?select=name,company,country,type,cap,loc,lat,lon,note";
+      fetch(url, { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (rows) {
+          _sbInFlight = false;
+          if (!Array.isArray(rows) || !rows.length) return;
+
+          /* Cheap change detection first: same count and same name at each index
+             means the embedded copy is already current, so skip the rebuild. */
+          if (rows.length === PROJECTS_DB.length) {
+            var same = true;
+            for (var i = 0; i < rows.length; i++) {
+              if (rows[i].name !== PROJECTS_DB[i].name) { same = false; break; }
+            }
+            if (same) return;
+          }
+
+          /* The database wins, but keep any embedded row the database has not
+             been seeded with yet, so a partial seed never loses projects. */
+          var seen = {};
+          rows.forEach(function (p) { seen[p.type + "\u0000" + p.name] = true; });
+          var kept = PROJECTS_DB.filter(function (p) {
+            return !seen[p.type + "\u0000" + p.name];
+          });
+          PROJECTS_DB = rows.concat(kept);
+          if (typeof rebuildAll === "function") rebuildAll(false);
+        })
+        .catch(function () { _sbInFlight = false; /* offline: keep the embedded copy */ });
+    }
+
     /* ---- User-added projects in localStorage ---- */
     var STORE_KEY = "rvn_user_projects";
     var userProjects = (function () {
@@ -2492,13 +2539,56 @@
       });
     }
 
-    /* ---------------- Companies List UI ---------------- */
+    /* ---------------- Companies List UI ----------------
+       Loading 900+ projects means ~200 company rows. Building them all (with
+       their handlers and per-project rows) on every rebuild — and on every
+       search keystroke — is the page's main avoidable cost, so rows are built
+       once but only *appended* a chunk at a time as the sidebar scrolls.
+       `companyRows` is always complete, so search, selection and the accordion
+       logic keep working exactly as before. */
     var companyListEl = document.getElementById("company-list");
     var companyRows = [];
+    var LIST_CHUNK = 40;
+    var _loadedCount = 0;
+    var _listObserver = null;
+
+    /* Make sure the first `n` rows are in the DOM (they may be filtered out by
+       display:none, which still counts as loaded — that is fine). */
+    function ensureRowsLoaded(n) {
+      n = Math.min(n, companyRows.length);
+      if (n <= _loadedCount) return;
+      var frag = document.createDocumentFragment();
+      for (var i = _loadedCount; i < n; i++) {
+        frag.appendChild(companyRows[i].li);
+        companyRows[i].loaded = true;
+      }
+      if (_sentinel && _sentinel.parentNode === companyListEl) {
+        companyListEl.insertBefore(frag, _sentinel);
+      } else {
+        companyListEl.appendChild(frag);
+      }
+      _loadedCount = n;
+    }
+
+    var _sentinel = null;
+    function _observeSentinel() {
+      if (!_sentinel) return;
+      if (_listObserver) { _listObserver.disconnect(); }
+      if (typeof IntersectionObserver !== "function") return;
+      var root = companyListEl.closest(".side-body") || null;
+      _listObserver = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) {
+          ensureRowsLoaded(_loadedCount + LIST_CHUNK);
+        }
+      }, { root: root, rootMargin: "300px 0px" });
+      _listObserver.observe(_sentinel);
+    }
 
     function buildCompanyList() {
       companyListEl.innerHTML = "";
       companyRows = [];
+      _loadedCount = 0;
+      if (_listObserver) { _listObserver.disconnect(); _listObserver = null; }
 
       companyModel.forEach(function (c) {
         var li = document.createElement("li");
@@ -2604,8 +2694,7 @@
 
         li.appendChild(head);
         li.appendChild(proj);
-        companyListEl.appendChild(li);
-        companyRows.push({ name:c.name, li:li, company:c });
+        companyRows.push({ name:c.name, li:li, company:c, loaded:false });
       });
 
       var names = companyModel.map(function (c) { return c.name; });
@@ -2614,6 +2703,15 @@
 
       syncAccordionUI();
       applySearch();
+
+      /* Sentinel + first chunk. Keeping the sentinel after the rows means the
+         observer fires again as the user scrolls toward the bottom. */
+      _sentinel = document.createElement("li");
+      _sentinel.className = "co-sentinel";
+      _sentinel.setAttribute("aria-hidden", "true");
+      companyListEl.appendChild(_sentinel);
+      ensureRowsLoaded(LIST_CHUNK);
+      _observeSentinel();
     }
 
     function syncAccordionUI() {
@@ -2635,7 +2733,8 @@
       /* When only some energy types are ticked, list just the companies that hold one of them. */
       var types = activeEnergyTypes();
       var typeFilter = types.size > 0 && types.size < EZ_TYPES.length;
-      companyRows.forEach(function (row) {
+      var lastMatchIdx = -1;
+      companyRows.forEach(function (row, idx) {
         var hay = (row.name + " " + row.company.country + " " +
           row.company.projects.map(function (p) { return p.name + " " + p.loc; }).join(" ")).toLowerCase();
         var match = q === "" || hay.indexOf(q) > -1;
@@ -2650,8 +2749,12 @@
         applyProjectRowFilter(row.li, types, typeFilter);
         if (q !== "" && match) {
           expandedCompanies.add(row.name);
+          lastMatchIdx = idx;
         }
       });
+      /* A search auto-expands matching companies, so make sure they are actually
+         in the DOM — otherwise the result would be an expanded row nobody sees. */
+      if (lastMatchIdx >= 0) ensureRowsLoaded(lastMatchIdx + 1);
       syncAccordionUI();
     }
 
@@ -3260,6 +3363,10 @@
 
     // Initial render — no company selected by default
     rebuildAll(false);
+
+    /* The page is already usable above. Now let the database correct or extend
+       that copy in the background; if it is unreachable nothing changes. */
+    syncProjectsFromSupabase();
 
     setTimeout(function () { map.invalidateSize(); }, 200);
   })();
