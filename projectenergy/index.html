@@ -2006,33 +2006,41 @@
     function syncProjectsFromSupabase() {
       if (_sbInFlight) return;
       _sbInFlight = true;
-      var url = SUPABASE_URL + "/rest/v1/energy_projects" +
-                "?select=name,company,country,type,cap,loc,lat,lon,note";
-      fetch(url, { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (rows) {
-          _sbInFlight = false;
-          if (!Array.isArray(rows) || !rows.length) return;
+      var base = SUPABASE_URL + "/rest/v1/energy_projects";
+      var hdr = { headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY } };
 
-          /* Cheap change detection first: same count and same name at each index
-             means the embedded copy is already current, so skip the rebuild. */
-          if (rows.length === PROJECTS_DB.length) {
+      /* Step 1 is deliberately tiny: just the names. If they match the embedded
+         copy the database is already up to date, and we never download the full
+         ~250 KB payload. Only when something genuinely differs do we fetch it. */
+      fetch(base + "?select=name", hdr)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (names) {
+          if (!Array.isArray(names) || !names.length) { _sbInFlight = false; return; }
+
+          if (names.length === PROJECTS_DB.length) {
             var same = true;
-            for (var i = 0; i < rows.length; i++) {
-              if (rows[i].name !== PROJECTS_DB[i].name) { same = false; break; }
+            for (var i = 0; i < names.length; i++) {
+              if (names[i].name !== PROJECTS_DB[i].name) { same = false; break; }
             }
-            if (same) return;
+            if (same) { _sbInFlight = false; return; }   // nothing to do
           }
 
-          /* The database wins, but keep any embedded row the database has not
-             been seeded with yet, so a partial seed never loses projects. */
-          var seen = {};
-          rows.forEach(function (p) { seen[p.type + "\u0000" + p.name] = true; });
-          var kept = PROJECTS_DB.filter(function (p) {
-            return !seen[p.type + "\u0000" + p.name];
-          });
-          PROJECTS_DB = rows.concat(kept);
-          if (typeof rebuildAll === "function") rebuildAll(false);
+          var sel = "?select=name,company,country,type,cap,loc,lat,lon,note";
+          return fetch(base + sel, hdr)
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (rows) {
+              _sbInFlight = false;
+              if (!Array.isArray(rows) || !rows.length) return;
+              /* The database wins, but keep any embedded row it has not been
+                 seeded with yet, so a partial seed never loses projects. */
+              var seen = {};
+              rows.forEach(function (p) { seen[p.type + "\u0000" + p.name] = true; });
+              var kept = PROJECTS_DB.filter(function (p) {
+                return !seen[p.type + "\u0000" + p.name];
+              });
+              PROJECTS_DB = rows.concat(kept);
+              if (typeof rebuildAll === "function") rebuildAll(false);
+            });
         })
         .catch(function () { _sbInFlight = false; /* offline: keep the embedded copy */ });
     }
