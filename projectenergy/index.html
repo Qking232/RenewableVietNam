@@ -5,10 +5,10 @@
   Features:
     - 960 verified power projects across Viet Nam (solar, wind, hydro, LNG,
       coal, oil, biomass, nuclear) with installed capacity per energy type
-    - Live Overpass API Query Engine
     - Transmission Grid (500kV, 220kV) & Substations
     - Data Provenance and Sources Transparency Section
-    - Unified Details Modal & Geolocation (My Location)
+    - Unified Details Modal
+    - Satellite / map basemap toggle in the header
 -->
 <html lang="en" dir="ltr">
 <head>
@@ -144,7 +144,16 @@
   .side-head::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg,#0072BC,#00A0E0 55%,#3FC0F5); }
   .tools { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
   .btn.menu-toggle { display: none; }
-  .brand { display: flex; flex-direction: row; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  /* Satellite / Map toggle: its label is the base map currently showing, so the
+     active one is highlighted and the other reads as the thing you'd switch to. */
+  #btn-satellite { text-transform: none; letter-spacing: 0; font-size: 11.5px; }
+  #btn-satellite.is-active { background: var(--primary-subtle); border-color: var(--primary-border); color: var(--primary); }
+  /* The Setting gear is hidden on purpose. The button, its popover and the
+     handler all remain in place, so bringing it back is a one-line change:
+     delete this rule. Nothing looks the control up in a way that would break
+     while it is hidden. */
+  #btn-settings { display: none; }
+  .brand { display: flex; flex-direction: row; align-items: center; text-decoration: none; color: var(--ink); }
   .brand-text { display: flex; flex-direction: column; }
   .brand-text span { display: block; font-weight: 700; font-size: 15px; color: var(--ink); letter-spacing: -0.01em; }
 
@@ -165,11 +174,6 @@
     transition: all .15s ease; display: inline-flex; align-items: center; gap: 5px;
   }
   .btn:hover { background: var(--bg-page); border-color: #cbd5e1; color: var(--ink); }
-  .btn.solid { background: var(--primary); color: var(--white); border-color: var(--primary); }
-  .btn.solid:hover { background: var(--primary-hover); }
-  .btn.live-sync { background: #0284c7; color: #fff; border-color: #0284c7; }
-  .btn.live-sync:hover { background: #0369a1; }
-  .btn.live-sync.syncing { opacity: 0.7; pointer-events: none; }
 
   /* ---------- Layout: full-bleed map + docked left sidebar ---------- */
   .map-wrap { position: fixed; inset: 0; z-index: 0; background: #e2e8f0; }
@@ -252,13 +256,13 @@
   .sw.oil  { background: var(--oil); }
   .sw.biomass { background: var(--biomass); }
 
-  /* Grid line swatches (Layers legend) — sized to match the quarter-scale panel */
+  /* Grid line swatches (Layers legend) — 2x scale to match the panel */
   .grid-swatch {
-    width: 9px; height: 2px; border-radius: 1px; flex: 0 0 auto;
+    width: 36px; height: 6px; border-radius: 2px; flex: 0 0 auto;
   }
-  .grid-swatch.g500 { background: var(--grid-500); height: 2px; }
-  .grid-swatch.g220 { background: var(--grid-220); height: 1.5px; }
-  .grid-swatch.subst { width: 7px; height: 7px; border-radius: 1.5px; background: #334155; border: 1px solid #fff; box-shadow: 0 0 0 1px #334155; }
+  .grid-swatch.g500 { background: var(--grid-500); height: 8px; }
+  .grid-swatch.g220 { background: var(--grid-220); height: 5px; }
+  .grid-swatch.subst { width: 14px; height: 14px; border-radius: 2px; background: #334155; border: 1px solid #fff; box-shadow: 0 0 0 1px #334155; }
 
   /* Carries "374 projects · 22,430 MW" now, so keep it on one line and let the
      name take the remaining space. */
@@ -513,8 +517,8 @@
     /* Phones: the Layers panel collapses to its heading. */
     .grid-panel .gp-body { display: none; }
     .grid-panel.gp-open .gp-body { display: block; }
-    .grid-panel .gp-toggle { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 7px; }
-    .grid-panel .gp-toggle::after { content: "▾"; font-size: 6px; color: var(--muted); }
+    .grid-panel .gp-toggle { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .grid-panel .gp-toggle::after { content: "▾"; font-size: 12px; color: #000; }
     .grid-panel:not(.gp-open) .gp-toggle::after { content: "▸"; }
   }
 
@@ -525,8 +529,6 @@
 
   .btn { background: var(--btn-face); border-color: var(--line-strong); font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; border-radius: var(--radius); }
   .btn:hover { background: var(--btn-face); border-color: var(--primary); color: var(--ink); }
-  .btn.solid, .btn.live-sync { background: linear-gradient(180deg,#00A0E0,#0072BC); border-color: #005A96; color: #fff; }
-  .btn.solid:hover, .btn.live-sync:hover { background: linear-gradient(180deg,#12B0EE,#0082CE); }
   .btn.mini, .btn.mini.accent, .btn.mini.primary { text-transform: none; letter-spacing: 0; font-size: 11.5px; }
   .btn.mini:hover { background: var(--chip); color: var(--ink); }
   .btn.mini.accent, .btn.mini.primary { background: linear-gradient(180deg,#00A0E0,#0072BC); border-color: #005A96; color: #fff; }
@@ -534,7 +536,6 @@
   .btn.icon { padding: 7px 9px; justify-content: center; }
   .btn.icon svg { width: 16px; height: 16px; display: block; }
   .btn.icon > span { display: block; line-height: 1; font-size: 15px; }
-  .btn.live-sync.done { background: var(--primary-subtle); color: var(--primary); border-color: var(--primary); }
   #np-pick.armed { background: var(--gold); border-color: transparent; color: #fff; }
 
   .co-search, .add-form input, .add-form select { background: var(--surface-2); }
@@ -553,16 +554,16 @@
   .map-wrap, #map { background: var(--surface-2); }
   .substation-icon { border-color: #fff; }
 
-  /* Leaflet chrome — solid panel background so the labels stay readable on any basemap.
-     The Layers panel is scaled to a quarter of its original footprint (all
-     dimensions halved), so it reads as a compact legend. */
+  /* Layers legend. Fully transparent so the map shows straight through, with
+     black text for contrast against the imagery; every dimension is 2x the
+     previous quarter-scale version so the labels are legible (type 6px -> 12px). */
   .grid-panel {
-    background: var(--legend-bg); border: 1px solid var(--line-strong); border-radius: var(--radius);
-    box-shadow: var(--shadow-md); padding: 5px 7px; max-width: 130px; color: var(--ink);
+    background: transparent; border: 0; border-radius: 0; box-shadow: none;
+    padding: 10px 14px; max-width: 260px; color: #000; font-size: 12px;
   }
-  .grid-panel h4 { margin: 0 0 3px; font-size: 6px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .grid-panel .row { gap: 4px; padding: 2px 0; }
-  .grid-panel .row label { font-size: 6px; line-height: 1.25; }
+  .grid-panel h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: #000; }
+  .grid-panel .row { gap: 8px; padding: 4px 0; }
+  .grid-panel .row label { font-size: 12px; line-height: 1.25; color: #000; }
   .scale-note { background: var(--legend-bg); border-color: var(--line-strong); }
   .leaflet-bar a { background: var(--card-bg); color: var(--ink); border-bottom-color: var(--line); }
   .leaflet-bar a:hover { background: var(--chip); color: var(--primary); }
@@ -602,9 +603,8 @@
       </a>
       <div class="tools">
         <button class="btn mini menu-toggle" id="menu-toggle" type="button">Show</button>
-        <button class="btn icon live-sync" id="btn-live-osm" type="button" title="Live query (Overpass API)" aria-label="Live query">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" /></svg>
-        </button>
+        <button class="btn mini" id="btn-satellite" type="button" aria-pressed="false"
+                title="Switch between satellite imagery and the map">Map</button>
         <button class="btn icon" id="btn-settings" type="button" title="Setting" aria-label="Setting" aria-haspopup="true" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" /></svg>
         </button>
@@ -2150,6 +2150,17 @@
       baseStatusEl.textContent = msg || "";
     }
 
+    /* The header toggle shows the base map currently in use, so it stays correct
+       even when setBase() switches on its own (e.g. the tile-failure fallback). */
+    function updateBaseToggle() {
+      var b = document.getElementById("btn-satellite");
+      if (!b) return;
+      var sat = currentBaseName === "esriSat";
+      b.textContent = sat ? "Satellite" : "Map";
+      b.setAttribute("aria-pressed", sat ? "true" : "false");
+      if (sat) b.classList.add("is-active"); else b.classList.remove("is-active");
+    }
+
     function setBase(name) {
       if (currentBase) { map.removeLayer(currentBase); currentBase = null; }
 
@@ -2190,6 +2201,8 @@
 
       var radio = document.querySelector('input[name="base"][value="' + name + '"]');
       if (radio) radio.checked = true;
+
+      updateBaseToggle();
     }
 
     /* ---------------- Base-map Switcher ---------------- */
@@ -2214,6 +2227,16 @@
     baseStatusEl = statusP;
 
     setBase(DEFAULT_BASE);
+
+    /* Satellite ⇄ map. The label always names the base map in use, so this one
+       button both reports the state and switches it. */
+    (function () {
+      var b = document.getElementById("btn-satellite");
+      if (!b) return;
+      b.addEventListener("click", function () {
+        setBase(currentBaseName === "esriSat" ? DEFAULT_BASE : "esriSat");
+      });
+    })();
 
     /* ---------------- Viet Nam archipelagos — Hoang Sa & Truong Sa ---------------- */
     var ARCHIPELAGOS = [
@@ -2914,54 +2937,6 @@
       });
       syncCompanyUI(true);
     });
-    /* ---------------- Live Overpass API Query ---------------- */
-    var liveBtn = document.getElementById("btn-live-osm");
-
-    liveBtn.onclick = function () {
-      liveBtn.classList.add("syncing");
-
-      var query = '[out:json][timeout:25];area["ISO3166-1"="VN"][admin_level=2]->.a;(node["power"="plant"]["plant:source"~"solar|wind"](area.a);way["power"="plant"]["plant:source"~"solar|wind"](area.a););out center 40;';
-      var url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
-
-      fetch(url)
-        .then(function (res) { return res.json(); })
-        .then(function (data) {
-          var count = 0;
-          if (data && data.elements) {
-            data.elements.forEach(function (el) {
-              var lat = el.lat || (el.center && el.center.lat);
-              var lon = el.lon || (el.center && el.center.lon);
-              if (!lat || !lon) return;
-
-              var name = (el.tags && el.tags.name) || "Live Power Facility";
-              var source = (el.tags && el.tags["plant:source"]) || "solar";
-              var output = (el.tags && el.tags["plant:output:electricity"]) || "Grid Active";
-              var operator = (el.tags && el.tags.operator) || "Community";
-
-              PROJECTS_DB.push({
-                name: name,
-                company: operator + " [Live]",
-                country: "Viet Nam",
-                type: source === "wind" ? "wind" : "solar",
-                cap: output,
-                loc: "Vietnam",
-                lat: lat,
-                lon: lon,
-                note: "Live data point received from the Overpass API."
-              });
-              count++;
-            });
-          }
-          rebuildAll(false);
-          liveBtn.classList.remove("syncing");
-          liveBtn.classList.add("done");
-          setTimeout(function () { liveBtn.classList.remove("done"); }, 1600);
-        })
-        .catch(function (err) {
-          liveBtn.classList.remove("syncing");
-        });
-    };
-
     /* ---------------- Add a project ---------------- */
     var addForm = document.getElementById("add-form");
     var pickBtn = document.getElementById("np-pick");
@@ -3316,7 +3291,7 @@
             '<span class="grid-swatch subst"></span>' +
             '<label>Substations (500kV / 220kV)</label>' +
             '<span class="count" id="c-substations"></span></div>' +
-          '<div class="row" style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px;">' +
+          '<div class="row" style="margin-top:6px; padding-top:8px;">' +
             '<span class="swatch sw" style="background:var(--primary); border-radius:50%;"></span>' +
             '<label>Company projects</label>' +
             '<span class="count" id="c-projects"></span></div>' +
