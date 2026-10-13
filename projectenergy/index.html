@@ -496,7 +496,17 @@
   .co-external-links { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-subtle); display: flex; flex-wrap: wrap; gap: 8px; }
 
   @media (max-width:820px) {
-    .side { top: 8px; left: 8px; right: 8px; bottom: auto; width: auto !important; max-width: none; max-height: 64vh; }
+    /* Phones: the drawer docks flush to the top and spans the full viewport
+       width instead of floating 8px in from every edge. With no offsets left
+       there is nothing for a rounded corner to wrap, so it reads as a docked
+       bar rather than a floating card. */
+    .side {
+      top: 0; left: 0; right: 0; bottom: auto;
+      width: 100% !important; max-width: none;
+      max-height: 64vh;
+      border-right: 0;
+      border-radius: 0;
+    }
     .resizer { display: none; }
     /* Phones: the menu stays closed until the Show / Close button is tapped. */
     .side .side-body { display: none; }
