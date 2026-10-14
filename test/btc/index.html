@@ -218,8 +218,18 @@
   .mx-cell{display:block; cursor:pointer; border-radius:var(--radius); padding:5px 4px;
     font-weight:700; font-variant-numeric:tabular-nums; border:1px solid transparent}
   .mx-cell:hover{border-color:var(--accent)}
-  .chart-lg{height:200px}
+  .chart-lg{height:260px}
   .chart-tip.wrap{white-space:normal; max-width:230px; line-height:1.5}
+  .trend-toolbar{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px}
+  .trend-toolbar .chip.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+  .trend-toolbar .chip.active{border-color:var(--accent-2); color:#fff; background:var(--btn-primary); box-shadow:0 0 10px var(--accent-soft)}
+  .color-picker{display:inline-flex; gap:6px; align-items:center; padding:3px 8px; background:var(--surface-2); border:1px solid var(--line-strong); border-radius:var(--radius)}
+  .color-dot{width:18px; height:18px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; outline:none; transition:transform .12s}
+  .color-dot:hover{transform:scale(1.15)}
+  .color-dot.on{border-color:var(--text); transform:scale(1.22); box-shadow:0 0 0 2px var(--bg)}
+  .drawing-mode{cursor:crosshair !important}
+  .drawing-mode *{cursor:crosshair !important}
+  .drawn-line-hit{cursor:pointer}
 
   details{border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   summary{cursor:pointer; padding:12px 16px; font-size:10.5px; font-weight:700; letter-spacing:.18em;
@@ -582,22 +592,36 @@
   <div class="section" id="trend">
     <div class="panel">
       <h2>Trend lines &amp; breakouts <span class="cloud">candle chart</span></h2>
-      <div class="sub">Candlestick chart with volume. Swing highs and lows are connected into support (green) and resistance (red) lines. A close beyond a line is a breakout — ▲ above resistance, ▼ below support. Hover for OHLC + crosshair.</div>
-      <div class="bt-controls" id="trend-k">
-        <button class="chip" data-k="5">5</button>
-        <button class="chip on" data-k="10">10</button>
-        <button class="chip" data-k="20">20</button>
-        <span class="sub" style="margin-left:auto">pivot lookback</span>
+      <div class="sub">Candlestick chart with volume. Auto swing lines &amp; interactive manual drawing tool. Hover/tap candles for OHLC + crosshair.</div>
+      <div class="trend-toolbar" id="trend-toolbar">
+        <div class="bt-controls" id="trend-k" style="margin-top:0">
+          <button class="chip" data-k="5">5</button>
+          <button class="chip on" data-k="10">10</button>
+          <button class="chip" data-k="20">20</button>
+          <span class="sub" style="font-size:10.5px">pivot</span>
+        </div>
+        <button class="chip on" id="trend-auto-toggle" title="Toggle automatic pivot lines">Auto: ON</button>
+        <button class="chip" id="trend-draw-toggle" title="Click chart to draw trend lines">✏️ Draw Line</button>
+        <div class="color-picker" id="trend-color-picker" style="display:none">
+          <button class="color-dot on" data-color="#3FC0F5" style="background:#3FC0F5" title="Cyan"></button>
+          <button class="color-dot" data-color="#3FD07E" style="background:#3FD07E" title="Support (Green)"></button>
+          <button class="color-dot" data-color="#FF2D3F" style="background:#FF2D3F" title="Resistance (Red)"></button>
+          <button class="color-dot" data-color="#E0A83A" style="background:#E0A83A" title="Gold"></button>
+          <button class="color-dot" data-color="#FFFFFF" style="background:#FFFFFF" title="White"></button>
+        </div>
+        <button class="chip" id="trend-undo" style="display:none" title="Undo last drawn line">↩️ Undo</button>
+        <button class="chip" id="trend-clear" style="display:none" title="Clear your drawn lines">🗑️ Clear</button>
       </div>
       <div class="status" id="trend-summary"></div>
       <div class="chart-wrap">
-        <svg class="chart chart-lg" id="trend-chart" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <svg class="chart chart-lg" id="trend-chart" viewBox="0 0 600 260" preserveAspectRatio="none" aria-hidden="true"></svg>
         <div class="chart-tip wrap"></div>
       </div>
-      <div class="legend">
+      <div class="legend" id="trend-legend">
         <span><i style="background:var(--accent)"></i>Price</span>
         <span><i style="background:var(--up)"></i>Support</span>
         <span><i style="background:var(--down)"></i>Resistance</span>
+        <span><i style="background:#3FC0F5"></i>Drawn</span>
         <span>▲ break out</span>
         <span>▼ break down</span>
       </div>
@@ -1648,8 +1672,39 @@
     renderDemo();
   }
 
-  /* ===================== trend lines ===================== */
+  /* ===================== trend lines & interactive drawing ===================== */
   let trendK = 10;
+  let currentPair = 'BTCUSDT';
+  let showAutoLines = true;
+  let isDrawingMode = false;
+  let drawColor = '#3FC0F5';
+  let drawPt1 = null;
+  let drawHoverPt = null;
+
+  const DRAWN_LINES_KEY = 'coinsearch.trendlines.v2';
+  function getDrawnLines() {
+    try {
+      const all = JSON.parse(localStorage.getItem(DRAWN_LINES_KEY) || '{}');
+      return Array.isArray(all[currentPair]) ? all[currentPair] : [];
+    } catch { return []; }
+  }
+  function saveDrawnLines(lines) {
+    try {
+      const all = JSON.parse(localStorage.getItem(DRAWN_LINES_KEY) || '{}');
+      all[currentPair] = lines;
+      localStorage.setItem(DRAWN_LINES_KEY, JSON.stringify(all));
+    } catch {}
+  }
+
+  function findClosestIdx(arr, target) {
+    if (!arr || !arr.length) return 0;
+    let bestIdx = 0, bestDiff = Infinity;
+    for (let i = 0; i < arr.length; i++) {
+      const diff = Math.abs(arr[i] - target);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+    }
+    return bestIdx;
+  }
 
   function findPivots(H, k) {
     const n = H.c.length, lows = [], highs = [];
@@ -1667,21 +1722,22 @@
 
   function trendSegments(H, idxs, isSupport) {
     const segs = [];
+    const arr = isSupport ? H.l : H.h;
     for (let s = 0; s + 1 < idxs.length; s++) {
       const i1 = idxs[s], i2 = idxs[s + 1];
-      const slope = (H.c[i2] - H.c[i1]) / (i2 - i1);
+      const slope = (arr[i2] - arr[i1]) / (i2 - i1);
       let broken = null;
       for (let j = i2 + 1; j < H.c.length; j++) {
-        const lv = H.c[i2] + slope * (j - i2);
+        const lv = arr[i2] + slope * (j - i2);
         if (isSupport ? H.c[j] < lv : H.c[j] > lv) { broken = { j, lv }; break; }
       }
-      segs.push({ i1, i2, slope, broken });
+      segs.push({ i1, i2, slope, broken, isSupport });
     }
     return segs;
   }
 
   /* ===================== candle chart (TradingView-style) ===================== */
-  const CD_W = 300, CD_H = 200, CD_PL = 4, CD_PR = 42, CD_PT = 4, CD_PB = 16;
+  const CD_W = 600, CD_H = 260, CD_PL = 12, CD_PR = 55, CD_PT = 8, CD_PB = 18;
   const volFmt = (v) => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(0) + 'K' : String(Math.round(v));
 
   function drawCandleChart(svg, H, start, end, sup, res, evs) {
@@ -1691,80 +1747,246 @@
     const volH = Math.round(plotH * 0.18);
     const priceH = plotH - volH;
     const plotBot = CD_PT + plotH;
+
+    // Price scaling: strictly bounded to actual candle Highs & Lows in the active window
     let min = Infinity, max = -Infinity, vmax = 0;
     for (let i = start; i <= end; i++) {
       if (H.l[i] < min) min = H.l[i];
       if (H.h[i] > max) max = H.h[i];
       if (H.v[i] > vmax) vmax = H.v[i];
     }
-    for (const s of sup.concat(res)) {
-      const a = Math.max(s.i1, start), b = Math.min(s.i2, end);
-      for (let i = a; i <= b; i++) {
-        const lv = H.c[s.i1] + s.slope * (i - s.i1);
-        if (lv < min) min = lv;
-        if (lv > max) max = lv;
-      }
-      if (s.broken && s.broken.j <= end) {
-        if (s.broken.lv < min) min = s.broken.lv;
-        if (s.broken.lv > max) max = s.broken.lv;
-      }
+    if (!Number.isFinite(min) || !Number.isFinite(max) || min === max) {
+      min = (min || 1) * 0.95;
+      max = (max || 1) * 1.05;
     }
-    const padY = (max - min) * 0.06 || 1;
+    const padY = (max - min) * 0.05 || 1;
     min -= padY; max += padY;
-    const cw = plotW / n;
-    const bw = Math.max(0.8, cw * 0.68);
-    const X = (i) => CD_PL + ((i - start) / n) * plotW + cw / 2;
+
+    const cw = plotW / (n || 1);
+    const bw = Math.max(1.2, cw * 0.7);
+    const X = (i) => CD_PL + ((i - start) / (n - 1 || 1)) * plotW;
     const Y = (v) => CD_PT + (1 - (v - min) / (max - min)) * priceH;
     const Yv = (v) => CD_PT + priceH + (1 - v / (vmax || 1)) * volH;
+
     let out = '';
+
+    // Defs & clip path so trend lines never draw outside plot bounds
+    out += '<defs><clipPath id="candle-plot-clip"><rect x="' + CD_PL + '" y="' + CD_PT + '" width="' + plotW + '" height="' + plotH + '"/></clipPath></defs>';
+
+    // Horizontal grid lines and price axis labels
     for (let g = 0; g <= 4; g++) {
-      const v = min + ((max - min) * g) / 4, yy = Y(v);
-      out += '<line x1="' + CD_PL + '" y1="' + yy.toFixed(1) + '" x2="' + (CD_PL + plotW) + '" y2="' + yy.toFixed(1) + '" stroke="var(--line)" stroke-width="0.5"/>';
-      out += '<text x="' + (CD_PL + plotW + 4) + '" y="' + (yy + 2).toFixed(1) + '" fill="var(--faint)" font-size="7">' + fmtAx(v) + '</text>';
+      const v = min + ((max - min) * (4 - g)) / 4, yy = Y(v);
+      out += '<line x1="' + CD_PL + '" y1="' + yy.toFixed(1) + '" x2="' + (CD_PL + plotW) + '" y2="' + yy.toFixed(1) + '" stroke="var(--line)" stroke-width="0.5" stroke-dasharray="2 3"/>';
+      out += '<text x="' + (CD_PL + plotW + 4) + '" y="' + (yy + 3).toFixed(1) + '" fill="var(--faint)" font-size="8">' + fmtAx(v) + '</text>';
     }
+
+    // X-axis date labels (start/end anchored to prevent clipping)
     for (let g = 0; g <= 3; g++) {
       const i = Math.round(start + ((n - 1) * g) / 3);
-      out += '<text x="' + X(i).toFixed(1) + '" y="' + (CD_H - 4) + '" fill="var(--faint)" font-size="7" text-anchor="middle">' + shortDate(H.t[i]) + '</text>';
+      const anchor = g === 0 ? 'start' : (g === 3 ? 'end' : 'middle');
+      const lx = g === 0 ? CD_PL : (g === 3 ? (CD_PL + plotW) : X(i));
+      out += '<text x="' + lx.toFixed(1) + '" y="' + (CD_H - 4) + '" fill="var(--faint)" font-size="8" text-anchor="' + anchor + '">' + shortDate(H.t[i]) + '</text>';
     }
+
+    // Volume baseline separator
     out += '<line x1="' + CD_PL + '" y1="' + (CD_PT + priceH) + '" x2="' + (CD_PL + plotW) + '" y2="' + (CD_PT + priceH) + '" stroke="var(--line)" stroke-width="0.5"/>';
+
+    // Candlesticks and volume bars
     for (let i = start; i <= end; i++) {
       const up = H.c[i] >= H.o[i];
       const col = up ? 'var(--up)' : 'var(--down)';
       const x = X(i);
-      out += '<line x1="' + x.toFixed(1) + '" y1="' + Y(H.h[i]).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + Y(H.l[i]).toFixed(1) + '" stroke="' + col + '" stroke-width="0.75"/>';
+      out += '<line x1="' + x.toFixed(1) + '" y1="' + Y(H.h[i]).toFixed(1) + '" x2="' + x.toFixed(1) + '" y2="' + Y(H.l[i]).toFixed(1) + '" stroke="' + col + '" stroke-width="1"/>';
       const yTop = Y(Math.max(H.o[i], H.c[i])), yBot = Y(Math.min(H.o[i], H.c[i]));
       out += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + yTop.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, yBot - yTop).toFixed(1) + '" fill="' + col + '"/>';
       const vy = Yv(H.v[i]);
-      out += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + vy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (plotBot - vy).toFixed(1) + '" fill="' + col + '" opacity="0.22"/>';
+      out += '<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + vy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (plotBot - vy).toFixed(1) + '" fill="' + col + '" opacity="0.25"/>';
     }
-    for (const s of sup) {
-      if (s.i2 < start) continue;
-      const a = Math.max(s.i1, start);
-      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--up)" stroke-width="1" opacity="0.9"/>';
-      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--up)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+
+    // Automatic Support & Resistance lines (clipped inside plot area)
+    if (showAutoLines) {
+      out += '<g clip-path="url(#candle-plot-clip)">';
+      for (const s of sup) {
+        if (s.i2 < start) continue;
+        const a = Math.max(s.i1, start);
+        const y1 = Y(H.l[s.i1] + s.slope * (a - s.i1));
+        const y2 = Y(H.l[s.i2]);
+        out += '<line x1="' + X(a).toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="var(--up)" stroke-width="1.2" opacity="0.9"/>';
+        if (s.broken && s.broken.j >= start) {
+          const yb = Y(s.broken.lv);
+          out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + y2.toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + yb.toFixed(1) + '" stroke="var(--up)" stroke-width="0.9" stroke-dasharray="3 3" opacity="0.6"/>';
+        }
+      }
+      for (const s of res) {
+        if (s.i2 < start) continue;
+        const a = Math.max(s.i1, start);
+        const y1 = Y(H.h[s.i1] + s.slope * (a - s.i1));
+        const y2 = Y(H.h[s.i2]);
+        out += '<line x1="' + X(a).toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="var(--down)" stroke-width="1.2" opacity="0.9"/>';
+        if (s.broken && s.broken.j >= start) {
+          const yb = Y(s.broken.lv);
+          out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + y2.toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + yb.toFixed(1) + '" stroke="var(--down)" stroke-width="0.9" stroke-dasharray="3 3" opacity="0.6"/>';
+        }
+      }
+      out += '</g>';
+
+      // Breakout markers
+      for (const e of evs) {
+        out += '<text x="' + X(e.j).toFixed(1) + '" y="' + (Y(e.price) + (e.type === 'up' ? -5 : 10)).toFixed(1) + '" fill="' + (e.type === 'up' ? 'var(--up)' : 'var(--down)') + '" font-size="9" font-weight="700" text-anchor="middle">' + (e.type === 'up' ? '▲' : '▼') + '</text>';
+      }
     }
-    for (const s of res) {
-      if (s.i2 < start) continue;
-      const a = Math.max(s.i1, start);
-      out += '<line x1="' + X(a).toFixed(1) + '" y1="' + Y(H.c[s.i1] + s.slope * (a - s.i1)).toFixed(1) + '" x2="' + X(s.i2).toFixed(1) + '" y2="' + Y(H.c[s.i2]).toFixed(1) + '" stroke="var(--down)" stroke-width="1" opacity="0.9"/>';
-      if (s.broken) out += '<line x1="' + X(s.i2).toFixed(1) + '" y1="' + Y(H.c[s.i2]).toFixed(1) + '" x2="' + X(Math.min(s.broken.j, end)).toFixed(1) + '" y2="' + Y(s.broken.lv).toFixed(1) + '" stroke="var(--down)" stroke-width="0.75" stroke-dasharray="2 2" opacity="0.5"/>';
+
+    // Manual drawn trend lines
+    const myLines = getDrawnLines();
+    if (myLines.length) {
+      out += '<g clip-path="url(#candle-plot-clip)">';
+      myLines.forEach((line) => {
+        let idx1 = H.t.indexOf(line.t1);
+        let idx2 = H.t.indexOf(line.t2);
+        if (idx1 === -1) idx1 = findClosestIdx(H.t, line.t1);
+        if (idx2 === -1) idx2 = findClosestIdx(H.t, line.t2);
+        const x1 = X(idx1), y1 = Y(line.p1);
+        const x2 = X(idx2), y2 = Y(line.p2);
+
+        // Ray extension forward to the right chart edge
+        if (x2 !== x1) {
+          const slope = (y2 - y1) / (x2 - x1);
+          const xRight = CD_PL + plotW;
+          const yRight = y2 + slope * (xRight - x2);
+          out += '<line x1="' + x2.toFixed(1) + '" y1="' + y2.toFixed(1) + '" x2="' + xRight.toFixed(1) + '" y2="' + yRight.toFixed(1) + '" stroke="' + line.color + '" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.65"/>';
+        }
+
+        // Main segment between anchor points
+        out += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + line.color + '" stroke-width="2" opacity="0.95"/>';
+
+        // Anchor dots
+        out += '<circle cx="' + x1.toFixed(1) + '" cy="' + y1.toFixed(1) + '" r="3.5" fill="' + line.color + '" stroke="var(--card)" stroke-width="1.2"/>';
+        out += '<circle cx="' + x2.toFixed(1) + '" cy="' + y2.toFixed(1) + '" r="3.5" fill="' + line.color + '" stroke="var(--card)" stroke-width="1.2"/>';
+
+        // Wide hit line for click-to-delete
+        out += '<line class="drawn-line-hit" data-id="' + line.id + '" x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="transparent" stroke-width="16"/>';
+      });
+      out += '</g>';
     }
-    for (const e of evs) {
-      out += '<text x="' + X(e.j).toFixed(1) + '" y="' + (Y(e.price) + (e.type === 'up' ? -4 : 8)).toFixed(1) + '" fill="' + (e.type === 'up' ? 'var(--up)' : 'var(--down)') + '" font-size="8" text-anchor="middle">' + (e.type === 'up' ? '▲' : '▼') + '</text>';
+
+    // Live preview during drawing
+    if (drawPt1 && drawHoverPt) {
+      out += '<g clip-path="url(#candle-plot-clip)">';
+      out += '<circle cx="' + drawPt1.x.toFixed(1) + '" cy="' + drawPt1.y.toFixed(1) + '" r="4" fill="' + drawColor + '" stroke="#fff" stroke-width="1.5"/>';
+      out += '<line x1="' + drawPt1.x.toFixed(1) + '" y1="' + drawPt1.y.toFixed(1) + '" x2="' + drawHoverPt.x.toFixed(1) + '" y2="' + drawHoverPt.y.toFixed(1) + '" stroke="' + drawColor + '" stroke-width="1.8" stroke-dasharray="4 3"/>';
+      out += '<circle cx="' + drawHoverPt.x.toFixed(1) + '" cy="' + drawHoverPt.y.toFixed(1) + '" r="3.5" fill="' + drawColor + '" stroke="#fff" stroke-width="1"/>';
+      out += '</g>';
     }
+
+    // Last price indicator badge on the right axis
     const lastPx = H.c[end];
     const ly = Y(lastPx);
     out += '<line x1="' + CD_PL + '" y1="' + ly.toFixed(1) + '" x2="' + (CD_PL + plotW) + '" y2="' + ly.toFixed(1) + '" stroke="var(--amber)" stroke-width="0.75" stroke-dasharray="3 2"/>';
-    out += '<rect x="' + (CD_PL + plotW) + '" y="' + (ly - 6).toFixed(1) + '" width="' + CD_PR + '" height="12" fill="var(--amber)"/>';
-    out += '<text x="' + (CD_PL + plotW + CD_PR / 2).toFixed(1) + '" y="' + (ly + 2.5).toFixed(1) + '" fill="#000" font-size="7" font-weight="700" text-anchor="middle">' + fmtAx(lastPx) + '</text>';
+    out += '<rect x="' + (CD_PL + plotW) + '" y="' + (ly - 6.5).toFixed(1) + '" width="' + CD_PR + '" height="13" fill="var(--amber)"/>';
+    out += '<text x="' + (CD_PL + plotW + CD_PR / 2).toFixed(1) + '" y="' + (ly + 3).toFixed(1) + '" fill="#000" font-size="8" font-weight="700" text-anchor="middle">' + fmtAx(lastPx) + '</text>';
+
+    // Crosshairs
     out += '<line class="cx-v" y1="' + CD_PT + '" y2="' + plotBot + '" stroke="var(--faint)" stroke-width="0.5" style="display:none"/>';
     out += '<line class="cx-h" x1="' + CD_PL + '" x2="' + (CD_PL + plotW) + '" stroke="var(--faint)" stroke-width="0.5" style="display:none"/>';
+
     svg.innerHTML = out;
 
+    // Update drawing toolbar buttons
+    const undoBtn = $('trend-undo'), clearBtn = $('trend-clear');
+    if (undoBtn) undoBtn.style.display = myLines.length ? '' : 'none';
+    if (clearBtn) clearBtn.style.display = myLines.length ? '' : 'none';
+    const drawBtn = $('trend-draw-toggle');
+    if (drawBtn) {
+      drawBtn.classList.toggle('active', isDrawingMode);
+      drawBtn.textContent = isDrawingMode ? (drawPt1 ? '📍 Click Point 2' : '📍 Click Point 1') : '✏️ Draw Line';
+    }
+    const colorPicker = $('trend-color-picker');
+    if (colorPicker) colorPicker.style.display = isDrawingMode ? 'inline-flex' : 'none';
+    svg.classList.toggle('drawing-mode', isDrawingMode);
+
+    // Coordinate translation helper
+    function getPointerCoord(e) {
+      const rect = svg.getBoundingClientRect();
+      const cx = e.clientX ?? (e.touches && e.touches[0] ? e.touches[0].clientX : (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : null));
+      const cy = e.clientY ?? (e.touches && e.touches[0] ? e.touches[0].clientY : (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : null));
+      if (cx === null || cy === null || !rect.width || !rect.height) return null;
+      const fx = Math.max(0, Math.min(1, (cx - rect.left) / rect.width));
+      const fy = Math.max(0, Math.min(1, (cy - rect.top) / rect.height));
+      const rawX = fx * CD_W, rawY = fy * CD_H;
+      const k = Math.max(0, Math.min(n - 1, Math.round(((rawX - CD_PL) / plotW) * (n - 1))));
+      const i = start + k;
+      let price = max - ((rawY - CD_PT) / priceH) * (max - min);
+
+      // Snap to high/low/close if within 4% of vertical range
+      const snapDist = (max - min) * 0.04;
+      if (Math.abs(price - H.h[i]) <= snapDist) price = H.h[i];
+      else if (Math.abs(price - H.l[i]) <= snapDist) price = H.l[i];
+      else if (Math.abs(price - H.c[i]) <= snapDist) price = H.c[i];
+
+      return { i, t: H.t[i], price, x: X(i), y: Y(price) };
+    }
+
+    // Chart click handling (both for placing points and deleting lines)
+    svg.onclick = (e) => {
+      const hit = e.target.closest && e.target.closest('.drawn-line-hit');
+      if (hit && !isDrawingMode) {
+        const id = Number(hit.dataset.id);
+        const lines = getDrawnLines();
+        const found = lines.find((l) => l.id === id);
+        if (found && confirm('Delete this drawn trend line (' + usd(found.p1) + ' → ' + usd(found.p2) + ')?')) {
+          saveDrawnLines(lines.filter((l) => l.id !== id));
+          renderTrend();
+        }
+        return;
+      }
+
+      if (!isDrawingMode) return;
+      const pt = getPointerCoord(e);
+      if (!pt) return;
+
+      if (!drawPt1) {
+        drawPt1 = pt;
+        $('trend-summary').textContent = '📍 Point 1 anchored at ' + usd(pt.price) + ' (' + shortDate(pt.t) + '). Click point 2 to finish.';
+        renderTrend();
+      } else {
+        const pt2 = pt;
+        if (pt2.i !== drawPt1.i || Math.abs(pt2.price - drawPt1.price) > 0.0001) {
+          const lines = getDrawnLines();
+          const [first, second] = drawPt1.t <= pt2.t ? [drawPt1, pt2] : [pt2, drawPt1];
+          lines.push({
+            id: Date.now(),
+            t1: first.t,
+            p1: first.price,
+            t2: second.t,
+            p2: second.price,
+            color: drawColor,
+          });
+          saveDrawnLines(lines);
+          $('trend-summary').textContent = '✅ Line added (' + usd(first.price) + ' → ' + usd(second.price) + ')! Click 1st point to draw another or exit Draw.';
+        }
+        drawPt1 = null;
+        drawHoverPt = null;
+        renderTrend();
+      }
+    };
+
+    // Crosshair and live drawing hover
     const tip = svg.parentElement && svg.parentElement.querySelector('.chart-tip');
     const cv = svg.querySelector('.cx-v'), ch = svg.querySelector('.cx-h');
-    if (!tip || !cv || !ch) return;
+
     svg.onmousemove = (e) => {
+      if (isDrawingMode) {
+        if (tip) tip.style.display = 'none';
+        if (cv) cv.style.display = 'none';
+        if (ch) ch.style.display = 'none';
+        if (drawPt1) {
+          drawHoverPt = getPointerCoord(e);
+          renderTrend();
+        }
+        return;
+      }
+
+      if (!tip || !cv || !ch) return;
       const rect = svg.getBoundingClientRect();
       if (!rect.width || n < 2) return;
       const fx = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -1788,10 +2010,15 @@
       tip.style.left = Math.max(0, Math.min(px, 100 - 60)) + '%';
       tip.style.top = '2px';
     };
+
     svg.onmouseleave = () => {
-      tip.style.display = 'none';
-      cv.style.display = 'none';
-      ch.style.display = 'none';
+      if (tip) tip.style.display = 'none';
+      if (cv) cv.style.display = 'none';
+      if (ch) ch.style.display = 'none';
+      if (isDrawingMode && drawHoverPt) {
+        drawHoverPt = null;
+        renderTrend();
+      }
     };
   }
 
@@ -1816,18 +2043,22 @@
 
     drawCandleChart(svg, H, start, end, sup, res, evs);
 
-    const j = n - 1;
-    const bits = [];
-    const lastSup = sup[sup.length - 1], lastRes = res[res.length - 1];
-    if (lastSup) {
-      const lv = H.c[lastSup.i2] + lastSup.slope * (j - lastSup.i2);
-      bits.push('last support ' + (lastSup.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'above' : 'BELOW') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
+    if (!isDrawingMode) {
+      const j = n - 1;
+      const bits = [];
+      const lastSup = sup[sup.length - 1], lastRes = res[res.length - 1];
+      if (lastSup) {
+        const lv = H.l[lastSup.i2] + lastSup.slope * (j - lastSup.i2);
+        bits.push('last support ' + (lastSup.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'above' : 'BELOW') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
+      }
+      if (lastRes) {
+        const lv = H.h[lastRes.i2] + lastRes.slope * (j - lastRes.i2);
+        bits.push('last resistance ' + (lastRes.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'ABOVE' : 'below') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
+      }
+      const myLines = getDrawnLines();
+      if (myLines.length) bits.push(myLines.length + ' custom trendline' + (myLines.length === 1 ? '' : 's'));
+      summary.textContent = (bits.join(' · ') || 'no pivots found at this lookback') + ' · ' + evs.length + ' breakout' + (evs.length === 1 ? '' : 's') + ' in window';
     }
-    if (lastRes) {
-      const lv = H.c[lastRes.i2] + lastRes.slope * (j - lastRes.i2);
-      bits.push('last resistance ' + (lastRes.slope >= 0 ? 'rising' : 'falling') + ' — price ' + (H.c[j] >= lv ? 'ABOVE' : 'below') + ' it (' + (((H.c[j] - lv) / lv) * 100).toFixed(1) + '%)');
-    }
-    summary.textContent = (bits.join(' · ') || 'no pivots found at this lookback') + ' · ' + evs.length + ' breakout' + (evs.length === 1 ? '' : 's') + ' in window';
     $('trend').classList.add('show');
 
     events.innerHTML = evs.slice(0, 100).map((e) =>
@@ -1937,6 +2168,7 @@
       const H = await klines(meta.id);
       sparkline(H.c);
       if (H.c.length > 50) {
+        currentPair = meta.id;
         showDecision(H); showModels(H); showHistory(H);
         showBacktest(H);
         renderTrend();
@@ -2010,6 +2242,47 @@
       renderTrend();
     };
   }
+
+  // Trend interactive toolbar listeners
+  $('trend-auto-toggle').onclick = () => {
+    showAutoLines = !showAutoLines;
+    $('trend-auto-toggle').classList.toggle('on', showAutoLines);
+    $('trend-auto-toggle').textContent = showAutoLines ? 'Auto: ON' : 'Auto: OFF';
+    renderTrend();
+  };
+
+  $('trend-draw-toggle').onclick = () => {
+    isDrawingMode = !isDrawingMode;
+    drawPt1 = null;
+    drawHoverPt = null;
+    $('trend-summary').textContent = isDrawingMode ? '✏️ Draw mode active: tap or click 1st point on chart.' : '';
+    renderTrend();
+  };
+
+  for (const dot of $('trend-color-picker').querySelectorAll('.color-dot')) {
+    dot.onclick = () => {
+      drawColor = dot.dataset.color;
+      for (const d of $('trend-color-picker').querySelectorAll('.color-dot')) d.classList.toggle('on', d === dot);
+    };
+  }
+
+  $('trend-undo').onclick = () => {
+    const lines = getDrawnLines();
+    if (lines.length) {
+      lines.pop();
+      saveDrawnLines(lines);
+      $('trend-summary').textContent = '↩️ Last trend line removed.';
+      renderTrend();
+    }
+  };
+
+  $('trend-clear').onclick = () => {
+    if (confirm('Clear all custom trend lines for this coin?')) {
+      saveDrawnLines([]);
+      $('trend-summary').textContent = '🗑️ All custom trend lines cleared.';
+      renderTrend();
+    }
+  };
 
   // Restore the saved code on this device; otherwise start local-only.
   (async () => {
