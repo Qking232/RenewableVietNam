@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.7)</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.8)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -410,7 +410,7 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
     <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.7</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.8</span></div>
     <div class="spacer"></div>
     <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
     <button class="btn" id="itinBtn" title="Lập lộ trình & gợi ý sạc EV" data-i18n-title="itin_t" style="border-color:var(--accent);color:var(--accent);font-weight:650">🧭 <span data-i18n="itin_nav">Lập lộ trình</span></button>
@@ -804,6 +804,55 @@ function applyI18n(){
   var lb=document.getElementById("langBtn"); if(lb) lb.textContent = (LANG==="vi" ? "EN" : "VI");
 }
 
+// High-precision Vietnam land border polygon (44 key frontier vertices)
+const VN_BORDER_POLYGON = [
+  [108.0502, 21.5524], [106.7151, 20.6969], [105.8817, 19.7521], [105.662, 19.0582], [106.4268, 18.0041],
+  [107.362, 16.6975], [108.2695, 16.0797], [108.8771, 15.2767], [109.3353, 13.426], [109.2001, 11.6669],
+  [108.3661, 11.0083], [107.2209, 10.3645], [106.4051, 9.5308], [105.1583, 8.5998], [104.7952, 9.241],
+  [105.0762, 9.9185], [104.3343, 10.4865], [105.1999, 10.8893], [106.2497, 10.9618], [105.8105, 11.5676],
+  [107.4914, 12.3372], [107.6145, 13.5355], [107.3827, 14.2024], [107.5645, 15.2022], [107.3127, 15.9085],
+  [106.556, 16.6043], [105.9258, 17.4853], [105.0946, 18.667], [103.8965, 19.2652], [104.1834, 19.6247],
+  [104.8226, 19.8866], [104.435, 20.7587], [103.2039, 20.7666], [102.7549, 21.6751], [102.1704, 22.4648],
+  [102.707, 22.7088], [103.5045, 22.7038], [104.4769, 22.8192], [105.3292, 23.3521], [105.8112, 22.9769],
+  [106.7254, 22.7943], [106.5673, 22.2182], [107.0434, 21.8119], [108.0502, 21.5524]
+];
+
+function isPointInPoly(x, y, poly){
+  var inside = false, p1 = poly[0];
+  for(var i = 0; i < poly.length; i++){
+    var p2 = poly[(i + 1) % poly.length];
+    if(y > Math.min(p1[1], p2[1]) && y <= Math.max(p1[1], p2[1])){
+      if(x <= Math.max(p1[0], p2[0])){
+        var xinters = p1[1] !== p2[1] ? (y - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1]) + p1[0] : p1[0];
+        if(p1[0] === p2[0] || x <= xinters) inside = !inside;
+      }
+    }
+    p1 = p2;
+  }
+  return inside;
+}
+
+function isWithinVietnam(lat, lng, addr){
+  if(typeof lat !== "number" || typeof lng !== "number" || isNaN(lat) || isNaN(lng)) return false;
+  // Bounding box of Vietnam
+  if(lat < 8.18 || lat > 23.45 || lng < 102.10 || lng > 114.50) return false;
+  // Island territories check (Phú Quốc, Côn Đảo, Phú Quý, Lý Sơn, Cát Bà)
+  if(lng >= 103.7 && lng <= 104.15 && lat >= 9.9 && lat <= 10.45) return true; // Phú Quốc
+  if(lng >= 106.5 && lng <= 106.70 && lat >= 8.6 && lat <= 8.80) return true;  // Côn Đảo
+  if(lng >= 108.8 && lng <= 109.10 && lat >= 10.45 && lat <= 10.65) return true;// Phú Quý
+  if(lng >= 109.0 && lng <= 109.20 && lat >= 15.35 && lat <= 15.48) return true;// Lý Sơn
+  if(lng >= 106.9 && lng <= 107.15 && lat >= 20.65 && lat <= 20.90) return true;// Cát Bà
+
+  // Address check for foreign territories
+  if(addr && typeof addr === "string"){
+    var lower = addr.toLowerCase();
+    if(lower.includes("cambodia") || lower.includes("campuchia") || lower.includes("laos") || lower.includes("lào") || lower.includes("china") || lower.includes("trung quốc")) return false;
+  }
+
+  return isPointInPoly(lng, lat, VN_BORDER_POLYGON);
+}
+window.isWithinVietnam = isWithinVietnam;
+
 const PORTS = {};                       // port name -> color
 ["Charging port: Type 2","Charging port: CCS2","Charging port: GBT & CCS2",
  "Charging port: DC 250 kW+","Charging port: DC 180 kW","Charging port: DC 150 kW",
@@ -846,7 +895,7 @@ const markersById = new Map();
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 const mkKey = s => s.id || (s.name+"|"+s.lat+","+s.lng);
 function popupHtml(s){
-  const g="https://www.google.com/maps/search/?api=1&query="+s.lat+","+s.lng;
+  const g="https://www.google.com/maps/search/?api=1&query="+s.lat+","+s.lng+"&gl=vn&hl=vi";
   let rows = '<div class="kv"><b>'+esc(tr("provider"))+':</b> '+esc(s.cpo||"-")+'</div>';
   if(s.addr) rows += '<div class="kv"><b>'+esc(tr("address"))+':</b> '+esc(s.addr)+'</div>';
   if(s.conn) rows += '<div class="kv"><b>'+esc(tr("connector"))+':</b> '+esc(s.conn)+'</div>';
@@ -1210,19 +1259,39 @@ function findNearest(prefix){
   setTimeout(()=>setMsg(""),4600);
 }
 function openGoogleDir(st){
+  if(st && !isWithinVietnam(st.lat, st.lng, st.addr)){
+    setMsg("Trạm sạc này nằm ngoài khu vực Việt Nam. Google Maps chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+    setTimeout(()=>setMsg(""), 3500);
+    return;
+  }
   const u = "https://www.google.com/maps/dir/?api=1"
     + (myLoc ? ("&origin="+myLoc.lat+","+myLoc.lng) : "")
-    + "&destination="+st.lat+","+st.lng + "&travelmode=driving";
+    + "&destination="+st.lat+","+st.lng + "&travelmode=driving&gl=vn&hl=vi";
   window.open(u, "_blank", "noopener");
 }
 function directions(st){
   st = st || selected || nearestStation();
   if(!st){ setMsg(tr("pick_station")); setTimeout(()=>setMsg(""),3200); return; }
+  if(!isWithinVietnam(st.lat, st.lng, st.addr)){
+    setMsg("Trạm sạc này nằm ngoài khu vực Việt Nam. Chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+    setTimeout(()=>setMsg(""), 3500);
+    return;
+  }
   openGoogleDir(st);                        // open Google Maps directions in a new tab
   if(!myLoc){ pendingRoute=st; locateMe(); return; }
   doRoute(st);                              // and draw the in-app route as well
 }
 async function doRoute(st){
+  if(!isWithinVietnam(st.lat, st.lng, st.addr)){
+    setMsg("Trạm sạc nằm ngoài khu vực Việt Nam. Chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+    setTimeout(()=>setMsg(""), 3500);
+    return;
+  }
+  if(myLoc && !isWithinVietnam(myLoc.lat, myLoc.lng)){
+    setMsg("Vị trí GPS của bạn nằm ngoài khu vực Việt Nam. Chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+    setTimeout(()=>setMsg(""), 3500);
+    return;
+  }
   setMsg(tr("routing"));
   try{
     const url="https://router.project-osrm.org/route/v1/driving/"+myLoc.lng+","+myLoc.lat+";"+st.lng+","+st.lat+"?overview=full&geometries=geojson";
@@ -1239,7 +1308,7 @@ async function doRoute(st){
 }
 function showRouteBar(st,dist,dur){
   clearRoute();
-  const g="https://www.google.com/maps/dir/?api=1&origin="+myLoc.lat+","+myLoc.lng+"&destination="+st.lat+","+st.lng+"&travelmode=driving";
+  const g="https://www.google.com/maps/dir/?api=1&origin="+myLoc.lat+","+myLoc.lng+"&destination="+st.lat+","+st.lng+"&travelmode=driving&gl=vn&hl=vi";
   routeBar=document.createElement("div"); routeBar.className="routebar";
   routeBar.innerHTML='<b>'+esc(st.name)+'</b><div>'+fmtKm(dist)+' &middot; '+fmtMin(dur)+' '+esc(tr("by_car"))+'</div>'+
     '<div class="rb"><a href="'+g+'" target="_blank" rel="noopener">'+esc(tr("open_gmaps"))+'</a><span class="x" id="clearRoute">'+esc(tr("clear"))+'</span></div>';
@@ -1850,18 +1919,26 @@ var NEAR_KM = 40;
     // Check if coordinates
     var coordMatch = trimmed.match(/^([-+]?\d{1,2}(?:\.\d+)?)\s*,\s*([-+]?\d{1,3}(?:\.\d+)?)$/);
     if(coordMatch){
-      return { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]), name: trimmed };
+      var lat = parseFloat(coordMatch[1]), lng = parseFloat(coordMatch[2]);
+      if(!isWithinVietnam(lat, lng)){
+        throw new Error("Tọa độ (" + trimmed + ") nằm ngoài khu vực Việt Nam. Google Maps chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+      }
+      return { lat: lat, lng: lng, name: trimmed };
     }
     // Check known cities
     var local = resolveCity(trimmed);
-    if(local) return local;
-    // Nominatim geocoding
+    if(local && isWithinVietnam(local.lat, local.lng)) return local;
+    // Nominatim geocoding strictly restricted to Vietnam (countrycodes=vn)
     var url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(trimmed) + "&countrycodes=vn&limit=1";
     var res = await fetch(url, { headers: { "Accept-Language": "vi,en" } });
     if(!res.ok) throw new Error("Không thể kết nối dịch vụ định vị");
     var data = await res.json();
-    if(!data || !data.length) throw new Error("Không tìm thấy địa điểm: " + trimmed);
-    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name.split(",")[0] || trimmed };
+    if(!data || !data.length) throw new Error("Không tìm thấy địa điểm trong khu vực Việt Nam: " + trimmed);
+    var pLat = parseFloat(data[0].lat), pLng = parseFloat(data[0].lon);
+    if(!isWithinVietnam(pLat, pLng)){
+      throw new Error("Địa điểm (" + trimmed + ") nằm ngoài khu vực Việt Nam. Chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+    }
+    return { lat: pLat, lng: pLng, name: data[0].display_name.split(",")[0] || trimmed };
   }
 
   // Toggle modal panel
@@ -2009,55 +2086,6 @@ var NEAR_KM = 40;
     return { detourKm: minDetour, distAlongKm: bestAlong };
   }
 
-  // High-precision Vietnam land border polygon (44 key frontier vertices)
-  const VN_BORDER_POLYGON = [
-    [108.0502, 21.5524], [106.7151, 20.6969], [105.8817, 19.7521], [105.662, 19.0582], [106.4268, 18.0041],
-    [107.362, 16.6975], [108.2695, 16.0797], [108.8771, 15.2767], [109.3353, 13.426], [109.2001, 11.6669],
-    [108.3661, 11.0083], [107.2209, 10.3645], [106.4051, 9.5308], [105.1583, 8.5998], [104.7952, 9.241],
-    [105.0762, 9.9185], [104.3343, 10.4865], [105.1999, 10.8893], [106.2497, 10.9618], [105.8105, 11.5676],
-    [107.4914, 12.3372], [107.6145, 13.5355], [107.3827, 14.2024], [107.5645, 15.2022], [107.3127, 15.9085],
-    [106.556, 16.6043], [105.9258, 17.4853], [105.0946, 18.667], [103.8965, 19.2652], [104.1834, 19.6247],
-    [104.8226, 19.8866], [104.435, 20.7587], [103.2039, 20.7666], [102.7549, 21.6751], [102.1704, 22.4648],
-    [102.707, 22.7088], [103.5045, 22.7038], [104.4769, 22.8192], [105.3292, 23.3521], [105.8112, 22.9769],
-    [106.7254, 22.7943], [106.5673, 22.2182], [107.0434, 21.8119], [108.0502, 21.5524]
-  ];
-
-  function isPointInPoly(x, y, poly){
-    var inside = false, p1 = poly[0];
-    for(var i = 0; i < poly.length; i++){
-      var p2 = poly[(i + 1) % poly.length];
-      if(y > Math.min(p1[1], p2[1]) && y <= Math.max(p1[1], p2[1])){
-        if(x <= Math.max(p1[0], p2[0])){
-          var xinters = p1[1] !== p2[1] ? (y - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1]) + p1[0] : p1[0];
-          if(p1[0] === p2[0] || x <= xinters) inside = !inside;
-        }
-      }
-      p1 = p2;
-    }
-    return inside;
-  }
-
-  function isWithinVietnam(lat, lng, addr){
-    if(typeof lat !== "number" || typeof lng !== "number" || isNaN(lat) || isNaN(lng)) return false;
-    // Bounding box of Vietnam
-    if(lat < 8.18 || lat > 23.45 || lng < 102.10 || lng > 114.50) return false;
-    // Island territories check (Phú Quốc, Côn Đảo, Phú Quý, Lý Sơn, Cát Bà)
-    if(lng >= 103.7 && lng <= 104.15 && lat >= 9.9 && lat <= 10.45) return true; // Phú Quốc
-    if(lng >= 106.5 && lng <= 106.70 && lat >= 8.6 && lat <= 8.80) return true;  // Côn Đảo
-    if(lng >= 108.8 && lng <= 109.10 && lat >= 10.45 && lat <= 10.65) return true;// Phú Quý
-    if(lng >= 109.0 && lng <= 109.20 && lat >= 15.35 && lat <= 15.48) return true;// Lý Sơn
-    if(lng >= 106.9 && lng <= 107.15 && lat >= 20.65 && lat <= 20.90) return true;// Cát Bà
-
-    // Address check for foreign territories
-    if(addr && typeof addr === "string"){
-      var lower = addr.toLowerCase();
-      if(lower.includes("cambodia") || lower.includes("campuchia") || lower.includes("laos") || lower.includes("lào") || lower.includes("china") || lower.includes("trung quốc")) return false;
-    }
-
-    return isPointInPoly(lng, lat, VN_BORDER_POLYGON);
-  }
-  window.isWithinVietnam = isWithinVietnam;
-
   async function fetchCorridorStations(coords, vnOnly){
     var boxes = [];
     var step = Math.max(20, Math.floor(coords.length / 10));
@@ -2102,12 +2130,22 @@ var NEAR_KM = 40;
       var origin = null;
       if(depVal.toLowerCase().includes("vị trí hiện tại") || depVal.toLowerCase().includes("current location")){
         if(!myLoc) throw new Error("Chưa có vị trí GPS. Hãy bật GPS hoặc bấm nút 'Gần tôi'.");
+        if(!isWithinVietnam(myLoc.lat, myLoc.lng)){
+          throw new Error("Vị trí GPS của bạn nằm ngoài khu vực Việt Nam. Google Maps chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+        }
         origin = { lat: myLoc.lat, lng: myLoc.lng, name: "Vị trí của bạn" };
       } else {
         origin = await geocode(depVal);
       }
 
       var dest = await geocode(arrVal);
+
+      if(!isWithinVietnam(origin.lat, origin.lng)){
+        throw new Error("Điểm xuất phát (" + origin.name + ") nằm ngoài khu vực Việt Nam. Google Maps chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+      }
+      if(!isWithinVietnam(dest.lat, dest.lng)){
+        throw new Error("Điểm đến (" + dest.name + ") nằm ngoài khu vực Việt Nam. Google Maps chỉ hỗ trợ chỉ đường trong lãnh thổ Việt Nam.");
+      }
 
       statusEl.textContent = "Đang tìm lộ trình lái xe tối ưu (OSRM)…";
       var osrmUrl = "https://router.project-osrm.org/route/v1/driving/" + origin.lng + "," + origin.lat + ";" + dest.lng + "," + dest.lat + "?overview=full&geometries=geojson";
@@ -2314,8 +2352,8 @@ var NEAR_KM = 40;
 
       map.fitBounds(rPoly.getBounds().pad(0.12));
 
-      // Build Google Maps Link with Waypoints
-      var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin.lat + "," + origin.lng + "&destination=" + dest.lat + "," + dest.lng + "&travelmode=driving";
+      // Build Google Maps Link with Waypoints restricted to Vietnam area
+      var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin.lat + "," + origin.lng + "&destination=" + dest.lat + "," + dest.lng + "&travelmode=driving&gl=vn&hl=vi";
       if(stops.length){
         var wp = stops.map(s => s.item.station.lat + "," + s.item.station.lng).join("|");
         gmapsUrl += "&waypoints=" + encodeURIComponent(wp);
@@ -2349,6 +2387,7 @@ var NEAR_KM = 40;
       // Intermediate charging stops
       stops.forEach((st, idx) => {
         var s = st.item.station;
+        var stopGmapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + s.lat + "," + s.lng + "&travelmode=driving&gl=vn&hl=vi";
         html += '<div class="itin-item charge">' +
           '<div class="itin-item-title">⚡ Dừng sạc #' + st.stopNum + ': ' + esc(s.name) + '</div>' +
           '<div class="itin-item-sub">Lái <b>' + fmtKm(st.legDist * 1000) + '</b> từ điểm trước &middot; Cách lộ trình ' + st.item.detourKm.toFixed(1) + ' km</div>' +
@@ -2356,6 +2395,9 @@ var NEAR_KM = 40;
             '<div class="itin-charge-row"><span>Nhà cung cấp: <b>' + esc(s.cpo || "VinFast") + '</b></span> <span class="itin-item-badge">' + (st.item.isDC ? "Sạc nhanh DC" : "Sạc AC") + ' &middot; ' + st.item.kw + ' kW</span> <span class="itin-item-badge" style="background:color-mix(in srgb,#10b981 18%,transparent);color:#10b981">🇻🇳 ' + esc(tr("vn_border_badge")) + '</span></div>' +
             '<div class="itin-charge-row" style="margin-top:4px"><span>Pin tới nơi: <b style="color:#ef4444">~' + Math.round(st.arrivalSoC * 100) + '%</b></span> <span>➔ Sạc lên: <b style="color:#10b981">80%</b> (~' + st.chargeTimeMin + ' phút)</span></div>' +
             (s.addr ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.addr) + '</div>' : '') +
+            '<div style="margin-top:5px;display:flex;justify-content:flex-end">' +
+              '<a href="' + stopGmapsUrl + '" target="_blank" rel="noopener" style="font-size:10.5px;color:var(--accent);text-decoration:none;font-weight:600" onclick="event.stopPropagation()">📍 Chỉ đường Google Maps (VN) ↗</a>' +
+            '</div>' +
           '</div>' +
           '</div>';
       });
@@ -2370,7 +2412,7 @@ var NEAR_KM = 40;
 
       // Actions
       html += '<div class="itin-act-row">' +
-        '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700">🗺️ Mở Google Maps</a>' +
+        '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700">🗺️ Mở Google Maps (Chỉ đường VN)</a>' +
         '<button type="button" class="btn" id="itinClearAllBtn">✕ Xóa lộ trình</button>' +
         '</div>';
 
