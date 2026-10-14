@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.6)</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.7)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -410,7 +410,7 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
     <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.6</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.7</span></div>
     <div class="spacer"></div>
     <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
     <button class="btn" id="itinBtn" title="Lập lộ trình & gợi ý sạc EV" data-i18n-title="itin_t" style="border-color:var(--accent);color:var(--accent);font-weight:650">🧭 <span data-i18n="itin_nav">Lập lộ trình</span></button>
@@ -661,6 +661,10 @@
               <input type="checkbox" id="itinDcOnly" checked>
               <span data-i18n="dc_pref">Ưu tiên trạm sạc nhanh DC (≥ 60 kW)</span>
             </label>
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--txt);margin-top:2px">
+              <input type="checkbox" id="itinVnOnly" checked style="accent-color:var(--accent)">
+              <span data-i18n="vn_border_only">🇻🇳 Chỉ gợi ý trạm trong lãnh thổ Việt Nam</span>
+            </label>
             <label id="itinNonVfWrap" style="display:none;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--txt)">
               <input type="checkbox" id="itinNonVfOnly" checked>
               <span>Chỉ chọn trạm sạc tương thích xe ngoài VinFast</span>
@@ -745,7 +749,8 @@ var I18N = {
     pick_map:"Chọn trên bản đồ", itin_precision:"3 Câu hỏi để gợi ý chính xác",
     q1:"1. Mẫu xe (Tầm vận hành 100% pin)", q2:"2. Mức pin khi xuất phát",
     q3:"3. Mức pin an toàn dự phòng", q3_sub:"Mức pin tối thiểu giữ lại khi tới trạm sạc để không bao giờ bị cạn pin.",
-    dc_pref:"Ưu tiên trạm sạc nhanh DC (≥ 60 kW)", btn_calc:"Tính toán trạm sạc phù hợp"
+    dc_pref:"Ưu tiên trạm sạc nhanh DC (≥ 60 kW)", btn_calc:"Tính toán trạm sạc phù hợp",
+    vn_border_only:"🇻🇳 Chỉ gợi ý trạm trong lãnh thổ Việt Nam", vn_border_badge:"Trong lãnh thổ VN"
   },
   en: {
     page_title:"EV Charging Stations - OpenStreetMap",
@@ -783,7 +788,8 @@ var I18N = {
     pick_map:"Pick on map", itin_precision:"3 Questions for Precise Suggestion",
     q1:"1. EV Model (Max Range 100% SoC)", q2:"2. Battery at departure",
     q3:"3. Safe reserve buffer", q3_sub:"Minimum battery buffer kept to prevent running out of power.",
-    dc_pref:"Prefer Fast DC Charging (≥ 60 kW)", btn_calc:"Calculate Optimal Charging"
+    dc_pref:"Prefer Fast DC Charging (≥ 60 kW)", btn_calc:"Calculate Optimal Charging",
+    vn_border_only:"🇻🇳 Only suggest stations within Vietnam Border", vn_border_badge:"Within VN Border"
   }
 };
 var LANG = "vi";
@@ -1921,6 +1927,7 @@ var NEAR_KM = 40;
   var compatNotice = document.getElementById("itinCompatNotice");
   var nonVfWrap = document.getElementById("itinNonVfWrap");
   var nonVfOnlyCb = document.getElementById("itinNonVfOnly");
+  var vnOnlyCb = document.getElementById("itinVnOnly");
 
   function updateEvBrandState(){
     var opt = evSelect.selectedOptions[0];
@@ -2002,7 +2009,56 @@ var NEAR_KM = 40;
     return { detourKm: minDetour, distAlongKm: bestAlong };
   }
 
-  async function fetchCorridorStations(coords){
+  // High-precision Vietnam land border polygon (44 key frontier vertices)
+  const VN_BORDER_POLYGON = [
+    [108.0502, 21.5524], [106.7151, 20.6969], [105.8817, 19.7521], [105.662, 19.0582], [106.4268, 18.0041],
+    [107.362, 16.6975], [108.2695, 16.0797], [108.8771, 15.2767], [109.3353, 13.426], [109.2001, 11.6669],
+    [108.3661, 11.0083], [107.2209, 10.3645], [106.4051, 9.5308], [105.1583, 8.5998], [104.7952, 9.241],
+    [105.0762, 9.9185], [104.3343, 10.4865], [105.1999, 10.8893], [106.2497, 10.9618], [105.8105, 11.5676],
+    [107.4914, 12.3372], [107.6145, 13.5355], [107.3827, 14.2024], [107.5645, 15.2022], [107.3127, 15.9085],
+    [106.556, 16.6043], [105.9258, 17.4853], [105.0946, 18.667], [103.8965, 19.2652], [104.1834, 19.6247],
+    [104.8226, 19.8866], [104.435, 20.7587], [103.2039, 20.7666], [102.7549, 21.6751], [102.1704, 22.4648],
+    [102.707, 22.7088], [103.5045, 22.7038], [104.4769, 22.8192], [105.3292, 23.3521], [105.8112, 22.9769],
+    [106.7254, 22.7943], [106.5673, 22.2182], [107.0434, 21.8119], [108.0502, 21.5524]
+  ];
+
+  function isPointInPoly(x, y, poly){
+    var inside = false, p1 = poly[0];
+    for(var i = 0; i < poly.length; i++){
+      var p2 = poly[(i + 1) % poly.length];
+      if(y > Math.min(p1[1], p2[1]) && y <= Math.max(p1[1], p2[1])){
+        if(x <= Math.max(p1[0], p2[0])){
+          var xinters = p1[1] !== p2[1] ? (y - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1]) + p1[0] : p1[0];
+          if(p1[0] === p2[0] || x <= xinters) inside = !inside;
+        }
+      }
+      p1 = p2;
+    }
+    return inside;
+  }
+
+  function isWithinVietnam(lat, lng, addr){
+    if(typeof lat !== "number" || typeof lng !== "number" || isNaN(lat) || isNaN(lng)) return false;
+    // Bounding box of Vietnam
+    if(lat < 8.18 || lat > 23.45 || lng < 102.10 || lng > 114.50) return false;
+    // Island territories check (Phú Quốc, Côn Đảo, Phú Quý, Lý Sơn, Cát Bà)
+    if(lng >= 103.7 && lng <= 104.15 && lat >= 9.9 && lat <= 10.45) return true; // Phú Quốc
+    if(lng >= 106.5 && lng <= 106.70 && lat >= 8.6 && lat <= 8.80) return true;  // Côn Đảo
+    if(lng >= 108.8 && lng <= 109.10 && lat >= 10.45 && lat <= 10.65) return true;// Phú Quý
+    if(lng >= 109.0 && lng <= 109.20 && lat >= 15.35 && lat <= 15.48) return true;// Lý Sơn
+    if(lng >= 106.9 && lng <= 107.15 && lat >= 20.65 && lat <= 20.90) return true;// Cát Bà
+
+    // Address check for foreign territories
+    if(addr && typeof addr === "string"){
+      var lower = addr.toLowerCase();
+      if(lower.includes("cambodia") || lower.includes("campuchia") || lower.includes("laos") || lower.includes("lào") || lower.includes("china") || lower.includes("trung quốc")) return false;
+    }
+
+    return isPointInPoly(lng, lat, VN_BORDER_POLYGON);
+  }
+  window.isWithinVietnam = isWithinVietnam;
+
+  async function fetchCorridorStations(coords, vnOnly){
     var boxes = [];
     var step = Math.max(20, Math.floor(coords.length / 10));
     for(var i = 0; i < coords.length; i += step){
@@ -2020,6 +2076,7 @@ var NEAR_KM = 40;
     var mapUnique = new Map();
     results.forEach(list=>{
       list.forEach(s=>{
+        if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
         var k = siteKeyOf(s.name, s.lat, s.lng);
         if(!mapUnique.has(k)) mapUnique.set(k, s);
       });
@@ -2088,7 +2145,8 @@ var NEAR_KM = 40;
 
       // Fetch charging stations along the route corridor
       statusEl.textContent = "Đang quét các trạm sạc EV dọc hành trình (" + fmtKm(routeData.distance) + ")…";
-      var candidateList = await fetchCorridorStations(coords);
+      var vnOnly = vnOnlyCb ? vnOnlyCb.checked : true;
+      var candidateList = await fetchCorridorStations(coords, vnOnly);
 
       var opt = evSelect.selectedOptions[0];
       var brand = opt ? (opt.dataset.brand || "vinfast") : "vinfast";
@@ -2098,6 +2156,9 @@ var NEAR_KM = 40;
       // Project candidate stations onto route
       var routeStations = [];
       candidateList.forEach(s=>{
+        // Strictly filter to Vietnam Border
+        if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
+
         var proj = projectPoint(s.lat, s.lng, coords, cumDist);
         if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
           var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
@@ -2117,6 +2178,7 @@ var NEAR_KM = 40;
       // If user selected non-VinFast car and strict filter resulted in 0 stations, widen to all stations
       if(isNonVfCar && nonVfOnly && !routeStations.length){
         candidateList.forEach(s=>{
+          if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
           var proj = projectPoint(s.lat, s.lng, coords, cumDist);
           if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
             var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
@@ -2291,7 +2353,7 @@ var NEAR_KM = 40;
           '<div class="itin-item-title">⚡ Dừng sạc #' + st.stopNum + ': ' + esc(s.name) + '</div>' +
           '<div class="itin-item-sub">Lái <b>' + fmtKm(st.legDist * 1000) + '</b> từ điểm trước &middot; Cách lộ trình ' + st.item.detourKm.toFixed(1) + ' km</div>' +
           '<div class="itin-charge-card" data-stop-idx="' + idx + '">' +
-            '<div class="itin-charge-row"><span>Nhà cung cấp: <b>' + esc(s.cpo || "VinFast") + '</b></span> <span class="itin-item-badge">' + (st.item.isDC ? "Sạc nhanh DC" : "Sạc AC") + ' &middot; ' + st.item.kw + ' kW</span></div>' +
+            '<div class="itin-charge-row"><span>Nhà cung cấp: <b>' + esc(s.cpo || "VinFast") + '</b></span> <span class="itin-item-badge">' + (st.item.isDC ? "Sạc nhanh DC" : "Sạc AC") + ' &middot; ' + st.item.kw + ' kW</span> <span class="itin-item-badge" style="background:color-mix(in srgb,#10b981 18%,transparent);color:#10b981">🇻🇳 ' + esc(tr("vn_border_badge")) + '</span></div>' +
             '<div class="itin-charge-row" style="margin-top:4px"><span>Pin tới nơi: <b style="color:#ef4444">~' + Math.round(st.arrivalSoC * 100) + '%</b></span> <span>➔ Sạc lên: <b style="color:#10b981">80%</b> (~' + st.chargeTimeMin + ' phút)</span></div>' +
             (s.addr ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.addr) + '</div>' : '') +
           '</div>' +
