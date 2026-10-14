@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.5)</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.6)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -230,47 +230,82 @@
   .colwrap label{display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap}
   .colwrap input{accent-color:var(--accent)}
   aside.collapsed + #drag{display:none}
-  /* Tablets & small laptops — keep the panel from crowding the map */
-  @media (max-width:1024px){
+  /* Tablets & small laptops (above 860px) */
+  @media (min-width: 861px) and (max-width: 1060px){
     aside{width:430px;min-width:430px}
   }
-  /* Panel floats over the map rather than pushing it */
-  @media (max-width:900px){
-    header{flex-wrap:wrap}
-    aside{position:absolute;left:0;top:0;bottom:0;z-index:900;width:min(92vw,430px);min-width:0;box-shadow:var(--shadow)}
-    #drag{display:none}
-  }
-  /* Phones — the panel is a bottom sheet about 1/4 of the screen */
-  @media (max-width:720px){
-    header{gap:6px;padding:6px 8px}
+  /* Mobile and compact screens (<= 860px): Bottom Sheet edge-to-edge & exactly 1/2 screen */
+  @media (max-width: 860px){
+    header{gap:6px;padding:6px 8px;flex-wrap:wrap}
     header .sub{display:none}
     header .mark{font-size:12px}
     header .mark .txt{display:none}
-    .btn{padding:6px 9px;font-size:11px}
+    .btn{padding:6px 8px;font-size:11px}
     #toast{top:8px;max-width:92%}
-    aside{left:0;right:0;top:auto;bottom:0;width:100%;min-width:0;max-width:none;
-          height:40vh;min-height:240px;overflow-y:auto;
-          border-right:none;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(0,0,0,.28)}
-    #listDrop.open{flex:0 0 auto;min-height:0}
-    #listDrop.open > .dropbody{flex:0 0 auto;min-height:0}
-    #list{flex:0 0 auto;min-height:0}
+    #drag{display:none !important}
+
+    aside#side{
+      position:absolute !important;
+      left:0 !important;
+      right:0 !important;
+      top:auto !important;
+      bottom:0 !important;
+      width:100% !important;
+      min-width:100% !important;
+      max-width:100% !important;
+      height:50vh !important;
+      height:50dvh !important;
+      max-height:50dvh !important;
+      min-height:220px !important;
+      display:flex !important;
+      flex-direction:column !important;
+      overflow:hidden !important;
+      border-right:none !important;
+      border-top:1px solid var(--line) !important;
+      box-shadow:0 -8px 24px rgba(0,0,0,.35) !important;
+      z-index:950 !important;
+    }
+    aside#side.collapsed{display:none !important}
+
+    /* Container scrolling inside 1/2 screen bottom sheet */
+    #hnavWrap{flex:1 1 auto;min-height:0;overflow:hidden}
+    #sideClassicWrap{flex:1 1 auto;min-height:0;overflow-y:auto}
+    .hnav-list{flex:1 1 auto;min-height:0;overflow-y:auto}
+    #listDrop.open{flex:1 1 auto;min-height:0}
+    #listDrop.open > .dropbody{flex:1 1 auto;min-height:0}
+    #list{flex:1 1 auto;min-height:0}
     .search{margin:6px 10px 4px;padding:6px 8px}
     table.grid{font-size:11.5px}
     table.grid th,table.grid td{padding:6px 7px}
     .routebar{max-width:calc(100% - 20px)}
-    .drop.open .tree{max-height:52vh}
-    .leaflet-bottom{bottom:calc(40vh + 4px)}
+    .drop.open .tree{max-height:35vh}
+    .tinyfoot{display:none}
+
+    /* Map bottom controls adjusted for 1/2 screen sheet */
+    .leaflet-bottom{bottom:calc(50dvh + 6px) !important;transition:bottom .2s ease}
+    aside.collapsed ~ #mapWrap .leaflet-bottom,
+    aside.collapsed + #drag + #mapWrap .leaflet-bottom{bottom:6px !important}
+
+    #adminBtn{bottom:calc(50dvh + 10px) !important;transition:bottom .2s ease}
+    aside.collapsed ~ #mapWrap #adminBtn,
+    aside.collapsed + #drag + #mapWrap #adminBtn{bottom:12px !important}
+
+    /* Mobile itinerary planner: full-width edge-to-edge modal with margins */
+    .itin-panel{
+      top:8px !important;
+      left:8px !important;
+      right:8px !important;
+      width:auto !important;
+      max-width:none !important;
+      max-height:calc(100% - 16px) !important;
+    }
   }
-  /* Phone in landscape — 1/4 of a very short screen isn't usable */
-  @media (max-width:720px) and (max-height:520px){
-    aside{height:62vh;min-height:190px}
-    .leaflet-bottom{bottom:calc(62vh + 4px)}
-  }
-  /* Landscape phones / short windows */
-  @media (max-height:520px){
-    header{padding:4px 8px;gap:5px}
-    .btn{padding:5px 8px;font-size:11px}
-    .drop.open .tree{max-height:62vh}
+
+  /* Very short landscape phones */
+  @media (max-width: 860px) and (max-height: 480px){
+    aside#side{height:60vh !important;height:60dvh !important;max-height:60dvh !important}
+    .leaflet-bottom{bottom:calc(60dvh + 6px) !important}
+    #adminBtn{bottom:calc(60dvh + 10px) !important}
   }
   /* Notch + home-bar safe areas */
   @supports (padding:max(0px)){
@@ -375,7 +410,7 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
     <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.5</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.6</span></div>
     <div class="spacer"></div>
     <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
     <button class="btn" id="itinBtn" title="Lập lộ trình & gợi ý sạc EV" data-i18n-title="itin_t" style="border-color:var(--accent);color:var(--accent);font-weight:650">🧭 <span data-i18n="itin_nav">Lập lộ trình</span></button>
@@ -1248,11 +1283,12 @@ wireDropdown("filterDrop","filterToggle");
 
 /* ---------------- ui wiring ---------------- */
 
-document.getElementById("toggleSide").addEventListener("click", ()=>{ document.getElementById("side").classList.toggle("collapsed"); setTimeout(()=>map.invalidateSize(),60); });
+document.getElementById("toggleSide").addEventListener("click", ()=>{ document.getElementById("side").classList.toggle("collapsed"); setTimeout(()=>map.invalidateSize(),100); });
 (function panelResize(){
   const d=document.getElementById("drag"), side=document.getElementById("side");
-  if(!d) return;
+  if(!d || !side) return;
   d.addEventListener("mousedown", function(e){
+    if(window.innerWidth <= 860) return;
     e.preventDefault(); const startX=e.clientX, startW=side.offsetWidth;
     d.classList.add("on"); document.body.classList.add("colres");
     function move(ev){
@@ -1267,7 +1303,19 @@ document.getElementById("toggleSide").addEventListener("click", ()=>{ document.g
     }
     document.addEventListener("mousemove",move); document.addEventListener("mouseup",up);
   });
-  try{ const w=parseInt(localStorage.getItem("evmap-sidew")||"",10); if(w>=300){ side.style.width=w+"px"; side.style.minWidth=w+"px"; } }catch(err){}
+  function applyDesktopWidth(){
+    if(window.innerWidth > 860){
+      try{
+        const w=parseInt(localStorage.getItem("evmap-sidew")||"",10);
+        if(w>=300){ side.style.width=w+"px"; side.style.minWidth=w+"px"; }
+      }catch(err){}
+    } else {
+      side.style.width="";
+      side.style.minWidth="";
+    }
+  }
+  applyDesktopWidth();
+  window.addEventListener("resize", applyDesktopWidth);
 })();
 document.getElementById("allLnk").addEventListener("click", ()=>{ state.loaded=null; renderTree(); refreshView(); });
 document.getElementById("noneLnk").addEventListener("click", ()=>{ state.loaded=new Set(); renderTree(); refreshView(); });
