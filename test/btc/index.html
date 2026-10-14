@@ -236,22 +236,23 @@
     .brand{font-size:10.5px; letter-spacing:.18em}
     .brand .dot{width:22px; height:22px; font-size:11px}
     .brand .tag{display:none}
-    .icon-btn{width:32px; min-width:32px; height:32px; font-size:14px}
+    .icon-btn{width:36px; min-width:36px; height:36px; font-size:14px}
     main{padding:12px; gap:11px}
     .panel{padding:16px 12px 12px; border-radius:var(--radius)}
-    .sub{font-size:11.5px}
+    .sub{font-size:11.5px; line-height:1.45}
     .status{font-size:12px}
 
     /* >=16px stops iOS zooming the page when a field is focused */
-    input[type="text"],input[type="password"]{font-size:16px}
+    input[type="text"],input[type="password"],input[type="number"]{font-size:16px; padding:12px}
     .row{gap:8px}
-    button.go{padding:10px 14px}
+    button.go{padding:12px 16px; min-height:44px}
     .chips{gap:6px}
-    .chip{font-size:10.5px; padding:7px 11px}
+    .chip{font-size:10.5px; padding:9px 13px; min-height:40px; display:inline-flex; align-items:center; justify-content:center}
 
     .price{font-size:26px}
     .spark{height:46px}
     .verdict-row{gap:8px}
+    .verdict{padding:6px 10px}
     .counts{gap:10px; flex-wrap:wrap; font-size:10.5px}
 
     .cards{grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:8px}
@@ -261,17 +262,17 @@
     .fc .r{font-size:10.5px}
     .fc .nm{font-size:9px}
 
-    details summary{padding:11px 12px}
+    details summary{padding:13px 12px; min-height:44px}
     details .body{padding:0 12px 14px; font-size:12px}
 
     .pf-form{flex-direction:column}
     .pf-form input,.pf-form .go,.pf-form .chip{width:100%}
     .pf-actions{gap:6px}
-    .pf-actions .chip{flex:1}
+    .pf-actions .chip{flex:1; min-height:44px}
     .pf-actions .status{flex-basis:100%}
 
     .bt-controls{gap:6px}
-    .bt-controls .chip{flex:1}
+    .bt-controls .chip{flex:1; min-height:40px}
     .bt-controls input[type="number"],.bt-controls .go{flex-basis:100%; width:100%}
     .bt-controls .go{flex:1}
 
@@ -281,15 +282,15 @@
     .scroll{max-height:none; overflow:visible}
 
     /* portfolio: each coin is a card */
-    #p-rows tr{border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin-bottom:8px; background:var(--surface-2)}
+    #p-rows tr{border:1px solid var(--line); border-radius:var(--radius); padding:12px; margin-bottom:8px; background:var(--surface-2)}
     #p-rows tr:last-child{margin-bottom:0}
     #p-rows tr:hover{background:var(--surface-2)}
     #p-rows td{padding:0; border:0}
     #p-rows td[data-label="Name"]{font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; margin-bottom:7px; overflow-wrap:anywhere}
-    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""]){display:flex; align-items:center; justify-content:space-between; gap:10px; padding:3px 0; font-size:12.5px}
-    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""])::before{content:attr(data-label); color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""]){display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 0; font-size:12.5px}
+    #p-rows td[data-label]:not([data-label="Name"]):not([data-label=""])::before{content:attr(data-label); color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; flex-shrink:0}
     #p-rows td[data-label=""]{margin-top:9px}
-    #p-rows td[data-label=""] .rm{width:100%; padding:8px}
+    #p-rows td[data-label=""] .rm{width:100%; padding:10px; min-height:44px}
 
     /* 180-day log: two compact lines per day */
     #h-rows tr{display:grid; grid-template-columns:1fr auto auto; grid-template-areas:"day value value" "decision score result"; gap:4px 10px; align-items:center; padding:9px 2px; border-bottom:1px solid var(--line)}
@@ -301,12 +302,124 @@
     #h-rows td[data-label="Result"]{grid-area:result; text-align:right}
     #history .scroll{max-height:62vh; overflow:auto}
     #history thead{display:none}
+
+    /* backtest trades: stacked card rows */
+    #backtest .scroll{max-height:50vh; overflow:auto}
+    #bt-trades tr{border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin-bottom:8px; background:var(--surface-2)}
+    #bt-trades tr:last-child{margin-bottom:0}
+    #bt-trades td{padding:2px 0; border:0; display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:12.5px}
+    #bt-trades td:first-child{font-weight:700; font-size:12px; color:var(--faint)}
+    #bt-trades td:first-child::before{content:"#"}
+    #bt-trades td:nth-child(2)::before{content:"Day"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #bt-trades td:nth-child(3)::before{content:"Side"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #bt-trades td:nth-child(4)::before{content:"Price"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #bt-trades td:nth-child(5)::before{content:"Value"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #bt-trades td:nth-child(6)::before{content:"P&L"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+
+    /* demo trading log: stacked card rows */
+    #demo .scroll{max-height:50vh; overflow:auto}
+    #dm-log tr{border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin-bottom:8px; background:var(--surface-2)}
+    #dm-log tr:last-child{margin-bottom:0}
+    #dm-log td{padding:2px 0; border:0; display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:12.5px}
+    #dm-log td:nth-child(1)::before{content:"Time"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #dm-log td:nth-child(2)::before{content:"Side"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #dm-log td:nth-child(3)::before{content:"Qty"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #dm-log td:nth-child(4)::before{content:"Price"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #dm-log td:nth-child(5)::before{content:"Value"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+
+    /* demo trading buttons: two per row */
+    #demo .pf-actions{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+    #demo .pf-actions .go,
+    #demo .pf-actions .chip{min-height:44px; text-align:center}
+    #demo .pf-actions .rm{grid-column:1 / -1; min-height:44px}
+
+    /* trend events table: stacked rows */
+    #trend .scroll{max-height:50vh; overflow:auto}
+    #trend-events tr{border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; margin-bottom:8px; background:var(--surface-2)}
+    #trend-events tr:last-child{margin-bottom:0}
+    #trend-events td{padding:2px 0; border:0; display:flex; align-items:center; justify-content:space-between; gap:6px; font-size:12.5px}
+    #trend-events td:nth-child(1)::before{content:"Day"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #trend-events td:nth-child(2)::before{content:"Break"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #trend-events td:nth-child(3)::before{content:"Price"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #trend-events td:nth-child(4)::before{content:"Line"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+    #trend-events td:nth-child(5)::before{content:"Distance"; color:var(--faint); font-size:9.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+
+    /* matrix backtest: horizontally scrollable on mobile */
+    #matrix .scroll{max-height:none; overflow-x:auto; overflow-y:visible; -webkit-overflow-scrolling:touch}
+    #mx-table{min-width:420px}
+    #mx-table thead{display:table-header-group}
+    #mx-table tbody{display:table-row-group}
+    #mx-table tr{display:table-row}
+    #mx-table td,#mx-table th{display:table-cell; padding:8px 6px}
+    .mx-cell{padding:6px 4px; font-size:11px}
+
+    /* stat grid: 2 columns on mobile */
+    .stat-grid{grid-template-columns:1fr 1fr; gap:8px}
+    .stat .v{font-size:15px}
+
+    /* charts: prevent tooltip clipping */
+    .chart-wrap{overflow:visible}
+    .chart-tip{font-size:10px; max-width:calc(100vw - 48px)}
+    .chart-tip.wrap{max-width:calc(100vw - 48px)}
+
+    /* legend: wrap nicely, smaller on mobile */
+    .legend{gap:8px; font-size:9.5px; flex-wrap:wrap}
+    .legend i{width:10px; margin-right:3px}
+
+    /* note text */
+    .note{font-size:12px; padding-left:8px}
+
+    /* streaks/badges: better wrapping */
+    .streaks{gap:6px}
+    .badge{font-size:9px; padding:4px 8px}
+
+    /* bar chart labels */
+    .bar{margin-top:10px}
+
+    /* divider spacing */
+    .divider{margin:12px 0}
+
+    /* footer */
+    footer{padding:8px 12px 30px; font-size:10px}
+  }
+
+  /* ---------- small phones ---------- */
+  @media (max-width: 480px){
+    main{padding:10px; gap:10px}
+    .panel{padding:14px 10px 10px}
+
+    .price{font-size:24px}
+    .score{font-size:20px}
+    .hl{font-size:11.5px}
+
+    .cards{grid-template-columns:1fr 1fr; gap:6px}
+    .fc{padding:8px; min-height:84px; gap:5px}
+    .fc .t{font-size:10px}
+    .fc .s{font-size:15px}
+    .fc .r{font-size:10px; line-height:1.35}
+
+    .stat-grid{gap:6px}
+    .stat{padding:8px 10px}
+    .stat .k{font-size:9px}
+    .stat .v{font-size:14px}
+
+    /* quick chip buttons scroll horizontally */
+    #chips{flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px; scrollbar-width:none}
+    #chips::-webkit-scrollbar{display:none}
+    #chips .chip{flex-shrink:0}
   }
 
   @media (max-width: 380px){
     .brand{font-size:10px}
     .cards{grid-template-columns:1fr 1fr}
     .fc .r{font-size:10px}
+
+    /* even tighter stat grid */
+    .stat-grid{grid-template-columns:1fr 1fr}
+    .stat .v{font-size:13px}
+
+    .price{font-size:22px}
+    .score{font-size:18px}
   }
 
   @media (max-height: 460px) and (orientation: landscape){
