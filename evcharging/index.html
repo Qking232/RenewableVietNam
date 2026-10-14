@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trạm sạc EV – Bản đồ trạm sạc</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.4)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -262,6 +262,96 @@
     aside{padding-bottom:env(safe-area-inset-bottom)}
     #toast{top:max(10px,env(safe-area-inset-top))}
   }
+  /* EV Itinerary Planner */
+  .itin-panel{position:absolute;top:12px;left:12px;z-index:960;width:400px;max-width:calc(100% - 24px);max-height:calc(100% - 24px);background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(8px)}
+  .itin-panel[hidden]{display:none !important}
+  .itin-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  .itin-head .title{font-weight:700;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:7px}
+  .itin-head .spacer{flex:1}
+  .itin-head .close-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 7px;border-radius:5px;line-height:1}
+  .itin-head .close-btn:hover{color:#e11d48;background:var(--panel)}
+  .itin-body{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .itin-field{display:flex;flex-direction:column;gap:4px}
+  .itin-label{font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;justify-content:space-between}
+  .itin-input-wrap{display:flex;gap:5px;align-items:center}
+  .itin-input{flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);font-size:12px;outline:none}
+  .itin-input:focus{border-color:var(--accent)}
+  .itin-btn-mini{padding:6px 9px;border-radius:7px;border:1px solid var(--line);background:var(--panel2);color:var(--txt);cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap}
+  .itin-btn-mini:hover{border-color:var(--accent);color:var(--accent)}
+  .itin-swap-row{display:flex;justify-content:center;margin:-3px 0}
+  .itin-swap-btn{background:var(--panel2);border:1px dashed var(--line);border-radius:50%;width:26px;height:26px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px}
+  .itin-swap-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .itin-box{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:9px}
+  .itin-box-title{font-size:11px;font-weight:750;color:var(--accent);display:flex;align-items:center;gap:6px}
+  .itin-chips{display:flex;gap:5px;flex-wrap:wrap}
+  .itin-chip{border:1px solid var(--line);background:var(--panel);color:var(--txt);padding:5px 9px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;transition:all .15s}
+  .itin-chip:hover{border-color:var(--accent);color:var(--accent)}
+  .itin-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .itin-select{width:100%;padding:7px 9px;border-radius:7px;border:1px solid var(--line);background:var(--panel);color:var(--txt);font-size:12px;outline:none;font-weight:550}
+  .itin-calc-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px;border-radius:8px;background:var(--accent);border:1px solid var(--accent);color:#fff;font-weight:700;font-size:12.5px;cursor:pointer;box-shadow:var(--shadow);transition:filter .15s}
+  .itin-calc-btn:hover{filter:brightness(1.1)}
+  .itin-calc-btn:disabled{opacity:0.6;cursor:not-allowed}
+  .itin-results{display:flex;flex-direction:column;gap:10px;margin-top:2px}
+  .itin-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .itin-stat-card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 8px;text-align:center}
+  .itin-stat-val{font-size:14px;font-weight:800;color:var(--accent)}
+  .itin-stat-lbl{font-size:9.5px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+  .itin-timeline{position:relative;padding-left:16px;margin-left:8px;border-left:2px dashed var(--line);display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .itin-item{position:relative;font-size:11.5px}
+  .itin-item::before{content:"";position:absolute;left:-22px;top:2px;width:10px;height:10px;border-radius:50%;background:var(--line);border:2px solid var(--panel)}
+  .itin-item.start::before{background:#10b981;border-color:#10b981;box-shadow:0 0 5px #10b981}
+  .itin-item.charge::before{background:#f59e0b;border-color:#f59e0b;box-shadow:0 0 8px #f59e0b}
+  .itin-item.dest::before{background:#ef4444;border-color:#ef4444;box-shadow:0 0 5px #ef4444}
+  .itin-item-title{font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px}
+  .itin-item-sub{color:var(--muted);font-size:10.5px;margin-top:2px;line-height:1.4}
+  .itin-item-badge{display:inline-block;padding:2px 7px;border-radius:99px;font-size:9.5px;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent);margin-top:4px}
+  .itin-charge-card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-top:5px;cursor:pointer}
+  .itin-charge-card:hover{border-color:var(--accent)}
+  .itin-charge-row{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px}
+  .itin-act-row{display:flex;gap:6px;margin-top:6px}
+  .itin-act-row .btn{flex:1;text-align:center;justify-content:center}
+
+  /* Hierarchical Navigation Tabs & Container */
+  .side-tabs{display:flex;background:var(--panel2);border-bottom:1px solid var(--line);padding:5px 7px;gap:4px;flex:none}
+  .side-tab{flex:1;padding:6px 6px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;font-size:11px;font-weight:650;text-align:center;white-space:nowrap;transition:all .15s}
+  .side-tab:hover{color:var(--txt);background:var(--panel)}
+  .side-tab.active{color:var(--accent);background:var(--panel);border-color:var(--line);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+
+  .hnav-wrap{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:var(--panel)}
+  .hnav-wrap[hidden]{display:none !important}
+  .hnav-header{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel2);border-bottom:1px solid var(--line);min-height:38px;flex:none}
+  .hnav-back-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--txt);cursor:pointer;font-size:11px;font-weight:650;flex:none}
+  .hnav-back-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .hnav-breadcrumbs{display:flex;align-items:center;gap:4px;flex:1;overflow-x:auto;white-space:nowrap;font-size:11px;color:var(--muted)}
+  .hnav-crumb{cursor:pointer;padding:2px 4px;border-radius:4px;transition:color .12s}
+  .hnav-crumb:hover{color:var(--txt);text-decoration:underline}
+  .hnav-crumb.active{color:var(--accent);font-weight:700}
+  .hnav-crumb-sep{color:var(--muted);opacity:.5;user-select:none;font-size:10px}
+
+  .hnav-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:8px;gap:5px}
+  .hnav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);cursor:pointer;user-select:none;transition:all .15s}
+  .hnav-item:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--panel2))}
+  .hnav-item.selected{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--panel2));box-shadow:0 0 0 1px var(--accent)}
+  .hnav-item-icon{font-size:17px;flex:none;width:24px;text-align:center}
+  .hnav-item-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .hnav-item-title{font-size:12px;font-weight:650;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hnav-item-desc{font-size:10px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hnav-item-badge{font-size:9.5px;padding:2px 7px;border-radius:99px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-weight:600;flex:none}
+  .hnav-item-arrow{font-size:16px;color:var(--muted);font-weight:700;flex:none;transition:transform .15s}
+  .hnav-item:hover .hnav-item-arrow{color:var(--accent);transform:translateX(2px)}
+  .hnav-item-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);background:var(--panel);display:flex;align-items:center;justify-content:center;flex:none;transition:all .15s}
+  .hnav-item.selected .hnav-item-radio{border-color:var(--accent);background:var(--accent)}
+  .hnav-item.selected .hnav-item-radio::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+
+  .hnav-footer{padding:10px 12px;background:var(--panel2);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;flex:none}
+  .hnav-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);overflow:hidden}
+  .hnav-status-lbl{flex:none;text-transform:uppercase;font-size:9.5px;font-weight:700}
+  .hnav-status-val{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--accent);font-weight:700}
+  .hnav-actions{display:flex;gap:8px}
+  .hnav-actions .btn{padding:8px 12px;font-size:12px}
+  .hnav-actions #hnavOkBtn{flex:2;font-weight:750;display:flex;align-items:center;justify-content:center;gap:6px}
+  .hnav-actions #hnavOkBtn:not(:disabled){box-shadow:0 0 12px color-mix(in srgb,var(--accent) 45%,transparent)}
+  .hnav-actions #hnavResetBtn{flex:1}
 </style>
 </head>
 <body>
@@ -269,49 +359,85 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
     <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.4</span></div>
     <div class="spacer"></div>
     <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
+    <button class="btn" id="itinBtn" title="Lập lộ trình & gợi ý sạc EV" data-i18n-title="itin_t" style="border-color:var(--accent);color:var(--accent);font-weight:650">🧭 <span data-i18n="itin_nav">Lập lộ trình</span></button>
     <button class="btn" id="langBtn" title="Ngôn ngữ" data-i18n-title="lang_t">EN</button>
     <button class="btn" id="themeBtn" title="Đổi sáng / tối" data-i18n-title="theme_t">&#9788;</button>
   </header>
   <main>
     <aside id="side">
-      <div class="netdrop" id="netDrop">
-        <button class="netbtn" id="netBtn" aria-haspopup="listbox" aria-expanded="false">
-          <span class="netlbl" data-i18n="evtype">Loại xe</span><span class="netval" id="netVal">Tất cả loại</span><span class="caret" aria-hidden="true">&#9662;</span>
-        </button>
-        <div class="netmenu" id="netMenu" role="listbox" aria-label="EV type">
-          <button class="netopt active" data-net="all" role="option">Tất cả loại</button>
-          <button class="netopt" data-net="vinfast" role="option">Chỉ VinFast</button>
-          <button class="netopt" data-net="other" role="option">Khác VinFast</button>
+      <!-- Sidebar Navigation Tabs -->
+      <div class="side-tabs">
+        <button class="side-tab active" id="tabHNav" type="button" title="Điều hướng đa cấp">🧭 Điều hướng</button>
+        <button class="side-tab" id="tabList" type="button" title="Xem danh sách trạm sạc">📋 Danh sách</button>
+        <button class="side-tab" id="tabFilter" type="button" title="Bộ lọc cổng sạc">⚡ Bộ lọc</button>
+      </div>
+
+      <!-- Multi-level Hierarchical Sidebar Navigation Panel -->
+      <div id="hnavWrap" class="hnav-wrap">
+        <div class="hnav-header">
+          <button id="hnavBackBtn" class="hnav-back-btn" type="button" style="display:none" title="Quay lại cấp trước">
+            <span>◀</span> <span>Quay lại</span>
+          </button>
+          <div class="hnav-breadcrumbs" id="hnavBreadcrumbs">
+            <span class="hnav-crumb active" data-level="0">🏠 Trang chủ</span>
+          </div>
+        </div>
+
+        <div id="hnavList" class="hnav-list"></div>
+
+        <div class="hnav-footer">
+          <div class="hnav-status">
+            <span class="hnav-status-lbl">Lựa chọn:</span>
+            <span class="hnav-status-val" id="hnavSelectedText">Chưa chọn mục nào</span>
+          </div>
+          <div class="hnav-actions">
+            <button id="hnavResetBtn" type="button" class="btn">Đặt lại</button>
+            <button id="hnavOkBtn" type="button" class="btn accent" disabled>OK &middot; Xác nhận</button>
+          </div>
         </div>
       </div>
-      <div class="hintwrap" id="locHint" hidden>
-        <span data-i18n="hint_loc">Bật vị trí để xem các trạm trong bán kính 40 km.</span>
-        <button id="locBtn" data-i18n="hint_btn">Dùng vị trí của tôi</button>
-      </div>
-      <div class="drop open" id="listDrop">
-        <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Ẩn / hiện danh sách trạm" data-i18n-title="list_t">
-          <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm" data-i18n="stations">Danh sách trạm</span>
-          <span class="spacer" style="flex:1"></span>
-          <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Chọn cột hiển thị" data-i18n-title="cols_t"><span data-i18n="cols">Cột</span> <span class="caret" aria-hidden="true">&#9662;</span></span>
+
+      <!-- Classic Views (List & Port Tree) -->
+      <div id="sideClassicWrap" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden">
+        <div class="netdrop" id="netDrop">
+          <button class="netbtn" id="netBtn" aria-haspopup="listbox" aria-expanded="false">
+            <span class="netlbl" data-i18n="evtype">Loại xe</span><span class="netval" id="netVal">Tất cả loại</span><span class="caret" aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="netmenu" id="netMenu" role="listbox" aria-label="EV type">
+            <button class="netopt active" data-net="all" role="option">Tất cả loại</button>
+            <button class="netopt" data-net="vinfast" role="option">Chỉ VinFast</button>
+            <button class="netopt" data-net="other" role="option">Khác VinFast</button>
+          </div>
         </div>
-        <div class="dropbody">
-          <div class="colwrap" id="colBody"></div>
-          <input class="search" id="search" placeholder="Tìm theo tên, nhà cung cấp, địa chỉ..." data-i18n-ph="search_ph">
-          <div id="list"></div>
+        <div class="hintwrap" id="locHint" hidden>
+          <span data-i18n="hint_loc">Bật vị trí để xem các trạm trong bán kính 40 km.</span>
+          <button id="locBtn" data-i18n="hint_btn">Dùng vị trí của tôi</button>
         </div>
-      </div>
-      <div class="drop" id="filterDrop">
-        <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp" data-i18n-title="filters_t">
-          <span class="caret" aria-hidden="true">&#9662;</span>
-          <span class="nm" data-i18n="filters">Bộ lọc</span>
-          <span class="spacer" style="flex:1"></span>
-          <a id="allLnk" data-i18n="all">Tất cả</a><a id="noneLnk" data-i18n="none">Bỏ chọn</a>
+        <div class="drop open" id="listDrop">
+          <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Ẩn / hiện danh sách trạm" data-i18n-title="list_t">
+            <span class="caret" aria-hidden="true">&#9662;</span>
+            <span class="nm" data-i18n="stations">Danh sách trạm</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Chọn cột hiển thị" data-i18n-title="cols_t"><span data-i18n="cols">Cột</span> <span class="caret" aria-hidden="true">&#9662;</span></span>
+          </div>
+          <div class="dropbody">
+            <div class="colwrap" id="colBody"></div>
+            <input class="search" id="search" placeholder="Tìm theo tên, nhà cung cấp, địa chỉ..." data-i18n-ph="search_ph">
+            <div id="list"></div>
+          </div>
         </div>
-        <div class="tree" id="tree"></div>
+        <div class="drop" id="filterDrop">
+          <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp" data-i18n-title="filters_t">
+            <span class="caret" aria-hidden="true">&#9662;</span>
+            <span class="nm" data-i18n="filters">Bộ lọc</span>
+            <span class="spacer" style="flex:1"></span>
+            <a id="allLnk" data-i18n="all">Tất cả</a><a id="noneLnk" data-i18n="none">Bỏ chọn</a>
+          </div>
+          <div class="tree" id="tree"></div>
+        </div>
       </div>
       <div class="tinyfoot" data-i18n="foot">Dữ liệu &copy; Google My Maps &ldquo;Bản đồ trạm sạc EV&rdquo; (gồm hệ thống VinFast) &mdash; chỉ dùng cho mục đích học tập / nghiên cứu, phi thương mại. Nền bản đồ: OpenStreetMap France. Số cổng = cổng đã lắp (số lượng &times; công suất), không phải tình trạng trống.</div>
     </aside>
@@ -321,6 +447,187 @@
       <div id="toast"></div>
       <div id="loadbar"><i></i></div>
       <button id="adminBtn" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
+
+      <!-- EV Itinerary & Charging Planner Panel -->
+      <div id="itinPanel" class="itin-panel" hidden>
+        <div class="itin-head">
+          <div class="title">🧭 <span data-i18n="itin_title">Lập lộ trình & Gợi ý sạc</span></div>
+          <span class="spacer"></span>
+          <button class="close-btn" id="itinCloseBtn" title="Đóng" aria-label="Close">✕</button>
+        </div>
+        <div class="itin-body">
+          <!-- Departure -->
+          <div class="itin-field">
+            <label class="itin-label">
+              <span data-i18n="depart">Điểm xuất phát</span>
+              <button class="itin-btn-mini" id="itinMyLocBtn" type="button" data-i18n="myloc_btn">📍 Vị trí hiện tại</button>
+            </label>
+            <div class="itin-input-wrap">
+              <input class="itin-input" id="itinDepart" list="itinCityList" placeholder="Nhập điểm xuất phát hoặc chọn gợi ý..." data-i18n-ph="depart_ph" autocomplete="off">
+              <button class="itin-btn-mini" id="itinPickDepart" type="button" title="Chọn điểm xuất phát trên bản đồ" data-i18n-title="pick_map">🎯</button>
+            </div>
+          </div>
+
+          <!-- Swap -->
+          <div class="itin-swap-row">
+            <button class="itin-swap-btn" id="itinSwapBtn" type="button" title="Đổi chiều xuất phát - điểm đến">⇅</button>
+          </div>
+
+          <!-- Arrival -->
+          <div class="itin-field">
+            <label class="itin-label">
+              <span data-i18n="arrival">Điểm đến</span>
+            </label>
+            <div class="itin-input-wrap">
+              <input class="itin-input" id="itinArrival" list="itinCityList" placeholder="Nhập điểm đến hoặc thành phố..." data-i18n-ph="arrival_ph" autocomplete="off">
+              <button class="itin-btn-mini" id="itinPickArrival" type="button" title="Chọn điểm đến trên bản đồ" data-i18n-title="pick_map">🎯</button>
+            </div>
+          </div>
+
+          <datalist id="itinCityList">
+            <option value="Hà Nội">
+            <option value="TP. Hồ Chí Minh">
+            <option value="Đà Nẵng">
+            <option value="Hải Phòng">
+            <option value="Cần Thơ">
+            <option value="Nha Trang">
+            <option value="Đà Lạt">
+            <option value="Vũng Tàu">
+            <option value="Phan Thiết">
+            <option value="Hạ Long">
+            <option value="Ninh Bình">
+            <option value="Thanh Hóa">
+            <option value="Vinh">
+            <option value="Hà Tĩnh">
+            <option value="Đồng Hới">
+            <option value="Huế">
+            <option value="Quy Nhơn">
+            <option value="Tuy Hòa">
+            <option value="Pleiku">
+            <option value="Buôn Ma Thuột">
+            <option value="Phú Quốc">
+          </datalist>
+
+          <!-- 3 Questions for Precise Suggestion -->
+          <div class="itin-box">
+            <div class="itin-box-title">⚡ <span data-i18n="itin_precision">3 Câu hỏi để gợi ý chính xác</span></div>
+
+            <!-- Question 1: EV Model & Range -->
+            <div class="itin-field">
+              <label class="itin-label"><span data-i18n="q1">1. Mẫu xe (Tầm vận hành 100% pin)</span></label>
+              <select class="itin-select" id="itinEvSelect">
+                <optgroup label="BYD">
+                  <option value="401" data-cap="45.1" data-brand="byd">BYD Atto 2 (401 km - 45.1 kWh)</option>
+                  <option value="301" data-cap="32.0" data-brand="byd">BYD Atto 2 Standard (301 km - 32.0 kWh)</option>
+                  <option value="410" data-cap="49.9" data-brand="byd">BYD Atto 3 Dynamic (410 km - 49.9 kWh)</option>
+                  <option value="480" data-cap="60.5" data-brand="byd">BYD Atto 3 Premium (480 km - 60.5 kWh)</option>
+                  <option value="405" data-cap="44.9" data-brand="byd">BYD Dolphin GLX (405 km - 44.9 kWh)</option>
+                  <option value="510" data-cap="61.4" data-brand="byd">BYD Seal Advanced (510 km - 61.4 kWh)</option>
+                  <option value="570" data-cap="82.5" data-brand="byd">BYD Seal Performance (570 km - 82.5 kWh)</option>
+                  <option value="420" data-cap="55.4" data-brand="byd">BYD M6 Dynamic (420 km - 55.4 kWh)</option>
+                  <option value="530" data-cap="71.8" data-brand="byd">BYD M6 Extended (530 km - 71.8 kWh)</option>
+                  <option value="521" data-cap="85.4" data-brand="byd">BYD Han EV (521 km - 85.4 kWh)</option>
+                  <option value="530" data-cap="108.8" data-brand="byd">BYD Tang EV (530 km - 108.8 kWh)</option>
+                  <option value="502" data-cap="82.5" data-brand="byd">BYD Sealion 7 (502 km - 82.5 kWh)</option>
+                </optgroup>
+                <optgroup label="VinFast">
+                  <option value="326" data-cap="37.2" data-brand="vinfast" selected>VinFast VF 5 Plus (326 km - 37.2 kWh)</option>
+                  <option value="210" data-cap="18.6" data-brand="vinfast">VinFast VF 3 (210 km - 18.6 kWh)</option>
+                  <option value="399" data-cap="59.6" data-brand="vinfast">VinFast VF 6 (399 km - 59.6 kWh)</option>
+                  <option value="431" data-cap="75.3" data-brand="vinfast">VinFast VF 7 (431 km - 75.3 kWh)</option>
+                  <option value="285" data-cap="42.0" data-brand="vinfast">VinFast VF e34 (285 km - 42.0 kWh)</option>
+                  <option value="471" data-cap="87.7" data-brand="vinfast">VinFast VF 8 (471 km - 87.7 kWh)</option>
+                  <option value="626" data-cap="123.0" data-brand="vinfast">VinFast VF 9 (626 km - 123.0 kWh)</option>
+                </optgroup>
+                <optgroup label="Hyundai & Kia">
+                  <option value="450" data-cap="58.0" data-brand="hyundai">Hyundai Ioniq 5 Exclusive (450 km - 58.0 kWh)</option>
+                  <option value="481" data-cap="72.6" data-brand="hyundai">Hyundai Ioniq 5 Prestige (481 km - 72.6 kWh)</option>
+                  <option value="400" data-cap="58.0" data-brand="kia">Kia EV6 Standard (400 km - 58.0 kWh)</option>
+                  <option value="528" data-cap="77.4" data-brand="kia">Kia EV6 Long Range (528 km - 77.4 kWh)</option>
+                </optgroup>
+                <optgroup label="MG & Wuling">
+                  <option value="350" data-cap="51.0" data-brand="mg">MG4 EV Delight (350 km - 51.0 kWh)</option>
+                  <option value="450" data-cap="64.0" data-brand="mg">MG4 EV Lux (450 km - 64.0 kWh)</option>
+                  <option value="333" data-cap="31.9" data-brand="wuling">Wuling Bingo (333 km - 31.9 kWh)</option>
+                  <option value="170" data-cap="13.9" data-brand="wuling">Wuling Mini EV (170 km - 13.9 kWh)</option>
+                </optgroup>
+                <optgroup label="Xe Sang (Porsche, Mercedes, BMW, Audi, Volvo)">
+                  <option value="440" data-cap="79.2" data-brand="porsche">Porsche Taycan (440 km - 79.2 kWh)</option>
+                  <option value="505" data-cap="93.4" data-brand="porsche">Porsche Taycan 4S / Turbo (505 km - 93.4 kWh)</option>
+                  <option value="535" data-cap="70.5" data-brand="mercedes">Mercedes-Benz EQB 250+ (535 km - 70.5 kWh)</option>
+                  <option value="549" data-cap="90.6" data-brand="mercedes">Mercedes-Benz EQE 500 (549 km - 90.6 kWh)</option>
+                  <option value="783" data-cap="108.4" data-brand="mercedes">Mercedes-Benz EQS 450+ (783 km - 108.4 kWh)</option>
+                  <option value="460" data-cap="80.0" data-brand="bmw">BMW iX3 (460 km - 80.0 kWh)</option>
+                  <option value="590" data-cap="83.9" data-brand="bmw">BMW i4 eDrive40 (590 km - 83.9 kWh)</option>
+                  <option value="488" data-cap="93.4" data-brand="audi">Audi e-tron GT (488 km - 93.4 kWh)</option>
+                  <option value="476" data-cap="69.0" data-brand="volvo">Volvo EX30 (476 km - 69.0 kWh)</option>
+                </optgroup>
+                <optgroup label="Tùy chỉnh">
+                  <option value="custom" data-brand="custom">Xe khác / Nhập km tùy chỉnh...</option>
+                </optgroup>
+              </select>
+              <div id="itinCompatNotice" style="display:none;font-size:10.5px;padding:5px 8px;border-radius:6px;background:color-mix(in srgb,var(--accent) 12%,var(--panel));border:1px solid var(--accent);color:var(--txt);margin-top:5px;line-height:1.4">
+                ⚡ <b>Xe ngoài VinFast:</b> Tự động ưu tiên trạm sạc đa thương hiệu (Charge+, EBOOST, EV Power, Rabbit EVC, EvPay, Showroom...)
+              </div>
+              <div id="itinCustomRangeWrap" style="display:none;margin-top:4px">
+                <div class="itin-input-wrap">
+                  <input type="number" id="itinCustomRange" class="itin-input" placeholder="Tầm vận hành (km)" min="50" max="1500" value="350">
+                  <span style="font-size:11px;color:var(--muted);white-space:nowrap">km</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question 2: Departure Battery % -->
+            <div class="itin-field">
+              <label class="itin-label">
+                <span data-i18n="q2">2. Mức pin khi xuất phát</span>
+                <b id="itinStartSocLbl" style="color:var(--accent)">90%</b>
+              </label>
+              <div class="itin-chips" id="itinStartSocChips">
+                <button type="button" class="itin-chip" data-val="100">100%</button>
+                <button type="button" class="itin-chip active" data-val="90">90% ★</button>
+                <button type="button" class="itin-chip" data-val="80">80%</button>
+                <button type="button" class="itin-chip" data-val="70">70%</button>
+                <button type="button" class="itin-chip" data-val="50">50%</button>
+              </div>
+            </div>
+
+            <!-- Question 3: Minimum Safe Reserve Battery % -->
+            <div class="itin-field">
+              <label class="itin-label">
+                <span data-i18n="q3">3. Mức pin an toàn dự phòng</span>
+                <b id="itinMinSocLbl" style="color:var(--accent)">15%</b>
+              </label>
+              <div class="itin-chips" id="itinMinSocChips">
+                <button type="button" class="itin-chip" data-val="10">10%</button>
+                <button type="button" class="itin-chip active" data-val="15">15% (Khuyên dùng) ★</button>
+                <button type="button" class="itin-chip" data-val="20">20%</button>
+              </div>
+              <div style="font-size:10px;color:var(--muted);line-height:1.35;margin-top:1px" data-i18n="q3_sub">Mức pin tối thiểu giữ lại khi tới trạm sạc để không bao giờ bị cạn pin.</div>
+            </div>
+
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--txt)">
+              <input type="checkbox" id="itinDcOnly" checked>
+              <span data-i18n="dc_pref">Ưu tiên trạm sạc nhanh DC (≥ 60 kW)</span>
+            </label>
+            <label id="itinNonVfWrap" style="display:none;align-items:center;gap:7px;cursor:pointer;font-size:11px;color:var(--txt)">
+              <input type="checkbox" id="itinNonVfOnly" checked>
+              <span>Chỉ chọn trạm sạc tương thích xe ngoài VinFast</span>
+            </label>
+          </div>
+
+          <!-- Calculate Button -->
+          <button id="itinSubmit" class="itin-calc-btn" type="button">
+            <span>🚀</span> <span data-i18n="btn_calc">Tính toán trạm sạc phù hợp</span>
+          </button>
+
+          <!-- Status / Spinner -->
+          <div id="itinStatus" style="font-size:11.5px;color:var(--accent);text-align:center;padding:6px;display:none"></div>
+
+          <!-- Results & Stop Timeline -->
+          <div id="itinResults" class="itin-results" style="display:none"></div>
+        </div>
+      </div>
     </div>
   </main>
   <div id="adminModal" role="dialog" aria-modal="true" aria-label="Bảng quản trị">
@@ -380,7 +687,14 @@ var I18N = {
     slow_only:"Khu vực này chỉ có trạm sạc chậm",
     admin_t:"Bảng quản trị", admin_access:"Truy cập quản trị", password:"Mật khẩu", unlock:"Mở khóa",
     admin_head:"Quản trị · Live Query", lock:"Khóa", close:"Đóng",
-    lq_all:"Live Query tất cả", export:"Xuất KML", pull:"Tải lại từ máy chủ"
+    lq_all:"Live Query tất cả", export:"Xuất KML", pull:"Tải lại từ máy chủ",
+    itin_nav:"Lập lộ trình", itin_t:"Lập lộ trình & gợi ý sạc EV", itin_title:"Lập lộ trình & Gợi ý sạc",
+    depart:"Điểm xuất phát", arrival:"Điểm đến", myloc_btn:"📍 Vị trí hiện tại",
+    depart_ph:"Nhập điểm xuất phát hoặc chọn gợi ý...", arrival_ph:"Nhập điểm đến hoặc thành phố...",
+    pick_map:"Chọn trên bản đồ", itin_precision:"3 Câu hỏi để gợi ý chính xác",
+    q1:"1. Mẫu xe (Tầm vận hành 100% pin)", q2:"2. Mức pin khi xuất phát",
+    q3:"3. Mức pin an toàn dự phòng", q3_sub:"Mức pin tối thiểu giữ lại khi tới trạm sạc để không bao giờ bị cạn pin.",
+    dc_pref:"Ưu tiên trạm sạc nhanh DC (≥ 60 kW)", btn_calc:"Tính toán trạm sạc phù hợp"
   },
   en: {
     page_title:"EV Charging Stations - OpenStreetMap",
@@ -411,7 +725,14 @@ var I18N = {
     slow_only:"Slow chargers only here",
     admin_t:"Admin console", admin_access:"Admin access", password:"Password", unlock:"Unlock",
     admin_head:"Admin · Live Query", lock:"Lock", close:"Close",
-    lq_all:"Live Query all", export:"Export KML", pull:"Pull shared"
+    lq_all:"Live Query all", export:"Export KML", pull:"Pull shared",
+    itin_nav:"Itinerary", itin_t:"Plan EV trip & charging stops", itin_title:"Trip & Charging Planner",
+    depart:"Departure", arrival:"Arrival", myloc_btn:"📍 Current location",
+    depart_ph:"Enter start address or pick city...", arrival_ph:"Enter destination or city...",
+    pick_map:"Pick on map", itin_precision:"3 Questions for Precise Suggestion",
+    q1:"1. EV Model (Max Range 100% SoC)", q2:"2. Battery at departure",
+    q3:"3. Safe reserve buffer", q3_sub:"Minimum battery buffer kept to prevent running out of power.",
+    dc_pref:"Prefer Fast DC Charging (≥ 60 kW)", btn_calc:"Calculate Optimal Charging"
   }
 };
 var LANG = "vi";
@@ -1081,10 +1402,18 @@ var EVDB = (function(){
       +"&lng=gte."+(lng-dLng).toFixed(5)+"&lng=lte."+(lng+dLng).toFixed(5)
       +"&order=site_key.asc");
   }
+  function box(minLat, maxLat, minLng, maxLng){
+    return fetch(URL+"/rest/v1/ev_stations?select="+COLS
+      +"&lat=gte."+minLat.toFixed(5)+"&lat=lte."+maxLat.toFixed(5)
+      +"&lng=gte."+minLng.toFixed(5)+"&lng=lte."+maxLng.toFixed(5)
+      +"&order=site_key.asc&limit=1000", {headers:H}).then(function(r){
+        return r.ok ? r.json() : [];
+      }).catch(function(){ return []; });
+  }
   function all(){ return paged(URL+"/rest/v1/ev_stations?select="+COLS+"&order=site_key.asc"); }
   function meta(){ return fetch(URL+"/rest/v1/ev_sync?id=eq.latest&select=*", {headers:H}).then(function(r){ return r.ok?r.json():[]; }).then(function(j){ return j[0]||null; }).catch(function(){ return null; }); }
   function pushStations(key, rows){ return fetch(URL+"/rest/v1/rpc/ev_push_stations", {method:"POST", headers:H, body:JSON.stringify({p_key:key, p_rows:rows})}); }
-  return { near:near, all:all, meta:meta, pushStations:pushStations };
+  return { near:near, all:all, box:box, meta:meta, pushStations:pushStations };
 })();
 var NEAR_KM = 40;
 
@@ -1364,8 +1693,1112 @@ var NEAR_KM = 40;
   }
 })();
 
-/* ---------------- boot ---------------- */
-/* The panel is shown on load; the ☰ Stations button hides it again. */
+/* ---------------- EV Itinerary & Charging Stop Planner ---------------- */
+(function itinModule(){
+  var panel = document.getElementById("itinPanel");
+  var openBtn = document.getElementById("itinBtn");
+  var closeBtn = document.getElementById("itinCloseBtn");
+  var departIn = document.getElementById("itinDepart");
+  var arrivalIn = document.getElementById("itinArrival");
+  var swapBtn = document.getElementById("itinSwapBtn");
+  var myLocBtn = document.getElementById("itinMyLocBtn");
+  var pickDepartBtn = document.getElementById("itinPickDepart");
+  var pickArrivalBtn = document.getElementById("itinPickArrival");
+  var evSelect = document.getElementById("itinEvSelect");
+  var customRangeWrap = document.getElementById("itinCustomRangeWrap");
+  var customRangeIn = document.getElementById("itinCustomRange");
+  var startSocChips = document.getElementById("itinStartSocChips");
+  var startSocLbl = document.getElementById("itinStartSocLbl");
+  var minSocChips = document.getElementById("itinMinSocChips");
+  var minSocLbl = document.getElementById("itinMinSocLbl");
+  var dcOnlyCb = document.getElementById("itinDcOnly");
+  var submitBtn = document.getElementById("itinSubmit");
+  var statusEl = document.getElementById("itinStatus");
+  var resultsEl = document.getElementById("itinResults");
+
+  var startSocVal = 90;
+  var minSocVal = 15;
+  var itinLayer = L.layerGroup().addTo(map);
+  var pickingFor = null;
+
+  var CITIES = {
+    "ha noi": [21.0285, 105.8542], "hanoi": [21.0285, 105.8542],
+    "tp ho chi minh": [10.8231, 106.6297], "ho chi minh": [10.8231, 106.6297], "sai gon": [10.8231, 106.6297], "saigon": [10.8231, 106.6297],
+    "da nang": [16.0544, 108.2022], "danang": [16.0544, 108.2022],
+    "hai phong": [20.8449, 106.6881], "haiphong": [20.8449, 106.6881],
+    "can tho": [10.0452, 105.7469], "cantho": [10.0452, 105.7469],
+    "nha trang": [12.2388, 109.1967], "nhatrang": [12.2388, 109.1967],
+    "da lat": [11.9404, 108.4583], "dalat": [11.9404, 108.4583],
+    "vung tau": [10.3460, 107.0843], "vungtau": [10.3460, 107.0843],
+    "phan thiet": [10.9805, 108.2615], "phanthiet": [10.9805, 108.2615],
+    "ha long": [20.9505, 107.0734], "halong": [20.9505, 107.0734],
+    "ninh binh": [20.2506, 105.9744], "ninhbinh": [20.2506, 105.9744],
+    "thanh hoa": [19.8067, 105.7852], "thanhhoa": [19.8067, 105.7852],
+    "vinh": [18.6796, 105.6813],
+    "ha tinh": [18.3428, 105.9059], "hatinh": [18.3428, 105.9059],
+    "dong hoi": [17.4764, 106.5997], "donghoi": [17.4764, 106.5997],
+    "dong ha": [16.8163, 107.1030], "dongha": [16.8163, 107.1030],
+    "hue": [16.4637, 107.5909],
+    "quang ngai": [15.1205, 108.7923], "quangngai": [15.1205, 108.7923],
+    "quy nhon": [13.7830, 109.2197], "quynhon": [13.7830, 109.2197],
+    "tuy hoa": [13.0882, 109.3134], "tuyhoa": [13.0882, 109.3134],
+    "buon ma thuot": [12.6675, 108.0383], "buonmathuot": [12.6675, 108.0383],
+    "pleiku": [13.9833, 108.0000],
+    "phu quoc": [10.2289, 103.9572], "phuquoc": [10.2289, 103.9572],
+    "rach gia": [10.0125, 105.0809], "rachgia": [10.0125, 105.0809],
+    "ca mau": [9.1769, 105.1524], "camau": [9.1769, 105.1524],
+    "bien hoa": [10.9460, 106.8242], "bienhoa": [10.9460, 106.8242],
+    "thu dau mot": [10.9805, 106.6519], "thudaumot": [10.9805, 106.6519],
+    "tay ninh": [11.3344, 106.1089], "tayninh": [11.3344, 106.1089],
+    "thai nguyen": [21.5942, 105.8481], "thainguyen": [21.5942, 105.8481],
+    "bac ninh": [21.1861, 106.0763], "bacninh": [21.1861, 106.0763],
+    "nam dinh": [20.4344, 106.1683], "namdinh": [20.4344, 106.1683],
+    "thai binh": [20.4463, 106.3366], "thaibinh": [20.4463, 106.3366],
+    "hai duong": [20.9373, 106.3146], "haiduong": [20.9373, 106.3146],
+    "lao cai": [22.4856, 103.9707], "laocai": [22.4856, 103.9707],
+    "sa pa": [22.3364, 103.8438], "sapa": [22.3364, 103.8438]
+  };
+
+  function stripVn(s){
+    return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/đ/g,"d").replace(/Đ/g,"D").trim().toLowerCase().replace(/[^a-z0-9\s]/g,"").replace(/\s+/g," ");
+  }
+
+  function resolveCity(q){
+    var k = stripVn(q);
+    for(var name in CITIES){
+      if(k === name || k === "tp " + name || k === "thanh pho " + name || k === "tinh " + name){
+        return { lat: CITIES[name][0], lng: CITIES[name][1], name: q.trim() };
+      }
+    }
+    return null;
+  }
+
+  async function geocode(q){
+    var trimmed = String(q||"").trim();
+    if(!trimmed) throw new Error("Chưa nhập địa điểm");
+    // Check if coordinates
+    var coordMatch = trimmed.match(/^([-+]?\d{1,2}(?:\.\d+)?)\s*,\s*([-+]?\d{1,3}(?:\.\d+)?)$/);
+    if(coordMatch){
+      return { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]), name: trimmed };
+    }
+    // Check known cities
+    var local = resolveCity(trimmed);
+    if(local) return local;
+    // Nominatim geocoding
+    var url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(trimmed) + "&countrycodes=vn&limit=1";
+    var res = await fetch(url, { headers: { "Accept-Language": "vi,en" } });
+    if(!res.ok) throw new Error("Không thể kết nối dịch vụ định vị");
+    var data = await res.json();
+    if(!data || !data.length) throw new Error("Không tìm thấy địa điểm: " + trimmed);
+    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name.split(",")[0] || trimmed };
+  }
+
+  // Toggle modal panel
+  openBtn.addEventListener("click", function(){
+    panel.hidden = !panel.hidden;
+    if(!panel.hidden){
+      if(!departIn.value && myLoc){ departIn.value = "Vị trí hiện tại của tôi"; }
+      departIn.focus();
+    }
+  });
+  closeBtn.addEventListener("click", function(){ panel.hidden = true; });
+
+  // Swap depart and arrival
+  swapBtn.addEventListener("click", function(){
+    var tmp = departIn.value;
+    departIn.value = arrivalIn.value;
+    arrivalIn.value = tmp;
+  });
+
+  // Use my location
+  myLocBtn.addEventListener("click", function(){
+    if(myLoc){
+      departIn.value = "Vị trí hiện tại của tôi";
+      setMsg("Đã chọn vị trí hiện tại làm điểm xuất phát");
+      setTimeout(()=>setMsg(""), 2500);
+    } else {
+      locateAndLoad();
+      setMsg("Đang lấy vị trí GPS...");
+      var checkTimer = setInterval(function(){
+        if(myLoc){
+          clearInterval(checkTimer);
+          departIn.value = "Vị trí hiện tại của tôi";
+          setMsg("Đã lấy vị trí GPS thành công!");
+          setTimeout(()=>setMsg(""), 2500);
+        }
+      }, 500);
+      setTimeout(function(){ clearInterval(checkTimer); }, 12000);
+    }
+  });
+
+  // Pick on map
+  function startMapPick(target){
+    pickingFor = target;
+    map.getContainer().style.cursor = "crosshair";
+    setMsg(target === "depart" ? "Bấm lên bản đồ để chọn Điểm xuất phát" : "Bấm lên bản đồ để chọn Điểm đến");
+  }
+  pickDepartBtn.addEventListener("click", function(){ startMapPick("depart"); });
+  pickArrivalBtn.addEventListener("click", function(){ startMapPick("arrival"); });
+
+  map.on("click", function(e){
+    if(!pickingFor) return;
+    var coords = e.latlng.lat.toFixed(5) + ", " + e.latlng.lng.toFixed(5);
+    if(pickingFor === "depart"){ departIn.value = coords; }
+    else if(pickingFor === "arrival"){ arrivalIn.value = coords; }
+    map.getContainer().style.cursor = "";
+    setMsg("Đã chọn tọa độ: " + coords);
+    setTimeout(()=>setMsg(""), 2500);
+    pickingFor = null;
+    panel.hidden = false;
+  });
+
+  // Question 1: EV Model
+  var compatNotice = document.getElementById("itinCompatNotice");
+  var nonVfWrap = document.getElementById("itinNonVfWrap");
+  var nonVfOnlyCb = document.getElementById("itinNonVfOnly");
+
+  function updateEvBrandState(){
+    var opt = evSelect.selectedOptions[0];
+    var brand = opt ? (opt.dataset.brand || "vinfast") : "vinfast";
+    if(evSelect.value === "custom"){
+      customRangeWrap.style.display = "block";
+      if(compatNotice) compatNotice.style.display = "none";
+      if(nonVfWrap) nonVfWrap.style.display = "none";
+    } else {
+      customRangeWrap.style.display = "none";
+      if(brand !== "vinfast"){
+        if(compatNotice) compatNotice.style.display = "block";
+        if(nonVfWrap) nonVfWrap.style.display = "flex";
+      } else {
+        if(compatNotice) compatNotice.style.display = "none";
+        if(nonVfWrap) nonVfWrap.style.display = "none";
+      }
+    }
+  }
+  evSelect.addEventListener("change", updateEvBrandState);
+  updateEvBrandState();
+
+  // Question 2: Starting SoC chips
+  startSocChips.addEventListener("click", function(e){
+    var chip = e.target.closest(".itin-chip");
+    if(!chip) return;
+    startSocChips.querySelectorAll(".itin-chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    startSocVal = parseInt(chip.dataset.val, 10);
+    startSocLbl.textContent = startSocVal + "%";
+  });
+
+  // Question 3: Min reserve SoC chips
+  minSocChips.addEventListener("click", function(e){
+    var chip = e.target.closest(".itin-chip");
+    if(!chip) return;
+    minSocChips.querySelectorAll(".itin-chip").forEach(c=>c.classList.remove("active"));
+    chip.classList.add("active");
+    minSocVal = parseInt(chip.dataset.val, 10);
+    minSocLbl.textContent = minSocVal + "%";
+  });
+
+  function parseKw(s){
+    var str = (s.conn || "") + " " + (s.port || "");
+    var max = 0;
+    if(/250/i.test(str)) max = 250;
+    else if(/150/i.test(str)) max = 150;
+    else if(/120/i.test(str)) max = 120;
+    else if(/80/i.test(str)) max = 80;
+    else if(/60/i.test(str)) max = 60;
+    else if(/30/i.test(str)) max = 30;
+    else if(/20/i.test(str)) max = 20;
+    else if(/11/i.test(str)) max = 11;
+    else if(/7/i.test(str)) max = 7;
+    else max = 11;
+    var isDC = /DC|CCS2/i.test(str) || max >= 30;
+    return { kw: max, isDC: isDC };
+  }
+
+  function projectPoint(lat, lng, coords, cumDist){
+    var minDetour = Infinity, bestAlong = 0;
+    for(var j = 0; j < coords.length - 1; j++){
+      var p1 = { lat: coords[j][1], lng: coords[j][0] };
+      var p2 = { lat: coords[j+1][1], lng: coords[j+1][0] };
+      var dx = p2.lng - p1.lng, dy = p2.lat - p1.lat;
+      var lenSq = dx * dx + dy * dy;
+      var t = 0;
+      if(lenSq > 0){
+        t = Math.max(0, Math.min(1, ((lng - p1.lng) * dx + (lat - p1.lat) * dy) / lenSq));
+      }
+      var projLat = p1.lat + t * dy, projLng = p1.lng + t * dx;
+      var detour = haversine({ lat: lat, lng: lng }, { lat: projLat, lng: projLng });
+      if(detour < minDetour){
+        minDetour = detour;
+        var segDist = haversine(p1, { lat: projLat, lng: projLng });
+        bestAlong = cumDist[j] + segDist;
+      }
+    }
+    return { detourKm: minDetour, distAlongKm: bestAlong };
+  }
+
+  async function fetchCorridorStations(coords){
+    var boxes = [];
+    var step = Math.max(20, Math.floor(coords.length / 10));
+    for(var i = 0; i < coords.length; i += step){
+      var slice = coords.slice(i, Math.min(coords.length, i + step + 5));
+      var minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+      slice.forEach(c=>{
+        if(c[1] < minLat) minLat = c[1];
+        if(c[1] > maxLat) maxLat = c[1];
+        if(c[0] < minLng) minLng = c[0];
+        if(c[0] > maxLng) maxLng = c[0];
+      });
+      boxes.push({ minLat: minLat - 0.05, maxLat: maxLat + 0.05, minLng: minLng - 0.05, maxLng: maxLng + 0.05 });
+    }
+    var results = await Promise.all(boxes.map(b=>EVDB.box(b.minLat, b.maxLat, b.minLng, b.maxLng)));
+    var mapUnique = new Map();
+    results.forEach(list=>{
+      list.forEach(s=>{
+        var k = siteKeyOf(s.name, s.lat, s.lng);
+        if(!mapUnique.has(k)) mapUnique.set(k, s);
+      });
+    });
+    return Array.from(mapUnique.values());
+  }
+
+  // Calculate Itinerary & Charging stops
+  submitBtn.addEventListener("click", async function(){
+    var depVal = departIn.value.trim();
+    var arrVal = arrivalIn.value.trim();
+    if(!depVal){ alert("Vui lòng nhập điểm xuất phát."); departIn.focus(); return; }
+    if(!arrVal){ alert("Vui lòng nhập điểm đến."); arrivalIn.focus(); return; }
+
+    submitBtn.disabled = true;
+    statusEl.style.display = "block";
+    statusEl.textContent = "Đang định vị tọa độ xuất phát & điểm đến…";
+    resultsEl.style.display = "none";
+    resultsEl.innerHTML = "";
+    itinLayer.clearLayers();
+
+    try{
+      var origin = null;
+      if(depVal.toLowerCase().includes("vị trí hiện tại") || depVal.toLowerCase().includes("current location")){
+        if(!myLoc) throw new Error("Chưa có vị trí GPS. Hãy bật GPS hoặc bấm nút 'Gần tôi'.");
+        origin = { lat: myLoc.lat, lng: myLoc.lng, name: "Vị trí của bạn" };
+      } else {
+        origin = await geocode(depVal);
+      }
+
+      var dest = await geocode(arrVal);
+
+      statusEl.textContent = "Đang tìm lộ trình lái xe tối ưu (OSRM)…";
+      var osrmUrl = "https://router.project-osrm.org/route/v1/driving/" + origin.lng + "," + origin.lat + ";" + dest.lng + "," + dest.lat + "?overview=full&geometries=geojson";
+      var osrmRes = await (await fetch(osrmUrl)).json();
+      if(!osrmRes.routes || !osrmRes.routes.length) throw new Error("Không tìm thấy đường lái xe giữa hai điểm này.");
+
+      var routeData = osrmRes.routes[0];
+      var coords = routeData.geometry.coordinates; // [ [lng, lat], ... ]
+      var latlngs = coords.map(c=>[c[1], c[0]]);
+      var totalDistKm = routeData.distance / 1000;
+      var totalDurSec = routeData.duration;
+
+      // Cumulative distances
+      var cumDist = [0];
+      for(var i = 1; i < coords.length; i++){
+        var d = haversine({ lat: coords[i-1][1], lng: coords[i-1][0] }, { lat: coords[i][1], lng: coords[i][0] });
+        cumDist.push(cumDist[i-1] + d);
+      }
+
+      // Read EV specs
+      var maxRange = 326;
+      var batCap = 37.2;
+      if(evSelect.value === "custom"){
+        maxRange = Math.max(50, parseFloat(customRangeIn.value) || 350);
+        batCap = maxRange * 0.16;
+      } else {
+        maxRange = parseFloat(evSelect.value) || 326;
+        var opt = evSelect.selectedOptions[0];
+        batCap = opt ? parseFloat(opt.dataset.cap) : (maxRange * 0.16);
+      }
+
+      var sSoC = startSocVal / 100;
+      var mSoC = minSocVal / 100;
+      var dcOnly = dcOnlyCb.checked;
+
+      // Fetch charging stations along the route corridor
+      statusEl.textContent = "Đang quét các trạm sạc EV dọc hành trình (" + fmtKm(routeData.distance) + ")…";
+      var candidateList = await fetchCorridorStations(coords);
+
+      var opt = evSelect.selectedOptions[0];
+      var brand = opt ? (opt.dataset.brand || "vinfast") : "vinfast";
+      var isNonVfCar = (brand !== "vinfast" && brand !== "custom");
+      var nonVfOnly = nonVfOnlyCb ? nonVfOnlyCb.checked : false;
+
+      // Project candidate stations onto route
+      var routeStations = [];
+      candidateList.forEach(s=>{
+        var proj = projectPoint(s.lat, s.lng, coords, cumDist);
+        if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
+          var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
+          if(isNonVfCar && nonVfOnly && isVF) return; // Prioritize non-VinFast stations for BYD/others
+          var pInfo = parseKw(s);
+          routeStations.push({
+            station: s,
+            distAlongKm: proj.distAlongKm,
+            detourKm: proj.detourKm,
+            kw: pInfo.kw,
+            isDC: pInfo.isDC,
+            isVF: isVF
+          });
+        }
+      });
+
+      // If user selected non-VinFast car and strict filter resulted in 0 stations, widen to all stations
+      if(isNonVfCar && nonVfOnly && !routeStations.length){
+        candidateList.forEach(s=>{
+          var proj = projectPoint(s.lat, s.lng, coords, cumDist);
+          if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
+            var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
+            var pInfo = parseKw(s);
+            routeStations.push({
+              station: s,
+              distAlongKm: proj.distAlongKm,
+              detourKm: proj.detourKm,
+              kw: pInfo.kw,
+              isDC: pInfo.isDC,
+              isVF: isVF
+            });
+          }
+        });
+      }
+      routeStations.sort((a,b)=>a.distAlongKm - b.distAlongKm);
+
+      // EV Simulation algorithm
+      statusEl.textContent = "Đang tối ưu hóa các điểm dừng sạc…";
+      var stops = [];
+      var currKm = 0;
+      var currSoC = sSoC;
+      var legKmTravelable = maxRange * (currSoC - mSoC);
+
+      if(totalDistKm > legKmTravelable){
+        var iter = 0;
+        while((totalDistKm - currKm) > (maxRange * (currSoC - mSoC)) && iter < 12){
+          iter++;
+          var maxKmCanGo = maxRange * (currSoC - mSoC);
+          var minWin = currKm + Math.max(15, maxKmCanGo * 0.55);
+          var maxWin = currKm + maxKmCanGo * 0.95;
+
+          var candidates = routeStations.filter(s => s.distAlongKm > (currKm + 10) && s.distAlongKm <= maxWin);
+          if(!candidates.length){
+            // widen backwards
+            candidates = routeStations.filter(s => s.distAlongKm > (currKm + 5) && s.distAlongKm <= (currKm + maxKmCanGo * 0.99));
+          }
+
+          if(!candidates.length){
+            // pick any closest forward
+            candidates = routeStations.filter(s => s.distAlongKm > currKm);
+          }
+
+          if(!candidates.length) break;
+
+          // Score stations
+          candidates.forEach(c => {
+            var score = 0;
+            if(c.kw >= 150) score += 100;
+            else if(c.kw >= 120) score += 80;
+            else if(c.kw >= 60) score += 60;
+            else if(c.kw >= 30) score += 40;
+            else score += 10;
+
+            if(dcOnly && !c.isDC) score -= 75;
+            score -= c.detourKm * 8;
+
+            var targetKm = currKm + maxKmCanGo * 0.85;
+            var distDiff = Math.abs(c.distAlongKm - targetKm);
+            score -= distDiff * 0.8;
+            c._score = score;
+          });
+
+          candidates.sort((a,b) => b._score - a._score);
+          var best = candidates[0];
+
+          var legDist = best.distAlongKm - currKm;
+          var arrSoC = Math.max(0.05, currSoC - (legDist / maxRange));
+
+          // Recommended charge up to 80%
+          var targetChargeSoC = 0.80;
+          var kwhToCharge = Math.max(5, (targetChargeSoC - arrSoC) * batCap);
+          var effKw = best.kw >= 120 ? 90 : (best.kw >= 60 ? 50 : (best.kw >= 30 ? 25 : 10));
+          var chargeTimeMin = Math.round((kwhToCharge / effKw) * 60);
+
+          stops.push({
+            stopNum: stops.length + 1,
+            item: best,
+            legDist: legDist,
+            arrivalSoC: arrSoC,
+            targetSoC: targetChargeSoC,
+            chargeTimeMin: Math.max(15, chargeTimeMin)
+          });
+
+          currKm = best.distAlongKm;
+          currSoC = targetChargeSoC;
+        }
+      }
+
+      var finalRemainingKm = totalDistKm - currKm;
+      var finalArrivalSoC = Math.max(0, currSoC - (finalRemainingKm / maxRange));
+
+      // Draw Route on Map
+      var rPoly = L.polyline(latlngs, { color: "#2563eb", weight: 6, opacity: 0.9 }).addTo(itinLayer);
+
+      // Start Marker
+      L.marker([origin.lat, origin.lng], {
+        icon: L.divIcon({
+          className: "itin-pin",
+          html: '<div style="background:#10b981;color:#fff;font-weight:800;font-size:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px #10b981, 0 3px 8px rgba(0,0,0,0.4);border:2px solid #fff">A</div>',
+          iconSize: [28, 28], iconAnchor: [14, 14]
+        })
+      }).addTo(itinLayer).bindPopup("<b>🟢 " + esc(tr("depart")) + "</b><br>" + esc(origin.name) + "<br>Pin khởi hành: <b>" + startSocVal + "%</b>");
+
+      // Stop Markers
+      stops.forEach((st, idx) => {
+        var s = st.item.station;
+        var m = L.marker([s.lat, s.lng], {
+          icon: L.divIcon({
+            className: "itin-pin",
+            html: '<div style="background:#f59e0b;color:#fff;font-weight:800;font-size:12px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px #f59e0b, 0 4px 10px rgba(0,0,0,0.5);border:2px solid #fff">⚡' + st.stopNum + '</div>',
+            iconSize: [32, 32], iconAnchor: [16, 16]
+          })
+        }).addTo(itinLayer);
+        m.bindPopup(
+          "<b>⚡ Trạm dừng sạc #" + st.stopNum + ": " + esc(s.name) + "</b><br>" +
+          (s.addr ? esc(s.addr) + "<br>" : "") +
+          "<b>Đơn vị:</b> " + esc(s.cpo || "VinFast") + "<br>" +
+          "<b>Cổng & Công suất:</b> " + esc(s.conn || s.port) + "<br>" +
+          "<b>Pin lúc tới:</b> <span style='color:#ef4444;font-weight:700'>~" + Math.round(st.arrivalSoC * 100) + "%</span> ➔ " +
+          "<b>Sạc lên:</b> <span style='color:#10b981;font-weight:700'>80%</span> (~" + st.chargeTimeMin + " phút)"
+        );
+      });
+
+      // Destination Marker
+      L.marker([dest.lat, dest.lng], {
+        icon: L.divIcon({
+          className: "itin-pin",
+          html: '<div style="background:#ef4444;color:#fff;font-weight:800;font-size:12px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px #ef4444, 0 3px 8px rgba(0,0,0,0.4);border:2px solid #fff">B</div>',
+          iconSize: [28, 28], iconAnchor: [14, 14]
+        })
+      }).addTo(itinLayer).bindPopup("<b>🏁 " + esc(tr("arrival")) + "</b><br>" + esc(dest.name) + "<br>Dự kiến pin còn: <b>~" + Math.round(finalArrivalSoC * 100) + "%</b>");
+
+      map.fitBounds(rPoly.getBounds().pad(0.12));
+
+      // Build Google Maps Link with Waypoints
+      var gmapsUrl = "https://www.google.com/maps/dir/?api=1&origin=" + origin.lat + "," + origin.lng + "&destination=" + dest.lat + "," + dest.lng + "&travelmode=driving";
+      if(stops.length){
+        var wp = stops.map(s => s.item.station.lat + "," + s.item.station.lng).join("|");
+        gmapsUrl += "&waypoints=" + encodeURIComponent(wp);
+      }
+
+      // Render Results UI
+      var totalChargeTime = stops.reduce((acc, s) => acc + s.chargeTimeMin, 0);
+      var totalTripMin = Math.round(totalDurSec / 60) + totalChargeTime;
+      var totalTripStr = totalTripMin >= 60 ? Math.floor(totalTripMin / 60) + "h " + (totalTripMin % 60) + "m" : totalTripMin + " min";
+
+      var html = '<div class="itin-stat-grid">' +
+        '<div class="itin-stat-card"><div class="itin-stat-val">' + fmtKm(routeData.distance) + '</div><div class="itin-stat-lbl">Quãng đường</div></div>' +
+        '<div class="itin-stat-card"><div class="itin-stat-val">' + stops.length + ' trạm</div><div class="itin-stat-lbl">Số lần cần sạc</div></div>' +
+        '<div class="itin-stat-card"><div class="itin-stat-val">' + fmtMin(totalDurSec) + '</div><div class="itin-stat-lbl">Thời gian lái</div></div>' +
+        '<div class="itin-stat-card"><div class="itin-stat-val">~' + Math.round(finalArrivalSoC * 100) + '%</div><div class="itin-stat-lbl">Pin lúc đến đích</div></div>' +
+        '</div>';
+
+      if(stops.length === 0){
+        html += '<div style="background:color-mix(in srgb,#10b981 15%,transparent);border:1px solid #10b981;border-radius:8px;padding:9px;font-size:11.5px;color:var(--txt)">' +
+          '🎉 <b>Không cần dừng sạc giữa đường!</b> Tầm hoạt động của xe (' + maxRange + ' km với ' + startSocVal + '% pin) đủ đi thẳng đến đích. Dự kiến khi đến nơi pin vẫn còn <b>~' + Math.round(finalArrivalSoC * 100) + '%</b>.' +
+          '</div>';
+      }
+
+      html += '<div class="itin-timeline">';
+      // Start node
+      html += '<div class="itin-item start">' +
+        '<div class="itin-item-title">🟢 ' + esc(origin.name) + '</div>' +
+        '<div class="itin-item-sub">Khởi hành với <b>' + startSocVal + '% pin</b></div>' +
+        '</div>';
+
+      // Intermediate charging stops
+      stops.forEach((st, idx) => {
+        var s = st.item.station;
+        html += '<div class="itin-item charge">' +
+          '<div class="itin-item-title">⚡ Dừng sạc #' + st.stopNum + ': ' + esc(s.name) + '</div>' +
+          '<div class="itin-item-sub">Lái <b>' + fmtKm(st.legDist * 1000) + '</b> từ điểm trước &middot; Cách lộ trình ' + st.item.detourKm.toFixed(1) + ' km</div>' +
+          '<div class="itin-charge-card" data-stop-idx="' + idx + '">' +
+            '<div class="itin-charge-row"><span>Nhà cung cấp: <b>' + esc(s.cpo || "VinFast") + '</b></span> <span class="itin-item-badge">' + (st.item.isDC ? "Sạc nhanh DC" : "Sạc AC") + ' &middot; ' + st.item.kw + ' kW</span></div>' +
+            '<div class="itin-charge-row" style="margin-top:4px"><span>Pin tới nơi: <b style="color:#ef4444">~' + Math.round(st.arrivalSoC * 100) + '%</b></span> <span>➔ Sạc lên: <b style="color:#10b981">80%</b> (~' + st.chargeTimeMin + ' phút)</span></div>' +
+            (s.addr ? '<div style="font-size:10px;color:var(--muted);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(s.addr) + '</div>' : '') +
+          '</div>' +
+          '</div>';
+      });
+
+      // Destination node
+      html += '<div class="itin-item dest">' +
+        '<div class="itin-item-title">🏁 ' + esc(dest.name) + '</div>' +
+        '<div class="itin-item-sub">Lái <b>' + fmtKm(finalRemainingKm * 1000) + '</b> từ trạm cuối &middot; Pin dự kiến còn <b>~' + Math.round(finalArrivalSoC * 100) + '%</b></div>' +
+        '</div>';
+
+      html += '</div>';
+
+      // Actions
+      html += '<div class="itin-act-row">' +
+        '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700">🗺️ Mở Google Maps</a>' +
+        '<button type="button" class="btn" id="itinClearAllBtn">✕ Xóa lộ trình</button>' +
+        '</div>';
+
+      resultsEl.innerHTML = html;
+      resultsEl.style.display = "flex";
+      statusEl.style.display = "none";
+
+      // Wire zoom to stop card
+      resultsEl.querySelectorAll(".itin-charge-card").forEach(card => {
+        card.addEventListener("click", function(){
+          var idx = parseInt(card.dataset.stopIdx, 10);
+          var st = stops[idx];
+          if(st){
+            map.flyTo([st.item.station.lat, st.item.station.lng], 15);
+          }
+        });
+      });
+
+      // Clear button
+      resultsEl.querySelector("#itinClearAllBtn").addEventListener("click", function(){
+        itinLayer.clearLayers();
+        resultsEl.style.display = "none";
+        resultsEl.innerHTML = "";
+        statusEl.style.display = "none";
+        setMsg("Đã xóa lộ trình");
+        setTimeout(()=>setMsg(""), 2000);
+      });
+
+    }catch(err){
+      statusEl.style.display = "block";
+      statusEl.style.color = "#ef4444";
+      statusEl.textContent = "Lỗi: " + (err && err.message || err);
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+
+})();
+
+/* ---------------- Multi-Level Hierarchical Sidebar Navigation ---------------- */
+(function hnavModule(){
+  var tabHNav = document.getElementById("tabHNav");
+  var tabList = document.getElementById("tabList");
+  var tabFilter = document.getElementById("tabFilter");
+  var hnavWrap = document.getElementById("hnavWrap");
+  var sideClassic = document.getElementById("sideClassicWrap");
+  var listDrop = document.getElementById("listDrop");
+  var filterDrop = document.getElementById("filterDrop");
+
+  var hnavBackBtn = document.getElementById("hnavBackBtn");
+  var hnavBreadcrumbs = document.getElementById("hnavBreadcrumbs");
+  var hnavList = document.getElementById("hnavList");
+  var hnavSelectedText = document.getElementById("hnavSelectedText");
+  var hnavOkBtn = document.getElementById("hnavOkBtn");
+  var hnavResetBtn = document.getElementById("hnavResetBtn");
+
+  // Tab switching
+  function switchTab(t){
+    [tabHNav, tabList, tabFilter].forEach(b=>b.classList.remove("active"));
+    if(t === "hnav"){
+      tabHNav.classList.add("active");
+      hnavWrap.hidden = false;
+      sideClassic.style.display = "none";
+    } else if(t === "list"){
+      tabList.classList.add("active");
+      hnavWrap.hidden = true;
+      sideClassic.style.display = "flex";
+      listDrop.classList.add("open");
+      filterDrop.classList.remove("open");
+    } else if(t === "filter"){
+      tabFilter.classList.add("active");
+      hnavWrap.hidden = true;
+      sideClassic.style.display = "flex";
+      listDrop.classList.remove("open");
+      filterDrop.classList.add("open");
+    }
+  }
+
+  tabHNav.addEventListener("click", ()=>switchTab("hnav"));
+  tabList.addEventListener("click", ()=>switchTab("list"));
+  tabFilter.addEventListener("click", ()=>switchTab("filter"));
+
+  // Base map tile changer
+  window.setTileLayer = function(type){
+    if(tileLayer) map.removeLayer(tileLayer);
+    if(type === "satellite"){
+      tileLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 19, attribution: "&copy; Esri &mdash; World Imagery"
+      }).addTo(map);
+    } else if(type === "cartodark"){
+      tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+        maxZoom: 20, attribution: "&copy; OpenStreetMap contributors &middot; &copy; CARTO"
+      }).addTo(map);
+    } else if(type === "osmstd"){
+      tileLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19, attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+    } else {
+      tileLayer = L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
+        maxZoom: 20, attribution: "&copy; OpenStreetMap contributors &middot; Tiles: OSM France"
+      }).addTo(map);
+    }
+  };
+
+  // Multi-Level Hierarchical Navigation Data Structure
+  var NAV_HIERARCHY = [
+    {
+      id: "geo",
+      title: "Khu vực & Tỉnh thành",
+      icon: "📍",
+      desc: "Tìm trạm sạc theo vùng miền, tỉnh và quận huyện",
+      children: [
+        {
+          id: "geo-north",
+          title: "Miền Bắc",
+          icon: "🏔️",
+          desc: "Hà Nội, Hải Phòng, Quảng Ninh, Ninh Bình...",
+          children: [
+            {
+              id: "geo-hanoi",
+              title: "Hà Nội",
+              icon: "🏛️",
+              desc: "Thủ đô Hà Nội",
+              children: [
+                { id: "geo-hn-all", title: "Toàn bộ Hà Nội", desc: "Khu vực trung tâm & vùng ven", isLeaf: true, action: { type: "pan", lat: 21.0285, lng: 105.8542, zoom: 11, km: 35, label: "Hà Nội" } },
+                { id: "geo-hn-cg", title: "Quận Cầu Giấy", desc: "Khu vực Duy Tân, Trung Kính, Cầu Giấy", isLeaf: true, action: { type: "pan", lat: 21.0360, lng: 105.7905, zoom: 14, km: 8, label: "Cầu Giấy, Hà Nội" } },
+                { id: "geo-hn-ntlv", title: "Quận Nam Từ Liêm", desc: "Vinhomes Smart City, Mỹ Đình", isLeaf: true, action: { type: "pan", lat: 21.0180, lng: 105.7650, zoom: 14, km: 8, label: "Nam Từ Liêm, Hà Nội" } },
+                { id: "geo-hn-hk", title: "Quận Hoàn Kiếm & Ba Đình", desc: "Phố cổ, hồ Hoàn Kiếm, Lăng Bác", isLeaf: true, action: { type: "pan", lat: 21.0290, lng: 105.8520, zoom: 14, km: 6, label: "Hoàn Kiếm & Ba Đình, Hà Nội" } },
+                { id: "geo-hn-lb", title: "Quận Long Biên & Gia Lâm", desc: "Vinhomes Ocean Park, Aeon Mall", isLeaf: true, action: { type: "pan", lat: 21.0350, lng: 105.8950, zoom: 13, km: 12, label: "Long Biên & Gia Lâm, Hà Nội" } },
+                { id: "geo-hn-tx", title: "Huyện Phú Xuyên & Thường Tín", desc: "Cửa ngõ phía Nam Hà Nội", isLeaf: true, action: { type: "pan", lat: 20.7600, lng: 105.8900, zoom: 12, km: 15, label: "Phú Xuyên & Thường Tín" } }
+              ]
+            },
+            {
+              id: "geo-hp",
+              title: "Hải Phòng",
+              icon: "⚓",
+              desc: "Thành phố Cảng Hải Phòng",
+              children: [
+                { id: "geo-hp-all", title: "Trung tâm TP. Hải Phòng", desc: "Lê Chân, Ngô Quyền, Hồng Bàng", isLeaf: true, action: { type: "pan", lat: 20.8449, lng: 106.6881, zoom: 13, km: 15, label: "TP. Hải Phòng" } },
+                { id: "geo-hp-dh", title: "Khu vực Đồ Sơn & Cát Hải", desc: "Tổ hợp nhà máy VinFast & Khu du lịch Đồ Sơn", isLeaf: true, action: { type: "pan", lat: 20.7100, lng: 106.7900, zoom: 12, km: 15, label: "Đồ Sơn & Cát Hải" } }
+              ]
+            },
+            {
+              id: "geo-qn",
+              title: "Quảng Ninh",
+              icon: "⛵",
+              desc: "Hạ Long, Cẩm Phả, Móng Cái",
+              children: [
+                { id: "geo-qn-hl", title: "TP. Hạ Long", desc: "Bãi Cháy, Hòn Gai", isLeaf: true, action: { type: "pan", lat: 20.9505, lng: 107.0734, zoom: 13, km: 15, label: "TP. Hạ Long" } },
+                { id: "geo-qn-ub", title: "TP. Uông Bí", desc: "Khu vực Yên Tử & Quốc lộ 18", isLeaf: true, action: { type: "pan", lat: 21.0330, lng: 106.7700, zoom: 13, km: 12, label: "TP. Uông Bí" } }
+              ]
+            },
+            {
+              id: "geo-nb",
+              title: "Ninh Bình & Nam Định",
+              icon: "⛰️",
+              desc: "Cửa ngõ kết nối cao tốc Bắc - Nam",
+              children: [
+                { id: "geo-nb-all", title: "TP. Ninh Bình", desc: "Tràng An, Bái Đính, Tam Cốc", isLeaf: true, action: { type: "pan", lat: 20.2506, lng: 105.9744, zoom: 13, km: 15, label: "TP. Ninh Bình" } },
+                { id: "geo-nd-all", title: "TP. Nam Định", desc: "Trung tâm TP. Nam Định", isLeaf: true, action: { type: "pan", lat: 20.4344, lng: 106.1683, zoom: 13, km: 15, label: "TP. Nam Định" } }
+              ]
+            }
+          ]
+        },
+        {
+          id: "geo-central",
+          title: "Miền Trung & Tây Nguyên",
+          icon: "🌊",
+          desc: "Đà Nẵng, Huế, Nha Trang, Quy Nhơn, Đà Lạt...",
+          children: [
+            {
+              id: "geo-dn",
+              title: "TP. Đà Nẵng",
+              icon: "🌉",
+              desc: "Đà Nẵng & Hội An",
+              children: [
+                { id: "geo-dn-all", title: "Trung tâm TP. Đà Nẵng", desc: "Hải Châu, Sơn Trà, Ngũ Hành Sơn", isLeaf: true, action: { type: "pan", lat: 16.0544, lng: 108.2022, zoom: 13, km: 15, label: "TP. Đà Nẵng" } },
+                { id: "geo-dn-ha", title: "Khu vực Hội An & Điện Bàn", desc: "Phố cổ Hội An & trục ven biển", isLeaf: true, action: { type: "pan", lat: 15.8800, lng: 108.3300, zoom: 13, km: 12, label: "Hội An & Điện Bàn" } }
+              ]
+            },
+            {
+              id: "geo-hue",
+              title: "Thừa Thiên Huế",
+              icon: "🏯",
+              desc: "Cố đô Huế",
+              children: [
+                { id: "geo-hue-all", title: "TP. Huế", desc: "Trung tâm bờ Nam & Kinh thành Huế", isLeaf: true, action: { type: "pan", lat: 16.4637, lng: 107.5909, zoom: 13, km: 15, label: "TP. Huế" } }
+              ]
+            },
+            {
+              id: "geo-nt",
+              title: "Khánh Hòa & Ninh Thuận",
+              icon: "🏖️",
+              desc: "Nha Trang, Cam Ranh, Phan Rang",
+              children: [
+                { id: "geo-nt-all", title: "TP. Nha Trang", desc: "Trung tâm vịnh biển Nha Trang", isLeaf: true, action: { type: "pan", lat: 12.2388, lng: 109.1967, zoom: 13, km: 15, label: "TP. Nha Trang" } },
+                { id: "geo-nt-cr", title: "TP. Cam Ranh & Sân bay", desc: "Bãi Dài, Sân bay Cam Ranh", isLeaf: true, action: { type: "pan", lat: 11.9900, lng: 109.1300, zoom: 12, km: 15, label: "Cam Ranh" } }
+              ]
+            },
+            {
+              id: "geo-dl",
+              title: "Lâm Đồng (Tây Nguyên)",
+              icon: "🌲",
+              desc: "Đà Lạt, Bảo Lộc",
+              children: [
+                { id: "geo-dl-all", title: "TP. Đà Lạt", desc: "Thành phố ngàn hoa", isLeaf: true, action: { type: "pan", lat: 11.9404, lng: 108.4583, zoom: 13, km: 15, label: "TP. Đà Lạt" } },
+                { id: "geo-bl-all", title: "TP. Bảo Lộc", desc: "Đèo Bảo Lộc & trung tâm", isLeaf: true, action: { type: "pan", lat: 11.5450, lng: 107.8100, zoom: 13, km: 15, label: "TP. Bảo Lộc" } }
+              ]
+            }
+          ]
+        },
+        {
+          id: "geo-south",
+          title: "Miền Nam",
+          icon: "🌴",
+          desc: "TP.HCM, Bình Dương, Đồng Nai, Vũng Tàu, Cần Thơ...",
+          children: [
+            {
+              id: "geo-hcm",
+              title: "TP. Hồ Chí Minh",
+              icon: "🏙️",
+              desc: "Đô thị lớn nhất miền Nam",
+              children: [
+                { id: "geo-hcm-all", title: "Toàn bộ TP. Hồ Chí Minh", desc: "Trung tâm và tất cả các quận huyện", isLeaf: true, action: { type: "pan", lat: 10.8231, lng: 106.6297, zoom: 11, km: 35, label: "TP. Hồ Chí Minh" } },
+                { id: "geo-hcm-q1", title: "Quận 1, 3 & Trung tâm", desc: "Khu vực phố đi bộ, Landmark", isLeaf: true, action: { type: "pan", lat: 10.7769, lng: 106.7009, zoom: 14, km: 6, label: "Quận 1 & 3, TP.HCM" } },
+                { id: "geo-hcm-td", title: "TP. Thủ Đức (Khu Đông)", desc: "Vinhomes Grand Park, Xa lộ Hà Nội", isLeaf: true, action: { type: "pan", lat: 10.8500, lng: 106.7700, zoom: 13, km: 12, label: "TP. Thủ Đức" } },
+                { id: "geo-hcm-q7", title: "Quận 7 & Nhà Bè (Khu Nam)", desc: "Phú Mỹ Hưng, Nguyễn Văn Linh", isLeaf: true, action: { type: "pan", lat: 10.7300, lng: 106.7200, zoom: 13, km: 10, label: "Quận 7, TP.HCM" } },
+                { id: "geo-hcm-tb", title: "Quận Tân Bình & Sân bay", desc: "Sân bay Tân Sơn Nhất & Tân Phú", isLeaf: true, action: { type: "pan", lat: 10.8000, lng: 106.6600, zoom: 14, km: 7, label: "Tân Bình & Tân Sơn Nhất" } }
+              ]
+            },
+            {
+              id: "geo-bd-dn",
+              title: "Bình Dương & Đồng Nai",
+              icon: "🏭",
+              desc: "Thủ Dầu Một, Dĩ An, Biên Hòa, Long Thành",
+              children: [
+                { id: "geo-bd-tdm", title: "TP. Thủ Dầu Một & Dĩ An", desc: "Thành phố Mới Bình Dương & Dĩ An", isLeaf: true, action: { type: "pan", lat: 10.9805, lng: 106.6519, zoom: 13, km: 12, label: "Thủ Dầu Một & Dĩ An" } },
+                { id: "geo-dn-bh", title: "TP. Biên Hòa & Sân bay Long Thành", desc: "Trục Quốc lộ 1A & Sân bay Long Thành", isLeaf: true, action: { type: "pan", lat: 10.9460, lng: 106.8242, zoom: 13, km: 15, label: "Biên Hòa & Long Thành" } }
+              ]
+            },
+            {
+              id: "geo-vt",
+              title: "Bà Rịa - Vũng Tàu",
+              icon: "🏖️",
+              desc: "Vũng Tàu, Long Hải, Phú Mỹ",
+              children: [
+                { id: "geo-vt-all", title: "TP. Vũng Tàu", desc: "Bãi Trước, Bãi Sau, Bến Đình", isLeaf: true, action: { type: "pan", lat: 10.3460, lng: 107.0843, zoom: 13, km: 12, label: "TP. Vũng Tàu" } },
+                { id: "geo-br-pm", title: "Thị xã Phú Mỹ & Bà Rịa", desc: "Cảng Cái Mép & Trung tâm Bà Rịa", isLeaf: true, action: { type: "pan", lat: 10.5900, lng: 107.0500, zoom: 12, km: 15, label: "Phú Mỹ & Bà Rịa" } }
+              ]
+            },
+            {
+              id: "geo-ct",
+              title: "Đồng bằng Sông Cửu Long",
+              icon: "🌾",
+              desc: "Cần Thơ, Kiên Giang (Phú Quốc)",
+              children: [
+                { id: "geo-ct-all", title: "TP. Cần Thơ", desc: "Thủ phủ Miền Tây sông nước", isLeaf: true, action: { type: "pan", lat: 10.0452, lng: 105.7469, zoom: 13, km: 15, label: "TP. Cần Thơ" } },
+                { id: "geo-pq-all", title: "Đảo Ngọc Phú Quốc", desc: "Vinpearl Grand World, Dương Đông, An Thới", isLeaf: true, action: { type: "pan", lat: 10.2289, lng: 103.9572, zoom: 12, km: 25, label: "TP. Phú Quốc" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "network",
+      title: "Mạng lưới & Công nghệ sạc",
+      icon: "⚡",
+      desc: "Lọc theo nhà cung cấp và công suất cổng sạc",
+      children: [
+        {
+          id: "net-vf",
+          title: "Hệ thống VinFast",
+          icon: "🟢",
+          desc: "Hệ sinh thái trạm sạc lớn nhất Việt Nam",
+          children: [
+            { id: "vf-all", title: "Tất cả trạm VinFast (Mọi công suất)", desc: "Trạm sạc phủ khắp 63 tỉnh thành", isLeaf: true, action: { type: "filterNet", net: "vinfast", label: "Tất cả trạm VinFast" } },
+            { id: "vf-ultra", title: "Trụ Siêu nhanh DC 150 kW & 250 kW", desc: "Sạc từ 10% lên 70% chỉ ~20 phút", isLeaf: true, action: { type: "filterPort", kwMin: 150, isDC: true, net: "vinfast", label: "VinFast Siêu nhanh (≥ 150 kW)" } },
+            { id: "vf-fast", title: "Trụ Nhanh DC 60 kW & 120 kW", desc: "Trụ sạc phổ biến tại các trạm dừng nghỉ", isLeaf: true, action: { type: "filterPort", kwMin: 60, kwMax: 120, isDC: true, net: "vinfast", label: "VinFast Nhanh (60 - 120 kW)" } },
+            { id: "vf-ac", title: "Trụ Tiêu chuẩn AC 7 kW & 11 kW", desc: "Sạc qua đêm tại chung cư và hầm đỗ xe", isLeaf: true, action: { type: "filterPort", kwMax: 22, isDC: false, net: "vinfast", label: "VinFast AC (7 - 11 kW)" } }
+          ]
+        },
+        {
+          id: "net-other",
+          title: "Trạm sạc Ngoài VinFast",
+          icon: "🔵",
+          desc: "Charge+, EBOOST, EV Power, Rabbit EVC, Showroom...",
+          children: [
+            { id: "oth-all", title: "Tất cả trạm ngoài VinFast (Đa thương hiệu)", desc: "Trạm sạc phục vụ mọi dòng xe điện", isLeaf: true, action: { type: "filterNet", net: "other", label: "Trạm ngoài VinFast" } },
+            { id: "oth-fast", title: "Trạm sạc nhanh DC đa thương hiệu (≥ 60 kW)", desc: "Trạm sạc chuẩn CCS2 công suất cao", isLeaf: true, action: { type: "filterPort", kwMin: 60, isDC: true, net: "other", label: "Trạm DC ngoài VinFast (≥ 60 kW)" } },
+            { id: "oth-ac", title: "Trạm sạc AC Type 2 (Căn hộ & Khách sạn)", desc: "Dành cho sạc tiện ích qua đêm", isLeaf: true, action: { type: "filterPort", kwMax: 22, isDC: false, net: "other", label: "Trạm AC ngoài VinFast" } }
+          ]
+        },
+        {
+          id: "net-all",
+          title: "Tất cả mạng lưới",
+          icon: "🌐",
+          desc: "Hiển thị toàn bộ các nhà vận hành sạc",
+          children: [
+            { id: "all-all", title: "Hiển thị tất cả trạm sạc trên bản đồ", desc: "Bỏ qua các bộ lọc mạng lưới", isLeaf: true, action: { type: "filterNet", net: "all", label: "Tất cả mạng lưới" } },
+            { id: "all-dc", title: "Chỉ hiện trạm sạc nhanh DC (Bất kỳ đơn vị)", desc: "Lọc tất cả trạm DC ≥ 30 kW", isLeaf: true, action: { type: "filterPort", kwMin: 30, isDC: true, net: "all", label: "Tất cả trạm DC (≥ 30 kW)" } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "corridor",
+      title: "Tuyến đường & Lộ trình sạc",
+      icon: "🛣️",
+      desc: "Lập lộ trình sạc theo các trục cao tốc và liên tỉnh",
+      children: [
+        {
+          id: "corr-north",
+          title: "Trục Giao thông Miền Bắc",
+          icon: "🚗",
+          desc: "Hà Nội đi các tỉnh lân cận",
+          children: [
+            { id: "corr-hn-hp", title: "Hà Nội ➔ Hải Phòng (CT.04 - 120 km)", desc: "Tuyến cao tốc hiện đại 6 làn xe", isLeaf: true, action: { type: "route", depart: "Hà Nội", arrival: "Hải Phòng", label: "Hà Nội ➔ Hải Phòng" } },
+            { id: "corr-hn-hl", title: "Hà Nội ➔ Hạ Long (160 km)", desc: "Tuyến du lịch Vịnh Hạ Long", isLeaf: true, action: { type: "route", depart: "Hà Nội", arrival: "Hạ Long", label: "Hà Nội ➔ Hạ Long" } },
+            { id: "corr-hn-th", title: "Hà Nội ➔ Thanh Hóa (CT.01 - 160 km)", desc: "Cao tốc Pháp Vân - Cầu Giẽ - Mai Sơn", isLeaf: true, action: { type: "route", depart: "Hà Nội", arrival: "Thanh Hóa", label: "Hà Nội ➔ Thanh Hóa" } },
+            { id: "corr-hn-vinh", title: "Hà Nội ➔ Vinh (Nghệ An - 300 km)", desc: "Trục cao tốc Bắc - Nam phía Bắc", isLeaf: true, action: { type: "route", depart: "Hà Nội", arrival: "Vinh", label: "Hà Nội ➔ Vinh" } }
+          ]
+        },
+        {
+          id: "corr-south",
+          title: "Trục Giao thông Miền Nam",
+          icon: "🚙",
+          desc: "TP.HCM đi các tỉnh Đông Nam Bộ & Miền Tây",
+          children: [
+            { id: "corr-hcm-vt", title: "TP.HCM ➔ Vũng Tàu (105 km)", desc: "Tuyến du lịch biển cuối tuần", isLeaf: true, action: { type: "route", depart: "TP. Hồ Chí Minh", arrival: "Vũng Tàu", label: "TP.HCM ➔ Vũng Tàu" } },
+            { id: "corr-hcm-pt", title: "TP.HCM ➔ Phan Thiết (CT.01 - 210 km)", desc: "Cao tốc Long Thành - Dầu Giây - Phan Thiết", isLeaf: true, action: { type: "route", depart: "TP. Hồ Chí Minh", arrival: "Phan Thiết", label: "TP.HCM ➔ Phan Thiết" } },
+            { id: "corr-hcm-nt", title: "TP.HCM ➔ Nha Trang (CT.01 - 430 km)", desc: "Tuyến cao tốc nối liền TP.HCM và Nha Trang", isLeaf: true, action: { type: "route", depart: "TP. Hồ Chí Minh", arrival: "Nha Trang", label: "TP.HCM ➔ Nha Trang" } },
+            { id: "corr-hcm-dl", title: "TP.HCM ➔ Đà Lạt (QL20 - 300 km)", desc: "Hành trình lên thành phố ngàn hoa", isLeaf: true, action: { type: "route", depart: "TP. Hồ Chí Minh", arrival: "Đà Lạt", label: "TP.HCM ➔ Đà Lạt" } },
+            { id: "corr-hcm-ct", title: "TP.HCM ➔ Cần Thơ (165 km)", desc: "Cao tốc Trung Lương - Mỹ Thuận - Cần Thơ", isLeaf: true, action: { type: "route", depart: "TP. Hồ Chí Minh", arrival: "Cần Thơ", label: "TP.HCM ➔ Cần Thơ" } }
+          ]
+        },
+        {
+          id: "corr-cross",
+          title: "Trục Xuyên Việt Bắc - Nam",
+          icon: "🧭",
+          desc: "Hành trình dài dọc đất nước",
+          children: [
+            { id: "corr-hn-dn", title: "Hà Nội ➔ Đà Nẵng (760 km)", desc: "Lộ trình xuyên miền Trung", isLeaf: true, action: { type: "route", depart: "Hà Nội", arrival: "Đà Nẵng", label: "Hà Nội ➔ Đà Nẵng" } },
+            { id: "corr-dn-hcm", title: "Đà Nẵng ➔ TP.HCM (960 km)", desc: "Lộ trình dọc Duyên hải Nam Trung Bộ", isLeaf: true, action: { type: "route", depart: "Đà Nẵng", arrival: "TP. Hồ Chí Minh", label: "Đà Nẵng ➔ TP.HCM" } }
+          ]
+        }
+      ]
+    },
+    {
+      id: "layers",
+      title: "Lớp bản đồ nền & Hiển thị",
+      icon: "🗺️",
+      desc: "Thay đổi giao diện bản đồ địa lý và vệ tinh",
+      children: [
+        {
+          id: "lay-tiles",
+          title: "Bản đồ nền (Base Map)",
+          icon: "🖼️",
+          desc: "Chọn kiểu hiển thị bản đồ",
+          children: [
+            { id: "tile-osm", title: "OpenStreetMap France (Mặc định)", desc: "Bản đồ chi tiết đường sá và tên địa danh tiếng Việt", isLeaf: true, action: { type: "tile", style: "osmfr", label: "OpenStreetMap France" } },
+            { id: "tile-std", title: "OpenStreetMap Tiêu chuẩn (Standard)", desc: "Bản đồ chuẩn quốc tế OpenStreetMap", isLeaf: true, action: { type: "tile", style: "osmstd", label: "OpenStreetMap Standard" } },
+            { id: "tile-sat", title: "Ảnh Vệ tinh Độ nét cao (Esri Satellite)", desc: "Hình ảnh chụp từ vệ tinh không gian độ phân giải cao", isLeaf: true, action: { type: "tile", style: "satellite", label: "Bản đồ Vệ tinh Esri" } },
+            { id: "tile-carto", title: "Bản đồ Tối giản Đen (CartoDB Dark)", desc: "Giao diện tối tương phản cao làm nổi bật trạm sạc", isLeaf: true, action: { type: "tile", style: "cartodark", label: "Bản đồ CartoDB Dark" } }
+          ]
+        }
+      ]
+    }
+  ];
+
+  // Navigation state
+  var navStack = [
+    { title: "🏠 Trang chủ", items: NAV_HIERARCHY }
+  ];
+  var selectedLeaf = null;
+
+  // Render navigation list and breadcrumbs
+  function renderHNav(){
+    var currentLevel = navStack[navStack.length - 1];
+
+    // Breadcrumbs
+    var bHtml = "";
+    navStack.forEach((node, idx) => {
+      var isLast = idx === (navStack.length - 1);
+      if(idx > 0) bHtml += '<span class="hnav-crumb-sep">›</span>';
+      bHtml += '<span class="hnav-crumb' + (isLast ? ' active' : '') + '" data-level-idx="' + idx + '">' + esc(node.title) + '</span>';
+    });
+    hnavBreadcrumbs.innerHTML = bHtml;
+
+    // Back button
+    if(navStack.length > 1){
+      hnavBackBtn.style.display = "inline-flex";
+    } else {
+      hnavBackBtn.style.display = "none";
+    }
+
+    // Render items
+    var lHtml = "";
+    currentLevel.items.forEach((item, i) => {
+      var hasChildren = Array.isArray(item.children) && item.children.length > 0;
+      var isSelected = selectedLeaf && selectedLeaf.id === item.id;
+
+      lHtml += '<div class="hnav-item' + (isSelected ? ' selected' : '') + '" data-item-idx="' + i + '">' +
+        '<div class="hnav-item-icon">' + (item.icon || (hasChildren ? '📁' : '⚡')) + '</div>' +
+        '<div class="hnav-item-content">' +
+          '<div class="hnav-item-title">' + esc(item.title) + '</div>' +
+          (item.desc ? '<div class="hnav-item-desc">' + esc(item.desc) + '</div>' : '') +
+        '</div>';
+
+      if(hasChildren){
+        lHtml += '<span class="hnav-item-badge">' + item.children.length + ' mục</span>' +
+          '<span class="hnav-item-arrow">›</span>';
+      } else {
+        lHtml += '<div class="hnav-item-radio"></div>';
+      }
+
+      lHtml += '</div>';
+    });
+
+    hnavList.innerHTML = lHtml;
+
+    // Attach click events
+    hnavList.querySelectorAll(".hnav-item").forEach(el => {
+      el.addEventListener("click", function(){
+        var idx = parseInt(el.dataset.itemIdx, 10);
+        var item = currentLevel.items[idx];
+
+        if(item.children && item.children.length > 0){
+          // Interaction & Expansion: Drill down to child nodes
+          navStack.push({ title: item.title, items: item.children });
+          renderHNav();
+        } else if(item.isLeaf){
+          // Final leaf node selection
+          selectedLeaf = item;
+          hnavSelectedText.textContent = item.title;
+          hnavOkBtn.disabled = false;
+          renderHNav();
+        }
+      });
+    });
+
+    // Breadcrumbs click to jump
+    hnavBreadcrumbs.querySelectorAll(".hnav-crumb").forEach(crumb => {
+      crumb.addEventListener("click", function(){
+        var targetIdx = parseInt(crumb.dataset.levelIdx, 10);
+        if(targetIdx < navStack.length - 1){
+          navStack = navStack.slice(0, targetIdx + 1);
+          renderHNav();
+        }
+      });
+    });
+  }
+
+  // Back button click
+  hnavBackBtn.addEventListener("click", function(){
+    if(navStack.length > 1){
+      navStack.pop();
+      renderHNav();
+    }
+  });
+
+  // Reset button click
+  hnavResetBtn.addEventListener("click", function(){
+    selectedLeaf = null;
+    hnavSelectedText.textContent = "Chưa chọn mục nào";
+    hnavOkBtn.disabled = true;
+    navStack = [{ title: "🏠 Trang chủ", items: NAV_HIERARCHY }];
+    renderHNav();
+  });
+
+  // OK Button Click: Completion & Confirmation
+  hnavOkBtn.addEventListener("click", function(){
+    if(!selectedLeaf || !selectedLeaf.action) return;
+    var act = selectedLeaf.action;
+
+    if(act.type === "pan"){
+      // 1. Pan map to region/city and load stations
+      map.flyTo([act.lat, act.lng], act.zoom || 13);
+      setMsg("Đang tải các trạm sạc khu vực " + act.label + "…");
+      showLoad(true);
+      EVDB.near(act.lat, act.lng, act.km || 25).then(function(rows){
+        state.stations = rows.map(function(r){
+          return { id:siteKeyOf(r.name,r.lat,r.lng), name:r.name, lat:r.lat, lng:r.lng,
+                   port:r.port||"", cpo:r.cpo||"", addr:r.addr||"", conn:r.conn||"" };
+        });
+        state.open = new Set(state.stations.map(s=>s.port));
+        applyVinFastBand();
+        renderTree(); refreshView();
+        setMsg("✓ Đã chuyển đến " + act.label + " (" + state.stations.length + " trạm sạc)");
+        setTimeout(()=>setMsg(""), 3500);
+      }).catch(function(e){
+        setMsg("Lỗi tải trạm: " + e.message);
+      }).finally(function(){ showLoad(false); });
+
+      // Automatically switch to Station List view to see the rows
+      switchTab("list");
+      if(isMobile()){
+        // On mobile, collapse sidebar so map is prominent
+        var sideEl = document.getElementById("side");
+        if(sideEl) sideEl.classList.add("collapsed");
+      }
+
+    } else if(act.type === "filterNet"){
+      // 2. Filter network
+      setNet(act.net);
+      setMsg("✓ Đã áp dụng bộ lọc: " + act.label);
+      setTimeout(()=>setMsg(""), 3000);
+      switchTab("list");
+
+    } else if(act.type === "filterPort"){
+      // 3. Filter port
+      if(act.net) setNet(act.net);
+      if(act.isDC){
+        state.stations = state.stations.filter(s => {
+          var str = (s.conn || "") + " " + (s.port || "");
+          var m = str.match(/(\d+)\s*kW/i) || str.match(/DC:?\s*(\d+)/i);
+          var kw = m ? parseInt(m[1], 10) : 0;
+          return /DC|CCS2/i.test(str) && (kw >= (act.kwMin || 30));
+        });
+      }
+      refreshView();
+      setMsg("✓ Đã áp dụng: " + act.label);
+      setTimeout(()=>setMsg(""), 3000);
+      switchTab("list");
+
+    } else if(act.type === "route"){
+      // 4. Launch Itinerary Planner with pre-filled route
+      var p = document.getElementById("itinPanel");
+      if(p) p.hidden = false;
+      var depIn = document.getElementById("itinDepart");
+      var arrIn = document.getElementById("itinArrival");
+      if(depIn) depIn.value = act.depart;
+      if(arrIn) arrIn.value = act.arrival;
+      setMsg("✓ Đang tính toán lộ trình sạc: " + act.depart + " ➔ " + act.arrival);
+      var sub = document.getElementById("itinSubmit");
+      if(sub) sub.click();
+      if(isMobile()){
+        var sideEl = document.getElementById("side");
+        if(sideEl) sideEl.classList.add("collapsed");
+      }
+
+    } else if(act.type === "tile"){
+      // 5. Switch base map tile layer
+      window.setTileLayer(act.style);
+      setMsg("✓ Đã đổi bản đồ: " + act.label);
+      setTimeout(()=>setMsg(""), 3000);
+    }
+  });
+
+  // Initial render
+  renderHNav();
+})();
+
+
 
 paintNet();
 renderTree(); refreshView();          // empty until the nearby set arrives
