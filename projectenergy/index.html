@@ -70,9 +70,10 @@
     --oil: #B45309;
     --biomass: #65A30D;
 
-    /* Grid Voltage Colors */
-    --grid-500: #FF4D4D;
-    --grid-220: #FF9F45;
+    /* Grid Voltage Colors (NSMO Standard) */
+    --grid-500: #22c55e;
+    --grid-220: #ef4444;
+    --grid-110: #3b82f6;
 
     --radius: 2px;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.70);
@@ -115,8 +116,9 @@
     --oil: #92400e;
     --biomass: #4d7c0f;
 
-    --grid-500: #dc2626;
-    --grid-220: #ea580c;
+    --grid-500: #16a34a;
+    --grid-220: #dc2626;
+    --grid-110: #2563eb;
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
     --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -260,9 +262,129 @@
   .grid-swatch {
     width: 36px; height: 6px; border-radius: 2px; flex: 0 0 auto;
   }
-  .grid-swatch.g500 { background: var(--grid-500); height: 8px; }
+  .grid-swatch.g500 { background: var(--grid-500); height: 7px; }
   .grid-swatch.g220 { background: var(--grid-220); height: 5px; }
-  .grid-swatch.subst { width: 14px; height: 14px; border-radius: 2px; background: #334155; border: 1px solid #fff; box-shadow: 0 0 0 1px #334155; }
+  .grid-swatch.g110 { background: var(--grid-110); height: 3px; }
+  .grid-swatch.subst { width: 12px; height: 12px; border-radius: 50%; background: var(--grid-500); border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
+
+  /* ---------- Grid & Transmission Layers Panel (Sidebar) ---------- */
+  .layer-list { display: flex; flex-direction: column; gap: 2px; padding: 4px 0; }
+  .layer-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 6px 8px; border-radius: 6px; transition: background .12s ease;
+  }
+  .layer-row:hover { background: var(--surface-2); }
+  .layer-item {
+    display: flex; align-items: center; gap: 9px; cursor: pointer; flex: 1 1 auto;
+    font-size: 12.8px; font-weight: 500; color: var(--ink); margin: 0;
+  }
+  .layer-item input[type=checkbox] { flex: 0 0 auto; margin: 0; }
+  .layer-title { flex: 1 1 auto; font-size: 12.5px; }
+
+  /* ---------- Grid Inspector (Search & Inspection for Lines, Substations, Plants) ---------- */
+  .grid-inspector { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line-subtle); }
+  .grid-filter-chips { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .grid-chip {
+    font-size: 11px; padding: 2px 8px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--surface-2); color: var(--ink-secondary); cursor: pointer; transition: all .12s ease;
+  }
+  .grid-chip:hover { border-color: var(--primary); color: var(--ink); }
+  .grid-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); font-weight: 600; }
+  .grid-search-list {
+    margin-top: 8px; max-height: 220px; overflow-y: auto; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--white); box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .grid-search-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 7px 10px; border-bottom: 1px solid var(--line-subtle); cursor: pointer;
+    transition: background .12s ease;
+  }
+  .grid-search-item:last-child { border-bottom: none; }
+  .grid-search-item:hover { background: var(--surface-2); }
+  .gsi-info { flex: 1 1 auto; min-width: 0; }
+  .gsi-title { font-size: 12.2px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gsi-meta { font-size: 11px; color: var(--muted); display: flex; gap: 6px; align-items: center; margin-top: 2px; }
+  .gsi-actions { display: flex; gap: 4px; flex: 0 0 auto; }
+
+  /* ---------- Model Inventory Stat Cards ---------- */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin: 10px 0 12px;
+  }
+  .sc {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 11px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+  }
+  .sc:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+  }
+  .sc .n {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .sc .l {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+  .sc .s {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+  .inv-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin: 2px 0 8px;
+  }
+  .inv-sub-accordion {
+    margin-top: 8px;
+    border-top: 1px solid var(--line-subtle);
+    padding-top: 6px;
+    font-size: 11.5px;
+  }
+  .inv-sub-accordion summary {
+    cursor: pointer;
+    color: var(--primary);
+    font-weight: 600;
+    padding: 4px 0;
+  }
+  .inv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    margin: 6px 0 10px;
+  }
+  .inv-table th {
+    text-align: left;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding: 4px 0;
+  }
+  .inv-table td {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--line-subtle);
+    color: var(--ink);
+  }
+  .inv-table td.num, .inv-table th.num { text-align: right; }
 
   /* Carries "374 projects · 22,430 MW" now, so keep it on one line and let the
      name take the remaining space. */
@@ -497,6 +619,60 @@
   .co-table td { padding: 6px 0; font-size: 12.8px; color: var(--ink); }
   .co-external-links { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-subtle); display: flex; flex-wrap: wrap; gap: 8px; }
 
+  /* GridTwinVN Substation & SLD Viewer Extensions */
+  .modal-card.modal-wide {
+    max-width: 980px;
+    width: 94vw;
+  }
+  .sub-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .pill {
+    display: inline-flex; align-items: center; font-size: 11px; font-weight: 700;
+    padding: 3px 8px; border-radius: 4px; line-height: 1; letter-spacing: .02em;
+  }
+  .pill.p500 { background: #22c55e; color: #052e16; }
+  .pill.p220 { background: #ef4444; color: #fff; }
+  .pill.p110 { background: #3b82f6; color: #fff; }
+  .pill.pkind { background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); }
+  .pill.pdashed { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); }
+  
+  .bay-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .bay-chip {
+    font-size: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-weight: 600; padding: 2px 5px;
+    border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+  }
+  
+  .sld-section { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .sld-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .sld-nav button {
+    font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: 4px;
+    background: var(--surface-2); border: 1px solid var(--line); color: var(--ink);
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .sld-nav button:hover { background: var(--primary-subtle); border-color: var(--primary); }
+  .sld-nav button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  
+  .sld-viewer-card {
+    background: #0b0f16; border-radius: 8px; border: 1px solid var(--line-strong);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .sld-toolbar {
+    display: flex; align-items: center; justify-content: space-between; padding: 8px 12px;
+    background: #111827; border-bottom: 1px solid #1f2937; color: #e2e8f0; font-size: 12px;
+  }
+  .sld-tools { display: flex; gap: 6px; }
+  .sld-tools button {
+    background: #1f2937; color: #f8fafc; border: 1px solid #374151; font-size: 11px;
+    padding: 3px 8px; border-radius: 4px; cursor: pointer;
+  }
+  .sld-tools button:hover { background: #374151; }
+  .sld-canvas-wrap {
+    min-height: 400px; max-height: 60vh; overflow: auto; padding: 16px;
+    display: flex; align-items: center; justify-content: center; background: #0b0f16;
+  }
+  .sld-canvas-wrap svg {
+    max-width: 100%; height: auto; display: block;
+  }
+
   @media (max-width:820px) {
     /* Phones: the drawer docks flush to the top and spans the full viewport
        width instead of floating 8px in from every edge. With no offsets left
@@ -514,12 +690,6 @@
     .side .side-body { display: none; }
     .side.menu-open .side-body { display: block; }
     .btn.menu-toggle { display: inline-flex; }
-    /* Phones: the Layers panel collapses to its heading. */
-    .grid-panel .gp-body { display: none; }
-    .grid-panel.gp-open .gp-body { display: block; }
-    .grid-panel .gp-toggle { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-    .grid-panel .gp-toggle::after { content: "▾"; font-size: 12px; color: #000; }
-    .grid-panel:not(.gp-open) .gp-toggle::after { content: "▸"; }
   }
 
   /* ============================================================
@@ -554,16 +724,7 @@
   .map-wrap, #map { background: var(--surface-2); }
   .substation-icon { border-color: #fff; }
 
-  /* Layers legend. Fully transparent so the map shows straight through, with
-     black text for contrast against the imagery; every dimension is 2x the
-     previous quarter-scale version so the labels are legible (type 6px -> 12px). */
-  .grid-panel {
-    background: transparent; border: 0; border-radius: 0; box-shadow: none;
-    padding: 10px 14px; max-width: 260px; color: #000; font-size: 12px;
-  }
-  .grid-panel h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: #000; }
-  .grid-panel .row { gap: 8px; padding: 4px 0; }
-  .grid-panel .row label { font-size: 12px; line-height: 1.25; color: #000; }
+
   .scale-note { background: var(--legend-bg); border-color: var(--line-strong); }
   .leaflet-bar a { background: var(--card-bg); color: var(--ink); border-bottom-color: var(--line); }
   .leaflet-bar a:hover { background: var(--chip); color: var(--primary); }
@@ -624,9 +785,140 @@
     </header>
 
     <div class="side-body">
-      <!-- Energy Zone (energy type → relevant zones & projects).
-           .section spans the full width of the drawer. Open by default, but the
-           user can fold it. -->
+      <!-- 1. Power Grid Layers (toggles, search & details inspector, model inventory) -->
+      <details class="section" id="grid-box" open>
+        <summary>
+          <span>Power Grid Layers</span>
+          <span class="ez-head-actions">
+            <button class="btn mini" id="grid-all" type="button">All on</button>
+            <button class="btn mini" id="grid-clear" type="button">All off</button>
+          </span>
+        </summary>
+        <div class="card-body">
+          <div class="layer-list">
+            <div class="layer-row">
+              <label class="layer-item" for="chk-grid-500">
+                <input type="checkbox" id="chk-grid-500" checked />
+                <span class="grid-swatch g500"></span>
+                <span class="layer-title">500 kV Transmission</span>
+              </label>
+              <span class="count" id="c-grid-500">…</span>
+            </div>
+
+            <div class="layer-row">
+              <label class="layer-item" for="chk-grid-220">
+                <input type="checkbox" id="chk-grid-220" checked />
+                <span class="grid-swatch g220"></span>
+                <span class="layer-title">220 kV Regional</span>
+              </label>
+              <span class="count" id="c-grid-220">…</span>
+            </div>
+
+            <div class="layer-row">
+              <label class="layer-item" for="chk-grid-110">
+                <input type="checkbox" id="chk-grid-110" checked />
+                <span class="grid-swatch g110"></span>
+                <span class="layer-title">110 kV Distribution</span>
+              </label>
+              <span class="count" id="c-grid-110">…</span>
+            </div>
+
+            <div class="layer-row">
+              <label class="layer-item" for="chk-substations">
+                <input type="checkbox" id="chk-substations" checked />
+                <span class="grid-swatch subst"></span>
+                <span class="layer-title">Substations & Plants</span>
+              </label>
+              <span class="count" id="c-substations">…</span>
+            </div>
+
+            <div class="layer-row" style="margin-top:6px; padding-top:6px; border-top:1px solid var(--line-subtle);">
+              <div class="layer-item">
+                <span class="swatch sw" style="background:var(--primary); border-radius:50%;"></span>
+                <span class="layer-title">Company Projects</span>
+              </div>
+              <span class="count" id="c-projects">Hidden (click Energy Zone)</span>
+            </div>
+          </div>
+
+          <!-- Power Grid Detail Inspector -->
+          <div class="grid-inspector">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:.04em;">Grid Inspector & Details</span>
+              <span style="font-size:11px; color:var(--muted);" id="grid-inspector-count">1,915 nodes · 2,877 circuits</span>
+            </div>
+            <input type="text" id="grid-search" class="co-search" placeholder="Search line, substation, or plant (e.g. 500kV, Hoa Binh)..." autocomplete="off" />
+            <div class="grid-filter-chips">
+              <button type="button" class="btn mini grid-chip active" data-filter="all">All</button>
+              <button type="button" class="btn mini grid-chip" data-filter="500">500 kV</button>
+              <button type="button" class="btn mini grid-chip" data-filter="220">220 kV</button>
+              <button type="button" class="btn mini grid-chip" data-filter="110">110 kV</button>
+              <button type="button" class="btn mini grid-chip" data-filter="substation">Substations</button>
+              <button type="button" class="btn mini grid-chip" data-filter="plant">Power Plants</button>
+              <button type="button" class="btn mini grid-chip" data-filter="line">Circuits</button>
+            </div>
+            <div id="grid-search-results" class="grid-search-list" style="display:none;"></div>
+          </div>
+
+          <!-- Grid Model Inventory -->
+          <div class="grid-inventory-section" style="margin-top:14px; padding-top:12px; border-top:1px solid var(--line-subtle);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); letter-spacing:.04em;">Grid Model Inventory</span>
+              <button class="btn mini" id="btn-open-inv-modal" type="button" title="View complete inventory tables">Expand ↗</button>
+            </div>
+
+            <div class="stat-cards">
+              <div class="sc">
+                <div class="n" id="sc-substations">1,915</div>
+                <div class="l">Grid Nodes</div>
+                <div class="s" id="sc-geolocated">989 geolocated (52%)</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-voltage-levels">2,303</div>
+                <div class="l">Voltage Levels</div>
+                <div class="s" id="sc-busbars">2,909 busbars</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-lines">2,877</div>
+                <div class="l">Transmission Circuits</div>
+                <div class="s" id="sc-lines-drawn">1,503 geocoded & mapped</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-switches">19,642</div>
+                <div class="l">Switching Devices</div>
+                <div class="s">circuit breakers & disconnectors</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-transformers">1,017</div>
+                <div class="l">Power Transformers</div>
+                <div class="s">two-winding transformers</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-generators">1,523</div>
+                <div class="l">Generator Units</div>
+                <div class="s" id="sc-gen-mw">80,612 MW installed</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-shunts">530</div>
+                <div class="l">Shunt Devices</div>
+                <div class="s">reactors & capacitors</div>
+              </div>
+              <div class="sc">
+                <div class="n" id="sc-loads">1,274</div>
+                <div class="l">Load Nodes</div>
+                <div class="s">p0 = 0, static load model</div>
+              </div>
+            </div>
+
+            <details class="inv-sub-accordion">
+              <summary>Detailed Breakdown: Voltages & Generation Mix ▾</summary>
+              <div id="inv-breakdown-tables" style="padding-top:6px;"></div>
+            </details>
+          </div>
+        </div>
+      </details>
+
+      <!-- 2. Energy Zone -->
       <details class="section" id="ez-box" open>
         <summary>
           <span>Energy Zone</span>
@@ -640,9 +932,8 @@
         </div>
       </details>
 
-      <!-- Companies & projects. Also a .section at full drawer width, but
-           unlike the Energy Zone it stays foldable, so it keeps its caret. -->
-      <details class="section" id="projects-box" open>
+      <!-- 3. Projects -->
+      <details class="section" id="projects-box">
         <summary>
           <span>Projects</span>
           <span class="badge-count" id="reg-count">960 loaded</span>
@@ -752,7 +1043,7 @@
     var COLORS = {
       solar:"#f59e0b", wind:"#0284c7", hydro:"#2563eb", lng:"#9333ea", nuclear:"#e11d48",
       coal:"#8D6E63", oil:"#B45309", biomass:"#65A30D",
-      g500:"#dc2626", g220:"#ea580c"
+      g500:"#22c55e", g220:"#ef4444", g110:"#3b82f6"
     };
     var LABELS = { solar:"Solar", wind:"Wind", hydro:"Hydropower", lng:"LNG / gas",
                    nuclear:"Nuclear", coal:"Coal", oil:"Oil", biomass:"Biomass" };
@@ -2284,6 +2575,7 @@
       projects: L.layerGroup().addTo(map),
       grid500: L.layerGroup().addTo(map),
       grid220: L.layerGroup().addTo(map),
+      grid110: L.layerGroup().addTo(map),
       substations: L.layerGroup().addTo(map)
     };
 
@@ -2310,66 +2602,572 @@
       layer.bindTooltip(z.name, { sticky:true, direction:"top" });
       layer.on("mouseover", function () { layer.setStyle({ fillOpacity:0.42 }); });
       layer.on("mouseout",  function () { layer.setStyle({ fillOpacity:0.25 }); });
+      layer.on("click", function () {
+        showProjectPins = true;
+        selectOnlyType(z.type);
+      });
       layer.addTo(layers[z.type]);
       zoneLayers[z.name] = layer;
       zoneCounts[z.type]++;
     });
 
-    /* ---------------- Grid Lines & Substations Rendering ---------------- */
-    var gridCounts = { "500":0, "220":0, substations:0 };
+    /* ---------------- Grid Lines & Substations Rendering (GridTwinVN Integration) ---------------- */
+    var gridCounts = { "500": 0, "220": 0, "110": 0, substations: 0 };
+    var gridSubMap = new Map();
+    var gridAdjMap = new Map();
+    var sldManifest = { sld: [], nad: [] };
+    var subMarkersList = [];
 
-    GRID_LINES.forEach(function (gl) {
-      var v = gl.voltage;
-      var style = {
-        color: v === "500" ? COLORS.g500 : COLORS.g220,
-        weight: v === "500" ? 4.2 : 2.8,
-        opacity: 0.9
-      };
+    window.viewSubstationModal = function (id) {
+      var sub = gridSubMap.get(id);
+      if (sub) showSubstationDetails(sub);
+    };
 
-      var lineLayer = L.polyline(gl.coords, style);
-      lineLayer.bindTooltip(gl.name + " (" + v + " kV)", { sticky:true });
-      lineLayer.bindPopup(
-        '<div style="min-width:200px;font-family:inherit;">' +
-          '<strong style="font-size:13.5px;color:#0f172a;">' + gl.name + '</strong><br>' +
-          '<span style="display:inline-block;margin:3px 0;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;background:' + style.color + '">' +
-            v + ' kV Transmission Line</span>' +
-          '<p style="margin:6px 0 2px;font-size:12px;color:#334155;"><strong>Estimated Length:</strong> ' + gl.length + '</p>' +
-          '<p style="margin:2px 0 0;font-size:11.8px;color:#475569;line-height:1.4;">' + gl.desc + '</p>' +
-        '</div>'
-      );
-      
-      var targetGroup = v === "500" ? layers.grid500 : layers.grid220;
-      lineLayer.addTo(targetGroup);
-      gridCounts[v]++;
-    });
+    function updateGridCountsUI() {
+      var el500 = document.getElementById("c-grid-500");
+      var el220 = document.getElementById("c-grid-220");
+      var el110 = document.getElementById("c-grid-110");
+      var elSub = document.getElementById("c-substations");
+      if (el500) el500.textContent = Number(gridCounts["500"]).toLocaleString("en-US") + " lines";
+      if (el220) el220.textContent = Number(gridCounts["220"]).toLocaleString("en-US") + " lines";
+      if (el110) el110.textContent = Number(gridCounts["110"]).toLocaleString("en-US") + " lines";
+      if (elSub) elSub.textContent = Number(gridCounts.substations).toLocaleString("en-US") + " nodes";
+    }
 
-    SUBSTATIONS.forEach(function (sub) {
-      var iconClass = sub.voltage === "500" ? "substation-icon s500" : "substation-icon s220";
-      var subIcon = L.divIcon({
-        className: "sub-marker-wrap",
-        html: '<div class="' + iconClass + '">' + sub.voltage + '</div>',
-        iconSize: [22, 22],
-        iconAnchor: [11, 11],
-        popupAnchor: [0, -10]
+    var gridStatsData = null;
+    var allGridLines = [];
+    var allGridSubstations = [];
+    var activeGridFilter = "all";
+    var gridLineMap = new Map();
+
+    function updateInventoryUI(s) {
+      if (!s) return;
+      gridStatsData = s;
+      var elSub = document.getElementById("sc-substations");
+      var elGeo = document.getElementById("sc-geolocated");
+      var elVl  = document.getElementById("sc-voltage-levels");
+      var elBb  = document.getElementById("sc-busbars");
+      var elLn  = document.getElementById("sc-lines");
+      var elLd  = document.getElementById("sc-lines-drawn");
+      var elSw  = document.getElementById("sc-switches");
+      var elTf  = document.getElementById("sc-transformers");
+      var elGen = document.getElementById("sc-generators");
+      var elGmw = document.getElementById("sc-gen-mw");
+      var elSh  = document.getElementById("sc-shunts");
+      var elLd2 = document.getElementById("sc-loads");
+
+      if (elSub) elSub.textContent = Number(s.substations).toLocaleString("en-US");
+      if (elGeo) elGeo.textContent = Number(s.geolocated).toLocaleString("en-US") + " geolocated (" + Math.round((100 * s.geolocated) / s.substations) + "%)";
+      if (elVl)  elVl.textContent  = Number(s.voltage_levels).toLocaleString("en-US");
+      if (elBb)  elBb.textContent  = Number(s.busbars).toLocaleString("en-US") + " busbars";
+      if (elLn)  elLn.textContent  = Number(s.lines).toLocaleString("en-US");
+      if (elLd)  elLd.textContent  = Number(s.lines_drawn).toLocaleString("en-US") + " geocoded & mapped";
+      if (elSw)  elSw.textContent  = Number(s.switches).toLocaleString("en-US");
+      if (elTf)  elTf.textContent  = Number(s.transformers).toLocaleString("en-US");
+      if (elGen) elGen.textContent = Number(s.generators).toLocaleString("en-US");
+      if (elGmw) elGmw.textContent = Number(s.gen_mw).toLocaleString("en-US") + " MW installed";
+      if (elSh)  elSh.textContent  = Number(s.shunts).toLocaleString("en-US");
+      if (elLd2) elLd2.textContent = Number(s.loads).toLocaleString("en-US");
+
+      var tblWrap = document.getElementById("inv-breakdown-tables");
+      if (tblWrap) {
+        var fuelLabels = {
+          HYDRO: ["#38bdf8", "Hydropower"],
+          THERMAL: ["#f97316", "Thermal"],
+          SOLAR: ["#facc15", "Solar"],
+          WIND: ["#a78bfa", "Wind"],
+          OTHER: ["#94a3b8", "Other"]
+        };
+        var fuelRows = s.fuel ? Object.keys(s.fuel).map(function (k) {
+          var f = s.fuel[k];
+          var info = fuelLabels[k] || ["#94a3b8", k];
+          var pct = s.gen_mw ? ((100 * f.mw) / s.gen_mw).toFixed(1) : "0";
+          return '<tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + info[0] + ';margin-right:5px;"></span>' + info[1] + '</td>' +
+            '<td class="num">' + Number(f.n).toLocaleString("en-US") + '</td>' +
+            '<td class="num"><strong>' + Number(f.mw).toLocaleString("en-US") + ' MW</strong></td>' +
+            '<td class="num">' + pct + '%</td></tr>';
+        }).join('') : '';
+
+        tblWrap.innerHTML = '' +
+          '<h5 style="margin:6px 0 3px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Voltage Levels & Est. Circuit Length</h5>' +
+          '<table class="inv-table"><thead><tr><th>Level</th><th class="num">Circuits</th><th class="num">Length</th></tr></thead><tbody>' +
+            '<tr><td><span class="pill p500" style="font-size:9.5px;padding:2px 5px;">500 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["500"]) || 0).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_500 || 0).toLocaleString("en-US") + ' km</td></tr>' +
+            '<tr><td><span class="pill p220" style="font-size:9.5px;padding:2px 5px;">220 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["220"]) || 0).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_220 || 0).toLocaleString("en-US") + ' km</td></tr>' +
+            '<tr><td><span class="pill p110" style="font-size:9.5px;padding:2px 5px;">110 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["110"]) || 0).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_110 || 0).toLocaleString("en-US") + ' km</td></tr>' +
+          '</tbody></table>' +
+          '<h5 style="margin:10px 0 3px;font-size:10px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Generation Source Mix</h5>' +
+          '<table class="inv-table"><thead><tr><th>Source</th><th class="num">Units</th><th class="num">Capacity</th><th class="num">%</th></tr></thead><tbody>' +
+            fuelRows +
+          '</tbody></table>';
+      }
+    }
+
+    var KVR = { 500: 6.2, 220: 4.2, 110: 2.5 };
+    var KVW = { 500: 3.2, 220: 2.0, 110: 1.1 };
+    function getZoomScale() {
+      var z = map.getZoom();
+      return Math.max(0.35, Math.min(1.6, 0.35 + 0.15 * (z - 5)));
+    }
+
+    function rescaleSubMarkers() {
+      var k = getZoomScale();
+      subMarkersList.forEach(function (item) {
+        var sub = item.sub;
+        var m = item.marker;
+        var r = (KVR[sub.kv] || 2.4) * k;
+        m.setRadius(Math.max(1.2, r));
+        m.setStyle({
+          weight: sub.kind === "plant_yard" ? Math.max(1.0, 1.8 * k) : Math.max(0.6, 0.8 * k)
+        });
+      });
+    }
+    map.on("zoomend", rescaleSubMarkers);
+
+    /* ---------------- Grid Inspector & Search Logic ---------------- */
+    function initGridInspector() {
+      var searchInput = document.getElementById("grid-search");
+      var resultsContainer = document.getElementById("grid-search-results");
+      var chips = document.querySelectorAll(".grid-chip");
+      var countEl = document.getElementById("grid-inspector-count");
+
+      if (countEl) {
+        countEl.textContent = Number(allGridSubstations.length).toLocaleString("en-US") + " nodes · " +
+          Number(allGridLines.length).toLocaleString("en-US") + " circuits";
+      }
+
+      chips.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          chips.forEach(function (c) { c.classList.remove("active"); });
+          btn.classList.add("active");
+          activeGridFilter = btn.getAttribute("data-filter");
+          renderGridSearchResults();
+        });
       });
 
-      var m = L.marker([sub.lat, sub.lon], { icon: subIcon, riseOnHover:true });
-      m.bindTooltip(sub.name + " [" + sub.voltage + "kV]", { direction:"top" });
-      m.bindPopup(
-        '<div style="min-width:205px;font-family:inherit;">' +
-          '<strong style="font-size:14px;color:#0f172a;">' + sub.name + '</strong><br>' +
-          '<span style="display:inline-block;margin:4px 0;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700;color:#fff;background:' +
-            (sub.voltage === "500" ? COLORS.g500 : COLORS.g220) + ';">' + sub.voltage + ' kV Substation</span>' +
-          '<table style="width:100%;margin-top:5px;font-size:12px;border-collapse:collapse;">' +
-            '<tr><td style="color:#64748b;padding:2px 0;">Capacity:</td><td><strong>' + sub.capacity + '</strong></td></tr>' +
-            '<tr><td style="color:#64748b;padding:2px 0;">Location:</td><td>' + sub.loc + '</td></tr>' +
-          '</table>' +
-          '<p style="margin:6px 0 0;font-size:11.8px;color:#475569;line-height:1.4;">' + sub.desc + '</p>' +
-        '</div>'
-      );
-      m.addTo(layers.substations);
-      gridCounts.substations++;
-    });
+      if (searchInput) {
+        searchInput.addEventListener("input", function () {
+          renderGridSearchResults();
+        });
+        searchInput.addEventListener("focus", function () {
+          resultsContainer.style.display = "block";
+          renderGridSearchResults();
+        });
+      }
+
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".grid-inspector")) {
+          if (resultsContainer) resultsContainer.style.display = "none";
+        }
+      });
+    }
+
+    function renderGridSearchResults() {
+      var searchInput = document.getElementById("grid-search");
+      var resultsContainer = document.getElementById("grid-search-results");
+      if (!resultsContainer) return;
+
+      var q = (searchInput ? searchInput.value : "").trim().toLowerCase();
+      var filter = activeGridFilter;
+      var items = [];
+
+      // Filter substations / plants
+      if (filter === "all" || filter === "500" || filter === "220" || filter === "110" || filter === "substation" || filter === "plant") {
+        allGridSubstations.forEach(function (sub) {
+          if (filter === "500" && sub.kv !== 500 && (!sub.lv || sub.lv.indexOf(500) === -1)) return;
+          if (filter === "220" && sub.kv !== 220 && (!sub.lv || sub.lv.indexOf(220) === -1)) return;
+          if (filter === "110" && sub.kv !== 110 && (!sub.lv || sub.lv.indexOf(110) === -1)) return;
+          if (filter === "plant" && sub.kind !== "plant_yard") return;
+          if (filter === "substation" && sub.kind !== "substation" && sub.kind !== "switching_station") return;
+
+          var match = !q || (sub.name && sub.name.toLowerCase().indexOf(q) > -1) ||
+            (sub.place && sub.place.toLowerCase().indexOf(q) > -1) ||
+            (sub.id && sub.id.toLowerCase().indexOf(q) > -1);
+
+          if (match) {
+            items.push({ type: "substation", data: sub });
+          }
+        });
+      }
+
+      // Filter transmission lines
+      if (filter === "all" || filter === "500" || filter === "220" || filter === "110" || filter === "line") {
+        allGridLines.forEach(function (line) {
+          if (filter === "500" && line.kv !== 500) return;
+          if (filter === "220" && line.kv !== 220) return;
+          if (filter === "110" && line.kv !== 110) return;
+
+          var subA = gridSubMap.get(line.a);
+          var subB = gridSubMap.get(line.b);
+          var nameA = subA ? subA.name : (line.name ? line.name.split(" - ")[0] : line.a);
+          var nameB = subB ? subB.name : (line.name ? line.name.split(" - ")[1] : line.b);
+          var label = (nameA || "") + " " + (nameB || "") + " " + (line.cond || "") + " " + (line.name || "");
+
+          var match = !q || label.toLowerCase().indexOf(q) > -1 ||
+            (line.id && line.id.toLowerCase().indexOf(q) > -1) ||
+            (line.kv && (line.kv + "kv").indexOf(q) > -1);
+
+          if (match) {
+            items.push({ type: "line", data: line, nameA: nameA || "Station A", nameB: nameB || "Station B" });
+          }
+        });
+      }
+
+      if (items.length === 0) {
+        resultsContainer.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--muted);text-align:center;">No matching lines or substations found.</div>';
+        resultsContainer.style.display = "block";
+        return;
+      }
+
+      var kindLabels = {
+        substation: "Substation",
+        plant_yard: "Power Plant Switchyard",
+        switching_station: "Switching Station"
+      };
+
+      var html = '';
+      items.slice(0, 40).forEach(function (it, idx) {
+        if (it.type === "substation") {
+          var s = it.data;
+          var kv = s.kv || (s.lv ? s.lv[0] : 110);
+          var kindText = kindLabels[s.kind] || "Substation";
+          var subMeta = (s.lv ? s.lv.join("/") + " kV" : kv + " kV") + " · " + kindText + (s.place ? " · " + s.place : "") + (s.gmw ? " · " + Number(s.gmw).toLocaleString("en-US") + " MW" : "");
+
+          html += '<div class="grid-search-item" data-type="sub" data-idx="' + idx + '">' +
+            '<div class="gsi-info">' +
+              '<div class="gsi-title"><span class="pill p' + kv + '" style="font-size:9.5px;padding:1px 5px;margin-right:6px;">' + kv + ' kV</span>' + s.name + '</div>' +
+              '<div class="gsi-meta">' + subMeta + '</div>' +
+            '</div>' +
+            '<div class="gsi-actions">' +
+              '<button type="button" class="btn mini primary btn-inspect" style="padding:2px 8px;font-size:11px;">Inspect ↗</button>' +
+            '</div>' +
+          '</div>';
+        } else {
+          var l = it.data;
+          var lineMeta = l.kv + " kV · " + (l.km ? Number(l.km).toLocaleString("en-US") + " km" : (l.length || "Schematic")) + (l.cond ? " · " + l.cond : "");
+
+          html += '<div class="grid-search-item" data-type="line" data-idx="' + idx + '">' +
+            '<div class="gsi-info">' +
+              '<div class="gsi-title"><span class="pill p' + l.kv + '" style="font-size:9.5px;padding:1px 5px;margin-right:6px;">' + l.kv + ' kV</span>' + it.nameA + ' — ' + it.nameB + '</div>' +
+              '<div class="gsi-meta">' + lineMeta + '</div>' +
+            '</div>' +
+            '<div class="gsi-actions">' +
+              '<button type="button" class="btn mini primary btn-inspect" style="padding:2px 8px;font-size:11px;">Inspect ↗</button>' +
+            '</div>' +
+          '</div>';
+        }
+      });
+
+      if (items.length > 40) {
+        html += '<div style="padding:6px 10px;font-size:11px;color:var(--muted);text-align:center;background:var(--surface-2);border-top:1px solid var(--line-subtle);">' +
+          '+ ' + Number(items.length - 40).toLocaleString("en-US") + ' more matches (type to narrow down)</div>';
+      }
+
+      resultsContainer.innerHTML = html;
+      resultsContainer.style.display = "block";
+
+      resultsContainer.querySelectorAll(".grid-search-item").forEach(function (el) {
+        el.addEventListener("click", function () {
+          var itemType = el.getAttribute("data-type");
+          var itemIdx = parseInt(el.getAttribute("data-idx"), 10);
+          var item = items[itemIdx];
+          if (!item) return;
+
+          if (itemType === "sub") {
+            var s = item.data;
+            if (s.lat != null && s.lon != null) {
+              map.setView([s.lat, s.lon], Math.max(map.getZoom(), 12));
+            }
+            showSubstationDetails(s);
+          } else {
+            var l = item.data;
+            if (l.lat1 != null && l.lat2 != null) {
+              map.fitBounds([[l.lat1, l.lon1], [l.lat2, l.lon2]], { padding: [50, 50], maxZoom: 13 });
+            } else if (l.coords && l.coords.length > 0) {
+              map.fitBounds(L.polyline(l.coords).getBounds(), { padding: [50, 50], maxZoom: 13 });
+            }
+            showLineDetails(l);
+          }
+        });
+      });
+    }
+
+    /* ---------------- Line Details Modal Function ---------------- */
+    window.showLineDetailsById = function (lineId) {
+      var line = gridLineMap.get(lineId);
+      if (line) showLineDetails(line);
+    };
+
+    function showLineDetails(line) {
+      var subA = line.a ? gridSubMap.get(line.a) : null;
+      var subB = line.b ? gridSubMap.get(line.b) : null;
+      var nameA = subA ? subA.name : (line.name ? line.name.split(" - ")[0] : line.a || "Station A");
+      var nameB = subB ? subB.name : (line.name ? line.name.split(" - ")[1] : line.b || "Station B");
+      var kv = line.kv || parseInt(line.voltage, 10) || 110;
+
+      modalTitleEl.textContent = kv + " kV Circuit: " + nameA + " — " + nameB;
+      var card = modalEl.querySelector(".modal-card");
+      if (card) card.classList.remove("modal-wide");
+      modalEl.classList.add("active");
+
+      var hasGeo = (line.lat1 != null && line.lat2 != null) || (line.coords && line.coords.length > 0);
+
+      modalContentEl.innerHTML = '' +
+        '<div class="sub-pills">' +
+          '<span class="pill p' + kv + '">' + kv + ' kV Circuit</span>' +
+          (line.dashed ? '<span class="pill pdashed">2025 Plan</span>' : '') +
+          (line.susp ? '<span class="pill" style="background:#fef3c7;color:#b45309;border:1px solid #fde68a;">⚠️ Suspicious Route</span>' : '') +
+        '</div>' +
+        '<table class="co-table">' +
+          '<tr><th>Voltage Level</th><td><strong>' + kv + ' kV</strong></td></tr>' +
+          '<tr><th>Terminal Station A</th><td>' + (subA ? '<a href="javascript:void(0)" class="line-term-link" data-id="' + subA.id + '">⚡ ' + nameA + '</a>' : nameA) + '</td></tr>' +
+          '<tr><th>Terminal Station B</th><td>' + (subB ? '<a href="javascript:void(0)" class="line-term-link" data-id="' + subB.id + '">⚡ ' + nameB + '</a>' : nameB) + '</td></tr>' +
+          (line.km ? '<tr><th>Circuit Length</th><td><strong>' + Number(line.km).toLocaleString('en-US') + ' km</strong></td></tr>' : (line.length ? '<tr><th>Circuit Length</th><td>' + line.length + '</td></tr>' : '')) +
+          (line.cond ? '<tr><th>Conductor Type</th><td><code>' + line.cond + '</code></td></tr>' : '') +
+          (line.desc ? '<tr><th>Description</th><td>' + line.desc + '</td></tr>' : '') +
+          (hasGeo && line.lat1 != null ? '<tr><th>Terminal Coordinates</th><td><code>' + line.lat1.toFixed(4) + ', ' + line.lon1.toFixed(4) + ' ➔ ' + line.lat2.toFixed(4) + ', ' + line.lon2.toFixed(4) + '</code></td></tr>' : '') +
+        '</table>' +
+        '<div class="co-external-links">' +
+          (hasGeo ? '<button class="btn mini primary" id="line-zoom-btn" type="button">📍 Zoom to Circuit on Map</button>' : '') +
+          (subA ? '<button class="btn mini" id="line-term-a-btn" type="button">⚡ View ' + nameA + ' SLD</button>' : '') +
+          (subB ? '<button class="btn mini" id="line-term-b-btn" type="button">⚡ View ' + nameB + ' SLD</button>' : '') +
+        '</div>';
+
+      if (hasGeo) {
+        document.getElementById("line-zoom-btn").addEventListener("click", function () {
+          closeModal();
+          if (line.lat1 != null && line.lat2 != null) {
+            map.fitBounds([[line.lat1, line.lon1], [line.lat2, line.lon2]], { padding: [50, 50], maxZoom: 13 });
+          } else if (line.coords && line.coords.length > 0) {
+            map.fitBounds(L.polyline(line.coords).getBounds(), { padding: [50, 50], maxZoom: 13 });
+          }
+        });
+      }
+      if (subA && document.getElementById("line-term-a-btn")) {
+        document.getElementById("line-term-a-btn").addEventListener("click", function () {
+          showSubstationDetails(subA);
+        });
+      }
+      if (subB && document.getElementById("line-term-b-btn")) {
+        document.getElementById("line-term-b-btn").addEventListener("click", function () {
+          showSubstationDetails(subB);
+        });
+      }
+      modalContentEl.querySelectorAll(".line-term-link").forEach(function (lnk) {
+        lnk.addEventListener("click", function () {
+          var s = gridSubMap.get(lnk.getAttribute("data-id"));
+          if (s) showSubstationDetails(s);
+        });
+      });
+    }
+    window.showLineDetails = showLineDetails;
+
+    function renderFallbackGrid() {
+      allGridLines = GRID_LINES;
+      allGridSubstations = SUBSTATIONS.map(function (sub) {
+        return {
+          id: sub.name,
+          name: sub.name,
+          kv: parseInt(sub.voltage, 10),
+          lv: [parseInt(sub.voltage, 10)],
+          kind: "substation",
+          place: sub.loc,
+          lat: sub.lat,
+          lon: sub.lon,
+          tmva: sub.capacity
+        };
+      });
+      allGridSubstations.forEach(function (x) { gridSubMap.set(x.id, x); });
+      allGridLines.forEach(function (gl, idx) {
+        gl.id = "fallback_line_" + idx;
+        gl.kv = parseInt(gl.voltage, 10);
+        gridLineMap.set(gl.id, gl);
+      });
+
+      GRID_LINES.forEach(function (gl) {
+        var v = gl.voltage;
+        var style = {
+          color: v === "500" ? COLORS.g500 : (v === "220" ? COLORS.g220 : COLORS.g110),
+          weight: v === "500" ? 4.0 : 2.5,
+          opacity: 0.9
+        };
+        var lineLayer = L.polyline(gl.coords, style);
+        lineLayer.bindTooltip(gl.name + " (" + v + " kV)", { sticky: true });
+        lineLayer.bindPopup(
+          '<div style="min-width:200px;font-family:inherit;">' +
+            '<strong style="font-size:13.5px;color:#0f172a;">' + gl.name + '</strong><br>' +
+            '<span style="display:inline-block;margin:3px 0;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;background:' + style.color + '">' +
+              v + ' kV Transmission Line</span>' +
+            '<p style="margin:6px 0 2px;font-size:12px;color:#334155;"><strong>Estimated Length:</strong> ' + gl.length + '</p>' +
+            '<p style="margin:2px 0 0;font-size:11.8px;color:#475569;line-height:1.4;">' + gl.desc + '</p>' +
+            '<div style="margin-top:8px;"><button type="button" class="btn mini primary" onclick="window.showLineDetailsById(\'' + gl.id + '\')">Circuit Details ↗</button></div>' +
+          '</div>'
+        );
+        var targetGroup = v === "500" ? layers.grid500 : (v === "220" ? layers.grid220 : layers.grid110);
+        lineLayer.addTo(targetGroup);
+        gridCounts[v] = (gridCounts[v] || 0) + 1;
+      });
+
+      SUBSTATIONS.forEach(function (sub) {
+        var col = sub.voltage === "500" ? COLORS.g500 : COLORS.g220;
+        var m = L.circleMarker([sub.lat, sub.lon], {
+          radius: sub.voltage === "500" ? 6 : 4.5,
+          color: "#0b0f16",
+          weight: 1,
+          fillColor: col,
+          fillOpacity: 0.95
+        });
+        m.bindTooltip("<b>" + sub.name + "</b><br>" + sub.voltage + " kV Substation", { direction: "top" });
+        m.on("click", function () {
+          showSubstationDetails({
+            id: sub.name,
+            name: sub.name,
+            kv: parseInt(sub.voltage, 10),
+            lv: [parseInt(sub.voltage, 10)],
+            kind: "substation",
+            place: sub.loc,
+            lat: sub.lat,
+            lon: sub.lon,
+            tmva: sub.capacity
+          });
+        });
+        m.addTo(layers.substations);
+        gridCounts.substations++;
+      });
+      updateGridCountsUI();
+      initGridInspector();
+    }
+
+    function renderFullGrid(d, sldData) {
+      if (sldData) sldManifest = sldData;
+      allGridLines = d.lines || [];
+      allGridSubstations = d.substations || [];
+
+      d.substations.forEach(function (x) {
+        gridSubMap.set(x.id, x);
+      });
+
+      // Index lines into adjacency map and gridLineMap
+      d.lines.forEach(function (l, idx) {
+        var lineId = l.id || ("line_" + l.a + "_" + l.b + "_" + l.kv + "_" + idx);
+        l.id = lineId;
+        gridLineMap.set(lineId, l);
+
+        if (!gridAdjMap.has(l.a)) gridAdjMap.set(l.a, []);
+        if (!gridAdjMap.has(l.b)) gridAdjMap.set(l.b, []);
+        gridAdjMap.get(l.a).push(l);
+        gridAdjMap.get(l.b).push(l);
+
+        if (l.lat1 == null || l.lat2 == null) return;
+        var kv = l.kv;
+        var targetGroup = kv === 500 ? layers.grid500 : (kv === 220 ? layers.grid220 : layers.grid110);
+        var strokeColor = kv === 500 ? COLORS.g500 : (kv === 220 ? COLORS.g220 : COLORS.g110);
+        var isDashed = Boolean(l.dashed);
+
+        var pl = L.polyline([[l.lat1, l.lon1], [l.lat2, l.lon2]], {
+          color: l.susp ? "#f59e0b" : strokeColor,
+          weight: l.susp ? 1.2 : (KVW[kv] || 1.2),
+          opacity: l.susp ? 0.6 : (isDashed ? 0.55 : 0.85),
+          dashArray: l.susp ? "2, 6" : (isDashed ? "5, 5" : null),
+          interactive: true
+        });
+
+        var subA = gridSubMap.get(l.a);
+        var subB = gridSubMap.get(l.b);
+        var nameA = subA ? subA.name : l.a;
+        var nameB = subB ? subB.name : l.b;
+
+        var tipContent = "<strong>" + nameA + " — " + nameB + "</strong><br>" +
+          "<span style='font-weight:700;color:" + strokeColor + ";'>" + kv + " kV</span>" +
+          (isDashed ? " · 2025 Plan" : "") +
+          (l.cond ? "<br>Conductor: " + l.cond : "") +
+          (l.km ? "<br>Length: " + Number(l.km).toLocaleString('en-US') + " km" : "") +
+          (l.susp ? "<br><span style='color:#f59e0b;'>⚠️ Suspicious route: " + l.gkm + " km</span>" : "");
+        pl.bindTooltip(tipContent, { sticky: true });
+
+        pl.on("click", function (e) {
+          L.DomEvent.stopPropagation(e);
+          var popHTML = '<div style="min-width:220px;font-family:inherit;">' +
+            '<strong style="font-size:13.5px;color:#0f172a;">' + nameA + ' — ' + nameB + '</strong><br>' +
+            '<span style="display:inline-block;margin:3px 0;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;background:' + strokeColor + '">' +
+              kv + ' kV Circuit' + (isDashed ? ' (2025 Plan)' : '') + '</span>' +
+            '<table style="width:100%;margin-top:6px;font-size:12px;border-collapse:collapse;">' +
+              (l.km ? '<tr><td style="color:#64748b;padding:2px 0;">Length:</td><td><strong>' + Number(l.km).toLocaleString('en-US') + ' km</strong></td></tr>' : '') +
+              (l.cond ? '<tr><td style="color:#64748b;padding:2px 0;">Conductor:</td><td><code>' + l.cond + '</code></td></tr>' : '') +
+            '</table>' +
+            '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' +
+              '<button type="button" class="btn mini primary" onclick="window.showLineDetailsById(\'' + lineId + '\')">Circuit Details ↗</button>' +
+              (subA ? '<button type="button" class="btn mini" onclick="window.viewSubstationModal(\'' + subA.id + '\')">⚡ ' + nameA + '</button>' : '') +
+              (subB ? '<button type="button" class="btn mini" onclick="window.viewSubstationModal(\'' + subB.id + '\')">⚡ ' + nameB + '</button>' : '') +
+            '</div>' +
+          '</div>';
+          L.popup().setLatLng(e.latlng).setContent(popHTML).openOn(map);
+        });
+
+        pl.addTo(targetGroup);
+        gridCounts[String(kv)] = (gridCounts[String(kv)] || 0) + 1;
+      });
+
+      // Render Substations
+      var k = getZoomScale();
+      var kindLabels = {
+        substation: "Substation",
+        plant_yard: "Plant Switchyard",
+        switching_station: "Switching Station"
+      };
+
+      d.substations.forEach(function (x) {
+        if (x.lat == null || x.lon == null) return;
+        var kv = x.kv || 110;
+        var col = kv === 500 ? COLORS.g500 : (kv === 220 ? COLORS.g220 : COLORS.g110);
+        var isPlantYard = x.kind === "plant_yard";
+
+        var m = L.circleMarker([x.lat, x.lon], {
+          radius: Math.max(1.2, (KVR[kv] || 2.4) * k),
+          color: isPlantYard ? col : "#0b0f16",
+          weight: isPlantYard ? Math.max(1.0, 1.8 * k) : 0.8 * k,
+          fillColor: isPlantYard ? "#0b0f16" : col,
+          fillOpacity: isPlantYard ? 0.75 : 0.95
+        });
+
+        var tip = "<strong>" + x.name + "</strong><br>" +
+          (x.lv ? x.lv.join(" / ") : kv) + " kV · " + (kindLabels[x.kind] || x.kind) +
+          (x.gn ? "<br>" + x.gn + " units · " + Number(x.gmw).toLocaleString("en-US") + " MW" : "") +
+          (x.place ? "<br><span style='color:#94a3b8;font-size:11px;'>" + x.place + "</span>" : "");
+        m.bindTooltip(tip, { direction: "top" });
+
+        m.on("click", function (e) {
+          L.DomEvent.stopPropagation(e);
+          showSubstationDetails(x);
+        });
+
+        m.addTo(layers.substations);
+        subMarkersList.push({ sub: x, marker: m });
+        gridCounts.substations++;
+      });
+
+      updateGridCountsUI();
+      if (d.stats) updateInventoryUI(d.stats);
+      initGridInspector();
+    }
+
+    // Attempt to load full GridTwinVN dataset
+    fetch("data/grid.json")
+      .then(function (r) {
+        if (!r.ok) throw new Error("Failed to load data/grid.json");
+        return r.json();
+      })
+      .then(function (gridData) {
+        return fetch("sld/manifest.json")
+          .then(function (res) { return res.ok ? res.json() : { sld: [], nad: [] }; })
+          .catch(function () { return { sld: [], nad: [] }; })
+          .then(function (sldData) {
+            renderFullGrid(gridData, sldData);
+          });
+      })
+      .catch(function (err) {
+        console.warn("Loading fallback embedded grid data:", err);
+        renderFallbackGrid();
+      });
 
     /* ---------------- Pin Icons ---------------- */
     function pinIcon(type) {
@@ -2475,7 +3273,18 @@
       return co.projects.some(function (p) { return types.has(p.type); });
     }
 
+    var showProjectPins = false;
+
     function renderCompanyMarkers(fit) {
+      if (!showProjectPins) {
+        layers.projects.clearLayers();
+        var elC = document.getElementById("c-projects");
+        if (elC) elC.textContent = "Hidden (click Energy Zone)";
+        var elReg = document.getElementById("reg-count");
+        if (elReg) elReg.textContent = projectMarkers.length + " available";
+        return;
+      }
+
       /* Pins follow the ticked energy types and/or the ticked companies.
          Every type ticked (the default) means no type filter. */
       var types = activeEnergyTypes();
@@ -2484,7 +3293,7 @@
          therefore left out of a single-type selection instead of showing both. */
       var typeFilter = types.size < EZ_TYPES.length;
       var filtering = selectedCompanies.size > 0 || typeFilter;
-      if (filtering && !map.hasLayer(layers.projects)) {
+      if (!map.hasLayer(layers.projects)) {
         map.addLayer(layers.projects);
       }
 
@@ -2520,6 +3329,7 @@
     }
 
     function zoomToProject(p) {
+      showProjectPins = true;
       var hit = findMarker(p);
       if (!hit) return;
       if (!map.hasLayer(layers.projects)) {
@@ -2536,7 +3346,11 @@
     var modalContentEl = document.getElementById("modal-details-content");
     var modalCloseEl = document.getElementById("modal-details-close");
 
-    function closeModal() { modalEl.classList.remove("active"); }
+    function closeModal() {
+      modalEl.classList.remove("active");
+      var card = modalEl.querySelector(".modal-card");
+      if (card) card.classList.remove("modal-wide");
+    }
     modalCloseEl.addEventListener("click", closeModal);
     modalEl.addEventListener("click", function (e) { if (e.target === modalEl) closeModal(); });
 
@@ -2603,6 +3417,272 @@
         closeModal();
         zoomToProject(p);
       });
+    }
+
+    function showSubstationDetails(sub) {
+      modalTitleEl.textContent = sub.name;
+      var card = modalEl.querySelector(".modal-card");
+      if (card) card.classList.add("modal-wide");
+      modalEl.classList.add("active");
+
+      var kindMap = {
+        substation: "Substation",
+        plant_yard: "Power Plant Switchyard",
+        switching_station: "Switching Station"
+      };
+
+      // Find matching diagrams from manifest
+      var sldItems = (sldManifest.sld || []).filter(function (s) { return s.sub === sub.id; });
+      var nadItems = (sldManifest.nad || []).filter(function (s) { return s.sub === sub.id; });
+
+      // Connected circuits
+      var conns = gridAdjMap.get(sub.id) || [];
+      var byKv = {};
+      conns.forEach(function (l) { byKv[l.kv] = (byKv[l.kv] || 0) + 1; });
+
+      // Bays formatting
+      var baysHTML = "";
+      if (sub.bays) {
+        baysHTML = '<div class="co-sec" style="margin-top:14px;"><h4 style="margin:0 0 6px;font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Drawing Bays</h4><div class="bay-grid">';
+        sub.bays.split(";").filter(Boolean).forEach(function (seg) {
+          var parts = seg.split(":");
+          var kvLabel = parts[0] ? parts[0] + "kV" : "";
+          (parts[1] || "").split(",").filter(Boolean).forEach(function (code) {
+            baysHTML += '<span class="bay-chip">' + (kvLabel ? '<strong style="color:var(--primary);margin-right:2px;">' + kvLabel + ':</strong>' : '') + code + '</span>';
+          });
+        });
+        baysHTML += '</div></div>';
+      }
+
+      var sldNavHTML = "";
+      if (sldItems.length > 0 || nadItems.length > 0) {
+        sldNavHTML = '<div class="sld-section">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<h4 style="margin:0;font-size:12px;text-transform:uppercase;color:var(--ink);letter-spacing:.05em;">Substation SLD & Regional Network Diagram (NAD)</h4>' +
+            '<span style="font-size:11px;color:var(--muted);">PowSyBl node-breaker vector diagram</span>' +
+          '</div>' +
+          '<div class="sld-nav">';
+        
+        sldItems.forEach(function (item, idx) {
+          sldNavHTML += '<button type="button" class="btn-sld' + (idx === 0 ? ' active' : '') + '" data-file="' + item.file + '" data-title="' + (item.title || item.file) + '">⚡ ' + (item.title || ('SLD ' + item.kv + 'kV')) + '</button>';
+        });
+        nadItems.forEach(function (item) {
+          sldNavHTML += '<button type="button" class="btn-sld' + (sldItems.length === 0 ? ' active' : '') + '" data-file="' + item.file + '" data-title="' + (item.title || item.file) + '">🌐 ' + (item.title || 'Regional Diagram NAD') + '</button>';
+        });
+        sldNavHTML += '</div>' +
+          '<div class="sld-viewer-card">' +
+            '<div class="sld-toolbar">' +
+              '<span id="sld-active-title" style="font-weight:600;"></span>' +
+              '<div class="sld-tools">' +
+                '<button type="button" id="sld-zoom-out">− Zoom Out</button>' +
+                '<button type="button" id="sld-zoom-reset">Fit Frame</button>' +
+                '<button type="button" id="sld-zoom-in">+ Zoom In</button>' +
+                '<a id="sld-open-link" href="#" target="_blank" rel="noopener" style="color:#38bdf8;margin-left:6px;font-size:11px;text-decoration:none;display:inline-flex;align-items:center;">Open SVG ↗</a>' +
+              '</div>' +
+            '</div>' +
+            '<div class="sld-canvas-wrap" id="sld-canvas-wrap">' +
+              '<div id="sld-svg-host" style="width:100%;display:flex;align-items:center;justify-content:center;">' +
+                '<p style="color:#94a3b8;font-size:12px;">Loading diagram...</p>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }
+
+      var connectedHTML = "";
+      if (conns.length > 0) {
+        connectedHTML = '<div class="co-sec" style="margin-top:14px;"><h4 style="margin:0 0 6px;font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Connected Transmission Circuits (' + conns.length + ' circuits)</h4><div style="max-height:140px;overflow-y:auto;font-size:12px;">';
+        conns.slice(0, 30).forEach(function (l) {
+          var targetId = l.a === sub.id ? l.b : l.a;
+          var targetSub = gridSubMap.get(targetId);
+          var targetName = targetSub ? targetSub.name : targetId;
+          connectedHTML += '<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line-subtle);">' +
+            '<span style="cursor:pointer;color:var(--primary);text-decoration:underline;" class="sub-link" data-id="' + targetId + '">' + targetName + '</span>' +
+            '<span style="color:var(--muted);">' + l.kv + ' kV' + (l.km ? ' · ' + Number(l.km).toLocaleString('en-US') + ' km' : '') + '</span>' +
+          '</div>';
+        });
+        if (conns.length > 30) {
+          connectedHTML += '<div style="color:var(--muted);font-size:11px;padding-top:4px;">+ ' + (conns.length - 30) + ' other circuits</div>';
+        }
+        connectedHTML += '</div></div>';
+      }
+
+      var mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + sub.lat + "," + sub.lon;
+
+      modalContentEl.innerHTML = '' +
+        '<div class="sub-pills">' +
+          (sub.lv ? sub.lv.map(function (v) { return '<span class="pill p' + v + '">' + v + ' kV</span>'; }).join('') : '<span class="pill p' + (sub.kv || 110) + '">' + (sub.kv || 110) + ' kV</span>') +
+          '<span class="pill pkind">' + (kindMap[sub.kind] || sub.kind) + '</span>' +
+          (sub.dashed ? '<span class="pill pdashed">2025 Plan</span>' : '') +
+        '</div>' +
+        (sub.place ? '<p style="margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.4;">📍 ' + sub.place + '</p>' : '') +
+        '<table class="co-table">' +
+          '<tr><th>Voltage Levels</th><td><strong>' + (sub.lv ? sub.lv.join(" / ") + " kV" : (sub.kv || "—") + " kV") + '</strong></td></tr>' +
+          '<tr><th>Node Type</th><td>' + (kindMap[sub.kind] || sub.kind) + '</td></tr>' +
+          '<tr><th>Coordinates</th><td><code>' + sub.lat.toFixed(4) + ', ' + sub.lon.toFixed(4) + '</code></td></tr>' +
+          '<tr><th>Power Transformers</th><td>' + (sub.tn ? sub.tn + ' transformers (' + Number(sub.tmva).toLocaleString('en-US') + ' MVA)' : (sub.tmva ? sub.tmva : '—')) + '</td></tr>' +
+          '<tr><th>Generator Units</th><td>' + (sub.gn ? sub.gn + ' units (' + Number(sub.gmw).toLocaleString('en-US') + ' MW)' : '—') + '</td></tr>' +
+          '<tr><th>Switchgear & Busbars</th><td>' + (sub.sw ? Number(sub.sw).toLocaleString('en-US') + ' switches' : '—') + (sub.bb ? ' · ' + sub.bb + ' busbars' : '') + '</td></tr>' +
+          (sub.gsrc ? '<tr><th>Power Source</th><td>' + (sub.gsrc_txt || sub.gsrc) + '</td></tr>' : '') +
+        '</table>' +
+        baysHTML +
+        connectedHTML +
+        sldNavHTML +
+        '<div class="co-external-links">' +
+          '<button class="btn mini primary" id="sub-zoom-btn" type="button">📍 Zoom to Substation on Map</button>' +
+          '<a class="btn mini" href="' + mapsUrl + '" target="_blank" rel="noopener">🗺️ Open in Google Maps</a>' +
+        '</div>';
+
+      document.getElementById("sub-zoom-btn").addEventListener("click", function () {
+        closeModal();
+        map.setView([sub.lat, sub.lon], Math.max(map.getZoom(), 12));
+      });
+
+      // Sub-links click
+      modalContentEl.querySelectorAll(".sub-link").forEach(function (lnk) {
+        lnk.addEventListener("click", function () {
+          var targetSub = gridSubMap.get(lnk.getAttribute("data-id"));
+          if (targetSub) showSubstationDetails(targetSub);
+        });
+      });
+
+      // SLD viewer interactive logic
+      if (sldItems.length > 0 || nadItems.length > 0) {
+        var activeFile = sldItems.length > 0 ? sldItems[0].file : nadItems[0].file;
+        var activeTitle = sldItems.length > 0 ? (sldItems[0].title || sldItems[0].file) : (nadItems[0].title || nadItems[0].file);
+        var currentZoom = 1;
+
+        function loadSvg(filePath, titleText) {
+          activeFile = filePath;
+          activeTitle = titleText;
+          var titleEl = document.getElementById("sld-active-title");
+          var openLink = document.getElementById("sld-open-link");
+          var hostEl = document.getElementById("sld-svg-host");
+          if (titleEl) titleEl.textContent = titleText;
+          if (openLink) openLink.href = filePath;
+          if (hostEl) hostEl.innerHTML = '<p style="color:#94a3b8;font-size:12px;">Loading diagram...</p>';
+          currentZoom = 1;
+
+          fetch(filePath)
+            .then(function (r) {
+              if (!r.ok) throw new Error("SVG not found");
+              return r.text();
+            })
+            .then(function (svgText) {
+              if (hostEl) {
+                hostEl.innerHTML = svgText;
+                var svgEl = hostEl.querySelector("svg");
+                if (svgEl) {
+                  var w = svgEl.getAttribute("width"), h = svgEl.getAttribute("height");
+                  if (!svgEl.getAttribute("viewBox") && w && h) {
+                    svgEl.setAttribute("viewBox", "0 0 " + parseFloat(w) + " " + parseFloat(h));
+                  }
+                  svgEl.removeAttribute("width");
+                  svgEl.removeAttribute("height");
+                  svgEl.style.width = "100%";
+                  svgEl.style.height = "auto";
+                }
+              }
+            })
+            .catch(function () {
+              if (hostEl) hostEl.innerHTML = '<p style="color:#f87171;font-size:12px;">SVG diagram file not found.</p>';
+            });
+        }
+
+        modalContentEl.querySelectorAll(".btn-sld").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            modalContentEl.querySelectorAll(".btn-sld").forEach(function (b) { b.classList.remove("active"); });
+            btn.classList.add("active");
+            loadSvg(btn.getAttribute("data-file"), btn.getAttribute("data-title"));
+          });
+        });
+
+        var btnZoomIn = document.getElementById("sld-zoom-in");
+        var btnZoomOut = document.getElementById("sld-zoom-out");
+        var btnZoomReset = document.getElementById("sld-zoom-reset");
+        if (btnZoomIn) btnZoomIn.addEventListener("click", function () {
+          currentZoom = Math.min(5, currentZoom * 1.3);
+          var s = document.querySelector("#sld-svg-host svg");
+          if (s) s.style.width = (100 * currentZoom) + "%";
+        });
+        if (btnZoomOut) btnZoomOut.addEventListener("click", function () {
+          currentZoom = Math.max(0.4, currentZoom / 1.3);
+          var s = document.querySelector("#sld-svg-host svg");
+          if (s) s.style.width = (100 * currentZoom) + "%";
+        });
+        if (btnZoomReset) btnZoomReset.addEventListener("click", function () {
+          currentZoom = 1;
+          var s = document.querySelector("#sld-svg-host svg");
+          if (s) s.style.width = "100%";
+        });
+
+        loadSvg(activeFile, activeTitle);
+      }
+    }
+
+    function showInventoryModal(s) {
+      if (!s) s = gridStatsData || {};
+      modalTitleEl.textContent = "Grid Model Inventory";
+      var card = modalEl.querySelector(".modal-card");
+      if (card) card.classList.add("modal-wide");
+      modalEl.classList.add("active");
+
+      var fuelLabels = {
+        HYDRO: ["#38bdf8", "Hydropower"],
+        THERMAL: ["#f97316", "Thermal"],
+        SOLAR: ["#facc15", "Solar"],
+        WIND: ["#a78bfa", "Wind"],
+        OTHER: ["#94a3b8", "Other"]
+      };
+      var kindLabels = {
+        substation: "Substation",
+        plant_yard: "Power Plant Switchyard",
+        switching_station: "Switching Station"
+      };
+
+      var fuelRows = s.fuel ? Object.keys(s.fuel).map(function (k) {
+        var f = s.fuel[k];
+        var info = fuelLabels[k] || ["#94a3b8", k];
+        var pct = s.gen_mw ? ((100 * f.mw) / s.gen_mw).toFixed(1) : "0";
+        return '<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + info[0] + ';margin-right:6px;"></span>' + info[1] + '</td>' +
+          '<td class="num">' + Number(f.n).toLocaleString("en-US") + '</td>' +
+          '<td class="num"><strong>' + Number(f.mw).toLocaleString("en-US") + ' MW</strong></td>' +
+          '<td class="num">' + pct + '%</td></tr>';
+      }).join('') : '';
+
+      var kindRows = s.kinds ? Object.keys(s.kinds).map(function (k) {
+        return '<tr><td>' + (kindLabels[k] || k) + '</td><td class="num"><strong>' + Number(s.kinds[k]).toLocaleString("en-US") + '</strong></td></tr>';
+      }).join('') : '';
+
+      modalContentEl.innerHTML = '' +
+        '<div class="stat-cards" style="grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:10px;margin-bottom:20px;">' +
+          '<div class="sc"><div class="n">' + Number(s.substations || 1915).toLocaleString("en-US") + '</div><div class="l">Grid Nodes</div><div class="s">' + Number(s.geolocated || 989).toLocaleString("en-US") + ' geolocated (' + Math.round((100 * (s.geolocated || 989)) / (s.substations || 1915)) + '%)</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.voltage_levels || 2303).toLocaleString("en-US") + '</div><div class="l">Voltage Levels</div><div class="s">' + Number(s.busbars || 2909).toLocaleString("en-US") + ' busbars</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.lines || 2877).toLocaleString("en-US") + '</div><div class="l">Transmission Circuits</div><div class="s">' + Number(s.lines_drawn || 1503).toLocaleString("en-US") + ' geocoded & mapped</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.switches || 19642).toLocaleString("en-US") + '</div><div class="l">Switching Devices</div><div class="s">circuit breakers & disconnectors</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.transformers || 1017).toLocaleString("en-US") + '</div><div class="l">Power Transformers</div><div class="s">two-winding transformers</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.generators || 1523).toLocaleString("en-US") + '</div><div class="l">Generator Units</div><div class="s">' + Number(s.gen_mw || 80612).toLocaleString("en-US") + ' MW installed</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.shunts || 530).toLocaleString("en-US") + '</div><div class="l">Shunt Devices</div><div class="s">reactors & capacitors</div></div>' +
+          '<div class="sc"><div class="n">' + Number(s.loads || 1274).toLocaleString("en-US") + '</div><div class="l">Load Nodes</div><div class="s">p0 = 0, static load model</div></div>' +
+        '</div>' +
+
+        '<h4 style="margin:16px 0 6px;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">By Voltage Level</h4>' +
+        '<table class="inv-table"><thead><tr><th>Level</th><th class="num">Transmission Circuits</th><th class="num">Estimated Length (km)</th><th class="num">Nodes with this Voltage</th></tr></thead><tbody>' +
+          '<tr><td><span class="pill p500">500 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["500"]) || 180).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_500 || 15888).toLocaleString("en-US") + ' km</td><td class="num">48</td></tr>' +
+          '<tr><td><span class="pill p220">220 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["220"]) || 780).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_220 || 27474).toLocaleString("en-US") + ' km</td><td class="num">276</td></tr>' +
+          '<tr><td><span class="pill p110">110 kV</span></td><td class="num">' + Number((s.lines_by_kv && s.lines_by_kv["110"]) || 1917).toLocaleString("en-US") + '</td><td class="num">' + Number(s.km_110 || 21553).toLocaleString("en-US") + ' km</td><td class="num">1,831</td></tr>' +
+        '</tbody></table>' +
+
+        '<h4 style="margin:16px 0 6px;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Grid Generation Mix</h4>' +
+        '<table class="inv-table"><thead><tr><th>Generation Source</th><th class="num">Units</th><th class="num">Installed Capacity (MW)</th><th class="num">Share</th></tr></thead><tbody>' +
+          fuelRows +
+        '</tbody></table>' +
+
+        '<h4 style="margin:16px 0 6px;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;">Substation Types</h4>' +
+        '<table class="inv-table"><thead><tr><th>Type</th><th class="num">Count</th></tr></thead><tbody>' +
+          kindRows +
+        '</tbody></table>' +
+        '<div class="co-external-links"><button class="btn mini primary" onclick="closeModal()" type="button">Close</button></div>';
     }
 
     /* ---------------- Companies List UI ----------------
@@ -3105,8 +4185,10 @@
         '<span><span class="zt">' + z.name + '</span><br>' +
         '<span class="zm">' + z.rating + ' potential</span></span>';
       b.addEventListener("click", function () {
+        showProjectPins = true;
         map.fitBounds(zoneLayers[z.name].getBounds(), { padding:[40,40] });
         zoneLayers[z.name].openPopup();
+        syncCompanyUI(false);
       });
       li.appendChild(b);
       return li;
@@ -3126,6 +4208,7 @@
 
     /* Selecting a type switches every other type off (and selecting it again restores all). */
     function applyTypeSelection(keys) {
+      showProjectPins = true;
       var want = {};
       keys.forEach(function (k) { want[k] = true; });
       EZ_TYPES.forEach(function (t) {
@@ -3142,6 +4225,7 @@
     function selectOnlyType(key) { applyTypeSelection([key]); }
     function selectAllTypes() { applyTypeSelection(EZ_TYPES.map(function (t) { return t.key; })); }
     document.getElementById("ez-all").addEventListener("click", function () {
+      showProjectPins = true;
       selectAllTypes();
       var projectsBox = document.getElementById("projects-box");
       if (projectsBox) projectsBox.open = true;
@@ -3153,6 +4237,7 @@
        ends by closing the box, which showAllProjects() then reopens. */
     document.getElementById("co-show-all").addEventListener("click", function () {
       closeMenus();
+      showProjectPins = true;
       if (searchEl.value) searchEl.value = "";
       selectAllTypes();
       showAllProjects();
@@ -3171,6 +4256,7 @@
         '<input type="checkbox" id="t-' + t.key + '" checked aria-label="Show ' + t.label + '" />';
       row.addEventListener("click", function (e) {
         if (e.target.closest("input")) return;
+        showProjectPins = true;
         /* Click a type to select it alone; click it again to show all types. */
         var box = document.getElementById("t-" + t.key);
         if (box.checked && activeEnergyTypes().size === 1) {
@@ -3272,44 +4358,67 @@
     };
     scaleNote.addTo(map);
 
-    /* ---------------- Power Grid & Substations panel (bottom-right, above the legend)
-       Legend only: the checkboxes were removed, so every listed layer is always
-       drawn. The counts still update from the live layer build. ---------------- */
-    var gridPanel = L.control({ position:"bottomright" });
-    gridPanel.onAdd = function () {
-      var div = L.DomUtil.create("div", "leaflet-control grid-panel");
-      div.innerHTML =
-        '<h4 class="gp-toggle">Layers</h4>' +
-        '<div class="gp-body">' +
-          '<div class="row"><span class="grid-swatch g500"></span>' +
-            '<label>500 kV Transmission Lines</label>' +
-            '<span class="count" id="c-grid-500"></span></div>' +
-          '<div class="row"><span class="grid-swatch g220"></span>' +
-            '<label>220 kV Regional Lines</label>' +
-            '<span class="count" id="c-grid-220"></span></div>' +
-          '<div class="row">' +
-            '<span class="grid-swatch subst"></span>' +
-            '<label>Substations (500kV / 220kV)</label>' +
-            '<span class="count" id="c-substations"></span></div>' +
-          '<div class="row" style="margin-top:6px; padding-top:8px;">' +
-            '<span class="swatch sw" style="background:var(--primary); border-radius:50%;"></span>' +
-            '<label>Company projects</label>' +
-            '<span class="count" id="c-projects"></span></div>' +
-        '</div>';
-      /* On phones the panel collapses to its heading; tapping it toggles the layer rows. */
-      div.querySelector(".gp-toggle").addEventListener("click", function () {
-        div.classList.toggle("gp-open");
-      });
-      L.DomEvent.disableClickPropagation(div);
-      L.DomEvent.disableScrollPropagation(div);
-      return div;
-    };
-    gridPanel.addTo(map);
+    /* ---------------- Grid & Transmission Layer Toggles (Sidebar) ---------------- */
+    var chkG500 = document.getElementById("chk-grid-500");
+    var chkG220 = document.getElementById("chk-grid-220");
+    var chkG110 = document.getElementById("chk-grid-110");
+    var chkSub  = document.getElementById("chk-substations");
 
-    /* ---------------- Grid layer counts ---------------- */
-    document.getElementById("c-grid-500").textContent = gridCounts["500"] + " lines";
-    document.getElementById("c-grid-220").textContent = gridCounts["220"] + " lines";
-    document.getElementById("c-substations").textContent = gridCounts.substations + " nodes";
+    if (chkG500) {
+      chkG500.addEventListener("change", function () {
+        if (this.checked) map.addLayer(layers.grid500); else map.removeLayer(layers.grid500);
+      });
+    }
+    if (chkG220) {
+      chkG220.addEventListener("change", function () {
+        if (this.checked) map.addLayer(layers.grid220); else map.removeLayer(layers.grid220);
+      });
+    }
+    if (chkG110) {
+      chkG110.addEventListener("change", function () {
+        if (this.checked) map.addLayer(layers.grid110); else map.removeLayer(layers.grid110);
+      });
+    }
+    if (chkSub) {
+      chkSub.addEventListener("change", function () {
+        if (this.checked) map.addLayer(layers.substations); else map.removeLayer(layers.substations);
+      });
+    }
+
+    var gridAllBtn = document.getElementById("grid-all");
+    var gridClearBtn = document.getElementById("grid-clear");
+
+    if (gridAllBtn) {
+      gridAllBtn.addEventListener("click", function () {
+        [chkG500, chkG220, chkG110, chkSub].forEach(function (chk) {
+          if (chk && !chk.checked) {
+            chk.checked = true;
+            chk.dispatchEvent(new Event("change"));
+          }
+        });
+      });
+    }
+    if (gridClearBtn) {
+      gridClearBtn.addEventListener("click", function () {
+        [chkG500, chkG220, chkG110, chkSub].forEach(function (chk) {
+          if (chk && chk.checked) {
+            chk.checked = false;
+            chk.dispatchEvent(new Event("change"));
+          }
+        });
+      });
+    }
+
+    updateGridCountsUI();
+
+    var btnOpenInv = document.getElementById("btn-open-inv-modal");
+    if (btnOpenInv) {
+      btnOpenInv.addEventListener("click", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        showInventoryModal(gridStatsData);
+      });
+    }
 
     /* ---------------- Layer toggles ----------------
        The "Layers" panel (bottom-right) lost its checkboxes and is now a legend,
@@ -3342,7 +4451,7 @@
            showAllProjects() replaces syncProjectsBox() here so the Projects box
            actually opens and lists them — syncProjectsBox() alone would leave it
            shut whenever every type is ticked. */
-        if (isEnergyType(key)) { applySearch(); syncCompanyUI(false); showAllProjects(); }
+        if (isEnergyType(key)) { showProjectPins = true; applySearch(); syncCompanyUI(false); showAllProjects(); }
       });
     });
 
@@ -3474,17 +4583,19 @@
     // fold the section every time you used one. The buttons' own handlers still
     // run — this only stops the event reaching the summary.
     (function () {
-      var d = document.getElementById("ez-box");
-      if (!d) return;
-      var s = d.querySelector("summary");
-      if (s) {
-        s.addEventListener("click", function (e) {
-          if (e.target.closest && e.target.closest(".ez-head-actions")) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-        });
-      }
+      ["ez-box", "grid-box"].forEach(function (boxId) {
+        var d = document.getElementById(boxId);
+        if (!d) return;
+        var s = d.querySelector("summary");
+        if (s) {
+          s.addEventListener("click", function (e) {
+            if (e.target.closest && e.target.closest(".ez-head-actions")) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          });
+        }
+      });
     })();
   </script>
   <script>

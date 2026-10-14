@@ -1,0 +1,592 @@
+<svg width="483.86" height="600.00" viewBox="-1710.65 -1190.59 3828.83 4747.82" xmlns="http://www.w3.org/2000/svg">
+    <style><![CDATA[.nad-branch-edges .nad-edge-path, .nad-3wt-edges .nad-edge-path {stroke: var(--nad-vl-color, lightgrey); stroke-width: 5; fill: none}
+.nad-branch-edges .nad-winding, .nad-3wt-nodes .nad-winding {stroke: var(--nad-vl-color, lightgrey); stroke-width: 5; fill: none}
+.nad-text-edges {stroke: black; stroke-width: 3; stroke-dasharray: 6,7; fill: none}
+.nad-disconnected.nad-edge-path {stroke-dasharray: 10,10}
+.nad-injections .nad-disconnected .nad-edge-path, .nad-injections .nad-disconnected circle {stroke: lightgrey}
+.nad-injections .nad-edge-path {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; fill: none}
+.nad-injections circle {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; fill: none}
+.nad-vl-nodes .nad-busnode {fill: var(--nad-vl-color, lightgrey)}
+.nad-vl-nodes circle.nad-unknown-busnode {stroke: var(--nad-vl-color, #808080); stroke-width: 5; stroke-dasharray: 5,5; fill: none}
+.nad-hvdc-edge polyline.nad-hvdc {stroke: grey; stroke-width: 40}
+.nad-branch-edges .nad-tie-line-edge .nad-edge-path {stroke-width: 7}
+.nad-pst-arrow {stroke: #6a6a6a; stroke-width: 4; stroke-linecap: round; fill: none}
+.nad-active {fill: #546e7a}
+.nad-reactive {fill: #0277bd}
+.nad-current {fill: #bd4802}
+.nad-text-background {flood-color: #90a4aeaa}
+.nad-text-nodes {font: 25px serif; fill: black; dominant-baseline: central}
+.nad-text-nodes foreignObject {overflow: visible; color: black}
+.nad-label-box {background-color: #6c6c6c20; width: max-content; padding: 10px; border-radius: 10px;}
+.nad-legend-square {display: inline-block; margin-right: 10px; width: 20px; height: 20px; background: var(--nad-vl-color, black);}
+.nad-edge-infos text, .nad-edge-label text {font: 20px serif; dominant-baseline:middle; stroke: #FFFFFFAA; stroke-width: 10; stroke-linejoin:round; paint-order: stroke}
+.nad-disconnected {--nad-vl-color: #808080}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl0to30 {--nad-vl-color: #afb42b}
+.nad-vl0to30 .nad-bus-0 {--nad-vl-color: #827717}
+.nad-vl0to30 .nad-bus-1 {--nad-vl-color: #d4e157}
+.nad-vl0to30 .nad-bus-2 {--nad-vl-color: #e6ee9c}
+.nad-vl0to30 .nad-bus-3 {--nad-vl-color: #c0ca33}
+.nad-vl0to30 .nad-bus-4 {--nad-vl-color: #f0fc83}
+.nad-vl0to30 .nad-bus-5 {--nad-vl-color: #9e9d24}
+.nad-vl0to30 .nad-bus-6 {--nad-vl-color: #cddc39}
+.nad-vl0to30 .nad-bus-7 {--nad-vl-color: #dce775}
+.nad-vl0to30 .nad-bus-8 {--nad-vl-color: #ddfc88}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl30to50 {--nad-vl-color: #ef9a9a}
+.nad-vl30to50 .nad-bus-0 {--nad-vl-color: #c2185b}
+.nad-vl30to50 .nad-bus-1 {--nad-vl-color: #f06292}
+.nad-vl30to50 .nad-bus-2 {--nad-vl-color: #d81b60}
+.nad-vl30to50 .nad-bus-3 {--nad-vl-color: #ec407a}
+.nad-vl30to50 .nad-bus-4 {--nad-vl-color: #880e4f}
+.nad-vl30to50 .nad-bus-5 {--nad-vl-color: #ad1457}
+.nad-vl30to50 .nad-bus-6 {--nad-vl-color: #e91e63}
+.nad-vl30to50 .nad-bus-7 {--nad-vl-color: #f48fb1}
+.nad-vl30to50 .nad-bus-8 {--nad-vl-color: #f8bbd0}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl50to70 {--nad-vl-color: #9c27b0}
+.nad-vl50to70 .nad-bus-0 {--nad-vl-color: #7b1fa2}
+.nad-vl50to70 .nad-bus-1 {--nad-vl-color: #ba68c8}
+.nad-vl50to70 .nad-bus-2 {--nad-vl-color: #512da8}
+.nad-vl50to70 .nad-bus-3 {--nad-vl-color: #ab47bc}
+.nad-vl50to70 .nad-bus-4 {--nad-vl-color: #e1bee7}
+.nad-vl50to70 .nad-bus-5 {--nad-vl-color: #6a1b9a}
+.nad-vl50to70 .nad-bus-6 {--nad-vl-color: #4a148c}
+.nad-vl50to70 .nad-bus-7 {--nad-vl-color: #ce93d8}
+.nad-vl50to70 .nad-bus-8 {--nad-vl-color: #9575cd}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl70to120 {--nad-vl-color: #e65100}
+.nad-vl70to120 .nad-bus-0 {--nad-vl-color: #fb8c00}
+.nad-vl70to120 .nad-bus-1 {--nad-vl-color: #ffb74d}
+.nad-vl70to120 .nad-bus-2 {--nad-vl-color: #f57c00}
+.nad-vl70to120 .nad-bus-3 {--nad-vl-color: #ffa726}
+.nad-vl70to120 .nad-bus-4 {--nad-vl-color: #ffe0b2}
+.nad-vl70to120 .nad-bus-5 {--nad-vl-color: #ef6c00}
+.nad-vl70to120 .nad-bus-6 {--nad-vl-color: #ff9800}
+.nad-vl70to120 .nad-bus-7 {--nad-vl-color: #ffcc80}
+.nad-vl70to120 .nad-bus-8 {--nad-vl-color: #fff3e0}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl120to180 {--nad-vl-color: #00ACC1}
+.nad-vl120to180 .nad-bus-0 {--nad-vl-color: #4fc3f7}
+.nad-vl120to180 .nad-bus-1 {--nad-vl-color: #01579b}
+.nad-vl120to180 .nad-bus-2 {--nad-vl-color: #b3e5fc}
+.nad-vl120to180 .nad-bus-3 {--nad-vl-color: #039be5}
+.nad-vl120to180 .nad-bus-4 {--nad-vl-color: #81d4fa}
+.nad-vl120to180 .nad-bus-5 {--nad-vl-color: #0288d1}
+.nad-vl120to180 .nad-bus-6 {--nad-vl-color: #29b6f6}
+.nad-vl120to180 .nad-bus-7 {--nad-vl-color: #0277bd}
+.nad-vl120to180 .nad-bus-8 {--nad-vl-color: #03a9f4}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl180to300 {--nad-vl-color: #2e7d32}
+.nad-vl180to300 .nad-bus-0 {--nad-vl-color: #81c784}
+.nad-vl180to300 .nad-bus-1 {--nad-vl-color: #558b2f}
+.nad-vl180to300 .nad-bus-2 {--nad-vl-color: #c8e6c9}
+.nad-vl180to300 .nad-bus-3 {--nad-vl-color: #43a047}
+.nad-vl180to300 .nad-bus-4 {--nad-vl-color: #a5d6a7}
+.nad-vl180to300 .nad-bus-5 {--nad-vl-color: #388e3c}
+.nad-vl180to300 .nad-bus-6 {--nad-vl-color: #66bb6a}
+.nad-vl180to300 .nad-bus-7 {--nad-vl-color: #1b5e20}
+.nad-vl180to300 .nad-bus-8 {--nad-vl-color: #4caf50}
+:is(.nad-branch-edges, .nad-3wt-edges, .nad-3wt-nodes) .nad-vl300to500 {--nad-vl-color: #d32f2f}
+.nad-vl300to500 .nad-bus-0 {--nad-vl-color: #ef5350}
+.nad-vl300to500 .nad-bus-1 {--nad-vl-color: #ef9a9a}
+.nad-vl300to500 .nad-bus-2 {--nad-vl-color: #b71c1c}
+.nad-vl300to500 .nad-bus-3 {--nad-vl-color: #e57373}
+.nad-vl300to500 .nad-bus-4 {--nad-vl-color: #e53935}
+.nad-vl300to500 .nad-bus-5 {--nad-vl-color: #ff8a80}
+.nad-vl300to500 .nad-bus-6 {--nad-vl-color: #f44336}
+.nad-vl300to500 .nad-bus-7 {--nad-vl-color: #ffcdd2}
+.nad-vl300to500 .nad-bus-8 {--nad-vl-color: #c62828}
+.nad-branch-edges .nad-overload .nad-edge-path {animation: line-blink 3s infinite}
+.nad-vl-nodes .nad-overvoltage {animation: node-over-blink 3s infinite}
+.nad-vl-nodes .nad-undervoltage {animation: node-under-blink 3s infinite}
+.nad-highlight {stroke-width: 25; opacity: 0.2; fill: none;}
+.nad-highlight-0 {stroke: #e6e600;}
+.nad-highlight-1 {stroke: #b300b3;}
+.nad-highlight-2 {stroke: #2eb82e;}
+.nad-highlight-3 {stroke: #e67300;}
+.nad-highlight-4 {stroke: #0000ff;}
+@keyframes line-blink {
+  0%, 80%, 100% {stroke: var(--nad-vl-color, black); stroke-width: 5}
+  40% {stroke: #FFEB3B; stroke-width: 15}
+}
+@keyframes node-over-blink {
+  0%, 80%, 100% {stroke: white; stroke-width: 0}
+  40% {stroke: #ff5722; stroke-width: 15}
+}
+@keyframes node-under-blink {
+  0%, 80%, 100% {stroke: white; stroke-width: 0}
+  40% {stroke: #00BCD4; stroke-width: 15}
+}
+.nad-load {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; fill: none}
+.nad-battery {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; fill: none}
+.nad-generator {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; stroke-linecap: round; fill: none}
+.nad-capacitor {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; fill: none}
+.nad-inductor {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; fill: none}
+.nad-svc {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; stroke-linejoin:round; fill: none}
+.nad-lcc {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; stroke-linecap:round; fill: none}
+.nad-vsc {stroke: var(--nad-vl-color, lightgrey); stroke-width: 3; stroke-linecap:round; fill: none}
+.nad-disconnected .nad-load {stroke: lightgrey}
+.nad-disconnected .nad-battery {stroke: lightgrey}
+.nad-disconnected .nad-generator {stroke: lightgrey}
+.nad-disconnected .nad-capacitor {stroke: lightgrey}
+.nad-disconnected .nad-inductor {stroke: lightgrey}
+.nad-disconnected .nad-svc {stroke: lightgrey}
+.nad-unknown {stroke: none; fill: black}
+]]></style>
+    <g class="nad-vl-nodes">
+        <g transform="translate(316.72,15.87)" id="0" class="nad-vl180to300">
+            <circle r="27.50" id="3" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-1510.65,1872.25)" id="4" class="nad-vl180to300">
+            <circle r="27.50" id="7" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-1039.00,1627.85)" id="8" class="nad-vl180to300">
+            <circle r="27.50" id="11" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-618.51,1764.88)" id="12" class="nad-vl180to300">
+            <circle r="27.50" id="15" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-273.75,2313.83)" id="16" class="nad-vl70to120">
+            <circle r="27.50" id="19" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-385.09,1436.50)" id="20" class="nad-vl180to300">
+            <circle r="27.50" id="23" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-320.81,2920.94)" id="24" class="nad-vl70to120">
+            <circle r="27.50" id="27" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(1425.21,-475.81)" id="28" class="nad-vl180to300">
+            <circle r="27.50" id="31" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(897.96,1140.84)" id="32" class="nad-vl180to300">
+            <circle r="27.50" id="35" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(1302.50,1345.23)" id="36" class="nad-vl180to300">
+            <circle r="27.50" id="39" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(-247.01,-638.86)" id="40" class="nad-vl70to120">
+            <circle r="27.50" id="43" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(572.27,536.94)" id="44" class="nad-vl180to300">
+            <circle r="27.50" id="47" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(161.99,693.88)" id="48">
+            <circle r="27.50" id="51" class="nad-bus-0 nad-busnode"/>
+        </g>
+        <g transform="translate(1365.01,850.01)" id="52" class="nad-vl180to300">
+            <circle r="27.50" id="55" class="nad-bus-0 nad-busnode"/>
+        </g>
+    </g>
+    <g class="nad-branch-edges">
+        <g id="104">
+            <polyline class="nad-vl180to300 nad-edge-path" points="322.69,-10.97 357.36,-166.83"/>
+        </g>
+        <g id="105">
+            <polyline class="nad-vl180to300 nad-edge-path" points="574.13,509.51 577.67,457.13 480.41,258.79"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="339.55,31.20 383.14,60.46 480.41,258.79"/>
+        </g>
+        <g id="106">
+            <polyline class="nad-vl180to300 nad-edge-path" points="564.63,510.53 550.05,460.09 456.97,270.29"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="332.93,38.08 363.88,80.49 456.97,270.29"/>
+        </g>
+        <g id="107">
+            <polyline class="nad-vl180to300 nad-edge-path" points="556.05,514.73 525.10,472.33 432.02,282.52"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="324.36,42.29 338.94,92.72 432.02,282.52"/>
+        </g>
+        <g id="108" class="nad-disconnected">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="549.44,521.62 505.85,492.35 408.58,294.02"/>
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="314.86,43.31 311.31,95.69 408.58,294.02"/>
+        </g>
+        <g id="109">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1063.42,1640.50 -1274.83,1750.05"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1486.24,1859.59 -1274.83,1750.05"/>
+        </g>
+        <g id="110">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-411.80,1429.99 -462.81,1417.57 -723.28,1493.78"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1020.01,1607.96 -983.74,1570.00 -723.28,1493.78"/>
+        </g>
+        <g id="111">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-412.57,1435.69 -465.05,1434.14 -718.99,1508.45"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1016.29,1612.35 -972.92,1582.75 -718.99,1508.45"/>
+        </g>
+        <g id="112">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-412.14,1441.42 -463.79,1450.82 -714.39,1524.15"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1013.56,1617.41 -964.99,1597.48 -714.39,1524.15"/>
+        </g>
+        <g id="113">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-410.53,1446.94 -459.10,1466.87 -709.69,1540.20"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1011.95,1622.93 -960.29,1613.53 -709.69,1540.20"/>
+        </g>
+        <g id="114">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-407.80,1452.00 -451.16,1481.59 -705.10,1555.90"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1011.51,1628.66 -959.04,1630.21 -705.10,1555.90"/>
+        </g>
+        <g id="115">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-404.08,1456.39 -440.35,1494.35 -700.81,1570.56"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1012.28,1634.36 -961.27,1646.78 -700.81,1570.56"/>
+        </g>
+        <g id="116">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-636.89,1744.43 -671.99,1705.38 -816.36,1658.33"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1012.10,1622.15 -960.73,1611.28 -816.36,1658.33"/>
+        </g>
+        <g id="117">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-645.41,1770.58 -696.78,1781.45 -841.15,1734.40"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-1020.62,1648.30 -985.52,1687.35 -841.15,1734.40"/>
+        </g>
+        <g id="118">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-593.51,1753.44 -545.77,1731.59 -469.20,1623.87"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-387.68,1463.88 -392.62,1516.14 -469.20,1623.87"/>
+        </g>
+        <g id="119">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-615.92,1737.50 -610.97,1685.24 -534.40,1577.52"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="-410.09,1447.95 -457.83,1469.79 -534.40,1577.52"/>
+        </g>
+        <g id="120">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-275.88,2341.25 -297.28,2617.39"/>
+            <polyline class="nad-vl70to120 nad-edge-path" points="-318.68,2893.52 -297.28,2617.39"/>
+        </g>
+        <g id="121">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-395.73,1461.86 -416.04,1510.27 -372.88,1850.44"/>
+            <polyline class="nad-vl70to120 nad-edge-path" points="-290.39,2291.94 -322.15,2250.14 -365.32,1909.96"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="-370.36" cy="1870.28" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="-367.84" cy="1890.12" r="20.00"/>
+            </g>
+        </g>
+        <g id="122">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="-368.45,1458.40 -336.68,1500.20 -293.51,1840.37"/>
+            <polyline class="nad-vl70to120 nad-edge-path" points="-263.11,2288.48 -242.79,2240.07 -285.96,1899.89"/>
+            <g>
+                <circle class="nad-disconnected nad-vl180to300 nad-winding" cx="-291.00" cy="1860.21" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="-288.48" cy="1880.05" r="20.00"/>
+            </g>
+        </g>
+        <g id="123">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-358.31,1430.21 -307.20,1418.21 120.98,1015.87"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="564.33,563.27 549.17,613.54 120.98,1015.87"/>
+        </g>
+        <g id="124">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-362.08,1421.44 -318.16,1392.68 103.10,996.85"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="555.80,558.97 524.36,601.02 103.10,996.85"/>
+        </g>
+        <g id="125">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-368.62,1414.48 -337.18,1372.43 84.08,976.60"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="549.26,552.01 505.34,580.77 84.08,976.60"/>
+        </g>
+        <g id="126">
+            <polyline class="nad-vl180to300 nad-edge-path" points="-377.14,1410.17 -361.99,1359.91 66.20,957.57"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="545.50,543.23 494.39,555.24 66.20,957.57"/>
+        </g>
+        <g id="127">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-296.88,2934.50 -77.39,3058.95"/>
+        </g>
+        <g id="128">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-316.76,2948.14 -288.39,3139.09"/>
+        </g>
+        <g id="129">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1446.08,-457.90 1485.93,-423.72 1664.32,-390.25"/>
+        </g>
+        <g id="130">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1451.15,-484.93 1500.68,-502.35 1679.07,-468.88"/>
+        </g>
+        <g id="131">
+            <polyline class="nad-vl180to300 nad-edge-path" points="598.13,527.59 647.49,509.72 1029.33,56.34"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="1420.38,-448.73 1411.17,-397.05 1029.33,56.34"/>
+        </g>
+        <g id="132">
+            <polyline class="nad-vl180to300 nad-edge-path" points="577.09,509.87 586.30,458.18 968.14,4.80"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="1399.35,-466.45 1349.98,-448.58 968.14,4.80"/>
+        </g>
+        <g id="133">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1401.84,-490.30 1357.21,-517.96 1287.79,-647.43"/>
+        </g>
+        <g id="134">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1426.07,-503.29 1427.72,-555.77 1358.29,-685.24"/>
+        </g>
+        <g id="135">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1449.14,-489.36 1494.82,-515.23 1580.62,-661.00"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="1590.77" cy="-678.24" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="1600.91" cy="-695.48" r="20.00"/>
+            </g>
+        </g>
+        <g id="136">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1439.16,-499.51 1465.79,-544.75 1546.15,-681.29"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="1556.30" cy="-698.53" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="1566.44" cy="-715.77" r="20.00"/>
+            </g>
+        </g>
+        <g id="137">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1425.44,-503.31 1425.88,-555.80 1511.68,-701.58"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="1521.82" cy="-718.82" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="1531.97" cy="-736.06" r="20.00"/>
+            </g>
+        </g>
+        <g id="138">
+            <polyline class="nad-vl180to300 nad-edge-path" points="571.47,564.43 569.95,616.91 699.91,857.88"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="874.55,1126.40 829.87,1098.85 699.91,857.88"/>
+        </g>
+        <g id="139">
+            <polyline class="nad-vl180to300 nad-edge-path" points="595.67,551.38 640.36,578.94 770.32,819.90"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="898.76,1113.35 900.28,1060.87 770.32,819.90"/>
+        </g>
+        <g id="140">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1277.95,1332.83 1100.23,1243.03"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="922.50,1153.24 1100.23,1243.03"/>
+        </g>
+        <g id="141">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1303.60,1372.71 1312.03,1584.13"/>
+        </g>
+        <g id="142">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1296.74,1318.34 1285.74,1267.01 967.06,914.27"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="598.44,545.40 648.39,561.54 967.06,914.27"/>
+        </g>
+        <g id="143">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1316.53,1368.88 1343.32,1414.03 1532.13,1520.07"/>
+        </g>
+        <g id="144">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1322.18,1364.44 1359.74,1401.12 1541.58,1503.24"/>
+        </g>
+        <g id="145">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1326.48,1358.70 1372.25,1384.40 1551.71,1485.19"/>
+        </g>
+        <g id="146">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1329.15,1352.03 1380.01,1365.02 1561.85,1467.14"/>
+        </g>
+        <g id="147">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1330.00,1344.90 1382.49,1344.28 1571.30,1450.31"/>
+        </g>
+        <g id="148">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1319.12,1323.32 1350.86,1281.50 1373.44,1102.63"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="1375.67,875.36 1396.02,923.76 1373.44,1102.63"/>
+        </g>
+        <g id="149" class="nad-disconnected">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="1291.84,1319.88 1271.49,1271.48 1294.07,1092.61"/>
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="1348.39,871.92 1316.65,913.74 1294.07,1092.61"/>
+        </g>
+        <g id="150">
+            <polyline class="nad-vl180to300 nad-edge-path" points="590.70,557.35 625.90,596.31 937.38,941.09"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="1284.06,1324.82 1248.87,1285.87 937.38,941.09"/>
+        </g>
+        <g id="151" class="nad-disconnected">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="578.03,563.83 589.03,615.17 907.70,967.90"/>
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="1276.33,1336.78 1226.37,1320.64 907.70,967.90"/>
+        </g>
+        <g id="152">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-270.21,-624.09 -314.50,-595.90 -583.74,-584.23"/>
+        </g>
+        <g id="153">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-273.86,-632.92 -325.12,-621.57 -584.87,-610.31"/>
+        </g>
+        <g id="154">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-274.28,-642.46 -326.32,-649.33 -586.08,-638.07"/>
+        </g>
+        <g id="155">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-271.40,-651.57 -317.96,-675.82 -587.21,-664.15"/>
+        </g>
+        <g id="156">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-266.59,-619.55 -444.21,-444.43"/>
+        </g>
+        <g id="157">
+            <polyline class="nad-vl70to120 nad-edge-path" points="-267.15,-657.59 -436.10,-814.72"/>
+        </g>
+        <g id="158">
+            <polyline class="nad-vl180to300 nad-edge-path" points="569.93,509.54 565.48,457.23 212.60,-49.21"/>
+            <polyline class="nad-vl70to120 nad-edge-path" points="-222.12,-627.18 -174.59,-604.89 178.30,-98.44"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="201.16" cy="-65.62" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="189.73" cy="-82.03" r="20.00"/>
+            </g>
+        </g>
+        <g id="159">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="547.37,525.26 499.84,502.97 146.96,-3.48"/>
+            <polyline class="nad-vl70to120 nad-edge-path" points="-244.68,-611.46 -240.22,-559.15 112.66,-52.71"/>
+            <g>
+                <circle class="nad-disconnected nad-vl180to300 nad-winding" cx="135.53" cy="-19.89" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="124.09" cy="-36.30" r="20.00"/>
+            </g>
+        </g>
+        <g id="160">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1347.91,828.48 1315.26,787.36 983.33,656.28"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="599.47,532.90 651.40,525.19 983.33,656.28"/>
+        </g>
+        <g id="161">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1343.81,832.50 1303.32,799.07 977.72,670.49"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="599.71,538.65 652.11,541.90 977.72,670.49"/>
+        </g>
+        <g id="162">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1340.63,837.29 1294.08,813.01 971.71,685.70"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="598.76,544.32 649.34,558.39 971.71,685.70"/>
+        </g>
+        <g id="163">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1338.52,842.64 1287.94,828.57 965.57,701.26"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="596.65,549.66 643.20,573.95 965.57,701.26"/>
+        </g>
+        <g id="164">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1337.56,848.31 1285.16,845.06 959.56,716.47"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="593.47,554.45 633.95,587.88 959.56,716.47"/>
+        </g>
+        <g id="165">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1337.81,854.06 1285.88,861.77 953.95,730.68"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="589.37,558.48 622.01,599.60 953.95,730.68"/>
+        </g>
+        <g id="166">
+            <polyline class="nad-edge-path" points="189.15,698.21 240.99,706.49 353.40,663.49"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="554.94,558.30 521.85,599.06 409.44,642.05"/>
+            <g>
+                <circle class="nad-winding" cx="372.08" cy="656.34" r="20.00"/>
+                <circle class="nad-vl180to300 nad-winding" cx="390.76" cy="649.20" r="20.00"/>
+            </g>
+        </g>
+        <g id="167">
+            <polyline class="nad-edge-path" points="179.33,672.53 212.41,631.77 324.82,588.77"/>
+            <polyline class="nad-vl180to300 nad-edge-path" points="545.11,532.61 493.27,524.34 380.86,567.33"/>
+            <g>
+                <circle class="nad-winding" cx="343.50" cy="581.62" r="20.00"/>
+                <circle class="nad-vl180to300 nad-winding" cx="362.18" cy="574.48" r="20.00"/>
+            </g>
+        </g>
+        <g id="168">
+            <polyline class="nad-vl180to300 nad-edge-path" points="1390.58,860.13 1439.40,879.45 1559.60,861.67"/>
+            <g>
+                <circle class="nad-vl180to300 nad-winding" cx="1579.39" cy="858.74" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="1599.17" cy="855.82" r="20.00"/>
+            </g>
+        </g>
+        <g id="169">
+            <polyline class="nad-disconnected nad-vl180to300 nad-edge-path" points="1386.56,832.93 1427.69,800.31 1547.90,782.53"/>
+            <g>
+                <circle class="nad-disconnected nad-vl180to300 nad-winding" cx="1567.69" cy="779.60" r="20.00"/>
+                <circle class="nad-vl70to120 nad-winding" cx="1587.47" cy="776.68" r="20.00"/>
+            </g>
+        </g>
+    </g>
+    <g class="nad-edge-infos"></g>
+    <g class="nad-text-edges">
+        <polyline id="2" points="346.39,11.42 416.72,0.87"/>
+        <polyline id="6" points="-1480.99,1867.80 -1410.65,1857.25"/>
+        <polyline id="10" points="-1009.33,1623.40 -939.00,1612.85"/>
+        <polyline id="14" points="-588.84,1760.43 -518.51,1749.88"/>
+        <polyline id="18" points="-244.08,2309.38 -173.75,2298.83"/>
+        <polyline id="22" points="-355.42,1432.05 -285.09,1421.50"/>
+        <polyline id="26" points="-291.14,2916.49 -220.81,2905.94"/>
+        <polyline id="30" points="1454.88,-480.26 1525.21,-490.81"/>
+        <polyline id="34" points="927.63,1136.39 997.96,1125.84"/>
+        <polyline id="38" points="1332.17,1340.78 1402.50,1330.23"/>
+        <polyline id="42" points="-217.34,-643.31 -147.01,-653.86"/>
+        <polyline id="46" points="601.94,532.49 672.27,521.94"/>
+        <polyline id="50" points="191.66,689.43 261.99,678.88"/>
+        <polyline id="54" points="1394.68,845.56 1465.01,835.01"/>
+    </g>
+    <g class="nad-text-nodes">
+        <foreignObject id="1" y="-24.13" x="416.72" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_A_VUONG_220_VL220</div>
+                <div>A VƯƠNG</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="5" y="1832.25" x="-1410.65" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_DAK_MI_1_220_VL220</div>
+                <div>ĐĂK MI 1</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="9" y="1587.85" x="-939.00" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_DAK_MI_2_220_VL220</div>
+                <div>ĐĂK MI 2</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="13" y="1724.88" x="-518.51" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_DAK_MI_3_220_VL220</div>
+                <div>ĐĂK MI 3</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="17" y="2273.83" x="-173.75" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl70to120 nad-label-box">
+                <div>S_DAK_MI_4A_220_VL110</div>
+                <div>ĐĂK MI 4A</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="21" y="1396.50" x="-285.09" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_DAK_MI_4A_220_VL220</div>
+                <div>ĐĂK MI 4A</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="25" y="2880.94" x="-220.81" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl70to120 nad-label-box">
+                <div>S_DAK_MI_4B_110_VL110</div>
+                <div>ĐĂK MI 4B</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="29" y="-515.81" x="1525.21" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_DUY_XUYEN_220KV_220_VL220</div>
+                <div>DUY XUYÊN (220kV)</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="33" y="1100.84" x="997.96" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_SONG_BUNG_4_500_VL220</div>
+                <div>SÔNG BUNG 4</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="37" y="1305.23" x="1402.50" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_TC_DAK_OOC_220_VL220</div>
+                <div>TC ĐĂK OOC</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="41" y="-678.86" x="-147.01" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl70to120 nad-label-box">
+                <div>S_THANH_MY_500_VL110</div>
+                <div>THẠNH MỸ</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="45" y="496.94" x="672.27" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_THANH_MY_500_VL220</div>
+                <div>THẠNH MỸ</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="49" y="653.88" x="261.99" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-label-box">
+                <div>S_THANH_MY_500_VL500</div>
+                <div>THẠNH MỸ</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+        <foreignObject id="53" y="810.01" x="1465.01" height="1" width="1">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="nad-vl180to300 nad-label-box">
+                <div>S_XEKAMAN_3_220_VL220</div>
+                <div>XEKAMAN 3</div>
+                <div class="nad-bus-descr">
+                    <span class="nad-bus-0 nad-legend-square"></span> kV / °</div>
+            </div>
+        </foreignObject>
+    </g>
+</svg>
