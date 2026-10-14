@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.8)</title>
+<title>Trạm sạc EV – Bản đồ trạm sạc (rev 0.9)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
@@ -269,6 +269,7 @@
 
     /* Container scrolling inside 1/2 screen bottom sheet */
     #hnavWrap{flex:1 1 auto;min-height:0;overflow:hidden}
+    .itin-wrap{flex:1 1 auto;min-height:0;overflow:hidden}
     #sideClassicWrap{flex:1 1 auto;min-height:0;overflow-y:auto}
     .hnav-list{flex:1 1 auto;min-height:0;overflow-y:auto}
     #listDrop.open{flex:1 1 auto;min-height:0}
@@ -289,16 +290,6 @@
     #adminBtn{bottom:calc(50dvh + 10px) !important;transition:bottom .2s ease}
     aside.collapsed ~ #mapWrap #adminBtn,
     aside.collapsed + #drag + #mapWrap #adminBtn{bottom:12px !important}
-
-    /* Mobile itinerary planner: full-width edge-to-edge modal with margins */
-    .itin-panel{
-      top:8px !important;
-      left:8px !important;
-      right:8px !important;
-      width:auto !important;
-      max-width:none !important;
-      max-height:calc(100% - 16px) !important;
-    }
   }
 
   /* Very short landscape phones */
@@ -313,15 +304,13 @@
     aside{padding-bottom:env(safe-area-inset-bottom)}
     #toast{top:max(10px,env(safe-area-inset-top))}
   }
-  /* EV Itinerary Planner */
-  .itin-panel{position:absolute;top:12px;left:12px;z-index:1100;width:400px;max-width:calc(100% - 24px);max-height:calc(100% - 24px);background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;backdrop-filter:blur(8px)}
-  .itin-panel[hidden]{display:none !important}
-  .itin-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
-  .itin-head .title{font-weight:700;font-size:13px;color:var(--txt);display:flex;align-items:center;gap:7px}
+  /* EV Itinerary Planner integrated into sidebar */
+  .itin-wrap{display:none;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden;background:var(--panel)}
+  .itin-wrap.active{display:flex}
+  .itin-head{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel2);border-bottom:1px solid var(--line);min-height:38px;flex:none}
+  .itin-head .title{font-weight:700;font-size:12.5px;color:var(--txt);display:flex;align-items:center;gap:7px}
   .itin-head .spacer{flex:1}
-  .itin-head .close-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:2px 7px;border-radius:5px;line-height:1}
-  .itin-head .close-btn:hover{color:#e11d48;background:var(--panel)}
-  .itin-body{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .itin-body{padding:12px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-height:0}
   .itin-field{display:flex;flex-direction:column;gap:4px}
   .itin-label{font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;justify-content:space-between}
   .itin-input-wrap{display:flex;gap:5px;align-items:center}
@@ -410,10 +399,9 @@
   <header>
     <a class="btn" id="homeBtn" href="https://renewablevietnam.com/" title="Về renewablevietnam.com" data-i18n-title="home_t" data-i18n="home">Trang chủ</a>
     <button class="btn" id="toggleSide" title="Ẩn / hiện bảng" data-i18n-title="panel_t">&#9776;</button>
-    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.8</span></div>
+    <div class="mark"><span class="dot"></span><span class="txt" data-i18n="mark">Trạm sạc EV</span><span style="font-size:10px;padding:1px 5px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-weight:600;margin-left:4px">rev 0.9</span></div>
     <div class="spacer"></div>
     <button class="btn" id="nearBtn" title="Các trạm gần vị trí của tôi" data-i18n-title="near_t" data-i18n="near">Gần tôi</button>
-    <button class="btn" id="itinBtn" title="Lập lộ trình & gợi ý sạc EV" data-i18n-title="itin_t" style="border-color:var(--accent);color:var(--accent);font-weight:650">🧭 <span data-i18n="itin_nav">Lập lộ trình</span></button>
     <button class="btn" id="langBtn" title="Ngôn ngữ" data-i18n-title="lang_t">EN</button>
     <button class="btn" id="themeBtn" title="Đổi sáng / tối" data-i18n-title="theme_t">&#9788;</button>
   </header>
@@ -422,6 +410,7 @@
       <!-- Sidebar Navigation Tabs -->
       <div class="side-tabs">
         <button class="side-tab active" id="tabHNav" type="button" title="Điều hướng đa cấp">🧭 Điều hướng</button>
+        <button class="side-tab" id="tabItin" type="button" title="Lập lộ trình & gợi ý sạc EV" style="color:var(--accent);font-weight:700">🧭 Lập lộ trình</button>
         <button class="side-tab" id="tabList" type="button" title="Xem danh sách trạm sạc">📋 Danh sách</button>
         <button class="side-tab" id="tabFilter" type="button" title="Bộ lọc cổng sạc">⚡ Bộ lọc</button>
       </div>
@@ -451,60 +440,14 @@
         </div>
       </div>
 
-      <!-- Classic Views (List & Port Tree) -->
-      <div id="sideClassicWrap" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden">
-        <div class="netdrop" id="netDrop">
-          <button class="netbtn" id="netBtn" aria-haspopup="listbox" aria-expanded="false">
-            <span class="netlbl" data-i18n="evtype">Loại xe</span><span class="netval" id="netVal">Tất cả loại</span><span class="caret" aria-hidden="true">&#9662;</span>
-          </button>
-          <div class="netmenu" id="netMenu" role="listbox" aria-label="EV type">
-            <button class="netopt active" data-net="all" role="option">Tất cả loại</button>
-            <button class="netopt" data-net="vinfast" role="option">Chỉ VinFast</button>
-            <button class="netopt" data-net="other" role="option">Khác VinFast</button>
-          </div>
-        </div>
-        <div class="hintwrap" id="locHint" hidden>
-          <span data-i18n="hint_loc">Bật vị trí để xem các trạm trong bán kính 40 km.</span>
-          <button id="locBtn" data-i18n="hint_btn">Dùng vị trí của tôi</button>
-        </div>
-        <div class="drop open" id="listDrop">
-          <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Ẩn / hiện danh sách trạm" data-i18n-title="list_t">
-            <span class="caret" aria-hidden="true">&#9662;</span>
-            <span class="nm" data-i18n="stations">Danh sách trạm</span>
-            <span class="spacer" style="flex:1"></span>
-            <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Chọn cột hiển thị" data-i18n-title="cols_t"><span data-i18n="cols">Cột</span> <span class="caret" aria-hidden="true">&#9662;</span></span>
-          </div>
-          <div class="dropbody">
-            <div class="colwrap" id="colBody"></div>
-            <input class="search" id="search" placeholder="Tìm theo tên, nhà cung cấp, địa chỉ..." data-i18n-ph="search_ph">
-            <div id="list"></div>
-          </div>
-        </div>
-        <div class="drop" id="filterDrop">
-          <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp" data-i18n-title="filters_t">
-            <span class="caret" aria-hidden="true">&#9662;</span>
-            <span class="nm" data-i18n="filters">Bộ lọc</span>
-            <span class="spacer" style="flex:1"></span>
-            <a id="allLnk" data-i18n="all">Tất cả</a><a id="noneLnk" data-i18n="none">Bỏ chọn</a>
-          </div>
-          <div class="tree" id="tree"></div>
-        </div>
-      </div>
-      <div class="tinyfoot" data-i18n="foot">Dữ liệu &copy; Google My Maps &ldquo;Bản đồ trạm sạc EV&rdquo; (gồm hệ thống VinFast) &mdash; chỉ dùng cho mục đích học tập / nghiên cứu, phi thương mại. Nền bản đồ: OpenStreetMap France. Số cổng = cổng đã lắp (số lượng &times; công suất), không phải tình trạng trống.</div>
-    </aside>
-    <div id="drag" title="Kéo để đổi kích thước bảng" data-i18n-title="drag_t"></div>
-    <div id="mapWrap">
-      <div id="map"></div>
-      <div id="toast"></div>
-      <div id="loadbar"><i></i></div>
-      <button id="adminBtn" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
-
-      <!-- EV Itinerary & Charging Planner Panel -->
-      <div id="itinPanel" class="itin-panel" hidden>
+      <!-- EV Itinerary & Charging Planner (integrated into sidebar) -->
+      <div id="itinPanel" class="itin-wrap" style="display:none">
         <div class="itin-head">
-          <div class="title">🧭 <span data-i18n="itin_title">Lập lộ trình & Gợi ý sạc</span></div>
+          <button class="hnav-back-btn" id="itinBackToNavBtn" type="button" title="Quay lại điều hướng">
+            <span>◀</span> <span>Điều hướng</span>
+          </button>
+          <div class="title" style="margin-left:4px">🧭 <span data-i18n="itin_title">Lập lộ trình & Gợi ý sạc</span></div>
           <span class="spacer"></span>
-          <button class="close-btn" id="itinCloseBtn" title="Đóng" aria-label="Close">✕</button>
         </div>
         <div class="itin-body">
           <!-- Departure -->
@@ -683,6 +626,54 @@
           <div id="itinResults" class="itin-results" style="display:none"></div>
         </div>
       </div>
+
+      <!-- Classic Views (List & Port Tree) -->
+      <div id="sideClassicWrap" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden">
+        <div class="netdrop" id="netDrop">
+          <button class="netbtn" id="netBtn" aria-haspopup="listbox" aria-expanded="false">
+            <span class="netlbl" data-i18n="evtype">Loại xe</span><span class="netval" id="netVal">Tất cả loại</span><span class="caret" aria-hidden="true">&#9662;</span>
+          </button>
+          <div class="netmenu" id="netMenu" role="listbox" aria-label="EV type">
+            <button class="netopt active" data-net="all" role="option">Tất cả loại</button>
+            <button class="netopt" data-net="vinfast" role="option">Chỉ VinFast</button>
+            <button class="netopt" data-net="other" role="option">Khác VinFast</button>
+          </div>
+        </div>
+        <div class="hintwrap" id="locHint" hidden>
+          <span data-i18n="hint_loc">Bật vị trí để xem các trạm trong bán kính 40 km.</span>
+          <button id="locBtn" data-i18n="hint_btn">Dùng vị trí của tôi</button>
+        </div>
+        <div class="drop open" id="listDrop">
+          <div class="drophead" id="listToggle" role="button" tabindex="0" aria-expanded="true" title="Ẩn / hiện danh sách trạm" data-i18n-title="list_t">
+            <span class="caret" aria-hidden="true">&#9662;</span>
+            <span class="nm" data-i18n="stations">Danh sách trạm</span>
+            <span class="spacer" style="flex:1"></span>
+            <span class="coltoggle" id="colToggle" role="button" tabindex="0" aria-expanded="false" title="Chọn cột hiển thị" data-i18n-title="cols_t"><span data-i18n="cols">Cột</span> <span class="caret" aria-hidden="true">&#9662;</span></span>
+          </div>
+          <div class="dropbody">
+            <div class="colwrap" id="colBody"></div>
+            <input class="search" id="search" placeholder="Tìm theo tên, nhà cung cấp, địa chỉ..." data-i18n-ph="search_ph">
+            <div id="list"></div>
+          </div>
+        </div>
+        <div class="drop" id="filterDrop">
+          <div class="drophead" id="filterToggle" role="button" tabindex="0" aria-expanded="false" title="Ẩn / hiện bộ lọc cổng sạc và nhà cung cấp" data-i18n-title="filters_t">
+            <span class="caret" aria-hidden="true">&#9662;</span>
+            <span class="nm" data-i18n="filters">Bộ lọc</span>
+            <span class="spacer" style="flex:1"></span>
+            <a id="allLnk" data-i18n="all">Tất cả</a><a id="noneLnk" data-i18n="none">Bỏ chọn</a>
+          </div>
+          <div class="tree" id="tree"></div>
+        </div>
+      </div>
+      <div class="tinyfoot" data-i18n="foot">Dữ liệu &copy; Google My Maps &ldquo;Bản đồ trạm sạc EV&rdquo; (gồm hệ thống VinFast) &mdash; chỉ dùng cho mục đích học tập / nghiên cứu, phi thương mại. Nền bản đồ: OpenStreetMap France. Số cổng = cổng đã lắp (số lượng &times; công suất), không phải tình trạng trống.</div>
+    </aside>
+    <div id="drag" title="Kéo để đổi kích thước bảng" data-i18n-title="drag_t"></div>
+    <div id="mapWrap">
+      <div id="map"></div>
+      <div id="toast"></div>
+      <div id="loadbar"><i></i></div>
+      <button id="adminBtn" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
     </div>
   </main>
   <div id="adminModal" role="dialog" aria-modal="true" aria-label="Bảng quản trị">
@@ -1835,8 +1826,8 @@ var NEAR_KM = 40;
 /* ---------------- EV Itinerary & Charging Stop Planner ---------------- */
 (function itinModule(){
   var panel = document.getElementById("itinPanel");
-  var openBtn = document.getElementById("itinBtn");
-  var closeBtn = document.getElementById("itinCloseBtn");
+  var openBtn = document.getElementById("tabItin");
+  var closeBtn = document.getElementById("itinBackToNavBtn");
   var departIn = document.getElementById("itinDepart");
   var arrivalIn = document.getElementById("itinArrival");
   var swapBtn = document.getElementById("itinSwapBtn");
@@ -1941,15 +1932,21 @@ var NEAR_KM = 40;
     return { lat: pLat, lng: pLng, name: data[0].display_name.split(",")[0] || trimmed };
   }
 
-  // Toggle modal panel
-  openBtn.addEventListener("click", function(){
-    panel.hidden = !panel.hidden;
-    if(!panel.hidden){
+  // Toggle sidebar panel
+  if(openBtn){
+    openBtn.addEventListener("click", function(){
+      if(window.switchTab) window.switchTab("itin");
+      else { panel.style.display = "flex"; }
       if(!departIn.value && myLoc){ departIn.value = "Vị trí hiện tại của tôi"; }
       departIn.focus();
-    }
-  });
-  closeBtn.addEventListener("click", function(){ panel.hidden = true; });
+    });
+  }
+  if(closeBtn){
+    closeBtn.addEventListener("click", function(){
+      if(window.switchTab) window.switchTab("hnav");
+      else { panel.style.display = "none"; }
+    });
+  }
 
   // Swap depart and arrival
   swapBtn.addEventListener("click", function(){
@@ -1984,6 +1981,10 @@ var NEAR_KM = 40;
     pickingFor = target;
     map.getContainer().style.cursor = "crosshair";
     setMsg(target === "depart" ? "Bấm lên bản đồ để chọn Điểm xuất phát" : "Bấm lên bản đồ để chọn Điểm đến");
+    if(isMobile()){
+      var sideEl = document.getElementById("side");
+      if(sideEl) sideEl.classList.add("collapsed");
+    }
   }
   pickDepartBtn.addEventListener("click", function(){ startMapPick("depart"); });
   pickArrivalBtn.addEventListener("click", function(){ startMapPick("arrival"); });
@@ -1997,7 +1998,10 @@ var NEAR_KM = 40;
     setMsg("Đã chọn tọa độ: " + coords);
     setTimeout(()=>setMsg(""), 2500);
     pickingFor = null;
-    panel.hidden = false;
+    if(window.switchTab) window.switchTab("itin");
+    else { panel.style.display = "flex"; }
+    var sideEl = document.getElementById("side");
+    if(sideEl) sideEl.classList.remove("collapsed");
   });
 
   // Question 1: EV Model
@@ -2455,9 +2459,12 @@ var NEAR_KM = 40;
 /* ---------------- Multi-Level Hierarchical Sidebar Navigation ---------------- */
 (function hnavModule(){
   var tabHNav = document.getElementById("tabHNav");
+  var tabItin = document.getElementById("tabItin");
   var tabList = document.getElementById("tabList");
   var tabFilter = document.getElementById("tabFilter");
   var hnavWrap = document.getElementById("hnavWrap");
+  var itinPanel = document.getElementById("itinPanel");
+  var itinBackToNavBtn = document.getElementById("itinBackToNavBtn");
   var sideClassic = document.getElementById("sideClassicWrap");
   var listDrop = document.getElementById("listDrop");
   var filterDrop = document.getElementById("filterDrop");
@@ -2471,29 +2478,44 @@ var NEAR_KM = 40;
 
   // Tab switching
   function switchTab(t){
-    [tabHNav, tabList, tabFilter].forEach(b=>b.classList.remove("active"));
+    [tabHNav, tabItin, tabList, tabFilter].forEach(b => { if(b) b.classList.remove("active"); });
     if(t === "hnav"){
-      tabHNav.classList.add("active");
+      if(tabHNav) tabHNav.classList.add("active");
       hnavWrap.hidden = false;
+      if(itinPanel) itinPanel.style.display = "none";
       sideClassic.style.display = "none";
-    } else if(t === "list"){
-      tabList.classList.add("active");
+    } else if(t === "itin"){
+      if(tabItin) tabItin.classList.add("active");
       hnavWrap.hidden = true;
+      if(itinPanel) itinPanel.style.display = "flex";
+      sideClassic.style.display = "none";
+      var sideEl = document.getElementById("side");
+      if(sideEl) sideEl.classList.remove("collapsed");
+      var depIn = document.getElementById("itinDepart");
+      if(depIn && !depIn.value && myLoc){ depIn.value = "Vị trí hiện tại của tôi"; }
+    } else if(t === "list"){
+      if(tabList) tabList.classList.add("active");
+      hnavWrap.hidden = true;
+      if(itinPanel) itinPanel.style.display = "none";
       sideClassic.style.display = "flex";
       listDrop.classList.add("open");
       filterDrop.classList.remove("open");
     } else if(t === "filter"){
-      tabFilter.classList.add("active");
+      if(tabFilter) tabFilter.classList.add("active");
       hnavWrap.hidden = true;
+      if(itinPanel) itinPanel.style.display = "none";
       sideClassic.style.display = "flex";
       listDrop.classList.remove("open");
       filterDrop.classList.add("open");
     }
   }
+  window.switchTab = switchTab;
 
-  tabHNav.addEventListener("click", ()=>switchTab("hnav"));
-  tabList.addEventListener("click", ()=>switchTab("list"));
-  tabFilter.addEventListener("click", ()=>switchTab("filter"));
+  if(tabHNav) tabHNav.addEventListener("click", ()=>switchTab("hnav"));
+  if(tabItin) tabItin.addEventListener("click", ()=>switchTab("itin"));
+  if(tabList) tabList.addEventListener("click", ()=>switchTab("list"));
+  if(tabFilter) tabFilter.addEventListener("click", ()=>switchTab("filter"));
+  if(itinBackToNavBtn) itinBackToNavBtn.addEventListener("click", ()=>switchTab("hnav"));
 
   // Base map tile changer
   window.setTileLayer = function(type){
@@ -2762,6 +2784,14 @@ var NEAR_KM = 40;
       ]
     },
     {
+      id: "root-itin",
+      title: "Lập lộ trình EV (EV Planner)",
+      icon: "🧭",
+      desc: "Gợi ý điểm dừng sạc thông minh theo quãng đường và pin xe",
+      isLeaf: true,
+      action: { type: "itin", label: "Lập lộ trình EV" }
+    },
+    {
       id: "layers",
       title: "Lớp bản đồ nền & Hiển thị",
       icon: "🗺️",
@@ -2938,10 +2968,15 @@ var NEAR_KM = 40;
       setTimeout(()=>setMsg(""), 3000);
       switchTab("list");
 
+    } else if(act.type === "itin"){
+      // Open EV Itinerary Planner tab
+      switchTab("itin");
+      setMsg("✓ Đã mở công cụ Lập lộ trình EV");
+      setTimeout(()=>setMsg(""), 2500);
+
     } else if(act.type === "route"){
-      // 4. Launch Itinerary Planner with pre-filled route
-      var p = document.getElementById("itinPanel");
-      if(p) p.hidden = false;
+      // 4. Launch Itinerary Planner with pre-filled route inside sidebar
+      switchTab("itin");
       var depIn = document.getElementById("itinDepart");
       var arrIn = document.getElementById("itinArrival");
       if(depIn) depIn.value = act.depart;
@@ -2949,10 +2984,6 @@ var NEAR_KM = 40;
       setMsg("✓ Đang tính toán lộ trình sạc: " + act.depart + " ➔ " + act.arrival);
       var sub = document.getElementById("itinSubmit");
       if(sub) sub.click();
-      if(isMobile()){
-        var sideEl = document.getElementById("side");
-        if(sideEl) sideEl.classList.add("collapsed");
-      }
 
     } else if(act.type === "tile"){
       // 5. Switch base map tile layer
