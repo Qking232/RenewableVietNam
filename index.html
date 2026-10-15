@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <!--
   Renewable Viet Nam — homepage (three domain cards)
+  Rev 0.39  Energy Map card statistic updated from stale "104 projects · 38.6 GW" to the
+            live national clean energy registry ("960 projects · 192.4 GW"). Upgraded fromEnergy
+            parser to extract projects and capacity directly from PROJECTS array and Supabase live store.
   Rev 0.38  SEO optimization for Google Indexing: Added targeted page title, meta description,
             keywords, canonical tag, robots directive, Open Graph / Twitter Card social previews,
             and Schema.org JSON-LD structured data (WebSite, Organization, Dataset).
@@ -289,7 +292,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
             <circle cx="12" cy="10" r="1.75" stroke-linecap="round"/>
           </svg>
-          <span id="statEnergy" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">104 projects &middot; 38.6 GW</span>
+          <span id="statEnergy" class="block max-w-[7.5rem] text-center font-mono text-[11px] leading-snug tracking-tight text-zinc-600 dark:text-zinc-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">960 projects &middot; 192.4 GW</span>
         </div>
       </div>
 
@@ -457,10 +460,49 @@
     }
 
     function fromEnergy(h) {
-      var a = grab(h, "PROJECTS_DB"); if (!a) return "";
+      var a = grab(h, "PROJECTS");
+      if (!a) a = grab(h, "PROJECTS_DB");
+      if (!a) return "";
       var mw = 0;
-      a.forEach(function (p) { var m = String(p.cap || "").replace(/,/g, "").match(/([\d.]+)\s*(GW|MW)/i); if (m) { var v = parseFloat(m[1]); if (/GW/i.test(m[2])) v *= 1000; mw += v; } });
+      a.forEach(function (p) {
+        var cap = String(p.capacity || p.cap || "").replace(/,/g, "");
+        var paren = cap.match(/\(([\d.]+)\s*(GW|MW)\)/i);
+        var m = paren || cap.match(/([\d.]+)\s*(GW|MW)/i);
+        if (m) {
+          var v = parseFloat(m[1]);
+          if (/GW/i.test(m[2])) v *= 1000;
+          mw += v;
+        }
+      });
       return fmt(a.length) + " projects \u00b7 " + (mw / 1000).toFixed(1) + " GW";
+    }
+
+    function fromEnergyLive() {
+      return fetch(EV_URL + "/rest/v1/energy_projects?select=cap", {
+        cache: "no-store",
+        headers: {
+          apikey: EV_KEY,
+          Authorization: "Bearer " + EV_KEY,
+          Accept: "application/json"
+        }
+      }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json().then(function (rows) {
+          if (!rows || !rows.length) return "";
+          var mw = 0;
+          rows.forEach(function (p) {
+            var cap = String(p.cap || "").replace(/,/g, "");
+            var paren = cap.match(/\(([\d.]+)\s*(GW|MW)\)/i);
+            var m = paren || cap.match(/([\d.]+)\s*(GW|MW)/i);
+            if (m) {
+              var v = parseFloat(m[1]);
+              if (/GW/i.test(m[2])) v *= 1000;
+              mw += v;
+            }
+          });
+          return fmt(rows.length) + " projects \u00b7 " + (mw / 1000).toFixed(1) + " GW";
+        });
+      });
     }
     /* EV totals come from the shared Supabase store, not from the EV page: since
        the stations moved server-side, /evcharging/ ships `const STATIONS = []`
@@ -536,8 +578,10 @@
     function refresh() {
       var out = {};
       return Promise.all([
-        txt("/projectenergy/").then(function (h) { out.energy = fromEnergy(h); }).catch(function () {}),
-        withTimeout(fromEvLive(), EV_TIMEOUT).then(function (t) { out.ev = t; }).catch(function () {})
+        withTimeout(fromEnergyLive().catch(function () {
+          return txt("/projectenergy/").then(function (h) { return fromEnergy(h); });
+        }), EV_TIMEOUT).then(function (t) { if (t) out.energy = t; }).catch(function () {}),
+        withTimeout(fromEvLive(), EV_TIMEOUT).then(function (t) { if (t) out.ev = t; }).catch(function () {})
       ]).then(function () {
         paint(out);
         try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
