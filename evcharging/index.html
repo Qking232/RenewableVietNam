@@ -725,7 +725,7 @@ aside#side.collapsed ~ #floatingMenuBtn {
 
 
 /* ==========================================================================
-   Google Maps Floating Search Bar & Filter Chips (rev 0.0.26)
+   Google Maps Floating Search Bar & Filter Chips (rev 0.0.27)
    ========================================================================== */
 
 html, body {
@@ -841,7 +841,7 @@ html[data-theme="dark"] .gm-search-bar {
   font-weight: 400;
 }
 
-/* Eradicate Chrome / Safari / Edge autofill blue/yellow background (rev 0.0.26) */
+/* Eradicate Chrome / Safari / Edge autofill blue/yellow background (rev 0.0.27) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
@@ -1095,7 +1095,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Near Me Submenu Popover (rev 0.0.26)
+   Near Me Submenu Popover (rev 0.0.27)
    ========================================================================== */
 .near-chip-wrap {
   position: relative;
@@ -1213,7 +1213,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Fix Popup & Control Overlay Collision (rev 0.0.26)
+   Fix Popup & Control Overlay Collision (rev 0.0.27)
    ========================================================================== */
 .leaflet-pane.leaflet-popup-pane {
   z-index: 2500 !important;
@@ -1308,7 +1308,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Mobile-Optimized Itinerary Results & Card Layout (rev 0.0.26)
+   Mobile-Optimized Itinerary Results & Card Layout (rev 0.0.27)
    ========================================================================== */
 
 #itinResults {
@@ -1497,7 +1497,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Dynamic Battery Level Colors (rev 0.0.26)
+   Dynamic Battery Level Colors (rev 0.0.27)
    ========================================================================== */
 .itin-chip[data-soc="100"].active, .itin-chip[data-soc="90"].active, .itin-chip[data-soc="80"].active {
   background: #10b981 !important;
@@ -1526,7 +1526,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Expanded Charging Station Cards & Compact Header (rev 0.0.26)
+   Expanded Charging Station Cards & Compact Header (rev 0.0.27)
    ========================================================================== */
 
 /* Compact Route Summary Header (when input form is closed) */
@@ -1725,7 +1725,7 @@ aside#side {
 
 
 /* ==========================================================================
-   Google Maps Official Typography System - rev 0.0.26
+   Google Maps Official Typography System - rev 0.0.27
    - Google Sans / Google Sans Text: Headings, Brand, Search Bar, Category Chips, Action Buttons
    - Roboto: Body, Addresses, Distance, Time, Specs (kW, SoC), Data tables
    100% Offline Embedded WOFF2 (Vietnamese + Latin subsets)
@@ -1930,7 +1930,7 @@ body, #app, header, aside, main {
 
 
 /* ==========================================================================
-   Bigger Pill Action Buttons at Top of Table / Results - rev 0.0.26
+   Bigger Pill Action Buttons at Top of Table / Results - rev 0.0.27
    ========================================================================== */
 .itin-act-row {
   display: flex !important;
@@ -2001,6 +2001,19 @@ body, #app, header, aside, main {
   transform: scale(0.98) !important;
 }
 
+/* ==========================================================================
+   Hidden Controls as requested in Rev 0.0.27:
+   - Hide Light/Dark Theme buttons
+   - Hide Admin console button
+   ========================================================================== */
+#bottomLeftThemeBtn,
+#floatingThemeBtn,
+#themeBtn,
+#adminBtn {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 </style>
 
 <style id="offline-leaflet-css">
@@ -2765,7 +2778,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <main>
     
     <!-- ====================================================================
-         Google Maps Floating Search Bar, Chips & Panel (rev 0.0.26)
+         Google Maps Floating Search Bar, Chips & Panel (rev 0.0.27)
          ==================================================================== -->
     <div class="gm-top-container" id="gmTopContainer">
       <!-- 1. Pill Search Bar (Exactly matching Google Maps reference) -->
@@ -2808,14 +2821,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <!-- 2. Horizontal Quick Filter Chips Row (Only 'Lập lộ trình' and 'Gần tôi') -->
       <div class="gm-chips-row" id="gmChipsRow">
         <button class="gm-chip" id="chipItinToggle" type="button" title="Lập lộ trình &amp; Gợi ý sạc EV">
-          <span class="chip-icon">🧭</span>
           <span class="chip-text" style="font-weight:650">Lập lộ trình</span>
         </button>
 
         <button class="gm-chip" id="pillNear" type="button" title="Tìm các trạm sạc gần bạn (chọn hãng)">
-          <span class="chip-icon">📍</span>
           <span class="chip-text" id="pillNearTxt" style="font-weight:650">Gần tôi</span>
-          <span style="font-size:10px;margin-left:2px;opacity:0.7">▾</span>
         </button>
       </div>
 
@@ -2895,7 +2905,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div class="gm-floating-panel" id="gmItinPanel" hidden>
         <div class="gm-panel-header">
           <div class="gm-panel-title">
-            <span>🧭</span> <span data-i18n="itin_title">Lập lộ trình &amp; Gợi ý sạc EV</span>
+            <span data-i18n="itin_title">Lập lộ trình &amp; Gợi ý sạc EV</span>
           </div>
           <button class="gm-panel-close-btn" id="gmCloseItinBtn" type="button" title="Đóng lộ trình">✕</button>
         </div>
@@ -3038,7 +3048,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
             <!-- SOC Settings (with Custom Percent for Pin Xuất Phát) -->
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <!-- Pin xuất phát (Start SoC) with Custom % feature (rev 0.0.26) -->
+              <!-- Pin xuất phát (Start SoC) with Custom % feature (rev 0.0.27) -->
               <div class="itin-field">
                 <label class="itin-label" style="font-size:11.5px;font-weight:600">Pin xuất phát: <b id="itinStartSocLbl">90%</b></label>
                 <div class="itin-chips" id="itinStartSocChips" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">
@@ -3119,7 +3129,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <button class="floating-icon-btn" id="floatingLangBtn" type="button" title="Đổi ngôn ngữ">
         <span>🌐</span> <span id="floatingLangTxt">EN</span>
       </button>
-      <button class="floating-icon-btn" id="floatingThemeBtn" type="button" title="Đổi giao diện Sáng / Tối">
+      <button class="floating-icon-btn" id="floatingThemeBtn" style="display:none !important;" type="button" title="Đổi giao diện Sáng / Tối">
         <span>&#9788;</span>
       </button>
     </div>
@@ -3129,8 +3139,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div id="map"></div>
       <div id="toast"></div>
       <div id="loadbar"><i></i></div>
-      <button id="adminBtn" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
-      <button id="bottomLeftThemeBtn" type="button" title="Đổi giao diện Sáng / Tối (Theme Light/Dark)" aria-label="Toggle Light/Dark Theme">&#9788;</button>
+      <button id="adminBtn" style="display:none !important;" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
+      <button id="bottomLeftThemeBtn" style="display:none !important;" type="button" title="Đổi giao diện Sáng / Tối (Theme Light/Dark)" aria-label="Toggle Light/Dark Theme">&#9788;</button>
     </div>
   </main>
   <div id="adminModal" role="dialog" aria-modal="true" aria-label="Bảng quản trị">
@@ -3167,7 +3177,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 //# sourceMappingURL=leaflet.markercluster.js.map
 </script>
 <script>
-// Ultra-fast Dynamic Station Store powered by Supabase + IndexedDB Cache (rev 0.0.26)
+// Ultra-fast Dynamic Station Store powered by Supabase + IndexedDB Cache (rev 0.0.27)
 let STATIONS = []; /* Populated asynchronously via Supabase REST API & persistent IndexedDB */
 
 /* ---------------- language (Vietnamese is the default) ---------------- */
@@ -3340,7 +3350,7 @@ const PROVIDERS = [
 ];
 let pIdx = 0, tileErrors = 0, tileLayer = null;
 const map = L.map("map", {zoomControl:false, worldCopyJump:true}).setView([16.0,106.5], 6);
-// Move Zoom In/Out control to right bottom corner (rev 0.0.26)
+// Move Zoom In/Out control to right bottom corner (rev 0.0.27)
 L.control.zoom({ position: "bottomright" }).addTo(map);
 function addTiles(){
   const p = PROVIDERS[pIdx];
@@ -3355,7 +3365,7 @@ const cluster = L.markerClusterGroup({
     var n=c.getChildCount();
     var cls = n<100 ? "sm" : (n<1000 ? "md" : "lg");
     var size = n<10 ? 14 : (n<100 ? 18 : (n<1000 ? 22 : 26));
-    // Clean Material Design 3 density dot - no numbers, no ⚡ icon on map overall (rev 0.0.26)
+    // Clean Material Design 3 density dot - no numbers, no ⚡ icon on map overall (rev 0.0.27)
     return L.divIcon({ html:'<div class="cc '+cls+'"><i class="cc-ring"></i></div>', className:'evcluster', iconSize:L.point(size,size) });
   }
 });
@@ -4589,7 +4599,7 @@ var NEAR_KM = 40;
   document.getElementById("adminClose").addEventListener("click", closeAdmin);
   document.getElementById("adminBtn").addEventListener("click", openAdmin);
 
-  // Bottom-Left Light / Dark Theme Button Handler (rev 0.0.26)
+  // Bottom-Left Light / Dark Theme Button Handler (rev 0.0.27)
   (function initBottomLeftThemeBtn(){
     var themeBtn = document.getElementById("bottomLeftThemeBtn");
     if(!themeBtn) return;
@@ -4925,7 +4935,7 @@ var NEAR_KM = 40;
   // Initialize colors on startup
   updateBatteryLabels();
 
-  // Custom Departure SoC handler (rev 0.0.26)
+  // Custom Departure SoC handler (rev 0.0.27)
   var startSocRange = document.getElementById("itinStartSocRange");
   var startSocCustomInput = document.getElementById("itinStartSocCustomInput");
   var startSocCustomWrap = document.getElementById("itinStartSocCustomWrap");
@@ -5114,7 +5124,7 @@ var NEAR_KM = 40;
 
       var dest = await geocode(arrVal);
 
-      // Ensure all stations along route corridor are loaded from Supabase (rev 0.0.26)
+      // Ensure all stations along route corridor are loaded from Supabase (rev 0.0.27)
       statusEl.textContent = "Đang tối ưu các trạm sạc trên hành lang di chuyển từ Supabase Cloud...";
       await EVDB.ensureCorridorStations(origin, dest);
 
@@ -5386,7 +5396,7 @@ var NEAR_KM = 40;
         })
       }).addTo(itinLayer).bindPopup("<b>🏁 " + esc(tr("arrival")) + "</b><br>" + esc(dest.name) + "<br>Dự kiến pin còn: <b>~" + Math.round(finalArrivalSoC * 100) + "%</b>");
 
-      // Hide general cluster layer so ONLY the charging stations in the itinerary list show on map with ⚡ (rev 0.0.26)
+      // Hide general cluster layer so ONLY the charging stations in the itinerary list show on map with ⚡ (rev 0.0.27)
       if(map.hasLayer(cluster)){
         map.removeLayer(cluster);
       }
@@ -5430,7 +5440,7 @@ var NEAR_KM = 40;
         '</div>' +
         '</div>';
 
-      // 3. Prominent Big Action Buttons MOVED TO THE TOP of Table / Results (rev 0.0.26)
+      // 3. Prominent Big Action Buttons MOVED TO THE TOP of Table / Results (rev 0.0.27)
       html += '<div class="itin-act-row">' +
         '<a href="' + gmapsUrl + '" target="_blank" rel="noopener" class="btn primary itin-btn-gmaps-all">🗺️ Mở toàn bộ lộ trình trên Google Maps</a>' +
         '<div style="display:flex;gap:8px;width:100%">' +
@@ -5552,7 +5562,7 @@ var NEAR_KM = 40;
         });
       }
 
-      // Toggle general map clusters button (rev 0.0.26)
+      // Toggle general map clusters button (rev 0.0.27)
       var toggleClustBtn = resultsEl.querySelector("#itinToggleClustersBtn");
       if(toggleClustBtn){
         toggleClustBtn.addEventListener("click", function(){
@@ -5674,7 +5684,7 @@ var NEAR_KM = 40;
   
   // ========================================================================
   // ==========================================================================
-  // Unified Mutually Exclusive UI Controller (rev 0.0.26)
+  // Unified Mutually Exclusive UI Controller (rev 0.0.27)
   // When one chip/panel is opened, all other chips/panels close immediately!
   // ==========================================================================
   (function initUnifiedUI(){
@@ -5890,7 +5900,7 @@ var NEAR_KM = 40;
         if(listTitle){
           listTitle.textContent = "📍 Trạm sạc gần bạn (" + labelText + ")";
         }
-        // Auto show the near station charge menu after searching! (rev 0.0.26)
+        // Auto show the near station charge menu after searching! (rev 0.0.27)
         showListPanel();
         if(typeof setMsg === "function"){
           setMsg("📍 Đã tìm thấy các trạm sạc " + labelText + " gần bạn");
@@ -6078,7 +6088,7 @@ var NEAR_KM = 40;
 paintNet();
 renderTree();
 refreshView();
-// Start Supabase + IndexedDB asynchronous loader (rev 0.0.26)
+// Start Supabase + IndexedDB asynchronous loader (rev 0.0.27)
 EVDB.init();
 </script>
 </body>
