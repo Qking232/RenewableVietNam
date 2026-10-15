@@ -395,9 +395,9 @@
               type="text" 
               id="table-search" 
               oninput="filterAssetTable()" 
-              data-placeholder-en="Filter by name, province..."
-              data-placeholder-vi="Lọc theo tên, tỉnh thành..."
-              placeholder="Filter by name, province..." 
+              data-placeholder-en="Filter by name, fuel, developer, province..."
+              data-placeholder-vi="Lọc theo tên, loại hình, CĐT, tỉnh thành..."
+              placeholder="Filter by name, fuel, developer, province..." 
               class="w-full bg-brand-card border border-brand-border px-3 py-2 sm:py-1.5 pl-8 font-mono text-xs text-white placeholder-slate-500 focus:outline-none focus:border-slate-400"
             />
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5"></i>
@@ -412,11 +412,11 @@
             <option value="Solar" data-en="SOLAR" data-vi="ĐIỆN MẶT TRỜI">SOLAR</option>
             <option value="Wind" data-en="WIND" data-vi="ĐIỆN GIÓ">WIND</option>
             <option value="Hydro" data-en="HYDRO" data-vi="THỦY ĐIỆN">HYDRO</option>
-            <option value="Data Center" data-en="DATA CENTER" data-vi="TRUNG TÂM DỮ LIỆU">DATA CENTER</option>
-            <option value="EV Corridor" data-en="EV CORRIDOR" data-vi="HÀNH LANG XE ĐIỆN">EV CORRIDOR</option>
             <option value="LNG / gas" data-en="LNG / GAS" data-vi="NHIỆT ĐIỆN KHÍ / LNG">LNG / GAS</option>
             <option value="Biomass" data-en="BIOMASS" data-vi="ĐIỆN SINH KHỐI">BIOMASS</option>
             <option value="Coal" data-en="COAL" data-vi="NHIỆT ĐIỆN THAN">COAL</option>
+            <option value="Oil" data-en="OIL / THERMAL" data-vi="NHIỆT ĐIỆN DẦU">OIL / THERMAL</option>
+            <option value="Nuclear" data-en="NUCLEAR" data-vi="ĐIỆN HẠT NHÂN">NUCLEAR</option>
           </select>
 
           <!-- Status filter -->
@@ -530,6 +530,10 @@
             <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
               <input type="checkbox" id="chk-hydro" checked onchange="renderProjects()" class="rounded bg-brand-surface border-slate-700 text-blue-500 focus:ring-0">
               <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> <span data-en="Hydro" data-vi="Thủy điện">Hydro</span></span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
+              <input type="checkbox" id="chk-lng" checked onchange="renderProjects()" class="rounded bg-brand-surface border-slate-700 text-purple-500 focus:ring-0">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span> <span data-en="LNG / Gas" data-vi="Khí / LNG">LNG / Gas</span></span>
             </label>
             <label class="flex items-center gap-1.5 cursor-pointer text-slate-300">
               <input type="checkbox" id="chk-other" checked onchange="renderProjects()" class="rounded bg-brand-surface border-slate-700 text-emerald-500 focus:ring-0">
@@ -768,6 +772,18 @@
     };
 
     // Color palette per clean generation type
+    // Accent-insensitive normalization helper
+    function normalizeStr(str) {
+      if (!str) return '';
+      return str.toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'd')
+        .trim();
+    }
+
     const FUEL_COLORS = {
       'solar': '#f59e0b',
       'wind': '#06b6d4',
@@ -776,7 +792,9 @@
       'lng': '#8b5cf6',
       'gas': '#8b5cf6',
       'thermal': '#94a3b8',
-      'coal': '#64748b'
+      'coal': '#64748b',
+      'oil': '#f97316',
+      'nuclear': '#ec4899'
     };
 
     function getProjectColor(type) {
@@ -860,6 +878,7 @@
       const showSolar = document.getElementById('chk-solar') ? document.getElementById('chk-solar').checked : true;
       const showWind = document.getElementById('chk-wind') ? document.getElementById('chk-wind').checked : true;
       const showHydro = document.getElementById('chk-hydro') ? document.getElementById('chk-hydro').checked : true;
+      const showLng = document.getElementById('chk-lng') ? document.getElementById('chk-lng').checked : true;
       const showOther = document.getElementById('chk-other') ? document.getElementById('chk-other').checked : true;
 
       let renderedCount = 0;
@@ -868,10 +887,16 @@
         if (p.lat == null || p.lon == null) return;
 
         const typeLower = (p.type || '').toLowerCase();
-        if (typeLower.includes('solar') && !showSolar) return;
-        if (typeLower.includes('wind') && !showWind) return;
-        if (typeLower.includes('hydro') && !showHydro) return;
-        if (!typeLower.includes('solar') && !typeLower.includes('wind') && !typeLower.includes('hydro') && !showOther) return;
+        const isSolar = typeLower.includes('solar') || typeLower.includes('mặt trời');
+        const isWind = typeLower.includes('wind') || typeLower.includes('gió');
+        const isHydro = typeLower.includes('hydro') || typeLower.includes('thủy');
+        const isLng = typeLower.includes('lng') || typeLower.includes('gas') || typeLower.includes('khí');
+
+        if (isSolar && !showSolar) return;
+        if (isWind && !showWind) return;
+        if (isHydro && !showHydro) return;
+        if (isLng && !showLng) return;
+        if (!isSolar && !isWind && !isHydro && !isLng && !showOther) return;
 
         renderedCount++;
         const color = getProjectColor(p.type);
@@ -1075,7 +1100,8 @@
 
     // Map Search
     function handleMapSearch() {
-      const q = document.getElementById('map-search-input').value.toLowerCase().trim();
+      const rawQ = document.getElementById('map-search-input').value.trim();
+      const q = normalizeStr(rawQ);
       const resultsDiv = document.getElementById('map-search-results');
 
       if (!q || q.length < 2) {
@@ -1084,7 +1110,9 @@
         return;
       }
 
-      const matchedProjects = PROJECTS.filter(p => p.name.toLowerCase().includes(q) || (p.location && p.location.toLowerCase().includes(q))).slice(0, 8);
+      const matchedProjects = PROJECTS.filter(p => {
+        return [p.name, p.location, p.company, p.type, p.capacity].some(v => v && normalizeStr(v).includes(q));
+      }).slice(0, 10);
 
       let html = '';
       matchedProjects.forEach(p => {
@@ -1132,30 +1160,24 @@
     ];
 
     function buildUnifiedAssets() {
-      UNIFIED_ASSETS = [
-        ...PREMIER_ASSETS,
-        ...PROJECTS.filter(p => !PREMIER_ASSETS.some(pa => pa.name.toLowerCase() === p.name.toLowerCase())).map(p => {
-          let status = 'Operational';
-          if (p.name.includes('Expansion') || p.name.includes('Giai đoạn 2') || p.name.includes('Phase 2') || p.name.includes('Dự kiến') || p.name.includes('Projected')) {
-            status = 'Under Construction';
-          }
-          return {
-            name: p.name,
-            location: p.location,
-            type: p.type,
-            capacity: p.capacity,
-            developer: p.company,
-            status: status,
-            lat: p.lat,
-            lon: p.lon,
-            rawProject: p
-          };
-        })
-      ];
-
-      UNIFIED_ASSETS.forEach((item, idx) => {
-        item._uIndex = idx;
-        if (!item.rawProject) item.rawProject = item;
+      UNIFIED_ASSETS = PROJECTS.map((p, idx) => {
+        let status = p.status || 'Operational';
+        const pName = p.name || '';
+        if (pName.includes('Expansion') || pName.includes('Giai đoạn 2') || pName.includes('Phase 2') || pName.includes('Dự kiến') || pName.includes('Projected') || pName.includes('Proposed') || pName.includes('Tương lai')) {
+          status = 'Under Construction';
+        }
+        return {
+          _uIndex: idx,
+          name: p.name,
+          location: p.location,
+          type: p.type,
+          capacity: p.capacity,
+          developer: p.company || 'Not stated',
+          status: status,
+          lat: p.lat,
+          lon: p.lon,
+          rawProject: p
+        };
       });
     }
 
@@ -1198,8 +1220,12 @@
           biomass: 'Biomass',
           battery: 'Storage',
           storage: 'Storage',
-          lng: 'LNG',
-          offshore_wind: 'Offshore Wind'
+          lng: 'LNG / gas',
+          gas: 'LNG / gas',
+          coal: 'Coal',
+          oil: 'Oil',
+          nuclear: 'Nuclear',
+          offshore_wind: 'Wind'
         };
 
         PROJECTS = rows.map(r => ({
@@ -1265,14 +1291,51 @@
     }
 
     function filterAssetTable() {
-      const q = document.getElementById('table-search').value.toLowerCase().trim();
-      const type = document.getElementById('table-type').value;
+      const q = normalizeStr(document.getElementById('table-search').value);
+      const selectedType = document.getElementById('table-type').value;
       const status = document.getElementById('table-status').value;
       const reg = document.getElementById('table-region').value;
 
       filteredAssets = UNIFIED_ASSETS.filter(item => {
-        const matchesQ = !q || item.name.toLowerCase().includes(q) || (item.location && item.location.toLowerCase().includes(q)) || (item.developer && item.developer.toLowerCase().includes(q)) || (item.status && item.status.toLowerCase().includes(q));
-        const matchesType = type === 'ALL' || (item.type && item.type.toLowerCase().includes(type.toLowerCase()));
+        // Multi-attribute search with accent insensitivity
+        const matchesQ = !q || [
+          item.name,
+          item.location,
+          item.developer,
+          item.type,
+          item.capacity,
+          item.status,
+          item.rawProject && item.rawProject.company,
+          item.rawProject && item.rawProject.note
+        ].some(val => val && normalizeStr(val).includes(q));
+
+        // Fuel type filter with alias recognition
+        let matchesType = true;
+        if (selectedType !== 'ALL') {
+          const it = normalizeStr(item.type);
+          const st = normalizeStr(selectedType);
+
+          if (st.includes('lng') || st.includes('gas')) {
+            matchesType = it.includes('lng') || it.includes('gas') || it.includes('khi');
+          } else if (st.includes('hydro')) {
+            matchesType = it.includes('hydro') || it.includes('thuy');
+          } else if (st.includes('solar')) {
+            matchesType = it.includes('solar') || it.includes('mat troi');
+          } else if (st.includes('wind')) {
+            matchesType = it.includes('wind') || it.includes('gio');
+          } else if (st.includes('biomass')) {
+            matchesType = it.includes('biomass') || it.includes('sinh khoi');
+          } else if (st.includes('coal')) {
+            matchesType = it.includes('coal') || it.includes('than');
+          } else if (st.includes('oil')) {
+            matchesType = it.includes('oil') || it.includes('dau');
+          } else if (st.includes('nuclear')) {
+            matchesType = it.includes('nuclear') || it.includes('hat nhan');
+          } else {
+            matchesType = it.includes(st) || st.includes(it);
+          }
+        }
+
         const matchesStatus = status === 'ALL' || (item.status && item.status.toLowerCase() === status.toLowerCase());
         
         let matchesReg = true;
