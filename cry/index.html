@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nothing but Fun — Rev 0.17</title>
+<title>Nothing but Fun — Rev 0.18</title>
 <link rel="canonical" href="https://renewablevietnam.com/cry/">
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
@@ -456,41 +456,6 @@
 
     <div class="status" id="status"></div>
 
-
-  <!-- PORTFOLIO -->
-  <div class="section show" id="portfolio">
-    <div class="panel">
-      <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
-      <div class="pf-form">
-        <input type="text" id="p-name" placeholder="Add coin (BTC, SOL, ETH...)" autocomplete="off" spellcheck="false">
-        <button class="go" id="p-add">Add</button>
-      </div>
-      <div class="pf-form" id="p-code-row">
-        <input type="password" id="p-code" placeholder="Private code" autocomplete="new-password" spellcheck="false">
-        <button class="go" id="p-code-save">Unlock</button>
-        <button class="chip" id="p-code-lock" style="display:none">Lock</button>
-      </div>
-      <div class="status" id="p-code-note" style="font-size:12px"></div>
-      <div class="pf-actions">
-        <button class="chip" id="p-export">Export</button>
-        <button class="chip" id="p-import-btn">Import</button>
-        <input type="file" id="p-import" accept="application/json,.json" style="display:none">
-        <span class="status" id="p-status" style="font-size:12px"></span>
-      </div>
-      <div class="scroll" style="margin-top:12px">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th class="r">Price</th><th class="c">Decision</th>
-              <th class="c">Score</th><th class="c">Streak</th><th class="c"></th>
-            </tr>
-          </thead>
-          <tbody id="p-rows"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
   <!-- COMBINED: crypto value + final decision -->
   <div class="section" id="overview">
     <div class="panel">
@@ -526,12 +491,17 @@
 
   <div class="section" id="history">
     <div class="panel">
-      <h2>Daily History <span style="color:var(--muted);font-weight:600;font-size:12px">· 180d</span></h2>
-      <div class="scroll" style="margin-top:10px">
-        <table>
-          <thead><tr><th>Day</th><th class="r">Price</th><th class="c">Score</th><th>Decision</th><th class="c">Result</th></tr></thead>
-          <tbody id="h-rows"></tbody>
-        </table>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+        <h2>Daily History <span style="color:var(--muted);font-weight:600;font-size:12px">· 180d</span></h2>
+        <button class="chip" id="h-toggle">Show History ▼</button>
+      </div>
+      <div id="h-content" style="display:none; margin-top:12px">
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Day</th><th class="r">Price</th><th class="c">Score</th><th>Decision</th><th class="c">Result</th></tr></thead>
+            <tbody id="h-rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -643,9 +613,46 @@
       </div>
     </div>
   </div>
+
+
+
+
+  <!-- PORTFOLIO -->
+  <div class="section show" id="portfolio">
+    <div class="panel">
+      <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
+      <div class="pf-form">
+        <input type="text" id="p-name" placeholder="Add coin (BTC, SOL, ETH...)" autocomplete="off" spellcheck="false">
+        <button class="go" id="p-add">Add</button>
+      </div>
+      <div class="pf-form" id="p-code-row">
+        <input type="password" id="p-code" placeholder="Private code" autocomplete="new-password" spellcheck="false">
+        <button class="go" id="p-code-save">Unlock</button>
+        <button class="chip" id="p-code-lock" style="display:none">Lock</button>
+      </div>
+      <div class="status" id="p-code-note" style="font-size:12px"></div>
+      <div class="pf-actions">
+        <button class="chip" id="p-export">Export</button>
+        <button class="chip" id="p-import-btn">Import</button>
+        <input type="file" id="p-import" accept="application/json,.json" style="display:none">
+        <span class="status" id="p-status" style="font-size:12px"></span>
+      </div>
+      <div class="scroll" style="margin-top:12px">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th class="r">Price</th><th class="c">Decision</th>
+              <th class="c">Score</th><th class="c">Streak</th><th class="c"></th>
+            </tr>
+          </thead>
+          <tbody id="p-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </main>
 
-<footer id="foot">Rev 0.17 · Data: Binance · CoinGecko</footer>
+<footer id="foot">Rev 0.18 · Data: Binance · CoinGecko</footer>
 
 <script>
 (() => {
@@ -2123,6 +2130,13 @@
   /* ===================== wire up ===================== */
 
   const run = () => search($('q').value);
+  $('h-toggle').onclick = () => {
+    const el = $('h-content');
+    const isHidden = el.style.display === 'none';
+    el.style.display = isHidden ? 'block' : 'none';
+    $('h-toggle').textContent = isHidden ? 'Hide History ▲' : 'Show History ▼';
+    $('h-toggle').classList.toggle('on', isHidden);
+  };
   $('go').onclick = run;
   $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
 
