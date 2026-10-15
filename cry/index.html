@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="gray">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nothing but Fun — Rev 0.16</title>
+<title>Nothing but Fun — Rev 0.17</title>
 <link rel="canonical" href="https://renewablevietnam.com/cry/">
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
@@ -29,20 +29,20 @@
     --btn-primary-line:#005A96;
     --wall:none;
   }
-  html[data-theme="dark"]{
-    --bg:#000000; --card:#0C0C0E; --surface-2:#141416; --panel:rgba(12,12,14,.86);
-    --field:#141416; --chip-bg:#1D1D21;
-    --text:#FFFFFF; --muted:#9DA0A6; --faint:#666A70;
-    --border:rgba(255,255,255,.15); --line:rgba(255,255,255,.15); --line-strong:rgba(255,255,255,.34);
-    --accent:#0092CC; --accent-2:#3FC0F5; --accent-soft:rgba(0,146,204,.16); --accent-border:rgba(0,146,204,.60);
-    --up:#3FD07E; --down:#FF2D3F; --amber:#E0A83A;
-    --notify:#FF2D3F;
-    --shadow:0 1px 2px rgba(0,0,0,.70);
-    --shadow-hover:0 12px 34px -14px rgba(0,146,204,.50), 0 2px 8px rgba(0,0,0,.80);
-    --btn-face:linear-gradient(180deg,#1E1E22,#141416);
-    --btn-primary:linear-gradient(180deg,#00A0E0,#0072BC);
-    --btn-primary-line:#005A96;
-    --wall:radial-gradient(1100px 620px at 50% -18%, #0E1F2B 0%, #050506 58%, #000 100%);
+  html[data-theme="gray"], html[data-theme="dark"]{
+    --bg:#181A20; --card:#20242D; --surface-2:#282D38; --panel:rgba(32,36,45,.92);
+    --field:#191C23; --chip-bg:#2A303D;
+    --text:#E5E7EB; --muted:#9CA3AF; --faint:#6B7280;
+    --border:rgba(255,255,255,.09); --line:rgba(255,255,255,.09); --line-strong:rgba(255,255,255,.20);
+    --accent:#38BDF8; --accent-2:#60A5FA; --accent-soft:rgba(56,189,248,.12); --accent-border:rgba(56,189,248,.45);
+    --up:#34D399; --down:#F87171; --amber:#FBBF24;
+    --notify:#F87171;
+    --shadow:0 1px 3px rgba(0,0,0,.30);
+    --shadow-hover:0 12px 30px -12px rgba(0,0,0,.50), 0 2px 6px rgba(0,0,0,.30);
+    --btn-face:linear-gradient(180deg,#2A303D,#202530);
+    --btn-primary:linear-gradient(180deg,#0284C7,#0369A1);
+    --btn-primary-line:#0284C7;
+    --wall:radial-gradient(1200px 700px at 50% -12%, #222733 0%, #181A20 65%, #14161B 100%);
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%; overflow-x:clip}
@@ -645,7 +645,7 @@
   </div>
 </main>
 
-<footer id="foot">Rev 0.16 · Data: Binance · CoinGecko</footer>
+<footer id="foot">Rev 0.17 · Data: Binance · CoinGecko</footer>
 
 <script>
 (() => {
@@ -744,9 +744,14 @@
 
   // ---- theme --------------------------------------------------------------
   const savedTheme = localStorage.getItem('coinsearch.theme');
-  if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+  if (savedTheme) {
+    document.documentElement.dataset.theme = savedTheme;
+  } else {
+    document.documentElement.dataset.theme = 'gray';
+  }
   $('theme').onclick = () => {
-    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    const cur = document.documentElement.dataset.theme;
+    const next = (cur === 'gray' || cur === 'dark') ? 'light' : 'gray';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('coinsearch.theme', next);
   };
