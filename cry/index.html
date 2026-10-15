@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Coin Search + 16 Models — Rev 0.13</title>
+<title>Coin Search + 16 Models — Rev 0.14</title>
 <link rel="canonical" href="https://renewablevietnam.com/cry/">
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
@@ -448,40 +448,6 @@
 </header>
 
 <main>
-  <!-- PORTFOLIO -->
-  <div class="section show" id="portfolio">
-    <div class="panel">
-      <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
-      <div class="sub">Coin price, today's final decision + score, and the run of correct/incorrect days vs yesterday. Private to you — keyed to your code.</div>
-      <div class="pf-form">
-        <input type="text" id="p-name" placeholder="Add a coin (e.g. BTC, solana, ARB)" autocomplete="off" spellcheck="false">
-        <button class="go" id="p-add">Add</button>
-      </div>
-      <div class="pf-form" id="p-code-row">
-        <input type="password" id="p-code" placeholder="Private code — only you know it" autocomplete="new-password" spellcheck="false">
-        <button class="go" id="p-code-save">Unlock</button>
-        <button class="chip" id="p-code-lock" style="display:none">Lock</button>
-      </div>
-      <div class="status" id="p-code-note" style="font-size:12px"></div>
-      <div class="pf-actions">
-        <button class="chip" id="p-export">Export JSON</button>
-        <button class="chip" id="p-import-btn">Import JSON</button>
-        <input type="file" id="p-import" accept="application/json,.json" style="display:none">
-        <span class="status" id="p-status" style="font-size:12px"></span>
-      </div>
-      <div class="scroll" style="margin-top:12px">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th><th class="r">Coin price</th><th class="c">Final decision</th>
-              <th class="c">Score</th><th class="c">Correct / incorrect run</th><th class="c"></th>
-            </tr>
-          </thead>
-          <tbody id="p-rows"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
   <div class="row">
     <input type="text" id="q" placeholder="Search coin name…" autocomplete="off" spellcheck="false" enterkeyhint="search">
@@ -489,7 +455,42 @@
   </div>
 
   <div class="chips" id="chips"></div>
-  <div class="status" id="status">Type a coin name or ticker — e.g. pepe, ARB, solana.</div>
+  <div class="status" id="status"></div>
+
+
+  <!-- PORTFOLIO -->
+  <div class="section show" id="portfolio">
+    <div class="panel">
+      <h2>Portfolio <span class="cloud" id="p-cloud">local</span></h2>
+      <div class="pf-form">
+        <input type="text" id="p-name" placeholder="Add coin (BTC, SOL, ETH...)" autocomplete="off" spellcheck="false">
+        <button class="go" id="p-add">Add</button>
+      </div>
+      <div class="pf-form" id="p-code-row">
+        <input type="password" id="p-code" placeholder="Private code" autocomplete="new-password" spellcheck="false">
+        <button class="go" id="p-code-save">Unlock</button>
+        <button class="chip" id="p-code-lock" style="display:none">Lock</button>
+      </div>
+      <div class="status" id="p-code-note" style="font-size:12px"></div>
+      <div class="pf-actions">
+        <button class="chip" id="p-export">Export</button>
+        <button class="chip" id="p-import-btn">Import</button>
+        <input type="file" id="p-import" accept="application/json,.json" style="display:none">
+        <span class="status" id="p-status" style="font-size:12px"></span>
+      </div>
+      <div class="scroll" style="margin-top:12px">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th class="r">Price</th><th class="c">Decision</th>
+              <th class="c">Score</th><th class="c">Streak</th><th class="c"></th>
+            </tr>
+          </thead>
+          <tbody id="p-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <!-- COMBINED: crypto value + final decision -->
   <div class="section" id="overview">
@@ -503,8 +504,7 @@
 
       <hr class="divider">
 
-      <h2>Final decision · today</h2>
-      <div class="sub">Latest daily candle. Score sums all 16 models.</div>
+      <h2>Decision · Today</h2>
       <div class="verdict-row">
         <span class="verdict amber" id="d-verdict">—</span>
         <span class="score"><span id="d-score">—</span><span class="max" id="d-max"></span></span>
@@ -521,17 +521,16 @@
   </div>
 
   <div class="section" id="models">
-    <div class="panel"><h2>Model flashcards</h2><div class="sub">16 models · each scores −2…+2</div></div>
+    <div class="panel"><h2>16 Models</h2></div>
     <div class="cards" id="m-cards"></div>
   </div>
 
   <div class="section" id="history">
     <div class="panel">
-      <h2>Final decision · each day <span style="color:var(--muted);font-weight:600;font-size:12px">· 180 days</span></h2>
-      <div class="sub">Each day's call is graded against the next day's close (app's <code>gradeDecision</code>).</div>
+      <h2>Daily History <span style="color:var(--muted);font-weight:600;font-size:12px">· 180d</span></h2>
       <div class="scroll" style="margin-top:10px">
         <table>
-          <thead><tr><th>Day</th><th class="r">Coin value</th><th class="c">Score</th><th>Decision</th><th class="c">Result</th></tr></thead>
+          <thead><tr><th>Day</th><th class="r">Price</th><th class="c">Score</th><th>Decision</th><th class="c">Result</th></tr></thead>
           <tbody id="h-rows"></tbody>
         </table>
       </div>
@@ -541,8 +540,7 @@
   <!-- BACKTEST -->
   <div class="section" id="backtest">
     <div class="panel">
-      <h2>Backtest <span class="cloud" id="bt-cloud">16-model strategy</span></h2>
-      <div class="sub">Replays the daily verdicts over the coin's history: a BUY invests fully at that day's close, a SELL moves to cash, HOLD keeps the current allocation. Compared against buy &amp; hold.</div>
+      <h2>Backtest <span class="cloud" id="bt-cloud">16 models</span></h2>
       <div class="bt-controls" id="bt-windows">
         <button class="chip" data-days="90">90d</button>
         <button class="chip on" data-days="180">180d</button>
@@ -574,8 +572,7 @@
   <!-- MATRIX BACKTEST -->
   <div class="section" id="matrix">
     <div class="panel">
-      <h2>Matrix backtest <span class="cloud">coins × windows</span></h2>
-      <div class="sub">The same 16-model strategy across the major coins and every window. Cells are the strategy return — greener is better; hover a cell for hold &amp; difference. Click a cell to open that coin at that window.</div>
+      <h2>Matrix Backtest</h2>
       <div class="pf-actions">
         <button class="go" id="mx-run">Run matrix</button>
         <span class="status" id="mx-status"></span>
@@ -592,8 +589,7 @@
   <!-- TREND LINES -->
   <div class="section" id="trend">
     <div class="panel">
-      <h2>Trend lines &amp; breakouts <span class="cloud">candle chart</span></h2>
-      <div class="sub">Candlestick chart with volume. Auto swing lines &amp; interactive manual drawing tool. Hover/tap candles for OHLC + crosshair.</div>
+      <h2>Trend Lines &amp; Breakouts</h2>
       <div class="trend-toolbar" id="trend-toolbar">
         <div class="bt-controls" id="trend-k" style="margin-top:0">
           <button class="chip" data-k="5">5</button>
@@ -638,13 +634,12 @@
   <!-- DEMO TRADING -->
   <div class="section" id="demo">
     <div class="panel">
-      <h2>Demo trading <span class="cloud">paper · virtual USDT</span></h2>
-      <div class="sub">A paper wallet for this coin, private to your code. Buy and sell at the live Binance price — nothing real is at stake.</div>
+      <h2>Demo Trading <span class="cloud">10,000 USDT</span></h2>
       <div class="stat-grid" id="dm-stats"></div>
       <div class="pf-actions">
         <button class="go" id="dm-buy">Buy</button>
         <button class="chip" id="dm-sell">Sell</button>
-        <button class="chip" id="dm-signal">Trade the signal</button>
+        <button class="chip" id="dm-signal">Trade Signal</button>
         <button class="chip" id="dm-refresh">Refresh price</button>
         <button class="rm" id="dm-reset">Reset</button>
       </div>
@@ -657,41 +652,9 @@
       </div>
     </div>
   </div>
-
-  <details>
-    <summary>How the search, the models and the decisions work</summary>
-    <div class="body">
-      <b>Search</b> — the reference app's ladder (<code>Repository.resolveCoinId</code>): local list first, then CoinGecko <code>/search</code>.
-      <div style="margin-top:12px"><b>Models</b> — the app's 10 (<code>QuantKt.MODEL_NAMES</code>) + 6 added, each scoring −2…+2
-      (<code>computeDay</code>). Verdict thresholds are normalised to the score range.</div>
-      <div style="margin-top:12px"><b>Final decision</b> — the day's verdict, graded against the <i>next</i> day's close:
-      a BUY is <span style="color:var(--up)">correct</span> if price rises, a SELL is correct if it falls, HOLD is neutral
-      (<code>gradeVerdict</code>). Streaks count consecutive same-direction decisions (<code>decisionStreak</code>) and
-      consecutive correct/incorrect days (<code>gradedRun</code> / <code>correctStreak</code>).</div>
-      <div style="margin-top:12px"><b>Portfolio</b> — private to you. It is keyed to a code you choose: the page hashes it and Supabase's
-      row-level security only ever returns rows for that hash, so nobody else can read your list, and the same code on another device
-      gives the same portfolio. With no code it stays local to this browser. Each row shows the coin's live price, today's decision,
-      its score and the current correct/incorrect run; export/import as JSON.</div>
-      <div style="margin-top:12px"><b>Backtest</b> — replays the daily verdicts over up to ~1,000 days of Binance daily klines:
-      a BUY invests fully at that day's close, a SELL moves to cash, HOLD keeps the current allocation. Compares against buy &amp; hold
-      with round-trip trades, win rate, max drawdown and exposure. The chart shows dates and dollar values — hover it for the
-      exact date and both equity curves. Past performance does not predict future results.</div>
-      <div style="margin-top:12px"><b>Matrix backtest</b> — the same strategy across the major coins (plus your portfolio coins)
-      and every window, as a color-coded grid. Hover a cell for hold &amp; difference; click one to open that coin at that window.</div>
-      <div style="margin-top:12px"><b>Trend lines &amp; breakouts</b> — a candlestick chart (OHLC + volume,
-      right price axis, last-price tag, hover crosshair with O/H/L/C) over the same window. Swing highs and lows
-      (pivot lookback 5/10/20) are connected into support and resistance lines. A close beyond a line is a breakout
-      (▲ above resistance, ▼ below support), dashed lines extend to the break, and every break is listed with price,
-      line value and distance.</div>
-      <div style="margin-top:12px"><b>Demo trading</b> — a paper wallet (virtual 10,000 USDT) per coin, stored in this browser and
-      keyed to your private code like the portfolio. Buy and sell at the live Binance price, or press <b>Trade the signal</b> to execute
-      what today's verdict implies. Nothing real is at stake.</div>
-      <div style="margin-top:8px">Coin list: Binance spot pairs (cached 24h). Price/klines: Binance. Rev 0.13.</div>
-    </div>
-  </details>
 </main>
 
-<footer id="foot">Data: Binance public API · CoinGecko. Model scores are a study aid, not financial advice.</footer>
+<footer id="foot">Rev 0.14 · Data: Binance · CoinGecko</footer>
 
 <script>
 (() => {
@@ -1231,8 +1194,8 @@
     $('p-code-save').style.display = locked ? 'none' : '';
     $('p-code-lock').style.display = locked ? '' : 'none';
     $('p-code-note').textContent = locked
-      ? 'Locked to your private code. Use the same code on another device to see this portfolio.'
-      : 'Set a private code to keep this portfolio to yourself (and to reach it from your other devices). Leave it empty to stay local to this browser.';
+      ? 'Locked to private code.'
+      : 'Set a private code to sync across devices, or leave empty for local storage.';
   }
 
   async function useCode(code) {
@@ -1256,7 +1219,7 @@
   function renderPortfolio() {
     const tbody = $('p-rows');
     if (!pf.list.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted)">No coins yet — add one above.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="color:var(--muted)">No coins in portfolio.</td></tr>';
       return;
     }
     tbody.innerHTML = pf.list.map((r) => {
@@ -2139,7 +2102,7 @@
     const text = String(raw || '').trim();
     if (!text) {
       hideSections();
-      setStatus('Type a coin name or ticker first — e.g. pepe, ARB, solana.');
+      setStatus('Search by coin name or ticker.');
       return;
     }
     busy = true;
