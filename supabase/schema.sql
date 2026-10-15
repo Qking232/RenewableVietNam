@@ -345,7 +345,7 @@ revoke all on function public.hub_view_counts() from public;
 grant execute on function public.hub_view_counts() to anon, authenticated;
 
 -- ===========================================================================
---  BTC portfolio  (page: /test/btc/)   — private per person
+--  BTC portfolio  (page: /cry/, redirected from /test/btc/)   — private per person
 --  Each device sets a private code. The page sends sha256(code) in the
 --  x-owner-hash request header and every row is keyed to it, so RLS lets the
 --  publishable key see and touch ONLY the rows for the hash it sends: one
