@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nothing but Fun — Rev 0.15</title>
+<title>Nothing but Fun — Rev 0.16</title>
 <link rel="canonical" href="https://renewablevietnam.com/cry/">
 <style>
   /* BlackBerry / BB10 design language — sharp rectangles, hairline chrome,
@@ -454,8 +454,7 @@
     <button class="go" id="go">Search</button>
   </div>
 
-  <div class="chips" id="chips"></div>
-  <div class="status" id="status"></div>
+    <div class="status" id="status"></div>
 
 
   <!-- PORTFOLIO -->
@@ -552,14 +551,6 @@
       </div>
       <div class="status" id="bt-status"></div>
       <div class="stat-grid" id="bt-stats"></div>
-      <div class="chart-wrap">
-        <svg class="chart" id="bt-chart" viewBox="0 0 300 150" preserveAspectRatio="none" aria-hidden="true"></svg>
-        <div class="chart-tip"></div>
-      </div>
-      <div class="legend">
-        <span><i style="background:var(--accent)"></i>Strategy</span>
-        <span><i style="background:var(--line-strong)"></i>Buy &amp; hold</span>
-      </div>
       <div class="scroll" style="margin-top:12px; max-height:260px">
         <table>
           <thead><tr><th>#</th><th>Day</th><th class="c">Side</th><th class="r">Price</th><th class="r">Value</th><th class="r">P&amp;L</th></tr></thead>
@@ -654,7 +645,7 @@
   </div>
 </main>
 
-<footer id="foot">Rev 0.15 · Data: Binance · CoinGecko</footer>
+<footer id="foot">Rev 0.16 · Data: Binance · CoinGecko</footer>
 
 <script>
 (() => {
@@ -1460,27 +1451,7 @@
     svg.onmouseleave = () => { tip.style.display = 'none'; };
   }
 
-  function drawBtChart(R) {
-    const svg = $('bt-chart');
-    if (!R || R.curve.length < 2) { svg.innerHTML = ''; return; }
-    const cap = btCapital();
-    const sVals = R.curve.map((p) => p.s * cap);
-    const hVals = R.curve.map((p) => p.h * cap);
-    let min = Math.min.apply(null, sVals.concat(hVals));
-    let max = Math.max.apply(null, sVals.concat(hVals));
-    const padY = (max - min) * 0.06 || 1;
-    min -= padY; max += padY;
-    const frame = chartFrame(svg, R.curve.length, min, max, (k) => shortDate(btHistory.t[R.start + k]));
-    const line = (vals) => vals.map((v, k) => frame.x(k).toFixed(1) + ',' + frame.y(v).toFixed(1)).join(' ');
-    svg.innerHTML +=
-      '<polyline points="' + line(hVals) + '" fill="none" stroke="var(--line-strong)" stroke-width="1"/>' +
-      '<polyline points="' + line(sVals) + '" fill="none" stroke="var(--accent)" stroke-width="1.5"/>';
-    attachChartHover(svg, R.curve.length, (k) => {
-      const d = new Date(btHistory.t[R.start + k]);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
-        ' · Strategy ' + usd(sVals[k]) + ' · Hold ' + usd(hVals[k]);
-    });
-  }
+  function drawBtChart(R) {}
 
   function renderBacktest(R) {
     const stats = $('bt-stats');
@@ -2145,13 +2116,7 @@
   }
 
   /* ===================== wire up ===================== */
-  const QUICK = ['BTC', 'ETH', 'SOL', 'ARB', 'PEPE', 'DOGE', 'bitcoin', 'dogwifhat'];
-  for (const q of QUICK) {
-    const b = document.createElement('button');
-    b.className = 'chip'; b.textContent = q;
-    b.onclick = () => { $('q').value = q; search(q); };
-    $('chips').appendChild(b);
-  }
+
   const run = () => search($('q').value);
   $('go').onclick = run;
   $('q').addEventListener('keydown', (e) => { if (e.key === 'Enter') run(); });
