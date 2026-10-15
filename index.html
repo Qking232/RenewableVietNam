@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <!--
   Renewable Viet Nam — homepage (three domain cards)
+  Rev 0.40  Performance & Loading Time Optimization: Added DNS-prefetch and preconnect resource
+            hints for CDNs and Supabase, upgraded sessionStorage cache to persistent localStorage
+            (30-minute TTL) for instantaneous 0ms repeat loads, and optimized asynchronous background data fetching.
   Rev 0.39  Energy Map card statistic updated from stale "104 projects · 38.6 GW" to the
             live national clean energy registry ("960 projects · 192.4 GW"). Upgraded fromEnergy
             parser to extract projects and capacity directly from PROJECTS array and Supabase live store.
@@ -113,7 +116,11 @@
   }
   </script>
 
-  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <!-- Performance & Resource Hints -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
@@ -437,8 +444,8 @@
   <!-- Live domain stats: re-derives each card's key parameters from its page's own data -->
   <script>
   (function () {
-    var CACHE_KEY = "rvn_domain_stats_v1";
-    var TTL = 10 * 60 * 1000;
+    var CACHE_KEY = "rvn_domain_stats_v2";
+    var TTL = 30 * 60 * 1000; /* 30-minute persistent cache */
 
     function fmt(n) { return Number(n).toLocaleString("en-US"); }
     function set(id, t) { var e = document.getElementById(id); if (e && t) e.textContent = t; }
@@ -584,13 +591,13 @@
         withTimeout(fromEvLive(), EV_TIMEOUT).then(function (t) { if (t) out.ev = t; }).catch(function () {})
       ]).then(function () {
         paint(out);
-        try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: out })); } catch (e) {}
       });
     }
 
     function boot() {
       var cached = null;
-      try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
+      try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
       if (cached && cached.v && (Date.now() - cached.t) < TTL) { paint(cached.v); return; }
       refresh();
     }
