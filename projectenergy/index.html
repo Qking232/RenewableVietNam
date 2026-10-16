@@ -562,13 +562,9 @@
             <div id="map-search-results" class="absolute left-0 right-0 top-full mt-1 bg-brand-card border border-brand-border max-h-56 overflow-y-auto hidden z-50 custom-scrollbar shadow-2xl"></div>
           </div>
 
-          <!-- Basemap Dropdown with OpenStreetMap (France) as Default and Satellite option -->
+          <!-- Basemap Dropdown with Satellite (Esri Imagery) as Default (other options hidden) -->
           <select id="basemap-select" onchange="changeBasemap(this.value)" class="bg-brand-surface border border-brand-border px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-slate-400">
-            <option value="osmfr" selected>OpenStreetMap (France)</option>
-            <option value="satellite">Satellite (Esri Imagery)</option>
-            <option value="osmvn">OpenStreetMap (OSM) Vietnam</option>
-            <option value="dark">Carto Dark</option>
-            <option value="light">Carto Light</option>
+            <option value="satellite" selected>Satellite (Esri Imagery)</option>
           </select>
         </div>
       </div>
@@ -595,7 +591,7 @@
               <span id="map-status-text" data-en="960 Clean Energy Facilities Tracked" data-vi="960 Nhà máy Năng lượng Sạch Giám sát">960 Clean Energy Facilities Tracked</span>
             </div>
             <div class="flex items-center gap-2 sm:gap-3">
-              <span id="map-tile-indicator" class="hidden sm:inline">Map Tile: OpenStreetMap (France)</span>
+              <span id="map-tile-indicator" class="hidden sm:inline">Map Tile: Satellite (Esri Imagery)</span>
               <a href="#inspector-panel" class="lg:hidden text-slate-300 hover:text-white flex items-center gap-1 text-[10px] underline"><span data-en="View Dossier ↓" data-vi="Xem chi tiết ↓">View Dossier ↓</span></a>
               <button onclick="resetMapView()" data-en="Recenter Map" data-vi="Căn giữa" class="text-slate-300 hover:text-white underline">Recenter Map</button>
             </div>
@@ -822,15 +818,16 @@
         tap: false
       });
 
-      // Set OpenStreetMap (France) as default tile layer
-      baseTileLayer = L.tileLayer(BASEMAPS.osmfr, {
-        subdomains: 'abc',
-        maxZoom: 20,
+      // Set Satellite (Esri Imagery) as default tile layer
+      baseTileLayer = L.tileLayer(BASEMAPS.satellite, {
+        subdomains: 'abcd',
+        maxZoom: 19,
         updateWhenIdle: true,
         updateWhenZooming: false,
         keepBuffer: 2,
-        attribution: '&copy; OpenStreetMap France | &copy; OpenStreetMap contributors'
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
       }).addTo(mapInstance);
+      baseTileLayer.setZIndex(0);
 
       // Layer group for projects
       projectLayerGroup = L.layerGroup().addTo(mapInstance);
@@ -1464,7 +1461,7 @@
         dark: 'Carto Dark',
         light: 'Carto Light'
       };
-      const curBasemap = document.getElementById('basemap-select') ? document.getElementById('basemap-select').value : 'osmfr';
+      const curBasemap = document.getElementById('basemap-select') ? document.getElementById('basemap-select').value : 'satellite';
       const indicator = document.getElementById('map-tile-indicator');
       if (indicator) {
         const prefix = currentLang === 'vi' ? 'Lớp bản đồ: ' : 'Map Tile: ';
