@@ -35,29 +35,24 @@ const payload = {
   data: ciphertext
 };
 
-// 4. Extract SEO head content from source to preserve search indexing
-const headMatch = rawHtml.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+// 4. Extract SEO metadata from source cleanly (including full JSON-LD schema)
 let seoHead = '';
-if (headMatch && headMatch[1]) {
-  const lines = headMatch[1].split('\n');
-  const preservedLines = lines.filter(line => {
-    const trimmed = line.trim();
-    return (
-      trimmed.startsWith('<meta') ||
-      trimmed.startsWith('<title') ||
-      trimmed.startsWith('<link rel="canonical"') ||
-      trimmed.startsWith('<link rel="icon"') ||
-      trimmed.startsWith('<script type="application/ld+json"') ||
-      trimmed.includes('"@context"') ||
-      trimmed.includes('"@type"') ||
-      trimmed.includes('"Vietnam renewable energy"') ||
-      trimmed.startsWith('</script>')
-    );
-  });
-  seoHead = preservedLines.join('\n');
-}
+const titleMatch = rawHtml.match(/<title>[\s\S]*?<\/title>/i);
+const metaMatches = rawHtml.match(/<meta[^>]*>/gi) || [];
+const canonicalMatch = rawHtml.match(/<link\s+rel="canonical"[^>]*>/i);
+const iconMatch = rawHtml.match(/<link\s+rel="icon"[^>]*>/i);
+const jsonLdMatch = rawHtml.match(/<script\s+type="application\/ld\+json">[\s\S]*?<\/script>/i);
 
-// 5. Generate production gatekeeper wrapper
+const headParts = [];
+if (titleMatch) headParts.push(titleMatch[0]);
+headParts.push(...metaMatches);
+if (canonicalMatch) headParts.push(canonicalMatch[0]);
+if (iconMatch) headParts.push(iconMatch[0]);
+if (jsonLdMatch) headParts.push(jsonLdMatch[0]);
+
+seoHead = headParts.join('\n');
+
+// 5. Generate production gatekeeper wrapper (non-blocking, instant in-memory mount)
 const productionHtml = `<!DOCTYPE html>
 <!--
   Renewable Viet Nam — The Library
@@ -66,66 +61,34 @@ const productionHtml = `<!DOCTYPE html>
 -->
 <html lang="en" data-theme="dark">
 <head>
+<meta charset="utf-8" />
 ${seoHead}
 <style>
   :root {
     --bg: #000000;
-    --accent: #0092CC;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: var(--bg);
     color: #ffffff;
     font-family: "Slate Pro", "Slate", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    min-height: 100vh;
-    overflow: hidden;
+    margin: 0;
   }
-  .app-loader {
-    position: fixed;
-    inset: 0;
+  #loader {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    background: #000000;
-    z-index: 9999;
-    transition: opacity 0.25s ease;
-  }
-  .top-accent {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #0072BC, #00A0E0 55%, #3FC0F5);
-  }
-  .loader-spinner {
-    width: 28px;
-    height: 28px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  .loader-text {
-    font-size: 11px;
-    letter-spacing: 0.18em;
+    min-height: 100vh;
+    font-size: 12px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.4);
     font-weight: 600;
-  }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
   }
 </style>
 </head>
 <body>
-<div class="top-accent"></div>
-<div class="app-loader" id="loader">
-  <div class="loader-spinner"></div>
-  <div class="loader-text">Loading The Library&hellip;</div>
-</div>
+<div id="loader">Loading The Library&hellip;</div>
 
 <script>
 (async function() {
@@ -173,15 +136,19 @@ ${seoHead}
 
     const appHtml = new TextDecoder('utf-8').decode(decrypted);
 
+    // Explicitly remove placeholder loader before mounting
+    const loaderEl = document.getElementById('loader');
+    if (loaderEl) loaderEl.remove();
+
     // Mount application into DOM
     document.open();
     document.write(appHtml);
     document.close();
   } catch (err) {
     console.error('Failed to unpack protected application:', err);
-    const loader = document.getElementById('loader');
-    if (loader) {
-      loader.innerHTML = '<div style="color:#f87171;font-size:13px;letter-spacing:0.04em;">Unable to load library. Please refresh or verify network access.</div>';
+    const loaderEl = document.getElementById('loader');
+    if (loaderEl) {
+      loaderEl.innerHTML = '<span style="color:#f87171;">Unable to load library. Please refresh.</span>';
     }
   }
 })();
