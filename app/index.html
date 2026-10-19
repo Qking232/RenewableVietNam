@@ -2199,7 +2199,7 @@ ${code}
               <div class="card-footer" onclick="event.stopPropagation()">
                 ${actionBtnHtml}
                 <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
-                ${this.isAdmin ? `<button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>` : ''}
+                <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete" style="color: #ef4444; font-size: 13px;">🗑</button>
               </div>
             </div>
           `;
@@ -2232,7 +2232,7 @@ ${code}
         const btnDelete = document.getElementById('btnDelete');
         if (btnEditApp) btnEditApp.style.display = 'inline-flex';
         if (btnEditInfo) btnEditInfo.style.display = 'inline-flex';
-        if (btnDelete) btnDelete.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnDelete) btnDelete.style.display = 'inline-flex';
 
         // Re-render feed cards with or without admin buttons
         this.renderFeed();
@@ -2930,7 +2930,13 @@ ${code}
       },
 
       async deleteApp(id) {
-        if (!confirm('Delete this app?')) return;
+        if (!this.isAdmin) {
+          this.promptAdminLogin('Please enter the Admin Master Password to delete this app.', () => {
+            this.deleteApp(id);
+          });
+          return;
+        }
+        if (!confirm('Delete this app? This action cannot be undone.')) return;
         await DB.deleteApp(id);
         await SupabaseClient.deleteApp(id);
         this.apps = this.apps.filter(a => a.id !== id);
@@ -2939,6 +2945,7 @@ ${code}
         } else {
           this.renderFeed();
         }
+        this.showToast('🗑️ App successfully deleted.');
       },
 
       async exportApp(id) {
@@ -3187,22 +3194,9 @@ ${code}
           }
         });
 
-        // Upload Button opens modal
+        // Upload Button: Guests & Admins can upload freely without password
         const filePicker = document.getElementById('filePicker');
         document.getElementById('uploadBtn').addEventListener('click', () => {
-          if (!this.isAdmin) {
-            this.promptAdminLogin('Please enter the Admin Master Password to upload or publish new apps.', () => {
-              this.setUploadMode('html');
-              this.setScreenshotPreview(null);
-              document.getElementById('upTitle').value = '';
-              document.getElementById('upDesc').value = '';
-              document.getElementById('upPrompt').value = '';
-              document.getElementById('upPassword').value = '';
-              document.getElementById('upExternalUrl').value = '';
-              document.getElementById('uploadModal').style.display = 'flex';
-            });
-            return;
-          }
           this.setUploadMode('html');
           this.setScreenshotPreview(null);
           document.getElementById('upTitle').value = '';
