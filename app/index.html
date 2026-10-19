@@ -1043,11 +1043,13 @@
     <div class="header-actions" id="headerActions">
       <input type="file" id="filePicker" accept=".html,.htm" style="display: none;" />
       
-      <!-- Admin Controls (Hidden from public; revealed ONLY when logged in via /app/admin) -->
+      <!-- + Upload Button: ALWAYS visible! Prompts admin password if not logged in -->
+      <button class="btn btn-primary" id="uploadBtn">
+        + Upload
+      </button>
+
+      <!-- Admin Status & Console (Shown ONLY when logged in via /app/admin) -->
       <div id="adminControlsGroup" style="display: none; align-items: center; gap: 8px;">
-        <button class="btn btn-primary" id="uploadBtn">
-          + Upload
-        </button>
         <button class="admin-badge-active" id="btnAdminConsole" title="Open Admin Console Dashboard">
           🛡️ Admin Console
         </button>
@@ -1096,8 +1098,8 @@
       <div class="player-toolbar">
         <div class="tool-group">
           <button class="tool-btn" id="btnRestart" title="Restart">🔄 Restart</button>
+          <button class="tool-btn" id="btnEditApp" style="color: #38bdf8;" title="Edit HTML">✏️ Edit HTML</button>
           <button class="tool-btn" id="btnEditInfo" style="color: #a78bfa;" title="Edit Information">⚙️ Edit Info</button>
-          <button class="tool-btn" id="btnEditApp" style="color: #38bdf8;" title="Edit HTML">✏️ Code</button>
           <button class="tool-btn" id="btnAspect" title="Aspect ratio">📐 16:9</button>
           <button class="tool-btn" id="btnSnapshot" title="Snapshot Frame as Thumbnail">📸 Snapshot</button>
           <button class="tool-btn" id="btnFullscreen" title="Fullscreen">⛶ Fullscreen</button>
@@ -2079,10 +2081,8 @@ ${code}
               <div class="card-desc">${Platapp.cleanCardDesc(app)}</div>
               <div class="card-footer" onclick="event.stopPropagation()">
                 ${actionBtnHtml}
-                ${this.isAdmin ? `
-                  <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
-                  <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>
-                ` : ''}
+                <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
+                ${this.isAdmin ? `<button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>` : ''}
               </div>
             </div>
           `;
@@ -2109,12 +2109,12 @@ ${code}
         if (loginTrigger) loginTrigger.style.display = 'none'; // Always hidden in public view
         if (adminGroup) adminGroup.style.display = this.isAdmin ? 'flex' : 'none';
 
-        // Update player stage admin controls if present
+        // Update player stage admin controls: Edit HTML is permanently visible
         const btnEditInfo = document.getElementById('btnEditInfo');
         const btnEditApp = document.getElementById('btnEditApp');
         const btnDelete = document.getElementById('btnDelete');
-        if (btnEditInfo) btnEditInfo.style.display = this.isAdmin ? 'inline-flex' : 'none';
-        if (btnEditApp) btnEditApp.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnEditApp) btnEditApp.style.display = 'inline-flex';
+        if (btnEditInfo) btnEditInfo.style.display = 'inline-flex';
         if (btnDelete) btnDelete.style.display = this.isAdmin ? 'inline-flex' : 'none';
 
         // Re-render feed cards with or without admin buttons
@@ -2338,12 +2338,12 @@ ${code}
         document.getElementById('tabsBar').style.display = 'none';
         document.getElementById('playerSection').style.display = 'flex';
 
-        // Control toolbar visibility based on admin status
+        // Control toolbar visibility: Edit HTML & Edit Info are visible, requiring password on click
         const btnEditInfo = document.getElementById('btnEditInfo');
         const btnEditApp = document.getElementById('btnEditApp');
         const btnDelete = document.getElementById('btnDelete');
-        if (btnEditInfo) btnEditInfo.style.display = this.isAdmin ? 'inline-flex' : 'none';
-        if (btnEditApp) btnEditApp.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnEditApp) btnEditApp.style.display = 'inline-flex';
+        if (btnEditInfo) btnEditInfo.style.display = 'inline-flex';
         if (btnDelete) btnDelete.style.display = this.isAdmin ? 'inline-flex' : 'none';
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2658,6 +2658,15 @@ ${code}
         }
         if (!app) return;
 
+        if (!this.isAdmin) {
+          this.promptAdminLogin('Please enter the Admin Master Password to edit this app.', () => {
+            this.requireUnlock(app, () => {
+              this.openEditInfo(app);
+            });
+          });
+          return;
+        }
+
         this.requireUnlock(app, () => {
           this.openEditInfo(app);
         });
@@ -2811,6 +2820,14 @@ ${code}
         // Edit App (Studio)
         document.getElementById('btnEditApp').addEventListener('click', () => {
           if (!this.activeApp) return;
+          if (!this.isAdmin) {
+            this.promptAdminLogin('Please enter the Admin Master Password to edit HTML.', () => {
+              this.requireUnlock(this.activeApp, () => {
+                this.openStudio(this.activeApp);
+              });
+            });
+            return;
+          }
           this.requireUnlock(this.activeApp, () => {
             this.openStudio(this.activeApp);
           });
