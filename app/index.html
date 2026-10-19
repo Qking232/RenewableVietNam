@@ -3037,20 +3037,26 @@ ${code}
 
       clearStage() {
         if (this.activeBlobUrl) {
-          URL.revokeObjectURL(this.activeBlobUrl);
+          try {
+            URL.revokeObjectURL(this.activeBlobUrl);
+          } catch(e) {}
           this.activeBlobUrl = null;
         }
         const oldIframe = document.getElementById('vibeStage');
         if (oldIframe) {
-          oldIframe.src = 'about:blank';
+          try {
+            oldIframe.src = 'about:blank';
+          } catch(e) {}
           oldIframe.remove();
         }
       },
 
-      loadStageUrl(targetUrl) {
-        this.clearStage();
+      mountIframe(targetUrl) {
         const wrapper = document.getElementById('stageWrapper');
         if (!wrapper) return;
+        const existing = document.getElementById('vibeStage');
+        if (existing) existing.remove();
+
         const iframe = document.createElement('iframe');
         iframe.id = 'vibeStage';
         iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-same-origin allow-popups allow-popups-to-escape-sandbox');
@@ -3060,15 +3066,21 @@ ${code}
         wrapper.appendChild(iframe);
       },
 
+      loadStageUrl(targetUrl) {
+        this.clearStage();
+        this.mountIframe(targetUrl);
+      },
+
       mountCode(rawCode, title) {
-        if (this.activeBlobUrl) {
-          URL.revokeObjectURL(this.activeBlobUrl);
-          this.activeBlobUrl = null;
-        }
+        // Clear previous stage and revoke prior blob URL
+        this.clearStage();
+
         const normalized = CompatibilityEngine.normalizeHtml(rawCode, title);
         const blob = new Blob([normalized], { type: 'text/html;charset=utf-8' });
         this.activeBlobUrl = URL.createObjectURL(blob);
-        this.loadStageUrl(this.activeBlobUrl);
+
+        // Mount the fresh iframe with the newly created active blob URL (DO NOT revoke here!)
+        this.mountIframe(this.activeBlobUrl);
       },
 
       renderUpNext(currentId) {
