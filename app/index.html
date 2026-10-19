@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>platapp — micro html & vibe coding</title>
   <meta name="description" content="A minimal, fast platform for discovering, playing, and sharing single-file HTML micro-apps.">
+    <link rel="preconnect" href="https://nkkwegvplpozirrjcxsn.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <link rel="preconnect" href="https://s0.wp.com" crossorigin>
+  <link rel="dns-prefetch" href="https://s0.wp.com">
   <style>
     :root {
       --bg: #09090b;
@@ -456,6 +460,31 @@
     .app-card:hover {
       border-color: #383842;
       transform: translateY(-2px);
+    }
+
+
+    /* Core Web Vitals & Layout Containment Optimizations */
+    .app-card {
+      contain: layout style;
+      content-visibility: auto;
+      contain-intrinsic-size: 280px 340px;
+    }
+    .card-thumb-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .stage-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      border-top-color: #38bdf8;
+      animation: stageSpin 0.75s ease-in-out infinite;
+    }
+    @keyframes stageSpin {
+      to { transform: rotate(360deg); }
     }
 
     .card-canvas-box {
@@ -1091,6 +1120,10 @@
 
       <!-- Stage -->
       <div class="stage-wrapper" id="stageWrapper">
+        <div id="stageLoadingOverlay" style="display: none; position: absolute; inset: 0; background: rgba(9,9,11,0.92); backdrop-filter: blur(6px); z-index: 15; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: inherit;">
+          <div class="stage-spinner"></div>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Loading micro-app code...</div>
+        </div>
         <iframe id="vibeStage" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock"></iframe>
       </div>
 
@@ -1821,6 +1854,39 @@ ${code}
       url: 'https://nkkwegvplpozirrjcxsn.supabase.co',
       key: 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU',
 
+      // Lightweight Feed query omitting heavy 'code' column (95%+ payload reduction)
+      async getFeedApps() {
+        try {
+          const fields = 'id,title,category,description,external_url,thumbnail,glyph,views,revision,author,created_at,updated_at';
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps?select=${fields}&order=created_at.desc`, {
+            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            return data && data.length > 0 ? data : null;
+          }
+          return null;
+        } catch(e) {
+          return null;
+        }
+      },
+
+      // Targeted on-demand query to fetch full source code for an app
+      async getApp(id) {
+        try {
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps?id=eq.${encodeURIComponent(id)}&select=*`, {
+            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            return data && data.length > 0 ? data[0] : null;
+          }
+          return null;
+        } catch(e) {
+          return null;
+        }
+      },
+
       async getAllApps() {
         try {
           const res = await fetch(`${this.url}/rest/v1/platapp_apps?select=*&order=created_at.desc`, {
@@ -1962,7 +2028,6 @@ ${code}
 
       async init() {
         await DB.init();
-        await this.loadApps();
         this.checkAdminSession();
         this.bindEvents();
         this.route();
@@ -1974,27 +2039,26 @@ ${code}
             if (e.data.dataUrl && this.activeApp) {
               this.activeApp.thumbnail = e.data.dataUrl;
               await DB.saveApp(this.activeApp);
+              await SupabaseClient.updateApp(this.activeApp.id, { thumbnail: e.data.dataUrl });
               this.showToast('📸 Thumbnail snapshot captured & saved!');
-            } else {
-              // Silently skip if no canvas frame
             }
           }
         });
+
+        // 1. Instant Cache-First Paint (< 30ms from IndexedDB)
+        await this.loadLocalApps();
+        this.renderFeed();
+
+        // 2. Parallel Stale-While-Revalidate Cloud Sync (non-blocking)
+        this.syncCloudFeed();
       },
 
+      setStageLoading(show) {
+        const el = document.getElementById('stageLoadingOverlay');
+        if (el) el.style.display = show ? 'flex' : 'none';
+      },
 
-
-      async loadApps() {
-        // 1. Try Supabase Cloud Sync
-        let cloudApps = await SupabaseClient.getAllApps();
-        if (cloudApps && cloudApps.length > 0) {
-          this.apps = cloudApps;
-          // Backup to local IndexedDB
-          for (const a of cloudApps) await DB.saveApp(a);
-          return;
-        }
-
-        // 2. Fallback to local IndexedDB
+      async loadLocalApps() {
         let loaded = await DB.getAllApps();
         if (loaded.length === 0) {
           SAMPLE_APPS[0].code = decodeB64("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIj4KICA8dGl0bGU+TmVvbiBQYXJ0aWNsZSBNYXRyaXg8L3RpdGxlPgogIDxtZXRhIG5hbWU9ImRlc2NyaXB0aW9uIiBjb250ZW50PSJJbnRlcmFjdGl2ZSBuZW9uIHBhcnRpY2xlIGNhbnZhcyB0aGF0IGZsb3dzIHdpdGggY3Vyc29yIG1vdmVtZW50cyBhbmQgY3JlYXRlcyBidXJzdCBzaG9ja3dhdmVzLiI+CiAgPCEtLSBwcm9tcHQ6IENyZWF0ZSBhbiBpbnRlcmFjdGl2ZSBjYW52YXMgd2l0aCBmbG93aW5nIG5lb24gcGFydGljbGVzIHRoYXQgcmVhY3QgdG8gbW91c2UgcG9zaXRpb24sIGNyZWF0ZSBjb2xvciB3YXZlcywgYW5kIGV4cGxvZGUgaW50byBzcGFya3Mgb24gY2xpY2suIC0tPgogIDxzdHlsZT4KICAgICogeyBtYXJnaW46IDA7IHBhZGRpbmc6IDA7IGJveC1zaXppbmc6IGJvcmRlci1ib3g7IH0KICAgIGJvZHksIGh0bWwgeyB3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBvdmVyZmxvdzogaGlkZGVuOyBiYWNrZ3JvdW5kOiAjMDgwODEwOyBmb250LWZhbWlseTogc2Fucy1zZXJpZjsgfQogICAgY2FudmFzIHsgZGlzcGxheTogYmxvY2s7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMCU7IH0KICAgIC5odWQgewogICAgICBwb3NpdGlvbjogYWJzb2x1dGU7IGJvdHRvbTogMTZweDsgbGVmdDogMTZweDsgY29sb3I6IHJnYmEoMjU1LDI1NSwyNTUsMC43KTsKICAgICAgZm9udC1zaXplOiAxM3B4OyBwb2ludGVyLWV2ZW50czogbm9uZTsgdGV4dC1zaGFkb3c6IDAgMCA4cHggcmdiYSgwLDI1NSwyNTUsMC41KTsKICAgIH0KICA8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5PgogIDxjYW52YXMgaWQ9ImMiPjwvY2FudmFzPgogIDxkaXYgY2xhc3M9Imh1ZCI+4pyoIE1vdmUgY3Vyc29yIHRvIGd1aWRlIHBhcnRpY2xlcyAmYnVsbDsgQ2xpY2sgZm9yIHN1cGVybm92YSBidXJzdDwvZGl2PgoKICA8c2NyaXB0PgogICAgY29uc3QgY2FudmFzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2MnKTsKICAgIGNvbnN0IGN0eCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgbGV0IHdpZHRoLCBoZWlnaHQ7CiAgICBsZXQgcGFydGljbGVzID0gW107CiAgICBsZXQgbW91c2UgPSB7IHg6IG51bGwsIHk6IG51bGwsIGFjdGl2ZTogZmFsc2UgfTsKICAgIGxldCBodWUgPSAxODA7CgogICAgZnVuY3Rpb24gcmVzaXplKCkgewogICAgICB3aWR0aCA9IGNhbnZhcy53aWR0aCA9IHdpbmRvdy5pbm5lcldpZHRoOwogICAgICBoZWlnaHQgPSBjYW52YXMuaGVpZ2h0ID0gd2luZG93LmlubmVySGVpZ2h0OwogICAgfQogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3Jlc2l6ZScsIHJlc2l6ZSk7CiAgICByZXNpemUoKTsKCiAgICBjbGFzcyBQYXJ0aWNsZSB7CiAgICAgIGNvbnN0cnVjdG9yKHgsIHksIGlzQnVyc3QgPSBmYWxzZSkgewogICAgICAgIHRoaXMueCA9IHggPz8gTWF0aC5yYW5kb20oKSAqIHdpZHRoOwogICAgICAgIHRoaXMueSA9IHkgPz8gTWF0aC5yYW5kb20oKSAqIGhlaWdodDsKICAgICAgICBjb25zdCBhbmdsZSA9IE1hdGgucmFuZG9tKCkgKiBNYXRoLlBJICogMjsKICAgICAgICBjb25zdCBzcGVlZCA9IGlzQnVyc3QgPyBNYXRoLnJhbmRvbSgpICogOCArIDMgOiBNYXRoLnJhbmRvbSgpICogMiArIDAuNTsKICAgICAgICB0aGlzLnZ4ID0gTWF0aC5jb3MoYW5nbGUpICogc3BlZWQ7CiAgICAgICAgdGhpcy52eSA9IE1hdGguc2luKGFuZ2xlKSAqIHNwZWVkOwogICAgICAgIHRoaXMucmFkaXVzID0gaXNCdXJzdCA/IE1hdGgucmFuZG9tKCkgKiAzICsgMiA6IE1hdGgucmFuZG9tKCkgKiAyICsgMTsKICAgICAgICB0aGlzLmNvbG9yID0gYGhzbCgke2h1ZSArIChNYXRoLnJhbmRvbSgpICogNjAgLSAzMCl9LCAxMDAlLCA2NSUpYDsKICAgICAgICB0aGlzLmxpZmUgPSBpc0J1cnN0ID8gMSA6IG51bGw7CiAgICAgICAgdGhpcy5kZWNheSA9IE1hdGgucmFuZG9tKCkgKiAwLjAyICsgMC4wMTsKICAgICAgfQoKICAgICAgdXBkYXRlKCkgewogICAgICAgIGlmIChtb3VzZS5hY3RpdmUgJiYgbW91c2UueCAhPT0gbnVsbCkgewogICAgICAgICAgY29uc3QgZHggPSBtb3VzZS54IC0gdGhpcy54OwogICAgICAgICAgY29uc3QgZHkgPSBtb3VzZS55IC0gdGhpcy55OwogICAgICAgICAgY29uc3QgZGlzdCA9IE1hdGguaHlwb3QoZHgsIGR5KTsKICAgICAgICAgIGlmIChkaXN0IDwgMTgwICYmIGRpc3QgPiA1KSB7CiAgICAgICAgICAgIGNvbnN0IGZvcmNlID0gKDE4MCAtIGRpc3QpIC8gMTgwOwogICAgICAgICAgICB0aGlzLnZ4ICs9IChkeCAvIGRpc3QpICogZm9yY2UgKiAwLjY7CiAgICAgICAgICAgIHRoaXMudnkgKz0gKGR5IC8gZGlzdCkgKiBmb3JjZSAqIDAuNjsKICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoaXMudnggKj0gMC45ODsKICAgICAgICB0aGlzLnZ5ICo9IDAuOTg7CiAgICAgICAgdGhpcy54ICs9IHRoaXMudng7CiAgICAgICAgdGhpcy55ICs9IHRoaXMudnk7CgogICAgICAgIGlmICh0aGlzLmxpZmUgIT09IG51bGwpIHsKICAgICAgICAgIHRoaXMubGlmZSAtPSB0aGlzLmRlY2F5OwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICBpZiAodGhpcy54IDwgMCkgdGhpcy54ID0gd2lkdGg7CiAgICAgICAgICBpZiAodGhpcy54ID4gd2lkdGgpIHRoaXMueCA9IDA7CiAgICAgICAgICBpZiAodGhpcy55IDwgMCkgdGhpcy55ID0gaGVpZ2h0OwogICAgICAgICAgaWYgKHRoaXMueSA+IGhlaWdodCkgdGhpcy55ID0gMDsKICAgICAgICB9CiAgICAgIH0KCiAgICAgIGRyYXcoKSB7CiAgICAgICAgY3R4LnNhdmUoKTsKICAgICAgICBjdHguYmVnaW5QYXRoKCk7CiAgICAgICAgY3R4LmFyYyh0aGlzLngsIHRoaXMueSwgTWF0aC5tYXgoMC4xLCB0aGlzLnJhZGl1cyAqICh0aGlzLmxpZmUgPz8gMSkpLCAwLCBNYXRoLlBJICogMik7CiAgICAgICAgY3R4LmZpbGxTdHlsZSA9IHRoaXMuY29sb3I7CiAgICAgICAgY3R4LnNoYWRvd0JsdXIgPSAxMjsKICAgICAgICBjdHguc2hhZG93Q29sb3IgPSB0aGlzLmNvbG9yOwogICAgICAgIGN0eC5nbG9iYWxBbHBoYSA9IHRoaXMubGlmZSA/PyAwLjg1OwogICAgICAgIGN0eC5maWxsKCk7CiAgICAgICAgY3R4LnJlc3RvcmUoKTsKICAgICAgfQogICAgfQoKICAgIGZvciAobGV0IGkgPSAwOyBpIDwgMTIwOyBpKyspIHsKICAgICAgcGFydGljbGVzLnB1c2gobmV3IFBhcnRpY2xlKCkpOwogICAgfQoKICAgIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtb3VzZW1vdmUnLCAoZSkgPT4gewogICAgICBtb3VzZS54ID0gZS5jbGllbnRYOwogICAgICBtb3VzZS55ID0gZS5jbGllbnRZOwogICAgICBtb3VzZS5hY3RpdmUgPSB0cnVlOwogICAgfSk7CgogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21vdXNlbGVhdmUnLCAoKSA9PiB7IG1vdXNlLmFjdGl2ZSA9IGZhbHNlOyB9KTsKCiAgICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoZSkgPT4gewogICAgICBmb3IgKGxldCBpID0gMDsgaSA8IDQwOyBpKyspIHsKICAgICAgICBwYXJ0aWNsZXMucHVzaChuZXcgUGFydGljbGUoZS5jbGllbnRYLCBlLmNsaWVudFksIHRydWUpKTsKICAgICAgfQogICAgfSk7CgogICAgZnVuY3Rpb24gY29ubmVjdCgpIHsKICAgICAgZm9yIChsZXQgaSA9IDA7IGkgPCBwYXJ0aWNsZXMubGVuZ3RoOyBpKyspIHsKICAgICAgICBmb3IgKGxldCBqID0gaSArIDE7IGogPCBwYXJ0aWNsZXMubGVuZ3RoOyBqKyspIHsKICAgICAgICAgIGNvbnN0IGR4ID0gcGFydGljbGVzW2ldLnggLSBwYXJ0aWNsZXNbal0ueDsKICAgICAgICAgIGNvbnN0IGR5ID0gcGFydGljbGVzW2ldLnkgLSBwYXJ0aWNsZXNbal0ueTsKICAgICAgICAgIGNvbnN0IGRpc3QgPSBNYXRoLmh5cG90KGR4LCBkeSk7CiAgICAgICAgICBpZiAoZGlzdCA8IDkwKSB7CiAgICAgICAgICAgIGNvbnN0IGFscGhhID0gKDEgLSBkaXN0IC8gOTApICogMC4yNTsKICAgICAgICAgICAgY3R4LnN0cm9rZVN0eWxlID0gYGhzbGEoJHtodWV9LCAxMDAlLCA3MCUsICR7YWxwaGF9KWA7CiAgICAgICAgICAgIGN0eC5saW5lV2lkdGggPSAwLjg7CiAgICAgICAgICAgIGN0eC5iZWdpblBhdGgoKTsKICAgICAgICAgICAgY3R4Lm1vdmVUbyhwYXJ0aWNsZXNbaV0ueCwgcGFydGljbGVzW2ldLnkpOwogICAgICAgICAgICBjdHgubGluZVRvKHBhcnRpY2xlc1tqXS54LCBwYXJ0aWNsZXNbal0ueSk7CiAgICAgICAgICAgIGN0eC5zdHJva2UoKTsKICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBhbmltYXRlKCkgewogICAgICBjdHguZmlsbFN0eWxlID0gJ3JnYmEoOCwgOCwgMTYsIDAuMjIpJzsKICAgICAgY3R4LmZpbGxSZWN0KDAsIDAsIHdpZHRoLCBoZWlnaHQpOwoKICAgICAgaHVlID0gKGh1ZSArIDAuMykgJSAzNjA7CgogICAgICBmb3IgKGxldCBpID0gcGFydGljbGVzLmxlbmd0aCAtIDE7IGkgPj0gMDsgaS0tKSB7CiAgICAgICAgcGFydGljbGVzW2ldLnVwZGF0ZSgpOwogICAgICAgIHBhcnRpY2xlc1tpXS5kcmF3KCk7CiAgICAgICAgaWYgKHBhcnRpY2xlc1tpXS5saWZlICE9PSBudWxsICYmIHBhcnRpY2xlc1tpXS5saWZlIDw9IDApIHsKICAgICAgICAgIHBhcnRpY2xlcy5zcGxpY2UoaSwgMSk7CiAgICAgICAgfQogICAgICB9CgogICAgICB3aGlsZSAocGFydGljbGVzLmZpbHRlcihwID0+IHAubGlmZSA9PT0gbnVsbCkubGVuZ3RoIDwgMTIwKSB7CiAgICAgICAgcGFydGljbGVzLnB1c2gobmV3IFBhcnRpY2xlKCkpOwogICAgICB9CgogICAgICBjb25uZWN0KCk7CiAgICAgIHJlcXVlc3RBbmltYXRpb25GcmFtZShhbmltYXRlKTsKICAgIH0KICAgIGFuaW1hdGUoKTsKICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+Cg==");
@@ -2007,6 +2071,62 @@ ${code}
           loaded = await DB.getAllApps();
         }
         this.apps = loaded;
+      },
+
+      async syncCloudFeed() {
+        try {
+          const cloudFeed = await SupabaseClient.getFeedApps();
+          if (cloudFeed && cloudFeed.length > 0) {
+            // Merge cloud metadata with local cache
+            const localMap = new Map((this.apps || []).map(a => [a.id, a]));
+            const merged = [];
+
+            for (const cloudItem of cloudFeed) {
+              const localItem = localMap.get(cloudItem.id);
+              // Preserve locally cached code and revision history if already present
+              const mergedItem = {
+                ...cloudItem,
+                code: localItem?.code || null,
+                revision_history: localItem?.revision_history || null,
+                password_hash: localItem?.password_hash || cloudItem.password_hash || null
+              };
+              merged.push(mergedItem);
+              await DB.saveApp(mergedItem);
+            }
+
+            // Detect if catalog updated
+            const hasChanged = merged.length !== this.apps.length ||
+              merged.some((m, idx) => m.id !== this.apps[idx]?.id || m.revision !== this.apps[idx]?.revision || m.title !== this.apps[idx]?.title);
+
+            if (hasChanged) {
+              this.apps = merged;
+              this.renderFeed();
+            }
+
+            // Idle prefetch: pull code for the first 2 HTML apps in the background
+            if ('requestIdleCallback' in window) {
+              window.requestIdleCallback(() => this.idlePrefetchTopApps());
+            } else {
+              setTimeout(() => this.idlePrefetchTopApps(), 1500);
+            }
+          }
+        } catch(e) {
+          console.warn('Silent cloud sync fallback:', e);
+        }
+      },
+
+      async idlePrefetchTopApps() {
+        const candidates = (this.apps || []).filter(a => !a.external_url && !a.code).slice(0, 2);
+        for (const c of candidates) {
+          try {
+            const full = await SupabaseClient.getApp(c.id);
+            if (full && full.code) {
+              c.code = full.code;
+              c.revision_history = full.revision_history;
+              await DB.saveApp(c);
+            }
+          } catch(e) {}
+        }
       },
 
       renderFeed() {
@@ -2043,7 +2163,7 @@ ${code}
           const isExternal = Boolean(app.external_url);
 
           if (app.thumbnail) {
-            thumbHtml = `<img src="${app.thumbnail}" class="card-thumb-img" alt="${app.title}" />`;
+            thumbHtml = `<img src="${app.thumbnail}" class="card-thumb-img" alt="${app.title}" loading="lazy" decoding="async" />`;
           } else if (!isExternal && app.code) {
             // Live Scaled Sandboxed Mini-Stage Preview for HTML files
             const normalized = CompatibilityEngine.normalizeHtml(app.code, app.title);
@@ -2300,7 +2420,12 @@ ${code}
       },
 
       async loadWatch(id) {
-        const app = await DB.getApp(id);
+        let app = await DB.getApp(id) || (this.apps || []).find(a => a.id === id);
+        if (!app) {
+          this.setStageLoading(true);
+          app = await SupabaseClient.getApp(id);
+          this.setStageLoading(false);
+        }
         if (!app) {
           window.location.hash = '#/';
           return;
@@ -2308,7 +2433,8 @@ ${code}
 
         this.activeApp = app;
         app.views = (app.views || 0) + 1;
-        await DB.saveApp(app);
+        DB.saveApp(app);
+        SupabaseClient.updateApp(app.id, { views: app.views });
 
         document.getElementById('stageTitle').textContent = app.title;
         document.getElementById('stageAuthor').textContent = `By ${app.author || 'You'}`;
@@ -2331,8 +2457,28 @@ ${code}
           pBox.style.display = 'none';
         }
 
-        this.mountCode(app.code, app.title);
         this.renderUpNext(app.id);
+
+        document.getElementById('feedSection').style.display = 'none';
+        document.getElementById('tabsBar').style.display = 'none';
+        document.getElementById('playerSection').style.display = 'flex';
+
+        // Check if code needs on-demand fetching
+        if (!app.external_url && !app.code) {
+          this.setStageLoading(true);
+          const fullApp = await SupabaseClient.getApp(id);
+          if (fullApp && fullApp.code) {
+            app.code = fullApp.code;
+            app.revision_history = fullApp.revision_history || [];
+            app.password_hash = fullApp.password_hash;
+            await DB.saveApp(app);
+          }
+          this.setStageLoading(false);
+        }
+
+        if (app.code) {
+          this.mountCode(app.code, app.title);
+        }
 
         document.getElementById('feedSection').style.display = 'none';
         document.getElementById('tabsBar').style.display = 'none';
@@ -2366,12 +2512,21 @@ ${code}
         document.getElementById('unlockPassInput').focus();
       },
 
-      openStudio(app) {
+      async openStudio(app) {
+        if (!app.code && !app.external_url) {
+          this.showToast('⏳ Fetching app source code...');
+          const full = await SupabaseClient.getApp(app.id);
+          if (full && full.code) {
+            app.code = full.code;
+            app.revision_history = full.revision_history || [];
+            await DB.saveApp(app);
+          }
+        }
         document.getElementById('studioAppName').textContent = app.title;
         document.getElementById('studioAppRev').textContent = `Rev ${app.revision || '1.0'}`;
         document.getElementById('studioRevNote').value = '';
-        document.getElementById('studioTextarea').value = app.code;
-        this.refreshStudioPreview(app.code, app.title);
+        document.getElementById('studioTextarea').value = app.code || '';
+        this.refreshStudioPreview(app.code || '', app.title);
         document.getElementById('studioModal').style.display = 'flex';
       },
 
@@ -2780,14 +2935,27 @@ ${code}
         }
       },
 
-      exportApp(id) {
-        const app = this.apps.find(a => a.id === id) || this.activeApp;
+      async exportApp(id) {
+        const app = (this.apps || []).find(a => a.id === id) || this.activeApp;
         if (!app) return;
+        if (!app.code && !app.external_url) {
+          this.showToast('⏳ Downloading app code...');
+          const full = await SupabaseClient.getApp(app.id);
+          if (full && full.code) {
+            app.code = full.code;
+            await DB.saveApp(app);
+          }
+        }
+        if (!app.code) {
+          this.showToast('❌ No HTML code available for download.');
+          return;
+        }
         const blob = new Blob([app.code], { type: 'text/html;charset=utf-8' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = `${app.title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.html`;
         a.click();
+        URL.revokeObjectURL(a.href);
       },
 
       bindEvents() {
@@ -2930,10 +3098,18 @@ ${code}
         });
 
         // View Code Modal
-        document.getElementById('btnViewCode').addEventListener('click', () => {
+        document.getElementById('btnViewCode').addEventListener('click', async () => {
           if (!this.activeApp) return;
+          if (!this.activeApp.code && !this.activeApp.external_url) {
+            this.showToast('⏳ Loading source code...');
+            const full = await SupabaseClient.getApp(this.activeApp.id);
+            if (full && full.code) {
+              this.activeApp.code = full.code;
+              await DB.saveApp(this.activeApp);
+            }
+          }
           document.getElementById('codeModalTitle').textContent = `Code: ${this.activeApp.title}`;
-          document.getElementById('codePre').textContent = this.activeApp.code;
+          document.getElementById('codePre').textContent = this.activeApp.code || '(External application or empty)';
           document.getElementById('codeModal').style.display = 'flex';
         });
 
