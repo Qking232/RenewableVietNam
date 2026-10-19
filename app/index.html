@@ -251,6 +251,124 @@
       opacity: 0.95;
     }
 
+    
+    /* Revision Badge */
+    .revision-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 2px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .revision-badge:hover {
+      background: rgba(56, 189, 248, 0.2);
+    }
+    .lock-indicator {
+      font-size: 11px;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Studio Fullscreen Modal */
+    #studioModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 1000;
+      flex-direction: column;
+    }
+    .studio-bar {
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+    }
+    .studio-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .studio-rev-input {
+      background: #09090c;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      color: #fff;
+      font-size: 12px;
+      width: 280px;
+      outline: none;
+    }
+    .studio-rev-input:focus { border-color: #38bdf8; }
+
+    .studio-workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .studio-workspace { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    }
+    .studio-pane {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+    .studio-pane-header {
+      background: #0d0d12;
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .studio-textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #09090c;
+      color: #93c5fd;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      white-space: pre;
+      overflow: auto;
+    }
+    .studio-preview-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+
     /* Main Container */
     main {
       flex: 1;
@@ -748,7 +866,11 @@
         <button class="btn-back" id="btnBackToFeed">
           ← Back
         </button>
-        <span id="playerCategoryTag" class="card-badge" style="position: static;">APP</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="playerLockTag" class="lock-indicator" style="display: none;">🔒 Locked</span>
+          <span id="playerRevBadge" class="revision-badge" title="View revision history">Rev 1.0</span>
+          <span id="playerCategoryTag" class="card-badge" style="position: static;">APP</span>
+        </div>
       </div>
 
       <!-- Stage -->
@@ -760,6 +882,7 @@
       <div class="player-toolbar">
         <div class="tool-group">
           <button class="tool-btn" id="btnRestart" title="Restart">🔄 Restart</button>
+          <button class="tool-btn" id="btnEditApp" style="color: #38bdf8;" title="Edit HTML">✏️ Edit</button>
           <button class="tool-btn" id="btnAspect" title="Aspect ratio">📐 16:9</button>
           <button class="tool-btn" id="btnSnapshot" title="Snapshot Frame as Thumbnail">📸 Snapshot</button>
           <button class="tool-btn" id="btnFullscreen" title="Fullscreen">⛶ Fullscreen</button>
@@ -839,7 +962,11 @@
         </div>
         <div class="form-field">
           <label>Prompt Recipe (optional)</label>
-          <textarea id="upPrompt" class="input-field" style="min-height: 70px; resize: vertical;" placeholder="AI prompt used to code this..."></textarea>
+          <textarea id="upPrompt" class="input-field" style="min-height: 60px; resize: vertical;" placeholder="AI prompt used to code this..."></textarea>
+        </div>
+        <div class="form-field">
+          <label>Edit Password / PIN (optional — lock against editing)</label>
+          <input type="password" id="upPassword" class="input-field" placeholder="Set a password to protect this app" />
         </div>
         <button class="btn btn-primary" id="saveUploadBtn" style="justify-content: center; margin-top: 6px;">
           Save & Launch
@@ -921,6 +1048,75 @@
 </head>
 <body>
 ${code}
+
+  <!-- Studio Fullscreen Code Editor -->
+  <div id="studioModal">
+    <div class="studio-bar">
+      <div class="studio-title">
+        <span>✏️ Studio</span>
+        <span style="color: var(--text-dim);">&bull;</span>
+        <span id="studioAppName">App</span>
+        <span id="studioAppRev" class="revision-badge" style="cursor: default;">Rev 1.0</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <input type="text" id="studioRevNote" class="studio-rev-input" placeholder="Revision note (e.g. updated layout)..." />
+        <button class="btn" id="studioTestRunBtn">▶ Run Preview</button>
+        <button class="btn btn-primary" id="studioSaveBtn">💾 Save Revision</button>
+        <button class="btn" id="studioCloseBtn">✕ Close</button>
+      </div>
+    </div>
+    <div class="studio-workspace">
+      <div class="studio-pane">
+        <div class="studio-pane-header">
+          <span>HTML / CSS / JS Code</span>
+          <span style="font-size: 10px; color: var(--text-dim);">Tab: 2 spaces &bull; Ctrl+S to save</span>
+        </div>
+        <textarea id="studioTextarea" class="studio-textarea" spellcheck="false"></textarea>
+      </div>
+      <div class="studio-pane" style="border-right: none;">
+        <div class="studio-pane-header">
+          <span>Live Sandbox Preview</span>
+          <span style="font-size: 10px; color: #38bdf8;">Auto-renders</span>
+        </div>
+        <iframe id="studioPreviewFrame" class="studio-preview-frame" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Unlock Modal -->
+  <div class="modal-backdrop" id="unlockModal">
+    <div class="modal-panel" style="max-width: 420px;">
+      <div class="modal-head">
+        <span>🔒 Enter Password to Unlock</span>
+        <button class="modal-close-btn" id="closeUnlockModal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <p style="font-size: 13px; color: var(--text-muted);">This app is protected by its creator. Enter the unlock password to edit or delete it.</p>
+        <div class="form-field">
+          <input type="password" id="unlockPassInput" class="input-field" placeholder="Enter password..." autofocus />
+        </div>
+        <div id="unlockError" style="font-size: 12px; color: #ef4444; display: none;">Incorrect password. Please try again.</div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px;">
+          <button class="btn" id="cancelUnlockBtn">Cancel</button>
+          <button class="btn btn-primary" id="confirmUnlockBtn">Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revision History Modal -->
+  <div class="modal-backdrop" id="historyModal">
+    <div class="modal-panel" style="max-width: 560px;">
+      <div class="modal-head">
+        <span>📜 Revision History</span>
+        <button class="modal-close-btn" id="closeHistoryModal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div id="historyList" style="display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>`;
       },
@@ -1050,6 +1246,94 @@ ${code}
       }
     ];
 
+    
+    /* ==========================================================
+       SUPABASE CLOUD SYNC & CRYPTO SECURITY ENGINE
+       ========================================================== */
+    const SupabaseClient = {
+      url: 'https://nkkwegvplpozirrjcxsn.supabase.co',
+      key: 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU',
+
+      async getAllApps() {
+        try {
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps?select=*&order=created_at.desc`, {
+            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            return data && data.length > 0 ? data : null;
+          }
+          return null;
+        } catch(e) {
+          return null;
+        }
+      },
+
+      async saveApp(app) {
+        try {
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps`, {
+            method: 'POST',
+            headers: {
+              'apikey': this.key,
+              'Authorization': `Bearer ${this.key}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(app)
+          });
+          return res.ok;
+        } catch(e) {
+          return false;
+        }
+      },
+
+      async updateApp(id, updates) {
+        try {
+          updates.updated_at = new Date().toISOString();
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps?id=eq.${encodeURIComponent(id)}`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': this.key,
+              'Authorization': `Bearer ${this.key}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updates)
+          });
+          return res.ok;
+        } catch(e) {
+          return false;
+        }
+      },
+
+      async deleteApp(id) {
+        try {
+          const res = await fetch(`${this.url}/rest/v1/platapp_apps?id=eq.${encodeURIComponent(id)}`, {
+            method: 'DELETE',
+            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+          });
+          return res.ok;
+        } catch(e) {
+          return false;
+        }
+      }
+    };
+
+    async function hashPassword(plain) {
+      if (!plain || !plain.trim()) return null;
+      const buf = new TextEncoder().encode(plain.trim());
+      const hash = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function getNextRev(revStr) {
+      if (!revStr) return '1.1';
+      const parts = revStr.toString().replace(/[^0-9.]/g, '').split('.');
+      if (parts.length >= 2) {
+        return `${parts[0]}.${parseInt(parts[1], 10) + 1}`;
+      }
+      return `${parseInt(parts[0], 10) + 1}.0`;
+    }
+
     function decodeB64(str) {
       const binary = atob(str);
       const bytes = new Uint8Array(binary.length);
@@ -1094,6 +1378,16 @@ ${code}
 
 
       async loadApps() {
+        // 1. Try Supabase Cloud Sync
+        let cloudApps = await SupabaseClient.getAllApps();
+        if (cloudApps && cloudApps.length > 0) {
+          this.apps = cloudApps;
+          // Backup to local IndexedDB
+          for (const a of cloudApps) await DB.saveApp(a);
+          return;
+        }
+
+        // 2. Fallback to local IndexedDB
         let loaded = await DB.getAllApps();
         if (loaded.length === 0) {
           SAMPLE_APPS[0].code = decodeB64("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIj4KICA8dGl0bGU+TmVvbiBQYXJ0aWNsZSBNYXRyaXg8L3RpdGxlPgogIDxtZXRhIG5hbWU9ImRlc2NyaXB0aW9uIiBjb250ZW50PSJJbnRlcmFjdGl2ZSBuZW9uIHBhcnRpY2xlIGNhbnZhcyB0aGF0IGZsb3dzIHdpdGggY3Vyc29yIG1vdmVtZW50cyBhbmQgY3JlYXRlcyBidXJzdCBzaG9ja3dhdmVzLiI+CiAgPCEtLSBwcm9tcHQ6IENyZWF0ZSBhbiBpbnRlcmFjdGl2ZSBjYW52YXMgd2l0aCBmbG93aW5nIG5lb24gcGFydGljbGVzIHRoYXQgcmVhY3QgdG8gbW91c2UgcG9zaXRpb24sIGNyZWF0ZSBjb2xvciB3YXZlcywgYW5kIGV4cGxvZGUgaW50byBzcGFya3Mgb24gY2xpY2suIC0tPgogIDxzdHlsZT4KICAgICogeyBtYXJnaW46IDA7IHBhZGRpbmc6IDA7IGJveC1zaXppbmc6IGJvcmRlci1ib3g7IH0KICAgIGJvZHksIGh0bWwgeyB3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBvdmVyZmxvdzogaGlkZGVuOyBiYWNrZ3JvdW5kOiAjMDgwODEwOyBmb250LWZhbWlseTogc2Fucy1zZXJpZjsgfQogICAgY2FudmFzIHsgZGlzcGxheTogYmxvY2s7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMCU7IH0KICAgIC5odWQgewogICAgICBwb3NpdGlvbjogYWJzb2x1dGU7IGJvdHRvbTogMTZweDsgbGVmdDogMTZweDsgY29sb3I6IHJnYmEoMjU1LDI1NSwyNTUsMC43KTsKICAgICAgZm9udC1zaXplOiAxM3B4OyBwb2ludGVyLWV2ZW50czogbm9uZTsgdGV4dC1zaGFkb3c6IDAgMCA4cHggcmdiYSgwLDI1NSwyNTUsMC41KTsKICAgIH0KICA8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5PgogIDxjYW52YXMgaWQ9ImMiPjwvY2FudmFzPgogIDxkaXYgY2xhc3M9Imh1ZCI+4pyoIE1vdmUgY3Vyc29yIHRvIGd1aWRlIHBhcnRpY2xlcyAmYnVsbDsgQ2xpY2sgZm9yIHN1cGVybm92YSBidXJzdDwvZGl2PgoKICA8c2NyaXB0PgogICAgY29uc3QgY2FudmFzID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2MnKTsKICAgIGNvbnN0IGN0eCA9IGNhbnZhcy5nZXRDb250ZXh0KCcyZCcpOwogICAgbGV0IHdpZHRoLCBoZWlnaHQ7CiAgICBsZXQgcGFydGljbGVzID0gW107CiAgICBsZXQgbW91c2UgPSB7IHg6IG51bGwsIHk6IG51bGwsIGFjdGl2ZTogZmFsc2UgfTsKICAgIGxldCBodWUgPSAxODA7CgogICAgZnVuY3Rpb24gcmVzaXplKCkgewogICAgICB3aWR0aCA9IGNhbnZhcy53aWR0aCA9IHdpbmRvdy5pbm5lcldpZHRoOwogICAgICBoZWlnaHQgPSBjYW52YXMuaGVpZ2h0ID0gd2luZG93LmlubmVySGVpZ2h0OwogICAgfQogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ3Jlc2l6ZScsIHJlc2l6ZSk7CiAgICByZXNpemUoKTsKCiAgICBjbGFzcyBQYXJ0aWNsZSB7CiAgICAgIGNvbnN0cnVjdG9yKHgsIHksIGlzQnVyc3QgPSBmYWxzZSkgewogICAgICAgIHRoaXMueCA9IHggPz8gTWF0aC5yYW5kb20oKSAqIHdpZHRoOwogICAgICAgIHRoaXMueSA9IHkgPz8gTWF0aC5yYW5kb20oKSAqIGhlaWdodDsKICAgICAgICBjb25zdCBhbmdsZSA9IE1hdGgucmFuZG9tKCkgKiBNYXRoLlBJICogMjsKICAgICAgICBjb25zdCBzcGVlZCA9IGlzQnVyc3QgPyBNYXRoLnJhbmRvbSgpICogOCArIDMgOiBNYXRoLnJhbmRvbSgpICogMiArIDAuNTsKICAgICAgICB0aGlzLnZ4ID0gTWF0aC5jb3MoYW5nbGUpICogc3BlZWQ7CiAgICAgICAgdGhpcy52eSA9IE1hdGguc2luKGFuZ2xlKSAqIHNwZWVkOwogICAgICAgIHRoaXMucmFkaXVzID0gaXNCdXJzdCA/IE1hdGgucmFuZG9tKCkgKiAzICsgMiA6IE1hdGgucmFuZG9tKCkgKiAyICsgMTsKICAgICAgICB0aGlzLmNvbG9yID0gYGhzbCgke2h1ZSArIChNYXRoLnJhbmRvbSgpICogNjAgLSAzMCl9LCAxMDAlLCA2NSUpYDsKICAgICAgICB0aGlzLmxpZmUgPSBpc0J1cnN0ID8gMSA6IG51bGw7CiAgICAgICAgdGhpcy5kZWNheSA9IE1hdGgucmFuZG9tKCkgKiAwLjAyICsgMC4wMTsKICAgICAgfQoKICAgICAgdXBkYXRlKCkgewogICAgICAgIGlmIChtb3VzZS5hY3RpdmUgJiYgbW91c2UueCAhPT0gbnVsbCkgewogICAgICAgICAgY29uc3QgZHggPSBtb3VzZS54IC0gdGhpcy54OwogICAgICAgICAgY29uc3QgZHkgPSBtb3VzZS55IC0gdGhpcy55OwogICAgICAgICAgY29uc3QgZGlzdCA9IE1hdGguaHlwb3QoZHgsIGR5KTsKICAgICAgICAgIGlmIChkaXN0IDwgMTgwICYmIGRpc3QgPiA1KSB7CiAgICAgICAgICAgIGNvbnN0IGZvcmNlID0gKDE4MCAtIGRpc3QpIC8gMTgwOwogICAgICAgICAgICB0aGlzLnZ4ICs9IChkeCAvIGRpc3QpICogZm9yY2UgKiAwLjY7CiAgICAgICAgICAgIHRoaXMudnkgKz0gKGR5IC8gZGlzdCkgKiBmb3JjZSAqIDAuNjsKICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHRoaXMudnggKj0gMC45ODsKICAgICAgICB0aGlzLnZ5ICo9IDAuOTg7CiAgICAgICAgdGhpcy54ICs9IHRoaXMudng7CiAgICAgICAgdGhpcy55ICs9IHRoaXMudnk7CgogICAgICAgIGlmICh0aGlzLmxpZmUgIT09IG51bGwpIHsKICAgICAgICAgIHRoaXMubGlmZSAtPSB0aGlzLmRlY2F5OwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICBpZiAodGhpcy54IDwgMCkgdGhpcy54ID0gd2lkdGg7CiAgICAgICAgICBpZiAodGhpcy54ID4gd2lkdGgpIHRoaXMueCA9IDA7CiAgICAgICAgICBpZiAodGhpcy55IDwgMCkgdGhpcy55ID0gaGVpZ2h0OwogICAgICAgICAgaWYgKHRoaXMueSA+IGhlaWdodCkgdGhpcy55ID0gMDsKICAgICAgICB9CiAgICAgIH0KCiAgICAgIGRyYXcoKSB7CiAgICAgICAgY3R4LnNhdmUoKTsKICAgICAgICBjdHguYmVnaW5QYXRoKCk7CiAgICAgICAgY3R4LmFyYyh0aGlzLngsIHRoaXMueSwgTWF0aC5tYXgoMC4xLCB0aGlzLnJhZGl1cyAqICh0aGlzLmxpZmUgPz8gMSkpLCAwLCBNYXRoLlBJICogMik7CiAgICAgICAgY3R4LmZpbGxTdHlsZSA9IHRoaXMuY29sb3I7CiAgICAgICAgY3R4LnNoYWRvd0JsdXIgPSAxMjsKICAgICAgICBjdHguc2hhZG93Q29sb3IgPSB0aGlzLmNvbG9yOwogICAgICAgIGN0eC5nbG9iYWxBbHBoYSA9IHRoaXMubGlmZSA/PyAwLjg1OwogICAgICAgIGN0eC5maWxsKCk7CiAgICAgICAgY3R4LnJlc3RvcmUoKTsKICAgICAgfQogICAgfQoKICAgIGZvciAobGV0IGkgPSAwOyBpIDwgMTIwOyBpKyspIHsKICAgICAgcGFydGljbGVzLnB1c2gobmV3IFBhcnRpY2xlKCkpOwogICAgfQoKICAgIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKCdtb3VzZW1vdmUnLCAoZSkgPT4gewogICAgICBtb3VzZS54ID0gZS5jbGllbnRYOwogICAgICBtb3VzZS55ID0gZS5jbGllbnRZOwogICAgICBtb3VzZS5hY3RpdmUgPSB0cnVlOwogICAgfSk7CgogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ21vdXNlbGVhdmUnLCAoKSA9PiB7IG1vdXNlLmFjdGl2ZSA9IGZhbHNlOyB9KTsKCiAgICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoZSkgPT4gewogICAgICBmb3IgKGxldCBpID0gMDsgaSA8IDQwOyBpKyspIHsKICAgICAgICBwYXJ0aWNsZXMucHVzaChuZXcgUGFydGljbGUoZS5jbGllbnRYLCBlLmNsaWVudFksIHRydWUpKTsKICAgICAgfQogICAgfSk7CgogICAgZnVuY3Rpb24gY29ubmVjdCgpIHsKICAgICAgZm9yIChsZXQgaSA9IDA7IGkgPCBwYXJ0aWNsZXMubGVuZ3RoOyBpKyspIHsKICAgICAgICBmb3IgKGxldCBqID0gaSArIDE7IGogPCBwYXJ0aWNsZXMubGVuZ3RoOyBqKyspIHsKICAgICAgICAgIGNvbnN0IGR4ID0gcGFydGljbGVzW2ldLnggLSBwYXJ0aWNsZXNbal0ueDsKICAgICAgICAgIGNvbnN0IGR5ID0gcGFydGljbGVzW2ldLnkgLSBwYXJ0aWNsZXNbal0ueTsKICAgICAgICAgIGNvbnN0IGRpc3QgPSBNYXRoLmh5cG90KGR4LCBkeSk7CiAgICAgICAgICBpZiAoZGlzdCA8IDkwKSB7CiAgICAgICAgICAgIGNvbnN0IGFscGhhID0gKDEgLSBkaXN0IC8gOTApICogMC4yNTsKICAgICAgICAgICAgY3R4LnN0cm9rZVN0eWxlID0gYGhzbGEoJHtodWV9LCAxMDAlLCA3MCUsICR7YWxwaGF9KWA7CiAgICAgICAgICAgIGN0eC5saW5lV2lkdGggPSAwLjg7CiAgICAgICAgICAgIGN0eC5iZWdpblBhdGgoKTsKICAgICAgICAgICAgY3R4Lm1vdmVUbyhwYXJ0aWNsZXNbaV0ueCwgcGFydGljbGVzW2ldLnkpOwogICAgICAgICAgICBjdHgubGluZVRvKHBhcnRpY2xlc1tqXS54LCBwYXJ0aWNsZXNbal0ueSk7CiAgICAgICAgICAgIGN0eC5zdHJva2UoKTsKICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIH0KCiAgICBmdW5jdGlvbiBhbmltYXRlKCkgewogICAgICBjdHguZmlsbFN0eWxlID0gJ3JnYmEoOCwgOCwgMTYsIDAuMjIpJzsKICAgICAgY3R4LmZpbGxSZWN0KDAsIDAsIHdpZHRoLCBoZWlnaHQpOwoKICAgICAgaHVlID0gKGh1ZSArIDAuMykgJSAzNjA7CgogICAgICBmb3IgKGxldCBpID0gcGFydGljbGVzLmxlbmd0aCAtIDE7IGkgPj0gMDsgaS0tKSB7CiAgICAgICAgcGFydGljbGVzW2ldLnVwZGF0ZSgpOwogICAgICAgIHBhcnRpY2xlc1tpXS5kcmF3KCk7CiAgICAgICAgaWYgKHBhcnRpY2xlc1tpXS5saWZlICE9PSBudWxsICYmIHBhcnRpY2xlc1tpXS5saWZlIDw9IDApIHsKICAgICAgICAgIHBhcnRpY2xlcy5zcGxpY2UoaSwgMSk7CiAgICAgICAgfQogICAgICB9CgogICAgICB3aGlsZSAocGFydGljbGVzLmZpbHRlcihwID0+IHAubGlmZSA9PT0gbnVsbCkubGVuZ3RoIDwgMTIwKSB7CiAgICAgICAgcGFydGljbGVzLnB1c2gobmV3IFBhcnRpY2xlKCkpOwogICAgICB9CgogICAgICBjb25uZWN0KCk7CiAgICAgIHJlcXVlc3RBbmltYXRpb25GcmFtZShhbmltYXRlKTsKICAgIH0KICAgIGFuaW1hdGUoKTsKICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+Cg==");
@@ -1199,6 +1493,13 @@ ${code}
         document.getElementById('stagePlays').textContent = `${app.views} plays`;
         document.getElementById('stageDesc').textContent = app.description || '';
         document.getElementById('playerCategoryTag').textContent = app.category.toUpperCase();
+        document.getElementById('playerRevBadge').textContent = `Rev ${app.revision || '1.0'}`;
+        const lockTag = document.getElementById('playerLockTag');
+        if (app.password_hash) {
+          lockTag.style.display = 'inline-block';
+        } else {
+          lockTag.style.display = 'none';
+        }
 
         const pBox = document.getElementById('stagePromptBox');
         if (app.prompt) {
@@ -1218,6 +1519,129 @@ ${code}
       },
 
       
+      
+      unlockedApps: new Set(),
+      pendingAction: null,
+
+      requireUnlock(app, actionCallback) {
+        if (!app.password_hash || this.unlockedApps.has(app.id)) {
+          actionCallback();
+          return;
+        }
+        this.pendingAction = actionCallback;
+        document.getElementById('unlockPassInput').value = '';
+        document.getElementById('unlockError').style.display = 'none';
+        document.getElementById('unlockModal').style.display = 'flex';
+        document.getElementById('unlockPassInput').focus();
+      },
+
+      openStudio(app) {
+        document.getElementById('studioAppName').textContent = app.title;
+        document.getElementById('studioAppRev').textContent = `Rev ${app.revision || '1.0'}`;
+        document.getElementById('studioRevNote').value = '';
+        document.getElementById('studioTextarea').value = app.code;
+        this.refreshStudioPreview(app.code, app.title);
+        document.getElementById('studioModal').style.display = 'flex';
+      },
+
+      refreshStudioPreview(code, title) {
+        const frame = document.getElementById('studioPreviewFrame');
+        const normalized = CompatibilityEngine.normalizeHtml(code, title);
+        const blob = new Blob([normalized], { type: 'text/html;charset=utf-8' });
+        frame.src = URL.createObjectURL(blob);
+      },
+
+      async saveStudioRevision() {
+        if (!this.activeApp) return;
+        const newCode = document.getElementById('studioTextarea').value;
+        const revNote = document.getElementById('studioRevNote').value.trim() || 'Code update';
+
+        const history = this.activeApp.revision_history || [];
+        history.unshift({
+          rev: this.activeApp.revision || '1.0',
+          timestamp: new Date().toISOString(),
+          note: revNote,
+          code: this.activeApp.code
+        });
+
+        const nextRev = getNextRev(this.activeApp.revision || '1.0');
+        this.activeApp.revision_history = history;
+        this.activeApp.revision = nextRev;
+        this.activeApp.code = newCode;
+
+        // Persist to Supabase and IndexedDB
+        await SupabaseClient.updateApp(this.activeApp.id, {
+          code: newCode,
+          revision: nextRev,
+          revision_history: history
+        });
+        await DB.saveApp(this.activeApp);
+
+        document.getElementById('studioModal').style.display = 'none';
+        this.mountCode(this.activeApp.code, this.activeApp.title);
+        document.getElementById('playerRevBadge').textContent = `Rev ${this.activeApp.revision}`;
+        this.showToast(`✅ Revision ${nextRev} saved & live across devices!`);
+      },
+
+      showHistory(app) {
+        const list = document.getElementById('historyList');
+        list.innerHTML = '';
+        const history = app.revision_history || [];
+
+        if (history.length === 0) {
+          list.innerHTML = '<div style="font-size: 13px; color: var(--text-dim); text-align: center; padding: 20px;">No prior revisions recorded.</div>';
+        } else {
+          history.forEach(item => {
+            const row = document.createElement('div');
+            row.style.cssText = 'background: #0d0d12; border: 1px solid var(--border); border-radius: 6px; padding: 10px; display: flex; align-items: center; justify-content: space-between;';
+            const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleString() : '';
+            row.innerHTML = `
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: #38bdf8;">Rev ${item.rev}</div>
+                <div style="font-size: 11px; color: var(--text-muted);">${item.note || 'No note'} &bull; ${dateStr}</div>
+              </div>
+              <button class="btn" style="font-size: 11px; padding: 4px 10px;" onclick="Platapp.restoreRevision('${item.rev}')">Rollback</button>
+            `;
+            list.appendChild(row);
+          });
+        }
+        document.getElementById('historyModal').style.display = 'flex';
+      },
+
+      restoreRevision(targetRev) {
+        if (!this.activeApp) return;
+        const item = (this.activeApp.revision_history || []).find(h => h.rev === targetRev);
+        if (!item) return;
+
+        this.requireUnlock(this.activeApp, async () => {
+          if (!confirm(`Rollback to Revision ${targetRev}? Current code will be archived.`)) return;
+          const currRev = this.activeApp.revision;
+          const history = this.activeApp.revision_history || [];
+          history.unshift({
+            rev: currRev,
+            timestamp: new Date().toISOString(),
+            note: `Rollback to Rev ${targetRev}`,
+            code: this.activeApp.code
+          });
+
+          this.activeApp.code = item.code;
+          this.activeApp.revision = getNextRev(currRev);
+          this.activeApp.revision_history = history;
+
+          await SupabaseClient.updateApp(this.activeApp.id, {
+            code: item.code,
+            revision: this.activeApp.revision,
+            revision_history: history
+          });
+          await DB.saveApp(this.activeApp);
+
+          document.getElementById('historyModal').style.display = 'none';
+          this.mountCode(this.activeApp.code, this.activeApp.title);
+          document.getElementById('playerRevBadge').textContent = `Rev ${this.activeApp.revision}`;
+          this.showToast(`Restored code from Rev ${targetRev}!`);
+        });
+      },
+
       scaleMiniStages() {
         document.querySelectorAll('.mini-stage-frame').forEach(iframe => {
           const parentW = iframe.parentElement?.clientWidth || 290;
@@ -1368,6 +1792,87 @@ ${code}
           if (this.activeApp) this.mountCode(this.activeApp.code, this.activeApp.title);
         });
 
+        // Edit App (Studio)
+        document.getElementById('btnEditApp').addEventListener('click', () => {
+          if (!this.activeApp) return;
+          this.requireUnlock(this.activeApp, () => {
+            this.openStudio(this.activeApp);
+          });
+        });
+
+        // Studio actions
+        document.getElementById('studioCloseBtn').addEventListener('click', () => {
+          document.getElementById('studioModal').style.display = 'none';
+        });
+
+        document.getElementById('studioTestRunBtn').addEventListener('click', () => {
+          const code = document.getElementById('studioTextarea').value;
+          this.refreshStudioPreview(code, this.activeApp?.title || 'Preview');
+        });
+
+        document.getElementById('studioSaveBtn').addEventListener('click', () => {
+          this.saveStudioRevision();
+        });
+
+        // Tab key in Studio Textarea
+        const studioText = document.getElementById('studioTextarea');
+        studioText.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = studioText.selectionStart;
+            const end = studioText.selectionEnd;
+            studioText.value = studioText.value.substring(0, start) + '  ' + studioText.value.substring(end);
+            studioText.selectionStart = studioText.selectionEnd = start + 2;
+          } else if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            this.saveStudioRevision();
+          }
+        });
+
+        // History Modal
+        document.getElementById('playerRevBadge').addEventListener('click', () => {
+          if (this.activeApp) this.showHistory(this.activeApp);
+        });
+
+        document.getElementById('closeHistoryModal').addEventListener('click', () => {
+          document.getElementById('historyModal').style.display = 'none';
+        });
+
+        // Unlock Modal
+        document.getElementById('closeUnlockModal').addEventListener('click', () => {
+          document.getElementById('unlockModal').style.display = 'none';
+        });
+
+        document.getElementById('cancelUnlockBtn').addEventListener('click', () => {
+          document.getElementById('unlockModal').style.display = 'none';
+        });
+
+        document.getElementById('confirmUnlockBtn').addEventListener('click', async () => {
+          if (!this.activeApp) return;
+          const entered = document.getElementById('unlockPassInput').value;
+          const hash = await hashPassword(entered);
+          if (hash === this.activeApp.password_hash) {
+            this.unlockedApps.add(this.activeApp.id);
+            document.getElementById('unlockModal').style.display = 'none';
+            if (this.pendingAction) {
+              this.pendingAction();
+              this.pendingAction = null;
+            }
+          } else {
+            document.getElementById('unlockError').style.display = 'block';
+          }
+        });
+
+        // Intercept Delete button with requireUnlock
+        document.getElementById('btnDelete').onclick = (e) => {
+          e.stopImmediatePropagation();
+          if (this.activeApp) {
+            this.requireUnlock(this.activeApp, () => {
+              this.deleteApp(this.activeApp.id);
+            });
+          }
+        };
+
         document.getElementById('btnSnapshot').addEventListener('click', () => {
           this.captureSnapshot();
         });
@@ -1462,6 +1967,8 @@ ${code}
           const category = document.getElementById('upCategory').value;
           const desc = document.getElementById('upDesc').value.trim();
           const prompt = document.getElementById('upPrompt').value.trim();
+          const rawPass = document.getElementById('upPassword').value;
+          const passHash = await hashPassword(rawPass);
 
           const newApp = {
             id: 'app_' + Date.now(),
@@ -1471,10 +1978,20 @@ ${code}
             prompt,
             author: 'you',
             views: 0,
+            revision: '1.0',
+            revision_history: [],
+            password_hash: passHash,
             code: this.stagedCode
           };
 
+          // Save to Supabase Cloud & Local DB
+          await SupabaseClient.saveApp(newApp);
           await DB.saveApp(newApp);
+
+          if (passHash) {
+            this.unlockedApps.add(newApp.id);
+          }
+
           this.apps.unshift(newApp);
           document.getElementById('uploadModal').style.display = 'none';
           this.openWatch(newApp.id);
@@ -1497,5 +2014,74 @@ ${code}
 
     window.addEventListener('DOMContentLoaded', () => Platapp.init());
   </script>
+
+  <!-- Studio Fullscreen Code Editor -->
+  <div id="studioModal">
+    <div class="studio-bar">
+      <div class="studio-title">
+        <span>✏️ Studio</span>
+        <span style="color: var(--text-dim);">&bull;</span>
+        <span id="studioAppName">App</span>
+        <span id="studioAppRev" class="revision-badge" style="cursor: default;">Rev 1.0</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <input type="text" id="studioRevNote" class="studio-rev-input" placeholder="Revision note (e.g. updated layout)..." />
+        <button class="btn" id="studioTestRunBtn">▶ Run Preview</button>
+        <button class="btn btn-primary" id="studioSaveBtn">💾 Save Revision</button>
+        <button class="btn" id="studioCloseBtn">✕ Close</button>
+      </div>
+    </div>
+    <div class="studio-workspace">
+      <div class="studio-pane">
+        <div class="studio-pane-header">
+          <span>HTML / CSS / JS Code</span>
+          <span style="font-size: 10px; color: var(--text-dim);">Tab: 2 spaces &bull; Ctrl+S to save</span>
+        </div>
+        <textarea id="studioTextarea" class="studio-textarea" spellcheck="false"></textarea>
+      </div>
+      <div class="studio-pane" style="border-right: none;">
+        <div class="studio-pane-header">
+          <span>Live Sandbox Preview</span>
+          <span style="font-size: 10px; color: #38bdf8;">Auto-renders</span>
+        </div>
+        <iframe id="studioPreviewFrame" class="studio-preview-frame" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Unlock Modal -->
+  <div class="modal-backdrop" id="unlockModal">
+    <div class="modal-panel" style="max-width: 420px;">
+      <div class="modal-head">
+        <span>🔒 Enter Password to Unlock</span>
+        <button class="modal-close-btn" id="closeUnlockModal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <p style="font-size: 13px; color: var(--text-muted);">This app is protected by its creator. Enter the unlock password to edit or delete it.</p>
+        <div class="form-field">
+          <input type="password" id="unlockPassInput" class="input-field" placeholder="Enter password..." autofocus />
+        </div>
+        <div id="unlockError" style="font-size: 12px; color: #ef4444; display: none;">Incorrect password. Please try again.</div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px;">
+          <button class="btn" id="cancelUnlockBtn">Cancel</button>
+          <button class="btn btn-primary" id="confirmUnlockBtn">Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revision History Modal -->
+  <div class="modal-backdrop" id="historyModal">
+    <div class="modal-panel" style="max-width: 560px;">
+      <div class="modal-head">
+        <span>📜 Revision History</span>
+        <button class="modal-close-btn" id="closeHistoryModal">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div id="historyList" style="display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
