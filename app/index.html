@@ -369,6 +369,63 @@
       background: #fff;
     }
 
+    
+    /* External Badges & Mode Switcher */
+    .badge-external {
+      color: #38bdf8 !important;
+      border-color: rgba(56, 189, 248, 0.4) !important;
+      background: rgba(56, 189, 248, 0.12) !important;
+      font-weight: 700 !important;
+    }
+
+    .upload-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .upload-tab {
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .upload-tab:hover {
+      color: var(--text);
+      background: var(--surface-hover);
+    }
+    .upload-tab.active {
+      color: #fff;
+      background: #27272a;
+    }
+
+    /* Screenshot Preview & Zone */
+    .screenshot-zone {
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      background: #09090c;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .screenshot-zone:hover {
+      border-color: #555566;
+    }
+    .screenshot-img-preview {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 6px;
+      display: none;
+      border: 1px solid var(--border);
+    }
+
     /* Main Container */
     main {
       flex: 1;
@@ -935,14 +992,46 @@
     </div>
   </div>
 
-  <!-- Upload Modal -->
+  <!-- Upload Modal (Supports HTML Files & External Links with Screenshots) -->
   <div class="modal-backdrop" id="uploadModal">
-    <div class="modal-panel">
+    <div class="modal-panel" style="max-width: 580px;">
       <div class="modal-head">
-        <span>Upload HTML App</span>
+        <span>Add Micro-App</span>
         <button class="modal-close-btn" id="closeUploadModal">&times;</button>
       </div>
       <div class="modal-content">
+        <!-- Dual Mode Tabs -->
+        <div class="upload-tabs">
+          <div class="upload-tab active" id="tabModeHtml">📁 HTML File</div>
+          <div class="upload-tab" id="tabModeLink">🔗 Link Only (External)</div>
+        </div>
+
+        <!-- External Link Input (Shown in Link Mode) -->
+        <div id="sectionLinkFields" style="display: none; flex-direction: column; gap: 10px;">
+          <div class="form-field">
+            <label>External App URL (opens in new window)</label>
+            <input type="url" id="upExternalUrl" class="input-field" placeholder="https://example.com/app or Vercel / CodePen URL" />
+          </div>
+
+          <!-- Screenshot Zone with Auto-Capture & Paste Support -->
+          <div class="form-field">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label>App Screenshot</label>
+              <span style="font-size: 11px; color: #38bdf8;">Tip: Press Ctrl+V to paste screenshot</span>
+            </div>
+            <div class="screenshot-zone" id="screenshotDropzone">
+              <img id="screenshotPreviewImg" class="screenshot-img-preview" alt="Screenshot Preview" />
+              <div id="screenshotPlaceholder" style="padding: 16px;">
+                <div style="font-size: 24px; margin-bottom: 4px;">📸</div>
+                <div style="font-size: 12px; font-weight: 500; color: #ddd;">Click to upload or press Ctrl+V to paste screenshot</div>
+                <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Automatic website snapshot will also generate on URL entry</div>
+              </div>
+              <input type="file" id="screenshotFileInput" accept="image/*" style="display: none;" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Common Fields -->
         <div class="form-field">
           <label>Title</label>
           <input type="text" id="upTitle" class="input-field" placeholder="App Title" />
@@ -950,26 +1039,26 @@
         <div class="form-field">
           <label>Category</label>
           <select id="upCategory" class="input-field">
+            <option value="tool">Tools</option>
             <option value="visual">Visuals</option>
             <option value="game">Games</option>
             <option value="audio">Audio</option>
-            <option value="tool">Tools</option>
           </select>
         </div>
         <div class="form-field">
           <label>Description</label>
           <input type="text" id="upDesc" class="input-field" placeholder="Brief description" />
         </div>
-        <div class="form-field">
+        <div class="form-field" id="fieldPromptBox">
           <label>Prompt Recipe (optional)</label>
-          <textarea id="upPrompt" class="input-field" style="min-height: 60px; resize: vertical;" placeholder="AI prompt used to code this..."></textarea>
+          <textarea id="upPrompt" class="input-field" style="min-height: 50px; resize: vertical;" placeholder="AI prompt used to code this..."></textarea>
         </div>
         <div class="form-field">
           <label>Edit Password / PIN (optional — lock against editing)</label>
           <input type="password" id="upPassword" class="input-field" placeholder="Set a password to protect this app" />
         </div>
         <button class="btn btn-primary" id="saveUploadBtn" style="justify-content: center; margin-top: 6px;">
-          Save & Launch
+          Save & Publish
         </button>
       </div>
     </div>
@@ -1433,10 +1522,12 @@ ${code}
           const glyph = app.glyph || (app.category === 'game' ? '🎮' : app.category === 'audio' ? '🎵' : app.category === 'tool' ? '🛠️' : '✨');
 
           let thumbHtml = '';
+          const isExternal = Boolean(app.external_url);
+
           if (app.thumbnail) {
             thumbHtml = `<img src="${app.thumbnail}" class="card-thumb-img" alt="${app.title}" />`;
-          } else if (app.code) {
-            // Live Scaled Sandboxed Mini-Stage Preview
+          } else if (!isExternal && app.code) {
+            // Live Scaled Sandboxed Mini-Stage Preview for HTML files
             const normalized = CompatibilityEngine.normalizeHtml(app.code, app.title);
             const blob = new Blob([normalized], { type: 'text/html;charset=utf-8' });
             const blobUrl = URL.createObjectURL(blob);
@@ -1445,20 +1536,33 @@ ${code}
                 <iframe class="mini-stage-frame" src="${blobUrl}" sandbox="allow-scripts" loading="lazy" data-appid="${app.id}"></iframe>
               </div>`;
           } else {
-            thumbHtml = `<span class="card-glyph">${glyph}</span>`;
+            thumbHtml = `<span class="card-glyph">${isExternal ? '🔗' : glyph}</span>`;
           }
+
+          const badgeHtml = isExternal
+            ? `<span class="card-badge badge-external">(external) ↗</span>`
+            : `<span class="card-badge">${app.category}</span>`;
+
+          const actionBtnHtml = isExternal
+            ? `<button class="btn-play-action" style="color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="Platapp.openExternal('${app.id}')">Open ↗</button>`
+            : `<button class="btn-play-action" onclick="Platapp.openWatch('${app.id}')">Play</button>`;
+
+          card.onclick = () => {
+            if (isExternal) Platapp.openExternal(app.id);
+            else Platapp.openWatch(app.id);
+          };
 
           card.innerHTML = `
             <div class="card-canvas-box">
               ${thumbHtml}
-              <span class="card-badge">${app.category}</span>
+              ${badgeHtml}
             </div>
             <div class="card-body">
               <div class="card-title">${app.title}</div>
-              <div class="card-author">${app.author || 'you'} &bull; ${app.views || 1} plays</div>
-              <div class="card-desc">${app.description || 'HTML micro-app.'}</div>
+              <div class="card-author">${app.author || 'you'} &bull; ${app.views || 0} visits</div>
+              <div class="card-desc">${app.description || (isExternal ? app.external_url : 'HTML micro-app.')}</div>
               <div class="card-footer" onclick="event.stopPropagation()">
-                <button class="btn-play-action" onclick="Platapp.openWatch('${app.id}')">Play</button>
+                ${actionBtnHtml}
                 <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>
               </div>
             </div>
@@ -1640,6 +1744,54 @@ ${code}
           document.getElementById('playerRevBadge').textContent = `Rev ${this.activeApp.revision}`;
           this.showToast(`Restored code from Rev ${targetRev}!`);
         });
+      },
+
+      
+      uploadMode: 'html', // 'html' or 'link'
+      stagedScreenshot: null,
+
+      openExternal(id) {
+        const app = this.apps.find(a => a.id === id);
+        if (!app || !app.external_url) return;
+        app.views = (app.views || 0) + 1;
+        SupabaseClient.updateApp(app.id, { views: app.views });
+        DB.saveApp(app);
+        window.open(app.external_url, '_blank', 'noopener,noreferrer');
+      },
+
+      setUploadMode(mode) {
+        this.uploadMode = mode;
+        const tabHtml = document.getElementById('tabModeHtml');
+        const tabLink = document.getElementById('tabModeLink');
+        const secLink = document.getElementById('sectionLinkFields');
+        const fieldPrompt = document.getElementById('fieldPromptBox');
+
+        if (mode === 'link') {
+          tabLink.classList.add('active');
+          tabHtml.classList.remove('active');
+          secLink.style.display = 'flex';
+          fieldPrompt.style.display = 'none';
+          document.getElementById('upCategory').value = 'tool';
+        } else {
+          tabHtml.classList.add('active');
+          tabLink.classList.remove('active');
+          secLink.style.display = 'none';
+          fieldPrompt.style.display = 'flex';
+        }
+      },
+
+      setScreenshotPreview(dataUrl) {
+        this.stagedScreenshot = dataUrl;
+        const img = document.getElementById('screenshotPreviewImg');
+        const placeholder = document.getElementById('screenshotPlaceholder');
+        if (dataUrl) {
+          img.src = dataUrl;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+        } else {
+          img.style.display = 'none';
+          placeholder.style.display = 'block';
+        }
       },
 
       scaleMiniStages() {
@@ -1916,9 +2068,74 @@ ${code}
           setTimeout(() => { btn.textContent = '📋 Copy Code'; }, 2000);
         });
 
-        // Upload
+        // Mode Switching
+        document.getElementById('tabModeHtml').addEventListener('click', () => this.setUploadMode('html'));
+        document.getElementById('tabModeLink').addEventListener('click', () => this.setUploadMode('link'));
+
+        // Screenshot file picker & dropzone
+        const dropzone = document.getElementById('screenshotDropzone');
+        const screenPicker = document.getElementById('screenshotFileInput');
+        dropzone.addEventListener('click', () => screenPicker.click());
+        screenPicker.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => this.setScreenshotPreview(ev.target.result);
+            reader.readAsDataURL(file);
+          }
+        });
+
+        // Clipboard Paste Listener (Ctrl+V) for Screenshot
+        window.addEventListener('paste', (e) => {
+          if (document.getElementById('uploadModal').style.display !== 'flex') return;
+          const items = e.clipboardData?.items;
+          if (!items) return;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+              const blob = items[i].getAsFile();
+              const reader = new FileReader();
+              reader.onload = (ev) => {
+                this.setScreenshotPreview(ev.target.result);
+                this.showToast('📸 Screenshot pasted from clipboard!');
+              };
+              reader.readAsDataURL(blob);
+              break;
+            }
+          }
+        });
+
+        // Auto-Screenshot on External URL entry
+        const urlInput = document.getElementById('upExternalUrl');
+        urlInput.addEventListener('change', () => {
+          const rawUrl = urlInput.value.trim();
+          if (rawUrl.startsWith('http')) {
+            // Suggest title if empty
+            try {
+              const u = new URL(rawUrl);
+              if (!document.getElementById('upTitle').value) {
+                document.getElementById('upTitle').value = u.hostname.replace(/^www\./, '');
+              }
+            } catch(e) {}
+            // Auto-fetch screenshot if no custom screenshot attached
+            if (!this.stagedScreenshot) {
+              const autoUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(rawUrl)}?w=800&h=450`;
+              this.setScreenshotPreview(autoUrl);
+            }
+          }
+        });
+
+        // Upload Button opens modal
         const filePicker = document.getElementById('filePicker');
-        document.getElementById('uploadBtn').addEventListener('click', () => filePicker.click());
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+          this.setUploadMode('html');
+          this.setScreenshotPreview(null);
+          document.getElementById('upTitle').value = '';
+          document.getElementById('upDesc').value = '';
+          document.getElementById('upPrompt').value = '';
+          document.getElementById('upPassword').value = '';
+          document.getElementById('upExternalUrl').value = '';
+          document.getElementById('uploadModal').style.display = 'flex';
+        });
         filePicker.addEventListener('change', async (e) => {
           const f = e.target.files[0];
           if (f) await this.handleFile(f);
@@ -1969,19 +2186,32 @@ ${code}
           const prompt = document.getElementById('upPrompt').value.trim();
           const rawPass = document.getElementById('upPassword').value;
           const passHash = await hashPassword(rawPass);
+          const isLinkMode = this.uploadMode === 'link';
+          const extUrl = isLinkMode ? document.getElementById('upExternalUrl').value.trim() : null;
+
+          let appCode = this.stagedCode;
+          if (isLinkMode) {
+            if (!extUrl) {
+              alert('Please enter a valid URL!');
+              return;
+            }
+            appCode = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${extUrl}"></head><body><script>window.location.href="${extUrl}";<\/script><p>Redirecting to <a href="${extUrl}">${extUrl}</a>...</p></body></html>`;
+          }
 
           const newApp = {
             id: 'app_' + Date.now(),
             title,
             category,
             description: desc,
-            prompt,
+            prompt: isLinkMode ? `External link: ${extUrl}` : prompt,
             author: 'you',
             views: 0,
             revision: '1.0',
             revision_history: [],
             password_hash: passHash,
-            code: this.stagedCode
+            external_url: extUrl,
+            thumbnail: this.stagedScreenshot || (extUrl ? `https://s0.wp.com/mshots/v1/${encodeURIComponent(extUrl)}?w=800&h=450` : null),
+            code: appCode
           };
 
           // Save to Supabase Cloud & Local DB
@@ -1994,7 +2224,8 @@ ${code}
 
           this.apps.unshift(newApp);
           document.getElementById('uploadModal').style.display = 'none';
-          this.openWatch(newApp.id);
+          this.renderFeed();
+          this.showToast(isLinkMode ? '🔗 External app saved & ready!' : '🚀 App published & ready!');
         });
       },
 
