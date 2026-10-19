@@ -1120,13 +1120,22 @@
         </div>
       </div>
 
+      <!-- External In-Page Playback Banner & Escape Hatch -->
+      <div id="externalNoticeBanner" style="display: none; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25); border-radius: 7px; padding: 7px 14px; font-size: 12px; color: #93c5fd; align-items: center; justify-content: space-between; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🌐 Playing external web app</span>
+          <span id="externalDomainPill" style="background: rgba(255,255,255,0.08); padding: 1px 7px; border-radius: 4px; font-size: 11px; color: #e2e8f0; font-family: monospace;"></span>
+        </div>
+        <a id="externalFallbackLink" href="#" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; font-weight: 600; text-decoration: none; white-space: nowrap;">Open in new tab ↗</a>
+      </div>
+
       <!-- Stage -->
       <div class="stage-wrapper" id="stageWrapper">
         <div id="stageLoadingOverlay" style="display: none; position: absolute; inset: 0; background: rgba(9,9,11,0.92); backdrop-filter: blur(6px); z-index: 15; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: inherit;">
           <div class="stage-spinner"></div>
           <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Loading micro-app code...</div>
         </div>
-        <iframe id="vibeStage" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock"></iframe>
+        <iframe id="vibeStage" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb; vr; xr-spatial-tracking" allowfullscreen></iframe>
       </div>
 
       <!-- Compact Controls Toolbar -->
@@ -1138,6 +1147,7 @@
           <button class="tool-btn" id="btnAspect" title="Aspect ratio">📐 16:9</button>
           <button class="tool-btn" id="btnSnapshot" title="Snapshot Frame as Thumbnail">📸 Snapshot</button>
           <button class="tool-btn" id="btnShareApp" title="Share App Direct Link">🔗 Share</button>
+          <button class="tool-btn" id="btnPopoutStage" style="display: none; color: #38bdf8;" title="Open in external browser window">↗ Pop Out</button>
           <button class="tool-btn" id="btnFullscreen" title="Fullscreen">⛶ Fullscreen</button>
         </div>
 
@@ -2184,12 +2194,11 @@ ${code}
             : `<span class="card-badge">${app.category}</span>`;
 
           const actionBtnHtml = isExternal
-            ? `<button class="btn-play-action" style="color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="Platapp.openExternal('${app.id}')">Open ↗</button>`
+            ? `<button class="btn-play-action" style="color: #38bdf8; border-color: rgba(56,189,248,0.4);" onclick="Platapp.openWatch('${app.id}')">Play ▶</button>`
             : `<button class="btn-play-action" onclick="Platapp.openWatch('${app.id}')">Play</button>`;
 
           card.onclick = () => {
-            if (isExternal) Platapp.openExternal(app.id);
-            else Platapp.openWatch(app.id);
+            Platapp.openWatch(app.id);
           };
 
           card.innerHTML = `
@@ -2460,36 +2469,59 @@ ${code}
           pBox.style.display = 'none';
         }
 
-        if (app.external_url) {
-          // If external app, open directly and return to feed
-          this.openExternal(app.id);
-          window.location.hash = '#/';
-          return;
-        }
-
         this.renderUpNext(app.id);
 
         document.getElementById('feedSection').style.display = 'none';
         document.getElementById('tabsBar').style.display = 'none';
         document.getElementById('playerSection').style.display = 'flex';
 
-        // Check if code needs on-demand fetching
-        if (!app.code) {
-          this.setStageLoading(true);
-          const fullApp = await SupabaseClient.getApp(id);
-          if (fullApp && fullApp.code) {
-            app.code = fullApp.code;
-            app.revision_history = fullApp.revision_history || [];
-            app.password_hash = fullApp.password_hash;
-            await DB.saveApp(app);
-          }
-          this.setStageLoading(false);
-        }
+        const popoutBtn = document.getElementById('btnPopoutStage');
+        const extBanner = document.getElementById('externalNoticeBanner');
+        const extDomainPill = document.getElementById('externalDomainPill');
+        const extLink = document.getElementById('externalFallbackLink');
 
-        if (app.code) {
-          this.mountCode(app.code, app.title);
+        if (app.external_url) {
+          // In-Page Playback for External URLs
+          if (this.activeBlobUrl) {
+            URL.revokeObjectURL(this.activeBlobUrl);
+            this.activeBlobUrl = null;
+          }
+          const iframe = document.getElementById('vibeStage');
+          iframe.src = app.external_url;
+
+          if (popoutBtn) popoutBtn.style.display = 'inline-flex';
+          if (extBanner) {
+            extBanner.style.display = 'flex';
+            try {
+              const parsed = new URL(app.external_url);
+              if (extDomainPill) extDomainPill.textContent = parsed.hostname;
+            } catch(e) {
+              if (extDomainPill) extDomainPill.textContent = 'external';
+            }
+            if (extLink) extLink.href = app.external_url;
+          }
         } else {
-          this.showToast('⚠️ Could not load app source code.');
+          // In-Page Playback for Single-File HTML apps
+          if (popoutBtn) popoutBtn.style.display = 'none';
+          if (extBanner) extBanner.style.display = 'none';
+
+          if (!app.code) {
+            this.setStageLoading(true);
+            const fullApp = await SupabaseClient.getApp(id);
+            if (fullApp && fullApp.code) {
+              app.code = fullApp.code;
+              app.revision_history = fullApp.revision_history || [];
+              app.password_hash = fullApp.password_hash;
+              await DB.saveApp(app);
+            }
+            this.setStageLoading(false);
+          }
+
+          if (app.code) {
+            this.mountCode(app.code, app.title);
+          } else {
+            this.showToast('⚠️ Could not load app source code.');
+          }
         }
 
         document.getElementById('feedSection').style.display = 'none';
@@ -3006,7 +3038,14 @@ ${code}
 
         // Player actions
         document.getElementById('btnRestart').addEventListener('click', () => {
-          if (this.activeApp) this.mountCode(this.activeApp.code, this.activeApp.title);
+          if (!this.activeApp) return;
+          if (this.activeApp.external_url) {
+            const iframe = document.getElementById('vibeStage');
+            iframe.src = this.activeApp.external_url;
+            this.showToast('🔄 Reloaded app frame');
+          } else if (this.activeApp.code) {
+            this.mountCode(this.activeApp.code, this.activeApp.title);
+          }
         });
 
         // Edit App (Studio)
@@ -3129,6 +3168,16 @@ ${code}
               } catch(e) {}
             }
             prompt('Copy direct app link:', shareUrl);
+          });
+        }
+
+        
+        const btnPopout = document.getElementById('btnPopoutStage');
+        if (btnPopout) {
+          btnPopout.addEventListener('click', () => {
+            if (this.activeApp && this.activeApp.external_url) {
+              window.open(this.activeApp.external_url, '_blank', 'noopener,noreferrer');
+            }
           });
         }
 
