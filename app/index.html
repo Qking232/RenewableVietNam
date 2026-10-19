@@ -1857,7 +1857,8 @@ ${code}
       // Lightweight Feed query omitting heavy 'code' column (95%+ payload reduction)
       async getFeedApps() {
         try {
-          const fields = 'id,title,category,description,external_url,thumbnail,glyph,views,revision,author,created_at,updated_at';
+          // Note: 'glyph' is computed on client from category, not stored in DB
+          const fields = 'id,title,category,description,prompt,external_url,thumbnail,views,revision,author,created_at,updated_at';
           const res = await fetch(`${this.url}/rest/v1/platapp_apps?select=${fields}&order=created_at.desc`, {
             headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
           });
@@ -1865,9 +1866,10 @@ ${code}
             const data = await res.json();
             return data && data.length > 0 ? data : null;
           }
-          return null;
+          // Self-healing fallback: fetch all columns if selective query fails
+          return await this.getAllApps();
         } catch(e) {
-          return null;
+          return await this.getAllApps();
         }
       },
 
@@ -2094,14 +2096,9 @@ ${code}
               await DB.saveApp(mergedItem);
             }
 
-            // Detect if catalog updated
-            const hasChanged = merged.length !== this.apps.length ||
-              merged.some((m, idx) => m.id !== this.apps[idx]?.id || m.revision !== this.apps[idx]?.revision || m.title !== this.apps[idx]?.title);
-
-            if (hasChanged) {
-              this.apps = merged;
-              this.renderFeed();
-            }
+            // Always update apps with cloud feed
+            this.apps = merged;
+            this.renderFeed();
 
             // Idle prefetch: pull code for the first 2 HTML apps in the background
             if ('requestIdleCallback' in window) {
@@ -2457,6 +2454,13 @@ ${code}
           pBox.style.display = 'none';
         }
 
+        if (app.external_url) {
+          // If external app, open directly and return to feed
+          this.openExternal(app.id);
+          window.location.hash = '#/';
+          return;
+        }
+
         this.renderUpNext(app.id);
 
         document.getElementById('feedSection').style.display = 'none';
@@ -2464,7 +2468,7 @@ ${code}
         document.getElementById('playerSection').style.display = 'flex';
 
         // Check if code needs on-demand fetching
-        if (!app.external_url && !app.code) {
+        if (!app.code) {
           this.setStageLoading(true);
           const fullApp = await SupabaseClient.getApp(id);
           if (fullApp && fullApp.code) {
@@ -2478,6 +2482,8 @@ ${code}
 
         if (app.code) {
           this.mountCode(app.code, app.title);
+        } else {
+          this.showToast('⚠️ Could not load app source code.');
         }
 
         document.getElementById('feedSection').style.display = 'none';
