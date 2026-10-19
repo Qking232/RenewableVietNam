@@ -172,13 +172,23 @@
       border-color: #e4e4e7;
     }
 
-    /* Categories Tab Bar */
+    /* Categories Tab Bar & View Switcher */
     .tabs-bar {
       display: flex;
-      gap: 6px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       padding: 10px 24px;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+
+    .tabs-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
       overflow-x: auto;
     }
 
@@ -189,6 +199,7 @@
       font-weight: 500;
       color: var(--text-muted);
       cursor: pointer;
+      user-select: none;
       white-space: nowrap;
       transition: all 0.15s;
     }
@@ -200,9 +211,195 @@
 
     .tab-item.active {
       color: var(--text);
-      background: var(--surface-hover);
-      border: 1px solid var(--border);
+      background: var(--surface-active);
       font-weight: 600;
+    }
+
+    .view-switcher {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 4px;
+      border-radius: 7px;
+      margin-left: auto;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .view-btn:hover {
+      color: var(--text);
+    }
+
+    .view-btn.active {
+      background: #27272a;
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    /* View Mode: List Layout */
+    .app-grid.view-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .app-list-row {
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      gap: 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .app-list-row:hover {
+      border-color: #383842;
+      transform: translateX(2px);
+    }
+
+    .list-thumb-box {
+      width: 120px;
+      min-width: 120px;
+      aspect-ratio: 16/9;
+      background: #0d0d10;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .list-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .list-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .list-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .list-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .list-meta {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .list-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .list-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    /* View Mode: Compact Directory Layout */
+    .app-grid.view-compact {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .app-compact-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0c0c0f;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 14px;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .app-compact-row:hover {
+      background: #141419;
+      border-color: #383842;
+    }
+
+    .compact-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .compact-glyph {
+      font-size: 16px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .compact-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .compact-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .compact-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     
@@ -1091,13 +1288,20 @@
     </div>
   </header>
 
-  <!-- Category Tabs -->
+  <!-- Category Tabs & View Switcher -->
   <div class="tabs-bar" id="tabsBar">
-    <div class="tab-item active" data-cat="all">All</div>
-    <div class="tab-item" data-cat="game">Games</div>
-    <div class="tab-item" data-cat="visual">Visuals</div>
-    <div class="tab-item" data-cat="audio">Audio</div>
-    <div class="tab-item" data-cat="tool">Tools</div>
+    <div class="tabs-left">
+      <div class="tab-item active" data-cat="all">All</div>
+      <div class="tab-item" data-cat="game">Games</div>
+      <div class="tab-item" data-cat="visual">Visuals</div>
+      <div class="tab-item" data-cat="audio">Audio</div>
+      <div class="tab-item" data-cat="tool">Tools</div>
+    </div>
+    <div class="view-switcher" id="viewSwitcher">
+      <button class="view-btn active" data-view="grid" title="Cards / Thumbnail Grid">⊞ Cards</button>
+      <button class="view-btn" data-view="list" title="Detailed List View">☰ List</button>
+      <button class="view-btn" data-view="compact" title="Compact Directory View">☵ Compact</button>
+    </div>
   </div>
 
   <!-- Main View Area -->
@@ -2038,10 +2242,20 @@ ${code}
       activeBlobUrl: null,
       currentCat: 'all',
       searchQuery: '',
+      viewMode: localStorage.getItem('platapp_view_mode') || 'grid', // 'grid', 'list', 'compact'
       aspectIdx: 0,
       aspects: ['16:9', '1:1', '9:16', 'Fit'],
       stagedCode: '',
       isAdmin: false, // Protected Admin Mode state
+
+      setViewMode(mode) {
+        this.viewMode = mode;
+        localStorage.setItem('platapp_view_mode', mode);
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.view === mode);
+        });
+        this.renderFeed();
+      },
 
       async init() {
         await DB.init();
@@ -2060,6 +2274,11 @@ ${code}
               this.showToast('📸 Thumbnail snapshot captured & saved!');
             }
           }
+        });
+
+        // Sync view switcher buttons from stored preference
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.view === (this.viewMode || 'grid'));
         });
 
         // 1. Instant Cache-First Paint (< 30ms from IndexedDB)
@@ -2144,6 +2363,7 @@ ${code}
       renderFeed() {
         const grid = document.getElementById('appGrid');
         grid.innerHTML = '';
+        grid.className = `app-grid view-${this.viewMode || 'grid'}`;
 
         const list = this.apps.filter(a => {
           const catOk = this.currentCat === 'all' || a.category === this.currentCat;
@@ -2164,7 +2384,67 @@ ${code}
           return;
         }
 
-        list.forEach(app => {
+        if (this.viewMode === 'list') {
+          list.forEach(app => {
+            const isExternal = Boolean(app.external_url);
+            const glyph = app.glyph || (app.category === 'game' ? '🎮' : app.category === 'audio' ? '🎵' : app.category === 'tool' ? '🛠️' : '✨');
+            const thumbImg = app.thumbnail 
+              ? `<img src="${app.thumbnail}" alt="${app.title}" loading="lazy" decoding="async" />`
+              : `<span style="font-size: 24px;">${isExternal ? '🔗' : glyph}</span>`;
+            
+            const row = document.createElement('div');
+            row.className = 'app-list-row';
+            row.onclick = () => this.openWatch(app.id);
+
+            row.innerHTML = `
+              <div class="list-thumb-box">${thumbImg}</div>
+              <div class="list-body">
+                <div class="list-title-row">
+                  <span class="list-title">${app.title}</span>
+                  <span class="card-badge" style="position: static; font-size: 10px;">${isExternal ? 'EXTERNAL ↗' : app.category}</span>
+                  <span class="revision-badge" style="font-size: 10px;">Rev ${app.revision || '1.0'}</span>
+                </div>
+                <div class="list-meta">By ${app.author || 'you'} &bull; ${app.views || 0} visits</div>
+                <div class="list-desc">${Platapp.cleanCardDesc(app)}</div>
+              </div>
+              <div class="list-actions" onclick="event.stopPropagation()">
+                <button class="btn-play-action" style="${isExternal ? 'color: #38bdf8; border-color: rgba(56,189,248,0.4);' : ''}" onclick="Platapp.openWatch('${app.id}')">${isExternal ? 'Play ▶' : 'Play'}</button>
+                <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
+                <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete" style="color: #ef4444; font-size: 13px;">🗑</button>
+              </div>
+            `;
+            grid.appendChild(row);
+          });
+        } else if (this.viewMode === 'compact') {
+          list.forEach(app => {
+            const isExternal = Boolean(app.external_url);
+            const glyph = app.glyph || (app.category === 'game' ? '🎮' : app.category === 'audio' ? '🎵' : app.category === 'tool' ? '🛠️' : '✨');
+
+            const row = document.createElement('div');
+            row.className = 'app-compact-row';
+            row.onclick = () => this.openWatch(app.id);
+
+            row.innerHTML = `
+              <div class="compact-left">
+                <span class="compact-glyph">${isExternal ? '🔗' : glyph}</span>
+                <span class="compact-title">${app.title}</span>
+                <span class="card-badge" style="position: static; font-size: 10px;">${app.category}</span>
+              </div>
+              <div class="compact-meta">
+                <span>Rev ${app.revision || '1.0'}</span>
+                <span>${app.views || 0} plays</span>
+              </div>
+              <div class="compact-actions" onclick="event.stopPropagation()">
+                <button class="btn-play-action" style="padding: 2px 8px; font-size: 11px; ${isExternal ? 'color: #38bdf8; border-color: rgba(56,189,248,0.4);' : ''}" onclick="Platapp.openWatch('${app.id}')">Play</button>
+                <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 12px; padding: 2px 4px;">✏️</button>
+                <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete" style="color: #ef4444; font-size: 12px; padding: 2px 4px;">🗑</button>
+              </div>
+            `;
+            grid.appendChild(row);
+          });
+        } else {
+          // Cards / Grid Mode (default)
+          list.forEach(app => {
           const card = document.createElement('div');
           card.className = 'app-card';
           card.onclick = () => this.openWatch(app.id);
@@ -2225,7 +2505,8 @@ ${code}
           this.scaleMiniStages();
           this.autoSnapshotMiniStages();
         });
-      },
+      }
+    },
 
       checkAdminSession() {
         const session = sessionStorage.getItem('platapp_admin_auth');
@@ -3028,6 +3309,13 @@ ${code}
             tab.classList.add('active');
             this.currentCat = tab.dataset.cat;
             this.renderFeed();
+          });
+        });
+
+        // View Mode Switcher (Cards / List / Compact)
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            this.setViewMode(btn.dataset.view);
           });
         });
 
