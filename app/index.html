@@ -1339,7 +1339,7 @@
           <div class="stage-spinner"></div>
           <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Loading micro-app code...</div>
         </div>
-        <iframe id="vibeStage" sandbox="allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb; vr; xr-spatial-tracking" allowfullscreen></iframe>
+        <!-- vibeStage is dynamically mounted when an app is played to avoid browser history pollution & white-screen back button traps -->
       </div>
 
       <!-- Compact Controls Toolbar -->
@@ -2762,13 +2762,8 @@ ${code}
         const extLink = document.getElementById('externalFallbackLink');
 
         if (app.external_url) {
-          // In-Page Playback for External URLs
-          if (this.activeBlobUrl) {
-            URL.revokeObjectURL(this.activeBlobUrl);
-            this.activeBlobUrl = null;
-          }
-          const iframe = document.getElementById('vibeStage');
-          iframe.src = app.external_url;
+          // In-Page Playback for External URLs (dynamically mounted to prevent history trap)
+          this.loadStageUrl(app.external_url);
 
           if (popoutBtn) popoutBtn.style.display = 'inline-flex';
           if (extBanner) {
@@ -3040,16 +3035,40 @@ ${code}
         setTimeout(() => { toast.style.display = 'none'; }, 2400);
       },
 
+      clearStage() {
+        if (this.activeBlobUrl) {
+          URL.revokeObjectURL(this.activeBlobUrl);
+          this.activeBlobUrl = null;
+        }
+        const oldIframe = document.getElementById('vibeStage');
+        if (oldIframe) {
+          oldIframe.src = 'about:blank';
+          oldIframe.remove();
+        }
+      },
+
+      loadStageUrl(targetUrl) {
+        this.clearStage();
+        const wrapper = document.getElementById('stageWrapper');
+        if (!wrapper) return;
+        const iframe = document.createElement('iframe');
+        iframe.id = 'vibeStage';
+        iframe.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-downloads allow-pointer-lock allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+        iframe.setAttribute('allow', 'accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; microphone; midi; payment; usb; vr; xr-spatial-tracking');
+        iframe.setAttribute('allowfullscreen', 'true');
+        iframe.src = targetUrl;
+        wrapper.appendChild(iframe);
+      },
+
       mountCode(rawCode, title) {
         if (this.activeBlobUrl) {
           URL.revokeObjectURL(this.activeBlobUrl);
+          this.activeBlobUrl = null;
         }
         const normalized = CompatibilityEngine.normalizeHtml(rawCode, title);
         const blob = new Blob([normalized], { type: 'text/html;charset=utf-8' });
         this.activeBlobUrl = URL.createObjectURL(blob);
-
-        const iframe = document.getElementById('vibeStage');
-        iframe.src = this.activeBlobUrl;
+        this.loadStageUrl(this.activeBlobUrl);
       },
 
       renderUpNext(currentId) {
@@ -3079,11 +3098,7 @@ ${code}
         if (hash.startsWith('#/watch/')) {
           this.loadWatch(hash.replace('#/watch/', ''));
         } else if (hash === '#/admin' || hash === '#admin' || hash.startsWith('#/admin/')) {
-          if (this.activeBlobUrl) {
-            URL.revokeObjectURL(this.activeBlobUrl);
-            this.activeBlobUrl = null;
-          }
-          document.getElementById('vibeStage').src = 'about:blank';
+          this.clearStage();
           document.getElementById('playerSection').style.display = 'none';
           document.getElementById('feedSection').style.display = 'block';
           document.getElementById('tabsBar').style.display = 'flex';
@@ -3099,11 +3114,7 @@ ${code}
             });
           }
         } else {
-          if (this.activeBlobUrl) {
-            URL.revokeObjectURL(this.activeBlobUrl);
-            this.activeBlobUrl = null;
-          }
-          document.getElementById('vibeStage').src = 'about:blank';
+          this.clearStage();
           document.getElementById('playerSection').style.display = 'none';
           document.getElementById('feedSection').style.display = 'block';
           document.getElementById('tabsBar').style.display = 'flex';
@@ -3321,6 +3332,7 @@ ${code}
 
         // Back
         document.getElementById('btnBackToFeed').addEventListener('click', () => {
+          this.clearStage();
           window.location.hash = '#/';
         });
 
@@ -3328,8 +3340,7 @@ ${code}
         document.getElementById('btnRestart').addEventListener('click', () => {
           if (!this.activeApp) return;
           if (this.activeApp.external_url) {
-            const iframe = document.getElementById('vibeStage');
-            iframe.src = this.activeApp.external_url;
+            this.loadStageUrl(this.activeApp.external_url);
             this.showToast('🔄 Reloaded app frame');
           } else if (this.activeApp.code) {
             this.mountCode(this.activeApp.code, this.activeApp.title);
