@@ -31,9 +31,11 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       letter-spacing: -0.2px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     /* Minimalist Top Nav Header */
@@ -1135,6 +1137,7 @@
           <button class="tool-btn" id="btnEditInfo" style="color: #a78bfa;" title="Edit Information">⚙️ Edit Info</button>
           <button class="tool-btn" id="btnAspect" title="Aspect ratio">📐 16:9</button>
           <button class="tool-btn" id="btnSnapshot" title="Snapshot Frame as Thumbnail">📸 Snapshot</button>
+          <button class="tool-btn" id="btnShareApp" title="Share App Direct Link">🔗 Share</button>
           <button class="tool-btn" id="btnFullscreen" title="Fullscreen">⛶ Fullscreen</button>
         </div>
 
@@ -2433,6 +2436,7 @@ ${code}
         DB.saveApp(app);
         SupabaseClient.updateApp(app.id, { views: app.views });
 
+        document.title = `${app.title} — platapp`;
         document.getElementById('stageTitle').textContent = app.title;
         document.getElementById('stageAuthor').textContent = `By ${app.author || 'You'}`;
         document.getElementById('stagePlays').textContent = `${app.views} plays`;
@@ -2768,6 +2772,7 @@ ${code}
           document.getElementById('playerSection').style.display = 'none';
           document.getElementById('feedSection').style.display = 'block';
           document.getElementById('tabsBar').style.display = 'flex';
+          document.title = 'platapp — micro html & vibe coding';
           this.renderFeed();
 
           // Trigger admin access
@@ -2972,10 +2977,14 @@ ${code}
       },
 
       bindEvents() {
-        // Search
+        // Debounced Search (120ms to prevent main-thread layout thrashing)
+        let searchDebounceTimer = null;
         document.getElementById('searchInput').addEventListener('input', (e) => {
-          this.searchQuery = e.target.value.toLowerCase().trim();
-          this.renderFeed();
+          clearTimeout(searchDebounceTimer);
+          searchDebounceTimer = setTimeout(() => {
+            this.searchQuery = e.target.value.toLowerCase().trim();
+            this.renderFeed();
+          }, 120);
         });
 
         // Tabs
@@ -3092,6 +3101,34 @@ ${code}
         });
 
         document.getElementById('btnAspect').addEventListener('click', () => this.toggleAspect());
+
+        
+        // 1-Click Share App Direct Link
+        const btnShare = document.getElementById('btnShareApp');
+        if (btnShare) {
+          btnShare.addEventListener('click', async () => {
+            if (!this.activeApp) return;
+            const shareUrl = `${window.location.origin}${window.location.pathname}#/watch/${this.activeApp.id}`;
+            if (navigator.share) {
+              try {
+                await navigator.share({
+                  title: this.activeApp.title,
+                  text: this.activeApp.description || `Explore ${this.activeApp.title} on platapp!`,
+                  url: shareUrl
+                });
+                return;
+              } catch(e) {}
+            }
+            if (navigator.clipboard) {
+              try {
+                await navigator.clipboard.writeText(shareUrl);
+                this.showToast('🔗 Direct app link copied to clipboard!');
+                return;
+              } catch(e) {}
+            }
+            prompt('Copy direct app link:', shareUrl);
+          });
+        }
 
         document.getElementById('btnFullscreen').addEventListener('click', () => {
           const wrapper = document.getElementById('stageWrapper');
@@ -3462,6 +3499,10 @@ ${code}
               alert('Please enter a valid URL!');
               return;
             }
+            if (!/^https?:\/\//i.test(extUrl)) {
+              alert('Please enter a valid web URL starting with https:// or http://');
+              return;
+            }
             appCode = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=${extUrl}"></head><body><script>window.location.href="${extUrl}";<\/script><p>Redirecting to <a href="${extUrl}">${extUrl}</a>...</p></body></html>`;
           }
 
@@ -3497,6 +3538,11 @@ ${code}
       },
 
       async handleFile(file) {
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+          this.showToast('⚠️ File exceeds 5MB limit. Please upload standalone HTML files under 5MB.');
+          return;
+        }
         const text = await file.text();
         const meta = CompatibilityEngine.parseMeta(text, file.name);
 
