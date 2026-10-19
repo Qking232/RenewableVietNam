@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Cyber Pong</title>
+  <meta name="description" content="Playable retro arcade paddle game with synth audio bleeps and progressive difficulty.">
+  <!-- prompt: Build a playable arcade Pong game in neon retro cyberpunk style with WebAudio sound effects, score counter, and responsive keyboard/mouse controls. -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #05050d; font-family: 'Courier New', monospace; color: #fff; }
+    #wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; position: relative; }
+    canvas { background: #0b0c16; border: 2px solid #00ffcc; box-shadow: 0 0 24px rgba(0,255,204,0.3); max-width: 95vw; max-height: 80vh; aspect-ratio: 16/9; }
+    .scoreboard {
+      display: flex; gap: 80px; font-size: 32px; font-weight: bold; margin-bottom: 12px;
+      color: #00ffcc; text-shadow: 0 0 10px #00ffcc;
+    }
+    .hud { font-size: 13px; color: #8899aa; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <div class="scoreboard">
+      <div>YOU: <span id="pScore">0</span></div>
+      <div>AI: <span id="aiScore">0</span></div>
+    </div>
+    <canvas id="game" width="800" height="450"></canvas>
+    <div class="hud">Move mouse or [W/S] or [Up/Down] to control left paddle</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const pScoreEl = document.getElementById('pScore');
+    const aiScoreEl = document.getElementById('aiScore');
+
+    let audioCtx = null;
+    function playTone(freq, duration = 0.08, type = 'square') {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    const paddleHeight = 80;
+    const paddleWidth = 12;
+    let pY = (canvas.height - paddleHeight) / 2;
+    let aiY = (canvas.height - paddleHeight) / 2;
+    let pScore = 0;
+    let aiScore = 0;
+
+    let ball = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: 6,
+      vy: 3,
+      radius: 7
+    };
+
+    function resetBall(servingPlayer = true) {
+      ball.x = canvas.width / 2;
+      ball.y = canvas.height / 2;
+      ball.vx = (servingPlayer ? 5.5 : -5.5);
+      ball.vy = (Math.random() * 6 - 3);
+    }
+
+    // Keyboard & Mouse controls
+    let keys = {};
+    window.addEventListener('keydown', e => { keys[e.key] = true; });
+    window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleY = canvas.height / rect.height;
+      pY = (e.clientY - rect.top) * scaleY - paddleHeight / 2;
+      pY = Math.max(0, Math.min(canvas.height - paddleHeight, pY));
+    });
+
+    function update() {
+      if (keys['ArrowUp'] || keys['w'] || keys['W']) pY -= 7;
+      if (keys['ArrowDown'] || keys['s'] || keys['S']) pY += 7;
+      pY = Math.max(0, Math.min(canvas.height - paddleHeight, pY));
+
+      // AI simple tracking
+      const aiCenter = aiY + paddleHeight / 2;
+      if (aiCenter < ball.y - 15) aiY += 4.5;
+      else if (aiCenter > ball.y + 15) aiY -= 4.5;
+      aiY = Math.max(0, Math.min(canvas.height - paddleHeight, aiY));
+
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // Top/Bottom bounce
+      if (ball.y - ball.radius <= 0) {
+        ball.y = ball.radius;
+        ball.vy = -ball.vy;
+        playTone(320);
+      } else if (ball.y + ball.radius >= canvas.height) {
+        ball.y = canvas.height - ball.radius;
+        ball.vy = -ball.vy;
+        playTone(320);
+      }
+
+      // Player paddle hit
+      if (ball.x - ball.radius <= 30 + paddleWidth && ball.x + ball.radius >= 30) {
+        if (ball.y >= pY && ball.y <= pY + paddleHeight) {
+          ball.vx = Math.abs(ball.vx) * 1.05;
+          const deltaY = ball.y - (pY + paddleHeight / 2);
+          ball.vy = deltaY * 0.22;
+          playTone(580);
+        }
+      }
+
+      // AI paddle hit
+      if (ball.x + ball.radius >= canvas.width - 30 - paddleWidth && ball.x - ball.radius <= canvas.width - 30) {
+        if (ball.y >= aiY && ball.y <= aiY + paddleHeight) {
+          ball.vx = -Math.abs(ball.vx) * 1.05;
+          const deltaY = ball.y - (aiY + paddleHeight / 2);
+          ball.vy = deltaY * 0.22;
+          playTone(440);
+        }
+      }
+
+      // Scoring
+      if (ball.x < 0) {
+        aiScore++;
+        aiScoreEl.textContent = aiScore;
+        playTone(180, 0.2, 'sawtooth');
+        resetBall(true);
+      } else if (ball.x > canvas.width) {
+        pScore++;
+        pScoreEl.textContent = pScore;
+        playTone(880, 0.2, 'triangle');
+        resetBall(false);
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#0b0c16';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Center dashed net
+      ctx.strokeStyle = '#1d2338';
+      ctx.lineWidth = 4;
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width / 2, 0);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Player paddle
+      ctx.fillStyle = '#00ffcc';
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#00ffcc';
+      ctx.fillRect(30, pY, paddleWidth, paddleHeight);
+
+      // AI paddle
+      ctx.fillStyle = '#ff0077';
+      ctx.shadowColor = '#ff0077';
+      ctx.fillRect(canvas.width - 30 - paddleWidth, aiY, paddleWidth, paddleHeight);
+
+      // Ball
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+    loop();
+  </script>
+</body>
+</html>

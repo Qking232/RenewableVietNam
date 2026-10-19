@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Synth Lab</title>
+  <meta name="description" content="Playable WebAudio micro synthesizer with real-time audio oscilloscope visualizer.">
+  <!-- prompt: Create an interactive synthesizer with piano keys, waveform selector, and real-time canvas oscilloscope visualizer using WebAudio API. -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0e0e17; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #fff; }
+    #container { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 20px; gap: 20px; }
+    canvas { width: 100%; max-width: 700px; height: 140px; background: #141424; border-radius: 8px; border: 1px solid #2d2d48; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .controls { display: flex; gap: 12px; align-items: center; }
+    button.wave-btn {
+      background: #1e1e32; border: 1px solid #3d3d62; color: #aaa; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s;
+    }
+    button.wave-btn.active { background: #7928ca; border-color: #9f45ff; color: #fff; box-shadow: 0 0 12px rgba(121,40,202,0.6); }
+    .keyboard { display: flex; position: relative; height: 160px; user-select: none; }
+    .key {
+      position: relative; width: 44px; height: 100%; background: #f0f0f5; border: 1px solid #bbb; border-radius: 0 0 6px 6px; cursor: pointer; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; color: #555; font-size: 12px; font-weight: bold; transition: background 0.1s;
+    }
+    .key:active, .key.pressed { background: #00d2ff; color: #000; box-shadow: 0 0 15px #00d2ff; }
+    .key.black {
+      width: 28px; height: 60%; background: #181822; color: #888; border-color: #000; z-index: 2; margin-left: -14px; margin-right: -14px; border-radius: 0 0 4px 4px;
+    }
+    .key.black:active, .key.black.pressed { background: #ff0077; color: #fff; box-shadow: 0 0 15px #ff0077; }
+    .tip { font-size: 13px; color: #778899; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="scope"></canvas>
+
+    <div class="controls">
+      <span style="font-size: 13px; color: #889;">Waveform:</span>
+      <button class="wave-btn active" data-wave="sine">Sine</button>
+      <button class="wave-btn" data-wave="triangle">Triangle</button>
+      <button class="wave-btn" data-wave="square">Square</button>
+      <button class="wave-btn" data-wave="sawtooth">Sawtooth</button>
+    </div>
+
+    <div class="keyboard" id="kb">
+      <!-- White and Black keys with key bindings -->
+      <div class="key" data-note="261.63" data-bind="a">A<br>C4</div>
+      <div class="key black" data-note="277.18" data-bind="w">W</div>
+      <div class="key" data-note="293.66" data-bind="s">S<br>D4</div>
+      <div class="key black" data-note="311.13" data-bind="e">E</div>
+      <div class="key" data-note="329.63" data-bind="d">D<br>E4</div>
+      <div class="key" data-note="349.23" data-bind="f">F<br>F4</div>
+      <div class="key black" data-note="369.99" data-bind="t">T</div>
+      <div class="key" data-note="392.00" data-bind="g">G<br>G4</div>
+      <div class="key black" data-note="415.30" data-bind="y">Y</div>
+      <div class="key" data-note="440.00" data-bind="h">H<br>A4</div>
+      <div class="key black" data-note="466.16" data-bind="u">U</div>
+      <div class="key" data-note="493.88" data-bind="j">J<br>B4</div>
+      <div class="key" data-note="523.25" data-bind="k">K<br>C5</div>
+    </div>
+
+    <div class="tip">🎹 Click keys or use your computer keyboard: A W S E D F T G Y H U J K</div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    let analyser = null;
+    let waveType = 'sine';
+    const activeOscillators = {};
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 1024;
+        analyser.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playNote(freq, keyId) {
+      initAudio();
+      if (activeOscillators[keyId]) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = waveType;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
+
+      osc.connect(gain);
+      gain.connect(analyser);
+      osc.start();
+
+      activeOscillators[keyId] = { osc, gain };
+    }
+
+    function stopNote(keyId) {
+      const item = activeOscillators[keyId];
+      if (item && audioCtx) {
+        item.gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+        setTimeout(() => {
+          try { item.osc.stop(); item.osc.disconnect(); } catch(e){}
+        }, 90);
+        delete activeOscillators[keyId];
+      }
+    }
+
+    // Waveform switcher
+    document.querySelectorAll('.wave-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wave-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        waveType = btn.dataset.wave;
+      });
+    });
+
+    // Keyboard interaction
+    const keyElements = document.querySelectorAll('.key');
+    keyElements.forEach(key => {
+      const note = parseFloat(key.dataset.note);
+      const id = key.dataset.bind;
+
+      key.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        key.classList.add('pressed');
+        playNote(note, id);
+      });
+      const end = () => {
+        key.classList.remove('pressed');
+        stopNote(id);
+      };
+      key.addEventListener('pointerup', end);
+      key.addEventListener('pointerleave', end);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.repeat) return;
+      const key = document.querySelector(`.key[data-bind="${e.key.toLowerCase()}"]`);
+      if (key) {
+        key.classList.add('pressed');
+        playNote(parseFloat(key.dataset.note), e.key.toLowerCase());
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      const key = document.querySelector(`.key[data-bind="${e.key.toLowerCase()}"]`);
+      if (key) {
+        key.classList.remove('pressed');
+        stopNote(e.key.toLowerCase());
+      }
+    });
+
+    // Oscilloscope Visualizer
+    const canvas = document.getElementById('scope');
+    const ctx = canvas.getContext('2d');
+    function drawScope() {
+      requestAnimationFrame(drawScope);
+      canvas.width = canvas.clientWidth * window.devicePixelRatio;
+      canvas.height = canvas.clientHeight * window.devicePixelRatio;
+
+      ctx.fillStyle = '#141424';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (!analyser) {
+        ctx.strokeStyle = '#333355';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+        return;
+      }
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteTimeDomainData(dataArray);
+
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#00d2ff';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#00d2ff';
+      ctx.beginPath();
+
+      const sliceWidth = canvas.width * 1.0 / bufferLength;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const v = dataArray[i] / 128.0;
+        const y = v * canvas.height / 2;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+        x += sliceWidth;
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+    drawScope();
+  </script>
+</body>
+</html>
