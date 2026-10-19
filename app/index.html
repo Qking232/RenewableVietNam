@@ -1043,18 +1043,11 @@
     <div class="header-actions" id="headerActions">
       <input type="file" id="filePicker" accept=".html,.htm" style="display: none;" />
       
-      <!-- Upload Button (Always visible! If visitor clicks, prompts admin login; if admin, opens upload modal) -->
-      <button class="btn btn-primary" id="uploadBtn">
-        + Upload
-      </button>
-
-      <!-- Admin Status & Login Controls -->
-      <button class="btn" id="btnAdminLoginTrigger" style="font-size: 12px; gap: 6px; padding: 6px 12px; color: var(--text-muted); border-color: rgba(255,255,255,0.14);" title="Sign in as Admin">
-        🔐 Admin
-      </button>
-
-      <!-- Admin Controls (Shown when authenticated) -->
+      <!-- Admin Controls (Hidden from public; revealed ONLY when logged in via /app/admin) -->
       <div id="adminControlsGroup" style="display: none; align-items: center; gap: 8px;">
+        <button class="btn btn-primary" id="uploadBtn">
+          + Upload
+        </button>
         <button class="admin-badge-active" id="btnAdminConsole" title="Open Admin Console Dashboard">
           🛡️ Admin Console
         </button>
@@ -2113,13 +2106,8 @@ ${code}
         const loginTrigger = document.getElementById('btnAdminLoginTrigger');
         const adminGroup = document.getElementById('adminControlsGroup');
         
-        if (this.isAdmin) {
-          if (loginTrigger) loginTrigger.style.display = 'none';
-          if (adminGroup) adminGroup.style.display = 'flex';
-        } else {
-          if (loginTrigger) loginTrigger.style.display = 'inline-flex';
-          if (adminGroup) adminGroup.style.display = 'none';
-        }
+        if (loginTrigger) loginTrigger.style.display = 'none'; // Always hidden in public view
+        if (adminGroup) adminGroup.style.display = this.isAdmin ? 'flex' : 'none';
 
         // Update player stage admin controls if present
         const btnEditInfo = document.getElementById('btnEditInfo');
@@ -2137,10 +2125,10 @@ ${code}
         try {
           let auth = await SupabaseClient.getSetting('admin_auth');
           if (!auth || !auth.salt || !auth.hash) {
-            // Default initial salt & hash for Ho@ngqu@n23021993.
+            // Default initial salt & hash for Ho@ngqu@n23021993
             auth = {
-              salt: '4489164adb3c940fbe39ee880e5b98a8',
-              hash: '5ce8f2618d5de735dfc70d9cf7bd9a4ad7b71f2203cf4ee91a90306801c79bd5'
+              salt: '90dd8fab8e798b7410d77419d1ada3d7',
+              hash: 'e483e847bf62ebecebe17c810254bdbb62cc34eae193fee900f85b891c9d5a7f'
             };
           }
           const enc = new TextEncoder();
@@ -2205,6 +2193,9 @@ ${code}
         if (consoleModal) consoleModal.style.display = 'none';
         this.updateAdminUI();
         this.showToast('Logged out of Admin Mode. Switched to Public Read-Only view.');
+        if (window.location.hash.includes('admin')) {
+          window.location.hash = '#/';
+        }
       },
 
       openAdminConsole() {
@@ -2607,6 +2598,25 @@ ${code}
         const hash = window.location.hash || '#/';
         if (hash.startsWith('#/watch/')) {
           this.loadWatch(hash.replace('#/watch/', ''));
+        } else if (hash === '#/admin' || hash === '#admin' || hash.startsWith('#/admin/')) {
+          if (this.activeBlobUrl) {
+            URL.revokeObjectURL(this.activeBlobUrl);
+            this.activeBlobUrl = null;
+          }
+          document.getElementById('vibeStage').src = 'about:blank';
+          document.getElementById('playerSection').style.display = 'none';
+          document.getElementById('feedSection').style.display = 'block';
+          document.getElementById('tabsBar').style.display = 'flex';
+          this.renderFeed();
+
+          // Trigger admin access
+          if (this.isAdmin) {
+            this.openAdminConsole();
+          } else {
+            this.promptAdminLogin('Enter Admin Master Password to access the Admin Console.', () => {
+              this.openAdminConsole();
+            });
+          }
         } else {
           if (this.activeBlobUrl) {
             URL.revokeObjectURL(this.activeBlobUrl);
