@@ -882,6 +882,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap !important;
       transition: all 0.15s;
     }
 
@@ -900,6 +901,121 @@
 
     @media (max-width: 860px) {
       .player-details { grid-template-columns: 1fr; }
+    }
+
+    /* Mobile Responsive Optimizations: At Least 85% Screen Height Player & Swipeable Toolbar */
+    @media (max-width: 768px) {
+      main {
+        padding: 10px 8px;
+      }
+
+      .header {
+        padding: 0 12px;
+        gap: 8px;
+      }
+
+      .tabs-bar {
+        padding: 8px 12px;
+        gap: 8px;
+      }
+
+      .player-view {
+        gap: 10px;
+        width: 100%;
+      }
+
+      /* HTML Player Stage: At least 85% of mobile viewport height */
+      .stage-wrapper {
+        width: 100% !important;
+        height: 85vh !important;
+        height: 85dvh !important;
+        min-height: 85vh !important;
+        min-height: 85dvh !important;
+        aspect-ratio: auto !important;
+        border-radius: 12px;
+      }
+
+      .stage-wrapper.aspect-full {
+        height: 92vh !important;
+        height: 92dvh !important;
+        min-height: 92dvh !important;
+      }
+
+      .stage-wrapper.aspect-1-1 {
+        aspect-ratio: 1/1 !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-width: 100% !important;
+      }
+
+      .stage-wrapper.aspect-9-16 {
+        aspect-ratio: 9/16 !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-width: 100% !important;
+      }
+
+      iframe#vibeStage {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+      }
+
+      /* Mobile Controls Toolbar: Sleek non-wrapping horizontal swipeable ribbon */
+      .player-toolbar {
+        padding: 8px 10px;
+        gap: 8px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        border-radius: 10px;
+        background: #111116;
+        border: 1px solid var(--border);
+      }
+
+      .player-toolbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tool-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+
+      .tool-btn {
+        white-space: nowrap !important;
+        flex-shrink: 0;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        min-height: 36px;
+        touch-action: manipulation;
+      }
+
+      .tool-btn:active {
+        transform: scale(0.96);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      #externalNoticeBanner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .player-details {
+        margin-top: 4px;
+        gap: 12px;
+      }
     }
 
     .player-meta-card {
