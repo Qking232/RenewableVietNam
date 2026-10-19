@@ -1043,16 +1043,18 @@
     <div class="header-actions" id="headerActions">
       <input type="file" id="filePicker" accept=".html,.htm" style="display: none;" />
       
-      <!-- Public Visitor Login Button -->
-      <button class="btn" id="btnAdminLoginTrigger" style="font-size: 12px; gap: 6px; padding: 6px 12px; color: var(--text-muted); border-color: rgba(255,255,255,0.14);" title="Sign in as Admin to manage and edit apps">
+      <!-- Upload Button (Always visible! If visitor clicks, prompts admin login; if admin, opens upload modal) -->
+      <button class="btn btn-primary" id="uploadBtn">
+        + Upload
+      </button>
+
+      <!-- Admin Status & Login Controls -->
+      <button class="btn" id="btnAdminLoginTrigger" style="font-size: 12px; gap: 6px; padding: 6px 12px; color: var(--text-muted); border-color: rgba(255,255,255,0.14);" title="Sign in as Admin">
         🔐 Admin
       </button>
 
-      <!-- Admin Actions (Shown only when authenticated) -->
+      <!-- Admin Controls (Shown when authenticated) -->
       <div id="adminControlsGroup" style="display: none; align-items: center; gap: 8px;">
-        <button class="btn btn-primary" id="uploadBtn">
-          + Upload
-        </button>
         <button class="admin-badge-active" id="btnAdminConsole" title="Open Admin Console Dashboard">
           🛡️ Admin Console
         </button>
@@ -1493,6 +1495,131 @@
 </head>
 <body>
 ${code}
+
+  
+  <!-- Admin Authentication Modal -->
+  <div class="modal-backdrop" id="adminLoginModal" style="display: none;">
+    <div class="modal-panel" style="max-width: 440px;">
+      <div class="modal-head">
+        <span>🔐 Admin Authentication</span>
+        <button class="modal-close-btn" id="closeAdminLoginModal">&times;</button>
+      </div>
+      <div class="modal-scroll-body">
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;" id="adminLoginPromptText">
+          Enter the Admin Master Password to unlock upload, editing, and management controls.
+        </div>
+        <div class="form-field" style="margin-top: 6px;">
+          <label>Admin Master Password</label>
+          <input type="password" id="adminLoginInput" class="input-field" placeholder="Enter password..." />
+        </div>
+        <div id="adminLoginError" style="display: none; color: #ef4444; font-size: 12px; font-weight: 500;">
+          ❌ Incorrect password. Please try again.
+        </div>
+      </div>
+      <div class="modal-sticky-foot">
+        <button class="btn" id="cancelAdminLoginBtn">Cancel</button>
+        <button class="btn btn-primary" id="submitAdminLoginBtn">Authenticate & Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Console Modal / Dashboard -->
+  <div class="modal-backdrop" id="adminConsoleModal" style="display: none;">
+    <div class="modal-panel" style="max-width: 760px; max-height: min(92vh, 820px);">
+      <div class="modal-head">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🛡️ Platapp Admin Console</span>
+          <span style="font-size: 11px; background: rgba(34,197,94,0.15); color: #4ade80; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(34,197,94,0.3); font-weight: 500;">Active</span>
+        </div>
+        <button class="modal-close-btn" id="closeAdminConsoleModal">&times;</button>
+      </div>
+      
+      <div class="modal-scroll-body" style="gap: 16px;">
+        <!-- Analytics Stat Grid -->
+        <div class="admin-stat-grid">
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatTotalApps">0</div>
+            <div class="admin-stat-lbl">Total Apps</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatTotalViews">0</div>
+            <div class="admin-stat-lbl">Total Plays / Visits</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatHtmlApps">0</div>
+            <div class="admin-stat-lbl">HTML Micro-Apps</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatExtApps">0</div>
+            <div class="admin-stat-lbl">External Links</div>
+          </div>
+        </div>
+
+        <!-- Cloud Status Card -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+          <div>
+            <span class="admin-status-dot"></span>
+            <span style="font-weight: 600; color: #fff;">Supabase Cloud Database:</span>
+            <span style="color: var(--text-dim); margin-left: 6px;">nkkwegvplpozirrjcxsn</span>
+          </div>
+          <div style="color: #38bdf8; font-family: var(--font-mono); font-size: 11px;">
+            Row-Level Security Enabled
+          </div>
+        </div>
+
+        <!-- Inventory Table Section -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-weight: 600; font-size: 13px;">Uploaded Micro-Apps & Links</div>
+            <button class="btn btn-primary" id="btnAdminQuickUpload" style="font-size: 11px; padding: 4px 10px;">+ New App</button>
+          </div>
+          <div class="admin-inv-table-wrap">
+            <table class="admin-inv-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;"></th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Rev</th>
+                  <th>Type</th>
+                  <th>Visits</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminInventoryTableBody">
+                <!-- Dynamically generated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Change Admin Password Section -->
+        <div style="background: #0d0d12; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px;">
+          <div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">🔑 Change Admin Master Password</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+            <div class="form-field">
+              <label>New Master Password</label>
+              <input type="password" id="admNewPassInput" class="input-field" placeholder="Enter new password" />
+            </div>
+            <div class="form-field">
+              <label>Confirm Password</label>
+              <input type="password" id="admConfirmPassInput" class="input-field" placeholder="Repeat new password" />
+            </div>
+            <button class="btn" id="btnUpdateAdminPass" style="white-space: nowrap; height: 35px; border-color: rgba(168,85,247,0.4); color: #c084fc;">
+              Update Password
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-sticky-foot">
+        <button class="btn" id="btnCloseAdminConsoleBtn">Close Console</button>
+        <button class="btn" id="btnLogoutFromConsoleBtn" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">
+          Log Out Admin
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Studio Fullscreen Code Editor -->
   <div id="studioModal">
@@ -1959,7 +2086,7 @@ ${code}
               <div class="card-desc">${Platapp.cleanCardDesc(app)}</div>
               <div class="card-footer" onclick="event.stopPropagation()">
                 ${actionBtnHtml}
-                ${Platapp.isAdmin ? `
+                ${this.isAdmin ? `
                   <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
                   <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>
                 ` : ''}
@@ -2026,6 +2153,18 @@ ${code}
         }
       },
 
+      promptAdminLogin(customMsg, onSuccess) {
+        const promptText = document.getElementById('adminLoginPromptText');
+        if (promptText) {
+          promptText.textContent = customMsg || 'Enter the Admin Master Password to unlock upload, editing, and management controls.';
+        }
+        this.onAdminLoginSuccess = onSuccess || null;
+        document.getElementById('adminLoginInput').value = '';
+        document.getElementById('adminLoginError').style.display = 'none';
+        document.getElementById('adminLoginModal').style.display = 'flex';
+        setTimeout(() => document.getElementById('adminLoginInput').focus(), 50);
+      },
+
       async loginAdmin(password) {
         const errEl = document.getElementById('adminLoginError');
         if (errEl) errEl.style.display = 'none';
@@ -2046,6 +2185,11 @@ ${code}
           document.getElementById('adminLoginInput').value = '';
           this.updateAdminUI();
           this.showToast('🛡️ Welcome back, Admin! Full edit controls unlocked.');
+          if (typeof this.onAdminLoginSuccess === 'function') {
+            const cb = this.onAdminLoginSuccess;
+            this.onAdminLoginSuccess = null;
+            cb();
+          }
         } else {
           if (errEl) {
             errEl.textContent = '❌ Incorrect password. Please try again.';
@@ -2057,15 +2201,15 @@ ${code}
       logoutAdmin() {
         this.isAdmin = false;
         sessionStorage.removeItem('platapp_admin_auth');
-        document.getElementById('adminConsoleModal').style.display = 'none';
+        const consoleModal = document.getElementById('adminConsoleModal');
+        if (consoleModal) consoleModal.style.display = 'none';
         this.updateAdminUI();
         this.showToast('Logged out of Admin Mode. Switched to Public Read-Only view.');
       },
 
       openAdminConsole() {
         if (!this.isAdmin) {
-          document.getElementById('adminLoginModal').style.display = 'flex';
-          document.getElementById('adminLoginInput').focus();
+          this.promptAdminLogin('Enter the Admin Master Password to open the Admin Console.');
           return;
         }
 
@@ -2837,6 +2981,19 @@ ${code}
         // Upload Button opens modal
         const filePicker = document.getElementById('filePicker');
         document.getElementById('uploadBtn').addEventListener('click', () => {
+          if (!this.isAdmin) {
+            this.promptAdminLogin('Please enter the Admin Master Password to upload or publish new apps.', () => {
+              this.setUploadMode('html');
+              this.setScreenshotPreview(null);
+              document.getElementById('upTitle').value = '';
+              document.getElementById('upDesc').value = '';
+              document.getElementById('upPrompt').value = '';
+              document.getElementById('upPassword').value = '';
+              document.getElementById('upExternalUrl').value = '';
+              document.getElementById('uploadModal').style.display = 'flex';
+            });
+            return;
+          }
           this.setUploadMode('html');
           this.setScreenshotPreview(null);
           document.getElementById('upTitle').value = '';
@@ -2846,6 +3003,97 @@ ${code}
           document.getElementById('upExternalUrl').value = '';
           document.getElementById('uploadModal').style.display = 'flex';
         });
+
+        // Admin Login & Console Event Handlers
+        const btnAdminTrigger = document.getElementById('btnAdminLoginTrigger');
+        if (btnAdminTrigger) {
+          btnAdminTrigger.addEventListener('click', () => {
+            this.promptAdminLogin();
+          });
+        }
+
+        const closeAdminLogin = document.getElementById('closeAdminLoginModal');
+        if (closeAdminLogin) {
+          closeAdminLogin.addEventListener('click', () => {
+            document.getElementById('adminLoginModal').style.display = 'none';
+          });
+        }
+
+        const cancelAdminLogin = document.getElementById('cancelAdminLoginBtn');
+        if (cancelAdminLogin) {
+          cancelAdminLogin.addEventListener('click', () => {
+            document.getElementById('adminLoginModal').style.display = 'none';
+          });
+        }
+
+        const submitAdminLogin = document.getElementById('submitAdminLoginBtn');
+        if (submitAdminLogin) {
+          submitAdminLogin.addEventListener('click', () => {
+            const pass = document.getElementById('adminLoginInput').value;
+            this.loginAdmin(pass);
+          });
+        }
+
+        const adminLoginInput = document.getElementById('adminLoginInput');
+        if (adminLoginInput) {
+          adminLoginInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              this.loginAdmin(e.target.value);
+            }
+          });
+        }
+
+        const btnConsole = document.getElementById('btnAdminConsole');
+        if (btnConsole) {
+          btnConsole.addEventListener('click', () => {
+            this.openAdminConsole();
+          });
+        }
+
+        const closeConsole = document.getElementById('closeAdminConsoleModal');
+        if (closeConsole) {
+          closeConsole.addEventListener('click', () => {
+            document.getElementById('adminConsoleModal').style.display = 'none';
+          });
+        }
+
+        const btnCloseConsole = document.getElementById('btnCloseAdminConsoleBtn');
+        if (btnCloseConsole) {
+          btnCloseConsole.addEventListener('click', () => {
+            document.getElementById('adminConsoleModal').style.display = 'none';
+          });
+        }
+
+        const btnLogout = document.getElementById('btnAdminLogout');
+        if (btnLogout) {
+          btnLogout.addEventListener('click', () => {
+            this.logoutAdmin();
+          });
+        }
+
+        const btnLogoutConsole = document.getElementById('btnLogoutFromConsoleBtn');
+        if (btnLogoutConsole) {
+          btnLogoutConsole.addEventListener('click', () => {
+            this.logoutAdmin();
+          });
+        }
+
+        const btnQuickUp = document.getElementById('btnAdminQuickUpload');
+        if (btnQuickUp) {
+          btnQuickUp.addEventListener('click', () => {
+            document.getElementById('adminConsoleModal').style.display = 'none';
+            document.getElementById('uploadModal').style.display = 'flex';
+          });
+        }
+
+        const btnUpPass = document.getElementById('btnUpdateAdminPass');
+        if (btnUpPass) {
+          btnUpPass.addEventListener('click', () => {
+            const p1 = document.getElementById('admNewPassInput').value;
+            const p2 = document.getElementById('admConfirmPassInput').value;
+            this.changeAdminPassword(p1, p2);
+          });
+        }
         filePicker.addEventListener('change', async (e) => {
           const f = e.target.files[0];
           if (f) await this.handleFile(f);
@@ -2886,64 +3134,6 @@ ${code}
         });
 
         // Cancel & Save Upload modal buttons
-        // Admin Login & Console Event Handlers
-        document.getElementById('btnAdminLoginTrigger').addEventListener('click', () => {
-          document.getElementById('adminLoginInput').value = '';
-          document.getElementById('adminLoginError').style.display = 'none';
-          document.getElementById('adminLoginModal').style.display = 'flex';
-          document.getElementById('adminLoginInput').focus();
-        });
-
-        document.getElementById('closeAdminLoginModal').addEventListener('click', () => {
-          document.getElementById('adminLoginModal').style.display = 'none';
-        });
-
-        document.getElementById('cancelAdminLoginBtn').addEventListener('click', () => {
-          document.getElementById('adminLoginModal').style.display = 'none';
-        });
-
-        document.getElementById('submitAdminLoginBtn').addEventListener('click', () => {
-          const pass = document.getElementById('adminLoginInput').value;
-          this.loginAdmin(pass);
-        });
-
-        document.getElementById('adminLoginInput').addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            this.loginAdmin(e.target.value);
-          }
-        });
-
-        document.getElementById('btnAdminConsole').addEventListener('click', () => {
-          this.openAdminConsole();
-        });
-
-        document.getElementById('closeAdminConsoleModal').addEventListener('click', () => {
-          document.getElementById('adminConsoleModal').style.display = 'none';
-        });
-
-        document.getElementById('btnCloseAdminConsoleBtn').addEventListener('click', () => {
-          document.getElementById('adminConsoleModal').style.display = 'none';
-        });
-
-        document.getElementById('btnAdminLogout').addEventListener('click', () => {
-          this.logoutAdmin();
-        });
-
-        document.getElementById('btnLogoutFromConsoleBtn').addEventListener('click', () => {
-          this.logoutAdmin();
-        });
-
-        document.getElementById('btnAdminQuickUpload').addEventListener('click', () => {
-          document.getElementById('adminConsoleModal').style.display = 'none';
-          document.getElementById('uploadModal').style.display = 'flex';
-        });
-
-        document.getElementById('btnUpdateAdminPass').addEventListener('click', () => {
-          const p1 = document.getElementById('admNewPassInput').value;
-          const p2 = document.getElementById('admConfirmPassInput').value;
-          this.changeAdminPassword(p1, p2);
-        });
-
         document.getElementById('cancelUploadBtn').addEventListener('click', () => {
           document.getElementById('uploadModal').style.display = 'none';
         });
@@ -3119,6 +3309,131 @@ ${code}
 
     window.addEventListener('DOMContentLoaded', () => Platapp.init());
   </script>
+
+  
+  <!-- Admin Authentication Modal -->
+  <div class="modal-backdrop" id="adminLoginModal" style="display: none;">
+    <div class="modal-panel" style="max-width: 440px;">
+      <div class="modal-head">
+        <span>🔐 Admin Authentication</span>
+        <button class="modal-close-btn" id="closeAdminLoginModal">&times;</button>
+      </div>
+      <div class="modal-scroll-body">
+        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;" id="adminLoginPromptText">
+          Enter the Admin Master Password to unlock upload, editing, and management controls.
+        </div>
+        <div class="form-field" style="margin-top: 6px;">
+          <label>Admin Master Password</label>
+          <input type="password" id="adminLoginInput" class="input-field" placeholder="Enter password..." />
+        </div>
+        <div id="adminLoginError" style="display: none; color: #ef4444; font-size: 12px; font-weight: 500;">
+          ❌ Incorrect password. Please try again.
+        </div>
+      </div>
+      <div class="modal-sticky-foot">
+        <button class="btn" id="cancelAdminLoginBtn">Cancel</button>
+        <button class="btn btn-primary" id="submitAdminLoginBtn">Authenticate & Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Console Modal / Dashboard -->
+  <div class="modal-backdrop" id="adminConsoleModal" style="display: none;">
+    <div class="modal-panel" style="max-width: 760px; max-height: min(92vh, 820px);">
+      <div class="modal-head">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>🛡️ Platapp Admin Console</span>
+          <span style="font-size: 11px; background: rgba(34,197,94,0.15); color: #4ade80; padding: 2px 8px; border-radius: 12px; border: 1px solid rgba(34,197,94,0.3); font-weight: 500;">Active</span>
+        </div>
+        <button class="modal-close-btn" id="closeAdminConsoleModal">&times;</button>
+      </div>
+      
+      <div class="modal-scroll-body" style="gap: 16px;">
+        <!-- Analytics Stat Grid -->
+        <div class="admin-stat-grid">
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatTotalApps">0</div>
+            <div class="admin-stat-lbl">Total Apps</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatTotalViews">0</div>
+            <div class="admin-stat-lbl">Total Plays / Visits</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatHtmlApps">0</div>
+            <div class="admin-stat-lbl">HTML Micro-Apps</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-val" id="admStatExtApps">0</div>
+            <div class="admin-stat-lbl">External Links</div>
+          </div>
+        </div>
+
+        <!-- Cloud Status Card -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+          <div>
+            <span class="admin-status-dot"></span>
+            <span style="font-weight: 600; color: #fff;">Supabase Cloud Database:</span>
+            <span style="color: var(--text-dim); margin-left: 6px;">nkkwegvplpozirrjcxsn</span>
+          </div>
+          <div style="color: #38bdf8; font-family: var(--font-mono); font-size: 11px;">
+            Row-Level Security Enabled
+          </div>
+        </div>
+
+        <!-- Inventory Table Section -->
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="font-weight: 600; font-size: 13px;">Uploaded Micro-Apps & Links</div>
+            <button class="btn btn-primary" id="btnAdminQuickUpload" style="font-size: 11px; padding: 4px 10px;">+ New App</button>
+          </div>
+          <div class="admin-inv-table-wrap">
+            <table class="admin-inv-table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;"></th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Rev</th>
+                  <th>Type</th>
+                  <th>Visits</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminInventoryTableBody">
+                <!-- Dynamically generated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Change Admin Password Section -->
+        <div style="background: #0d0d12; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px;">
+          <div style="font-weight: 600; font-size: 13px; margin-bottom: 10px;">🔑 Change Admin Master Password</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end;">
+            <div class="form-field">
+              <label>New Master Password</label>
+              <input type="password" id="admNewPassInput" class="input-field" placeholder="Enter new password" />
+            </div>
+            <div class="form-field">
+              <label>Confirm Password</label>
+              <input type="password" id="admConfirmPassInput" class="input-field" placeholder="Repeat new password" />
+            </div>
+            <button class="btn" id="btnUpdateAdminPass" style="white-space: nowrap; height: 35px; border-color: rgba(168,85,247,0.4); color: #c084fc;">
+              Update Password
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-sticky-foot">
+        <button class="btn" id="btnCloseAdminConsoleBtn">Close Console</button>
+        <button class="btn" id="btnLogoutFromConsoleBtn" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">
+          Log Out Admin
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Studio Fullscreen Code Editor -->
   <div id="studioModal">
