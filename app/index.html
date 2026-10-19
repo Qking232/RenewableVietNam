@@ -923,7 +923,100 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
-  </style>
+  
+    /* Admin UI & Console Styles */
+    .admin-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .admin-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .admin-stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .admin-stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+    .admin-stat-lbl {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .admin-inv-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      background: #09090c;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .admin-inv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+    .admin-inv-table th {
+      padding: 10px 12px;
+      background: #111116;
+      color: var(--text-dim);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
+    .admin-inv-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .admin-inv-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .admin-status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      margin-right: 6px;
+    }
+    .admin-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #c084fc;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .admin-badge-active:hover {
+      background: rgba(168, 85, 247, 0.25);
+    }
+
+</style>
 </head>
 <body>
 
@@ -947,11 +1040,26 @@
       <span class="search-icon">/</span>
     </div>
 
-    <div class="header-actions">
+    <div class="header-actions" id="headerActions">
       <input type="file" id="filePicker" accept=".html,.htm" style="display: none;" />
-      <button class="btn btn-primary" id="uploadBtn">
-        + Upload
+      
+      <!-- Public Visitor Login Button -->
+      <button class="btn" id="btnAdminLoginTrigger" style="font-size: 12px; gap: 6px; padding: 6px 12px; color: var(--text-muted); border-color: rgba(255,255,255,0.14);" title="Sign in as Admin to manage and edit apps">
+        🔐 Admin
       </button>
+
+      <!-- Admin Actions (Shown only when authenticated) -->
+      <div id="adminControlsGroup" style="display: none; align-items: center; gap: 8px;">
+        <button class="btn btn-primary" id="uploadBtn">
+          + Upload
+        </button>
+        <button class="admin-badge-active" id="btnAdminConsole" title="Open Admin Console Dashboard">
+          🛡️ Admin Console
+        </button>
+        <button class="btn" id="btnAdminLogout" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: rgba(239,68,68,0.3);" title="Log out of Admin Mode">
+          Logout
+        </button>
+      </div>
     </div>
   </header>
 
@@ -1272,6 +1380,99 @@
     margin: 0; padding: 0; width: 100%; height: 100%;
     overflow: auto; background-color: #09090b; color: #fff;
   }
+
+    /* Admin UI & Console Styles */
+    .admin-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) {
+      .admin-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .admin-stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .admin-stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+    .admin-stat-lbl {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .admin-inv-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      background: #09090c;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .admin-inv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+    .admin-inv-table th {
+      padding: 10px 12px;
+      background: #111116;
+      color: var(--text-dim);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
+    .admin-inv-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .admin-inv-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .admin-status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      margin-right: 6px;
+    }
+    .admin-badge-active {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #c084fc;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .admin-badge-active:hover {
+      background: rgba(168, 85, 247, 0.25);
+    }
+
 </style>`;
 
         if (hasDoctype || hasHtmlTag) {
@@ -1559,6 +1760,44 @@ ${code}
         } catch(e) {
           return false;
         }
+      },
+
+      async getSetting(key) {
+        try {
+          const res = await fetch(`${this.url}/rest/v1/platapp_settings?key=eq.${encodeURIComponent(key)}&select=*`, {
+            headers: { 'apikey': this.key, 'Authorization': `Bearer ${this.key}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            return data && data.length > 0 ? data[0].value : null;
+          }
+          return null;
+        } catch(e) {
+          return null;
+        }
+      },
+
+      async saveSetting(key, value) {
+        try {
+          const payload = {
+            key: key,
+            value: value,
+            updated_at: new Date().toISOString()
+          };
+          const res = await fetch(`${this.url}/rest/v1/platapp_settings`, {
+            method: 'POST',
+            headers: {
+              'apikey': this.key,
+              'Authorization': `Bearer ${this.key}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(payload)
+          });
+          return res.ok;
+        } catch(e) {
+          return false;
+        }
       }
     };
 
@@ -1597,10 +1836,12 @@ ${code}
       aspectIdx: 0,
       aspects: ['16:9', '1:1', '9:16', 'Fit'],
       stagedCode: '',
+      isAdmin: false, // Protected Admin Mode state
 
       async init() {
         await DB.init();
         await this.loadApps();
+        this.checkAdminSession();
         this.bindEvents();
         this.route();
         window.addEventListener('hashchange', () => this.route());
@@ -1718,8 +1959,10 @@ ${code}
               <div class="card-desc">${Platapp.cleanCardDesc(app)}</div>
               <div class="card-footer" onclick="event.stopPropagation()">
                 ${actionBtnHtml}
-                <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
-                <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>
+                ${Platapp.isAdmin ? `
+                  <button class="btn-icon-only" onclick="Platapp.startEditApp('${app.id}')" title="Edit Information" style="color: #cbd5e1; font-size: 13px;">✏️</button>
+                  <button class="btn-icon-only" onclick="Platapp.deleteApp('${app.id}')" title="Delete">🗑</button>
+                ` : ''}
               </div>
             </div>
           `;
@@ -1731,6 +1974,190 @@ ${code}
           this.scaleMiniStages();
           this.autoSnapshotMiniStages();
         });
+      },
+
+      checkAdminSession() {
+        const session = sessionStorage.getItem('platapp_admin_auth');
+        this.isAdmin = (session === 'active');
+        this.updateAdminUI();
+      },
+
+      updateAdminUI() {
+        const loginTrigger = document.getElementById('btnAdminLoginTrigger');
+        const adminGroup = document.getElementById('adminControlsGroup');
+        
+        if (this.isAdmin) {
+          if (loginTrigger) loginTrigger.style.display = 'none';
+          if (adminGroup) adminGroup.style.display = 'flex';
+        } else {
+          if (loginTrigger) loginTrigger.style.display = 'inline-flex';
+          if (adminGroup) adminGroup.style.display = 'none';
+        }
+
+        // Update player stage admin controls if present
+        const btnEditInfo = document.getElementById('btnEditInfo');
+        const btnEditApp = document.getElementById('btnEditApp');
+        const btnDelete = document.getElementById('btnDelete');
+        if (btnEditInfo) btnEditInfo.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnEditApp) btnEditApp.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnDelete) btnDelete.style.display = this.isAdmin ? 'inline-flex' : 'none';
+
+        // Re-render feed cards with or without admin buttons
+        this.renderFeed();
+      },
+
+      async verifyAdminPassword(password) {
+        try {
+          let auth = await SupabaseClient.getSetting('admin_auth');
+          if (!auth || !auth.salt || !auth.hash) {
+            // Default initial salt & hash for Ho@ngqu@n23021993.
+            auth = {
+              salt: '4489164adb3c940fbe39ee880e5b98a8',
+              hash: '5ce8f2618d5de735dfc70d9cf7bd9a4ad7b71f2203cf4ee91a90306801c79bd5'
+            };
+          }
+          const enc = new TextEncoder();
+          const data = enc.encode(auth.salt + password);
+          const hashBuf = await crypto.subtle.digest('SHA-256', data);
+          const hex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+          return hex === auth.hash;
+        } catch(e) {
+          return false;
+        }
+      },
+
+      async loginAdmin(password) {
+        const errEl = document.getElementById('adminLoginError');
+        if (errEl) errEl.style.display = 'none';
+
+        if (!password) {
+          if (errEl) {
+            errEl.textContent = '❌ Please enter password.';
+            errEl.style.display = 'block';
+          }
+          return;
+        }
+
+        const valid = await this.verifyAdminPassword(password);
+        if (valid) {
+          this.isAdmin = true;
+          sessionStorage.setItem('platapp_admin_auth', 'active');
+          document.getElementById('adminLoginModal').style.display = 'none';
+          document.getElementById('adminLoginInput').value = '';
+          this.updateAdminUI();
+          this.showToast('🛡️ Welcome back, Admin! Full edit controls unlocked.');
+        } else {
+          if (errEl) {
+            errEl.textContent = '❌ Incorrect password. Please try again.';
+            errEl.style.display = 'block';
+          }
+        }
+      },
+
+      logoutAdmin() {
+        this.isAdmin = false;
+        sessionStorage.removeItem('platapp_admin_auth');
+        document.getElementById('adminConsoleModal').style.display = 'none';
+        this.updateAdminUI();
+        this.showToast('Logged out of Admin Mode. Switched to Public Read-Only view.');
+      },
+
+      openAdminConsole() {
+        if (!this.isAdmin) {
+          document.getElementById('adminLoginModal').style.display = 'flex';
+          document.getElementById('adminLoginInput').focus();
+          return;
+        }
+
+        // Populate Analytics Stats
+        const totalApps = this.apps.length;
+        let totalViews = 0;
+        let extCount = 0;
+        let htmlCount = 0;
+
+        this.apps.forEach(a => {
+          totalViews += (a.views || 0);
+          if (a.external_url) extCount++;
+          else htmlCount++;
+        });
+
+        document.getElementById('admStatTotalApps').textContent = totalApps;
+        document.getElementById('admStatTotalViews').textContent = totalViews;
+        document.getElementById('admStatExtApps').textContent = extCount;
+        document.getElementById('admStatHtmlApps').textContent = htmlCount;
+
+        // Render Inventory Table
+        this.renderAdminInventory();
+
+        document.getElementById('adminConsoleModal').style.display = 'flex';
+      },
+
+      renderAdminInventory() {
+        const tbody = document.getElementById('adminInventoryTableBody');
+        tbody.innerHTML = '';
+
+        if (this.apps.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-dim); padding: 20px;">No apps found</td></tr>';
+          return;
+        }
+
+        this.apps.forEach(app => {
+          const tr = document.createElement('tr');
+          const isExt = Boolean(app.external_url);
+          const thumbSrc = app.thumbnail || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="30" viewBox="0 0 40 30"><rect width="40" height="30" fill="%23111116"/><text x="20" y="20" font-size="14" text-anchor="middle" fill="%23888">✨</text></svg>';
+          
+          tr.innerHTML = `
+            <td><img src="${thumbSrc}" style="width: 38px; height: 26px; object-fit: cover; border-radius: 3px; border: 1px solid var(--border);" alt="" /></td>
+            <td style="font-weight: 500;">${app.title}</td>
+            <td><span class="card-badge" style="position: static; font-size: 10px;">${app.category}</span></td>
+            <td style="color: var(--text-dim); font-family: var(--font-mono); font-size: 11px;">Rev ${app.revision || '1.0'}</td>
+            <td><span style="color: ${isExt ? '#38bdf8' : '#34d399'}; font-size: 11px;">${isExt ? '🔗 External' : '📁 HTML'}</span></td>
+            <td style="color: var(--text-dim); font-family: var(--font-mono);">${app.views || 0}</td>
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="btn" style="font-size: 11px; padding: 2px 8px; margin-right: 4px;" onclick="Platapp.startEditApp('${app.id}')">✏️ Edit</button>
+              <button class="btn" style="font-size: 11px; padding: 2px 8px; color: #ef4444; border-color: rgba(239,68,68,0.3);" onclick="Platapp.deleteApp('${app.id}')">🗑 Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      },
+
+      async changeAdminPassword(newPass, confirmPass) {
+        if (!newPass || newPass.length < 4) {
+          this.showToast('❌ Password must be at least 4 characters long.');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          this.showToast('❌ Passwords do not match.');
+          return;
+        }
+
+        try {
+          const arr = new Uint8Array(16);
+          crypto.getRandomValues(arr);
+          const salt = Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+
+          const enc = new TextEncoder();
+          const data = enc.encode(salt + newPass);
+          const hashBuf = await crypto.subtle.digest('SHA-256', data);
+          const hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+          const ok = await SupabaseClient.saveSetting('admin_auth', {
+            salt: salt,
+            hash: hash,
+            updated_at: new Date().toISOString()
+          });
+
+          if (ok) {
+            document.getElementById('admNewPassInput').value = '';
+            document.getElementById('admConfirmPassInput').value = '';
+            this.showToast('✅ Admin Master Password updated successfully in cloud!');
+          } else {
+            this.showToast('❌ Failed to update password. Check connection.');
+          }
+        } catch(e) {
+          this.showToast('❌ Error updating password.');
+        }
       },
 
       async openWatch(id) {
@@ -1775,6 +2202,15 @@ ${code}
         document.getElementById('feedSection').style.display = 'none';
         document.getElementById('tabsBar').style.display = 'none';
         document.getElementById('playerSection').style.display = 'flex';
+
+        // Control toolbar visibility based on admin status
+        const btnEditInfo = document.getElementById('btnEditInfo');
+        const btnEditApp = document.getElementById('btnEditApp');
+        const btnDelete = document.getElementById('btnDelete');
+        if (btnEditInfo) btnEditInfo.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnEditApp) btnEditApp.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (btnDelete) btnDelete.style.display = this.isAdmin ? 'inline-flex' : 'none';
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
 
@@ -2450,6 +2886,64 @@ ${code}
         });
 
         // Cancel & Save Upload modal buttons
+        // Admin Login & Console Event Handlers
+        document.getElementById('btnAdminLoginTrigger').addEventListener('click', () => {
+          document.getElementById('adminLoginInput').value = '';
+          document.getElementById('adminLoginError').style.display = 'none';
+          document.getElementById('adminLoginModal').style.display = 'flex';
+          document.getElementById('adminLoginInput').focus();
+        });
+
+        document.getElementById('closeAdminLoginModal').addEventListener('click', () => {
+          document.getElementById('adminLoginModal').style.display = 'none';
+        });
+
+        document.getElementById('cancelAdminLoginBtn').addEventListener('click', () => {
+          document.getElementById('adminLoginModal').style.display = 'none';
+        });
+
+        document.getElementById('submitAdminLoginBtn').addEventListener('click', () => {
+          const pass = document.getElementById('adminLoginInput').value;
+          this.loginAdmin(pass);
+        });
+
+        document.getElementById('adminLoginInput').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            this.loginAdmin(e.target.value);
+          }
+        });
+
+        document.getElementById('btnAdminConsole').addEventListener('click', () => {
+          this.openAdminConsole();
+        });
+
+        document.getElementById('closeAdminConsoleModal').addEventListener('click', () => {
+          document.getElementById('adminConsoleModal').style.display = 'none';
+        });
+
+        document.getElementById('btnCloseAdminConsoleBtn').addEventListener('click', () => {
+          document.getElementById('adminConsoleModal').style.display = 'none';
+        });
+
+        document.getElementById('btnAdminLogout').addEventListener('click', () => {
+          this.logoutAdmin();
+        });
+
+        document.getElementById('btnLogoutFromConsoleBtn').addEventListener('click', () => {
+          this.logoutAdmin();
+        });
+
+        document.getElementById('btnAdminQuickUpload').addEventListener('click', () => {
+          document.getElementById('adminConsoleModal').style.display = 'none';
+          document.getElementById('uploadModal').style.display = 'flex';
+        });
+
+        document.getElementById('btnUpdateAdminPass').addEventListener('click', () => {
+          const p1 = document.getElementById('admNewPassInput').value;
+          const p2 = document.getElementById('admConfirmPassInput').value;
+          this.changeAdminPassword(p1, p2);
+        });
+
         document.getElementById('cancelUploadBtn').addEventListener('click', () => {
           document.getElementById('uploadModal').style.display = 'none';
         });
