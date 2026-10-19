@@ -1205,10 +1205,12 @@
 
         <!-- HTML File Dropzone (Shown in HTML Mode) -->
         <div id="sectionHtmlFields">
-          <div class="drop-zone" id="uploadDropzone">
-            <div style="font-size: 26px; margin-bottom: 4px;">📁</div>
-            <div style="font-size: 13px; font-weight: 500; color: #ddd;">Click to browse or drop single-file HTML app here</div>
-            <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Self-contained .html files (.htm, .svg)</div>
+          <div class="drop-zone" id="uploadDropzone" style="cursor: pointer;">
+            <div id="uploadDropzonePrompt">
+              <div style="font-size: 26px; margin-bottom: 4px;">📁</div>
+              <div style="font-size: 13px; font-weight: 500; color: #ddd;">Click to browse or drop single-file HTML app here</div>
+              <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Self-contained .html files (.htm, .svg)</div>
+            </div>
             <input type="file" id="uploadFileInput" accept=".html,.htm,.svg" style="display: none;" />
           </div>
         </div>
@@ -3236,6 +3238,15 @@ ${code}
         document.getElementById('uploadBtn').addEventListener('click', () => {
           this.setUploadMode('html');
           this.setScreenshotPreview(null);
+          this.stagedCode = '';
+          const dropzonePrompt = document.getElementById('uploadDropzonePrompt');
+          if (dropzonePrompt) {
+            dropzonePrompt.innerHTML = `
+              <div style="font-size: 26px; margin-bottom: 4px;">📁</div>
+              <div style="font-size: 13px; font-weight: 500; color: #ddd;">Click to browse or drop single-file HTML app here</div>
+              <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Self-contained .html files (.htm, .svg)</div>
+            `;
+          }
           document.getElementById('upTitle').value = '';
           document.getElementById('upDesc').value = '';
           document.getElementById('upPrompt').value = '';
@@ -3334,6 +3345,44 @@ ${code}
             this.changeAdminPassword(p1, p2);
           });
         }
+        
+        // Modal HTML Dropzone Click and File Selection
+        const uploadDropzone = document.getElementById('uploadDropzone');
+        const uploadFileInput = document.getElementById('uploadFileInput');
+        if (uploadDropzone && uploadFileInput) {
+          uploadDropzone.addEventListener('click', (e) => {
+            if (e.target !== uploadFileInput) {
+              uploadFileInput.click();
+            }
+          });
+          uploadFileInput.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+              await this.handleFile(e.target.files[0]);
+              uploadFileInput.value = '';
+            }
+          });
+
+          // Drop events inside modal
+          uploadDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = '#38bdf8';
+            uploadDropzone.style.background = '#181824';
+          });
+          uploadDropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = '';
+            uploadDropzone.style.background = '';
+          });
+          uploadDropzone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            uploadDropzone.style.borderColor = '';
+            uploadDropzone.style.background = '';
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+              await this.handleFile(e.dataTransfer.files[0]);
+            }
+          });
+        }
+
         filePicker.addEventListener('change', async (e) => {
           const f = e.target.files[0];
           if (f) await this.handleFile(f);
@@ -3552,7 +3601,18 @@ ${code}
         document.getElementById('upDesc').value = meta.desc;
         document.getElementById('upPrompt').value = meta.prompt;
 
+        // Visual confirmation in the dropzone box
+        const dropzonePrompt = document.getElementById('uploadDropzonePrompt');
+        if (dropzonePrompt) {
+          dropzonePrompt.innerHTML = `
+            <div style="font-size: 26px; margin-bottom: 4px;">✅</div>
+            <div style="font-size: 13px; font-weight: 600; color: #34d399;">${file.name}</div>
+            <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">(${(file.size / 1024).toFixed(1)} KB loaded) &bull; Click to choose another file</div>
+          `;
+        }
+
         document.getElementById('uploadModal').style.display = 'flex';
+        this.showToast(`📄 Loaded "${file.name}"! Fill details & click Save.`);
       }
     };
 
