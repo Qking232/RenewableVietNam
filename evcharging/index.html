@@ -2014,6 +2014,63 @@ body, #app, header, aside, main {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+  /* Floating & Chip Geolocation Controls (rev 0.0.30) */
+  .gm-chip svg.chip-icon {
+    margin-right: 5px;
+    vertical-align: -2.5px;
+    flex-shrink: 0;
+  }
+  .gm-chip.active-loc {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+    border-color: var(--accent) !important;
+  }
+  .gm-chip.active-loc svg {
+    stroke: #ffffff;
+  }
+  .map-floating-location-controls {
+    position: absolute;
+    right: 14px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1000;
+  }
+  .map-loc-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--txt);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .map-loc-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(1.06);
+  }
+  .map-loc-btn.active-loc {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+  .map-loc-btn.picking {
+    animation: locPulse 1.2s infinite ease-in-out;
+    border-color: var(--accent);
+  }
+  @keyframes locPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(47,158,111,0.5); }
+    50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(47,158,111,0); }
+  }
+
 </style>
 
 <style id="offline-leaflet-css">
@@ -2818,7 +2875,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         </button>
       </div>
 
-      <!-- 2. Horizontal Quick Filter Chips Row (Only 'Lập lộ trình' and 'Gần tôi') -->
+      <!-- 2. Horizontal Quick Filter Chips Row (Lập lộ trình, Gần tôi, My Location, Select Location) -->
       <div class="gm-chips-row" id="gmChipsRow">
         <button class="gm-chip" id="chipItinToggle" type="button" title="Lập lộ trình &amp; Gợi ý sạc EV">
           <span class="chip-text" style="font-weight:650">Lập lộ trình</span>
@@ -2826,6 +2883,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         <button class="gm-chip" id="pillNear" type="button" title="Tìm các trạm sạc gần bạn (chọn hãng)">
           <span class="chip-text" id="pillNearTxt" style="font-weight:650">Gần tôi</span>
+        </button>
+
+        <button class="gm-chip" id="btnMyLocation" type="button" title="Lấy vị trí GPS hiện tại của tôi (My Location)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="chip-icon">
+            <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+            <circle cx="12" cy="12" r="7" />
+            <circle cx="12" cy="12" r="2" fill="currentColor" />
+          </svg>
+          <span class="chip-text" style="font-weight:650">My Location</span>
+        </button>
+
+        <button class="gm-chip" id="btnSelectLocation" type="button" title="Nhấp chọn vị trí bất kỳ trên bản đồ (Select Location)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="chip-icon">
+            <path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z" />
+            <circle cx="12" cy="11" r="2.5" />
+          </svg>
+          <span class="chip-text" style="font-weight:650">Select Location</span>
         </button>
       </div>
 
@@ -3139,6 +3213,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <div id="map"></div>
       <div id="toast"></div>
       <div id="loadbar"><i></i></div>
+
+      <!-- Floating Map Quick Action Dock (My Location & Select Location) -->
+      <div class="map-floating-location-controls" id="mapFloatingLocationControls">
+        <button class="map-loc-btn" id="mapBtnMyLocation" type="button" title="Vị trí của tôi (My Location)" aria-label="My Location">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
+            <circle cx="12" cy="12" r="7" />
+            <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+          </svg>
+        </button>
+        <button class="map-loc-btn" id="mapBtnSelectLocation" type="button" title="Chọn vị trí trên bản đồ (Select Location)" aria-label="Select Location">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z" />
+            <circle cx="12" cy="11" r="2.5" />
+          </svg>
+        </button>
+      </div>
       <button id="adminBtn" style="display:none !important;" title="Bảng quản trị" data-i18n-title="admin_t" aria-label="Admin">&#9881;</button>
       <button id="bottomLeftThemeBtn" style="display:none !important;" type="button" title="Đổi giao diện Sáng / Tối (Theme Light/Dark)" aria-label="Toggle Light/Dark Theme">&#9788;</button>
     </div>
@@ -3761,7 +3852,20 @@ function setMyLoc(lat,lng,acc){
   if(pendingRoute){ const t=pendingRoute; pendingRoute=null; doRoute(t); }
 }
 function startPick(msg){ picking=true; map.getContainer().style.cursor="crosshair"; setMsg(msg); }
-map.on("click", e=>{ if(!picking) return; picking=false; map.getContainer().style.cursor=""; setMyLoc(e.latlng.lat, e.latlng.lng, 0); });
+map.on("click", e=>{
+      if(!picking) return;
+      picking=false;
+      map.getContainer().style.cursor="";
+      const bSel = document.getElementById("btnSelectLocation");
+      const mSel = document.getElementById("mapBtnSelectLocation");
+      if(bSel) { bSel.classList.remove("picking"); bSel.classList.add("active-loc"); }
+      if(mSel) { mSel.classList.remove("picking"); mSel.classList.add("active-loc"); }
+      const bMy = document.getElementById("btnMyLocation");
+      const mMy = document.getElementById("mapBtnMyLocation");
+      if(bMy) bMy.classList.remove("active-loc");
+      if(mMy) mMy.classList.remove("active-loc");
+      setMyLoc(e.latlng.lat, e.latlng.lng, 0);
+    });
 function locateMe(){
   if(!navigator.geolocation){ startPick(tr("geo_unavail")); return; }
   setMsg(tr("locating"));
@@ -5803,6 +5907,40 @@ var NEAR_KM = 40;
 
     // Click handler for 'Gần tôi' chip
     if(pillNear) pillNear.addEventListener("click", toggleNearPopover);
+
+    // Event Handlers for 'My Location' and 'Select Location' Buttons
+    const btnMyLocation = document.getElementById("btnMyLocation");
+    const btnSelectLocation = document.getElementById("btnSelectLocation");
+    const mapBtnMyLocation = document.getElementById("mapBtnMyLocation");
+    const mapBtnSelectLocation = document.getElementById("mapBtnSelectLocation");
+
+    function triggerMyLocation(e) {
+      if (e) e.stopPropagation();
+      if (typeof closeNearPopover === "function") closeNearPopover();
+      if (btnSelectLocation) btnSelectLocation.classList.remove("active-loc", "picking");
+      if (mapBtnSelectLocation) mapBtnSelectLocation.classList.remove("active-loc", "picking");
+
+      if (btnMyLocation) btnMyLocation.classList.add("active-loc");
+      if (mapBtnMyLocation) mapBtnMyLocation.classList.add("active-loc");
+
+      locateMe();
+    }
+
+    function triggerSelectLocation(e) {
+      if (e) e.stopPropagation();
+      if (typeof closeNearPopover === "function") closeNearPopover();
+
+      if (btnSelectLocation) btnSelectLocation.classList.toggle("picking");
+      if (mapBtnSelectLocation) mapBtnSelectLocation.classList.toggle("picking");
+
+      startPick("Nhấp vào bất kỳ điểm nào trên bản đồ để chọn vị trí / Click map to set reference location");
+    }
+
+    if (btnMyLocation) btnMyLocation.addEventListener("click", triggerMyLocation);
+    if (mapBtnMyLocation) mapBtnMyLocation.addEventListener("click", triggerMyLocation);
+
+    if (btnSelectLocation) btnSelectLocation.addEventListener("click", triggerSelectLocation);
+    if (mapBtnSelectLocation) mapBtnSelectLocation.addEventListener("click", triggerSelectLocation);
 
     // Click handler for Menu button & List toggle
     function onToggleList(e){
