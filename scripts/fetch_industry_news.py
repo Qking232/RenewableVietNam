@@ -48,16 +48,47 @@ FEED_DEFINITIONS = [
         "default_sector": "Solar & Wind"
     },
     {
+        "name": "Google News High-Voltage Grid & Interconnect",
+        "type": "google_news",
+        "query": "Vietnam EVN OR \"500kV\" OR \"220kV\" OR \"substation\" OR \"power grid\"",
+        "default_sector": "Grid & Interconnect"
+    },
+    {
         "name": "Google News VIR FDI & Infrastructure",
         "type": "google_news",
-        "query": "site:vir.com.vn \"renewable\" OR \"solar\" OR \"wind\" OR \"industrial park\"",
+        "query": "site:vir.com.vn \"renewable\" OR \"solar\" OR \"wind\" OR \"industrial park\" OR \"energy\"",
         "default_sector": "FDI & Infrastructure"
+    },
+    {
+        "name": "Google News Macro & PDP8 Energy Transition",
+        "type": "google_news",
+        "query": "Vietnam \"PDP8\" OR \"JETP\" OR \"power development plan\" OR \"net zero\" OR \"energy transition\"",
+        "default_sector": "Policy & DPPA"
+    },
+    {
+        "name": "Google News Corporate Clean Siting & RE100",
+        "type": "google_news",
+        "query": "Vietnam \"Lego\" renewable OR \"Samsung\" solar OR \"Foxconn\" green power OR \"VSIP\" clean energy",
+        "default_sector": "Eco-Parks & Siting"
+    },
+    {
+        "name": "Google News Storage, Hydrogen & Renewables",
+        "type": "google_news",
+        "query": "Vietnam \"battery storage\" OR \"BESS\" OR \"green hydrogen\" OR \"floating solar\"",
+        "default_sector": "Solar & Wind"
     },
     {
         "name": "Vietnam News Environment Feed",
         "type": "direct_rss",
         "url": "https://vietnamnews.vn/rss/environment.rss",
         "default_sector": "Policy & ESG",
+        "default_source": "Vietnam News"
+    },
+    {
+        "name": "Vietnam News Economy & Infrastructure Feed",
+        "type": "direct_rss",
+        "url": "https://vietnamnews.vn/rss/economy.rss",
+        "default_sector": "FDI & Infrastructure",
         "default_source": "Vietnam News"
     }
 ]
@@ -212,8 +243,8 @@ def main():
     # Sort strictly descending by publication timestamp
     deduped.sort(key=lambda x: x['timestamp'], reverse=True)
     
-    # Select top 40 high-impact items
-    final_selection = deduped[:40]
+    # Select top 200 high-impact items
+    final_selection = deduped[:200]
     
     # Recalculate relative times at generation point
     for item in final_selection:
