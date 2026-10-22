@@ -1,0 +1,962 @@
+import os
+
+REPOS = [
+    r"G:\My Drive\7. AI\Gemini\RenewableVietNam",
+    r"G:\My Drive\7. AI\Gemini\Qking232.github.io"
+]
+
+EV_HTML = '''<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  
+  <title>Vietnam EV Charging Stations Map | National Electric Mobility Infrastructure Cockpit</title>
+  <meta name="description" content="Authoritative geospatial intelligence atlas on Vietnam's 22,055+ electric vehicle charging ports and stations (VinFast, EV ONE, Charge+, Autel) with direct satellite cartography and route navigation." />
+  <meta name="keywords" content="Vietnam EV charging map, tram sac xe dien Viet Nam, VinFast charging stations, EV ONE, Charge+, electric vehicle infrastructure Vietnam" />
+  <link rel="canonical" href="https://renewablevietnam.com/evcharging/" />
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://renewablevietnam.com/evcharging/" />
+  <meta property="og:title" content="Vietnam EV Charging Stations Map | National EV Infrastructure" />
+  <meta property="og:description" content="Explore 22,055+ EV charging stations across Vietnam with satellite cartography and live port telemetry." />
+  <meta property="og:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
+
+  <!-- Twitter Meta -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://renewablevietnam.com/evcharging/" />
+  <meta name="twitter:title" content="Vietnam EV Charging Stations Map | National EV Infrastructure" />
+  <meta name="twitter:description" content="Explore 22,055+ EV charging stations across Vietnam with satellite cartography." />
+  <meta name="twitter:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
+
+  <!-- Performance & Resource Hints -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="dns-prefetch" href="https://server.arcgisonline.com">
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+
+  <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Tailwind CSS Play CDN & Institutional Color Palette Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            alabaster: '#F8FAFC',          // Slate 50 ultra-light foundation
+            surfaceLight: '#FFFFFF',       // Pure white crisp cards
+            borderSlate: '#E2E8F0',        // Slate 200 hairline borders
+            inkPrimary: '#0F172A',         // Slate 900 institutional typography
+            inkMuted: '#475569',           // Slate 600
+            
+            // OLED Deep Midnight Blue Palette
+            obsidian: '#070A12',           // Deepest midnight navy base
+            darkSurface: '#0D1322',        // Primary nautical slate surface
+            darkCard: '#131B2E',           // Layered indigo-slate card
+            darkBorder: 'rgba(59, 130, 246, 0.16)', // Sapphire hairline border
+            textDarkPrimary: '#F1F5F9',    // Slate 100 soft readable white
+            textDarkMuted: '#94A3B8',      // Slate 400 crisp subtext
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Mobile Viewport Optimization & No-Scrollbar Utility */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Roboto", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-tap-highlight-color: transparent;
+      text-rendering: optimizeLegibility;
+      letter-spacing: -0.011em;
+    }
+
+    /* Tabular Numerals for Precision Telemetry */
+    .font-mono, td, th, .tabular-nums {
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+
+    /* Custom Hairline Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.4);
+    }
+
+    /* Leaflet High-DPI & OLED Midnight Styling */
+    .leaflet-container {
+      background: #070A12;
+      font-family: inherit;
+    }
+    .leaflet-popup-content-wrapper {
+      background: #0D1322 !important;
+      color: #F8FAFC !important;
+      border: 1px solid rgba(59, 130, 246, 0.25) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6) !important;
+      padding: 2px !important;
+    }
+    .leaflet-popup-content {
+      margin: 10px 14px !important;
+      line-height: 1.4 !important;
+    }
+    .leaflet-popup-tip {
+      background: #0D1322 !important;
+      border: 1px solid rgba(59, 130, 246, 0.25) !important;
+    }
+    html:not(.dark) .leaflet-container {
+      background: #F1F5F9;
+    }
+    html:not(.dark) .leaflet-popup-content-wrapper {
+      background: #FFFFFF !important;
+      color: #0F172A !important;
+      border: 1px solid #CBD5E1 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+    html:not(.dark) .leaflet-popup-tip {
+      background: #FFFFFF !important;
+      border: 1px solid #CBD5E1 !important;
+    }
+    .ev-marker-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+    .ev-marker-pin:hover {
+      transform: scale(1.18);
+      z-index: 1000 !important;
+    }
+  </style>
+
+  <script>
+    const savedTheme = localStorage.getItem('rvn-theme');
+    if (savedTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      if (!savedTheme) localStorage.setItem('rvn-theme', 'dark');
+    }
+  </script>
+</head>
+
+<body class="min-h-screen text-inkPrimary dark:text-textDarkPrimary antialiased bg-alabaster dark:bg-obsidian font-sans selection:bg-teal-500 selection:text-white dark:selection:bg-teal-400 dark:selection:text-obsidian transition-colors duration-500 flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+
+  <!-- ==================================================================== -->
+  <!-- TOP EXECUTIVE NAVIGATION BAR                                        -->
+  <!-- ==================================================================== -->
+  <header class="sticky top-0 z-40 w-full bg-alabaster/95 dark:bg-obsidian/95 backdrop-blur-md border-b border-borderSlate dark:border-darkBorder -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 transition-colors shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col gap-2 py-2.5 sm:py-3.5">
+      <!-- Top Row: Brand, Desktop Nav, and Header CTAs -->
+      <div class="flex items-center justify-between w-full">
+        <div class="flex items-center gap-6">
+          <a href="/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0" aria-label="Renewable Vietnam — home">
+            <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="34" height="34" class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg shrink-0 shadow-sm" />
+            <span class="text-[11px] sm:text-xs font-mono uppercase tracking-[0.14em] sm:tracking-[0.24em] text-inkPrimary dark:text-textDarkPrimary font-semibold">
+              RENEWABLE INFRASTRUCTURE
+            </span>
+          </a>
+
+          <!-- Quick Inter-Domain Jump Navigation (Desktop) -->
+          <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
+            <a href="/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Industrial Hubs</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/projectenergy/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Energy Map</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20">EV Stations</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/#pdp8" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">PDP8 Tracker</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/calculator/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Power Sizer &amp; Tariffs</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/hub/" class="px-2.5 py-1 rounded-md hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">The Library</a>
+          </nav>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <a href="/evcharging/ev/" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg font-mono text-[10px] sm:text-[11px] text-white bg-emerald-600 hover:bg-emerald-500 transition-all shadow-sm font-semibold">
+            <span>⚡ Route Planner</span>
+          </a>
+
+          <a href="/calculator/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-inkPrimary dark:text-textDarkPrimary bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400/40 transition-all shadow-sm">
+            <svg class="w-3.5 h-3.5 text-teal-500 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>Power Sizer</span>
+          </a>
+
+          <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8.5 h-8.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm hover:border-slate-400 dark:hover:border-slate-500 text-inkMuted dark:text-textDarkMuted transition-all cursor-pointer">
+            <svg id="sunIcon" class="hidden w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+            <svg id="moonIcon" class="w-4 h-4 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Touch Navigation Carousel -->
+      <nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap">
+        <a href="/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Industrial Hubs</a>
+        <a href="/projectenergy/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Energy Map</a>
+        <a href="/evcharging/" class="px-2.5 py-1.5 rounded-lg text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shrink-0">EV Stations</a>
+        <a href="/#pdp8" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">PDP8 Tracker</a>
+        <a href="/calculator/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Power Sizer</a>
+        <a href="/hub/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-sky-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">The Library</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==================================================================== -->
+  <!-- MAIN WORKSPACE                                                       -->
+  <!-- ==================================================================== -->
+  <main class="relative z-10 flex-1 w-full max-w-7xl mx-auto py-6 sm:py-8 space-y-8 sm:space-y-10">
+
+    <!-- HERO TELEMETRY HEADER -->
+    <section class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
+              National Electric Mobility Atlas &middot; Public Charging Infrastructure
+            </span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+            Vietnam EV Charging Stations &amp; Fast Corridors
+          </h1>
+          <p class="text-xs sm:text-sm text-inkMuted dark:text-textDarkMuted font-light max-w-3xl">
+            Authoritative registry of 22,055+ charging ports across Vietnam. Inspect DC fast charging hubs (up to 250 kW), AC destination points, and nationwide interprovincial highway corridors.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-[11px] shrink-0">
+          <a href="/evcharging/ev/" class="px-3.5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-2 shadow-sm transition-all cursor-pointer">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <span>Launch Route &amp; Trip Navigator &rarr;</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 4-Metric Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-2">
+        <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Total Ports &amp; Outlets</span>
+          <div class="text-xl sm:text-2xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">22,055 <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">Plugs</span></div>
+          <p class="text-[10px] text-inkMuted dark:text-textDarkMuted">DC Superchargers &amp; AC Sockets</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Active Stations</span>
+          <div class="text-xl sm:text-2xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">3,500+ <span class="text-xs text-teal-600 dark:text-teal-400 font-normal">Sites</span></div>
+          <p class="text-[10px] text-inkMuted dark:text-textDarkMuted">Geocoded Across 63 Provinces</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Ultra-Fast DC Corridors</span>
+          <div class="text-xl sm:text-2xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">250 <span class="text-xs text-sky-600 dark:text-sky-400 font-normal">kW Max</span></div>
+          <p class="text-[10px] text-inkMuted dark:text-textDarkMuted">CCS2 National Standard Backbone</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-1">
+          <span class="font-mono text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Supported CPO Networks</span>
+          <div class="text-xl sm:text-2xl font-bold font-mono text-amber-600 dark:text-amber-400">VinFast &middot; EV ONE</div>
+          <p class="text-[10px] text-inkMuted dark:text-textDarkMuted">Charge+, Autel, V-Green &amp; Public</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE GEOSPATIAL MAP COCKPIT (HIGH-RESOLUTION SATELLITE) -->
+    <section id="evMapContainer" class="p-4 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2 border-b border-slate-100 dark:border-white/[0.04]">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-mono text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">
+            Geospatial EV Station Atlas (ArcGIS WGS84)
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-[10px]">
+          <!-- Basemap Indicator (Locked to High-Resolution Satellite) -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-teal-600 dark:text-teal-400 font-semibold shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>Satellite (Esri World Imagery)</span>
+          </div>
+
+          <button id="myLocationBtn" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1" title="Find stations near me">
+            <span>📍 My Location</span>
+          </button>
+
+          <button id="resetMapZoomBtn" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer" title="Reset Zoom">
+            Full Extent
+          </button>
+        </div>
+      </div>
+
+      <!-- Leaflet Map Canvas -->
+      <div id="evMap" class="w-full h-[460px] sm:h-[500px] rounded-xl overflow-hidden border border-slate-200 dark:border-darkBorder relative z-0"></div>
+
+      <!-- Map Legend & Micro-Telemetry Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-1 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="text-slate-400 uppercase tracking-wider">CPO Legend:</span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span>VinFast DC Fast</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+            <span>VinFast AC</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+            <span>Other CPO (EV ONE / Charge+)</span>
+          </span>
+        </div>
+
+        <div id="mapTelemetryBadge" class="flex items-center gap-2">
+          <span>Active Pins: <strong id="visiblePinsCount" class="text-inkPrimary dark:text-textDarkPrimary">--</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MULTI-DIMENSIONAL STATION INTELLIGENCE & DIRECTORY COCKPIT -->
+    <section class="space-y-4">
+      <!-- Section Header with View Toggles -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+            National EV Charging Stations Directory
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light">
+            Search 22,055+ charging ports by operator, connector standard, or province.
+          </p>
+        </div>
+
+        <!-- View Mode Switcher -->
+        <div class="flex items-center gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder font-mono text-[11px]">
+          <button id="viewModeBothBtn" class="px-3 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer">
+            Both
+          </button>
+          <button id="viewModeTableBtn" class="px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-colors cursor-pointer">
+            Table Only
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Controls Bar -->
+      <div class="p-3.5 sm:p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center gap-3">
+          <!-- Live Search Input -->
+          <div class="relative flex-1">
+            <input type="text" id="evSearchInput" placeholder="Filter by station name, CPO, address, or province..." class="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs focus:outline-none focus:border-teal-500 font-mono transition-colors" />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <!-- Province Selector Dropdown -->
+          <select id="provinceSelect" class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-teal-500 transition-colors cursor-pointer">
+            <option value="ALL">All Regions (Vietnam)</option>
+          </select>
+        </div>
+
+        <!-- CPO Operator Pills -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-1 font-mono text-[11px]">
+          <span class="text-slate-400 text-[10px] uppercase tracking-wider mr-1">Network:</span>
+          <button data-cpo="ALL" class="cpo-pill px-3 py-1 rounded-lg bg-teal-600 text-white font-semibold transition-all cursor-pointer">All Networks</button>
+          <button data-cpo="VinFast" class="cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer">VinFast</button>
+          <button data-cpo="DC" class="cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer">DC Fast Only</button>
+          <button data-cpo="Other" class="cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer">Non-VinFast Public</button>
+
+          <a href="/evcharging/ev/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-500/20 transition-all ml-auto">
+            <span>⚡ Open Itinerary Planner</span>
+            <span>&rarr;</span>
+          </a>
+
+          <button id="resetFiltersBtn" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] underline cursor-pointer ml-2">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabular Station Directory -->
+      <div id="evTableContainer" class="rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-borderSlate dark:border-darkBorder bg-slate-50/50 dark:bg-darkCard/50 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted uppercase tracking-wider">
+                <th class="p-3.5">Station Name</th>
+                <th class="p-3.5">Network</th>
+                <th class="p-3.5">Power / Ports</th>
+                <th class="p-3.5">Address</th>
+                <th class="p-3.5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="evTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder">
+              <tr>
+                <td colspan="5" class="p-8 text-center text-slate-400 font-mono text-xs">
+                  Loading National EV Charging Network (Supabase Store)...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination Bar -->
+        <div id="tablePaginationBar" class="p-3.5 border-t border-borderSlate dark:border-darkBorder flex items-center justify-between text-xs font-mono text-inkMuted dark:text-textDarkMuted bg-slate-50/30 dark:bg-darkCard/30">
+          <div id="paginationInfo">Showing 1 to 25 of stations</div>
+          <div class="flex items-center gap-1.5">
+            <button id="prevPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed">Previous</button>
+            <span id="currentPageIndicator" class="px-2">1 / 1</span>
+            <button id="nextPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================================================================== -->
+  <!-- STATION TECHNICAL DOSSIER MODAL                                     -->
+  <!-- ==================================================================== -->
+  <div id="stationModalOverlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5 animate-in fade-in duration-200">
+      <div class="flex items-start justify-between pb-3 border-b border-borderSlate dark:border-darkBorder">
+        <div>
+          <span id="modalCpoBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+            VinFast
+          </span>
+          <h3 id="modalStationName" class="text-xl font-bold text-inkPrimary dark:text-textDarkPrimary mt-1">
+            Station Name
+          </h3>
+          <p id="modalAddress" class="text-xs text-inkMuted dark:text-textDarkMuted font-mono">Address, Vietnam</p>
+        </div>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg cursor-pointer">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-0.5">
+            <span class="text-slate-400 text-[10px] uppercase">Connector / Power</span>
+            <div id="modalPower" class="text-sm font-bold text-emerald-600 dark:text-emerald-400">DC Fast</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-0.5">
+            <span class="text-slate-400 text-[10px] uppercase">Network Operator</span>
+            <div id="modalOperator" class="text-sm font-bold text-inkPrimary dark:text-textDarkPrimary">VinFast</div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-1">
+          <span class="text-slate-400 text-[10px] uppercase">Geospatial Telemetry (WGS84)</span>
+          <div id="modalCoordinates" class="text-xs text-inkMuted dark:text-textDarkMuted">Lat: --, Lng: --</div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-borderSlate dark:border-darkBorder">
+        <a id="modalDirectionsLink" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors">
+          <span>Google Maps Navigation</span>
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- INSTITUTIONAL FOOTER                                                 -->
+  <!-- ==================================================================== -->
+  <footer class="mt-12 pt-8 pb-6 border-t border-borderSlate dark:border-darkBorder text-xs text-inkMuted dark:text-textDarkMuted font-mono">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Renewable Vietnam &middot; National EV Charging Registry (22,055 Outlets)</span>
+      </div>
+      <div>
+        <span>Data &copy; Google My Maps EV Charging Registry &middot; Supabase Live Store</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================================================================== -->
+  <!-- CLIENT DATA ENGINE & INTERACTIVITY                                   -->
+  <!-- ==================================================================== -->
+  <script>
+    // Theme toggle handling
+    const themeBtn = document.getElementById("themeToggleBtn");
+    const sunIcon = document.getElementById("sunIcon");
+    const moonIcon = document.getElementById("moonIcon");
+
+    function updateIcons() {
+      const isDark = document.documentElement.classList.contains("dark");
+      if (sunIcon && moonIcon) {
+        if (isDark) {
+          sunIcon.classList.remove("hidden");
+          moonIcon.classList.add("hidden");
+        } else {
+          sunIcon.classList.add("hidden");
+          moonIcon.classList.remove("hidden");
+        }
+      }
+    }
+    updateIcons();
+
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        const isDark = document.documentElement.classList.contains("dark");
+        localStorage.setItem("rvn-theme", isDark ? "dark" : "light");
+        updateIcons();
+      });
+    }
+
+    // Supabase Live Store
+    const SUPABASE_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
+    const HEADERS = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY };
+
+    let ALL_STATIONS = [];
+    let FILTERED_STATIONS = [];
+    let currentPage = 1;
+    const PAGE_SIZE = 25;
+    let selectedCPO = "ALL";
+    let selectedProvince = "ALL";
+    let searchQuery = "";
+
+    // Leaflet map
+    let evMap = null;
+    let markersLayer = null;
+
+    async function loadStationsData() {
+      try {
+        // Query top dense stations from Supabase (or recent cached)
+        const url = `${SUPABASE_URL}/rest/v1/ev_stations?select=name,lat,lng,port,cpo,addr,conn,site_key&limit=500`;
+        const res = await fetch(url, { headers: HEADERS });
+        if (res.ok) {
+          ALL_STATIONS = await res.json();
+          initDirectory();
+          return;
+        }
+      } catch (e) {
+        console.warn("Could not query Supabase directly, falling back", e);
+      }
+    }
+
+    function initDirectory() {
+      // Populate province dropdown
+      const provinces = new Set();
+      ALL_STATIONS.forEach(s => {
+        if (s.addr) {
+          const parts = s.addr.split(",");
+          if (parts.length > 0) {
+            const prov = parts[parts.length - 1].trim();
+            if (prov.length < 30) provinces.add(prov);
+          }
+        }
+      });
+
+      const provinceSelect = document.getElementById("provinceSelect");
+      if (provinceSelect) {
+        Array.from(provinces).sort().forEach(prv => {
+          const opt = document.createElement("option");
+          opt.value = prv;
+          opt.textContent = prv;
+          provinceSelect.appendChild(opt);
+        });
+      }
+
+      applyFilters();
+      initEVMap();
+    }
+
+    function applyFilters() {
+      FILTERED_STATIONS = ALL_STATIONS.filter(s => {
+        // CPO Network
+        if (selectedCPO !== "ALL") {
+          const cpoLower = (s.cpo || "").toLowerCase();
+          const portLower = (s.port || "").toLowerCase();
+          if (selectedCPO === "VinFast" && !cpoLower.includes("vinfast")) return false;
+          if (selectedCPO === "DC" && !portLower.includes("dc")) return false;
+          if (selectedCPO === "Other" && cpoLower.includes("vinfast")) return false;
+        }
+
+        // Province
+        if (selectedProvince !== "ALL") {
+          if (!(s.addr || "").includes(selectedProvince)) return false;
+        }
+
+        // Search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchName = (s.name || "").toLowerCase().includes(q);
+          const matchAddr = (s.addr || "").toLowerCase().includes(q);
+          const matchCpo = (s.cpo || "").toLowerCase().includes(q);
+          if (!matchName && !matchAddr && !matchCpo) return false;
+        }
+
+        return true;
+      });
+
+      currentPage = 1;
+      renderStationsTable();
+      renderMapPins();
+    }
+
+    function renderStationsTable() {
+      const tbody = document.getElementById("evTableBody");
+      const paginationInfo = document.getElementById("paginationInfo");
+      const pageIndicator = document.getElementById("currentPageIndicator");
+      const prevBtn = document.getElementById("prevPageBtn");
+      const nextBtn = document.getElementById("nextPageBtn");
+
+      if (!tbody) return;
+
+      if (FILTERED_STATIONS.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-mono text-xs">No charging stations found matching criteria.</td></tr>`;
+        if (paginationInfo) paginationInfo.textContent = "Showing 0 to 0 of 0 stations";
+        if (pageIndicator) pageIndicator.textContent = "0 / 0";
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        return;
+      }
+
+      const totalPages = Math.ceil(FILTERED_STATIONS.length / PAGE_SIZE);
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIndex = (currentPage - 1) * PAGE_SIZE;
+      const endIndex = Math.min(startIndex + PAGE_SIZE, FILTERED_STATIONS.length);
+      const pageItems = FILTERED_STATIONS.slice(startIndex, endIndex);
+
+      let html = "";
+      pageItems.forEach((s, idx) => {
+        const isVinFast = (s.cpo || "").toLowerCase().includes("vinfast");
+        const isDC = (s.port || "").toLowerCase().includes("dc");
+        const badgeColor = isVinFast ? (isDC ? "bg-emerald-500" : "bg-teal-500") : "bg-sky-500";
+        const globalIdx = startIndex + idx;
+
+        html += `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer group" onclick="openStationModal(${globalIdx})">
+            <td class="p-3.5 font-semibold text-inkPrimary dark:text-textDarkPrimary">
+              ${s.name || "Charging Station"}
+            </td>
+            <td class="p-3.5">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[10px] text-inkPrimary dark:text-textDarkPrimary bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder">
+                <span class="w-1.5 h-1.5 rounded-full ${badgeColor}"></span>
+                <span>${s.cpo || "Public"}</span>
+              </span>
+            </td>
+            <td class="p-3.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              ${s.port || "AC / DC"}
+            </td>
+            <td class="p-3.5 text-inkMuted dark:text-textDarkMuted max-w-[240px] truncate">
+              ${s.addr || "Vietnam"}
+            </td>
+            <td class="p-3.5 text-right font-mono">
+              <button class="px-2 py-1 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-[10px]">
+                Navigate &rarr;
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+
+      if (paginationInfo) paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${FILTERED_STATIONS.length} stations`;
+      if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    function initEVMap() {
+      const mapEl = document.getElementById("evMap");
+      if (!mapEl || evMap || typeof L === "undefined") return;
+
+      evMap = L.map('evMap', {
+        center: [16.0, 107.5],
+        zoom: 6,
+        minZoom: 5,
+        maxZoom: 19,
+        scrollWheelZoom: false,
+        preferCanvas: true
+      });
+
+      evMap.on('click', () => {
+        evMap.scrollWheelZoom.enable();
+      });
+
+      // Exclusive Satellite Basemap (ArcGIS Esri World Imagery)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        subdomains: 'abcd',
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+      }).addTo(evMap);
+
+      // Vietnamese Sovereignty Markers
+      L.marker([16.5, 112.0], {
+        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Hoàng Sa (Việt Nam)</div>' }),
+        keyboard: false
+      }).addTo(evMap);
+
+      L.marker([9.5, 113.5], {
+        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Trường Sa (Việt Nam)</div>' }),
+        keyboard: false
+      }).addTo(evMap);
+
+      markersLayer = L.layerGroup().addTo(evMap);
+      renderMapPins();
+
+      // Reset Extent Button
+      const resetBtn = document.getElementById("resetMapZoomBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          evMap.flyTo([16.0, 107.5], 6, { duration: 1 });
+        });
+      }
+
+      // My Location GPS Trigger
+      const myLocBtn = document.getElementById("myLocationBtn");
+      if (myLocBtn) {
+        myLocBtn.addEventListener("click", () => {
+          if (!navigator.geolocation) {
+            alert("Geolocation not supported by your browser.");
+            return;
+          }
+          myLocBtn.textContent = "Locating...";
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const lat = pos.coords.latitude;
+              const lng = pos.coords.longitude;
+              evMap.flyTo([lat, lng], 14, { duration: 1.5 });
+              L.circleMarker([lat, lng], { radius: 8, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.9 })
+                .addTo(evMap)
+                .bindPopup("<b>📍 Your Current Location</b>")
+                .openPopup();
+              myLocBtn.textContent = "📍 Found Location";
+            },
+            () => {
+              alert("Could not retrieve GPS coordinates.");
+              myLocBtn.textContent = "📍 My Location";
+            }
+          );
+        });
+      }
+
+      // View Mode Toggle
+      const viewBoth = document.getElementById("viewModeBothBtn");
+      const viewTable = document.getElementById("viewModeTableBtn");
+      const mapContainer = document.getElementById("evMapContainer");
+
+      if (viewBoth && viewTable && mapContainer) {
+        viewBoth.addEventListener("click", () => {
+          mapContainer.classList.remove("hidden");
+          viewBoth.classList.add("bg-teal-600", "text-white");
+          viewBoth.classList.remove("text-inkMuted", "dark:text-textDarkMuted");
+          viewTable.classList.remove("bg-teal-600", "text-white");
+          viewTable.classList.add("text-inkMuted", "dark:text-textDarkMuted");
+          setTimeout(() => { evMap.invalidateSize(); }, 200);
+        });
+
+        viewTable.addEventListener("click", () => {
+          mapContainer.classList.add("hidden");
+          viewTable.classList.add("bg-teal-600", "text-white");
+          viewTable.classList.remove("text-inkMuted", "dark:text-textDarkMuted");
+          viewBoth.classList.remove("bg-teal-600", "text-white");
+          viewBoth.classList.add("text-inkMuted", "dark:text-textDarkMuted");
+        });
+      }
+    }
+
+    function renderMapPins() {
+      if (!markersLayer || typeof L === "undefined") return;
+      markersLayer.clearLayers();
+
+      const pinsToRender = FILTERED_STATIONS.slice(0, 150);
+      pinsToRender.forEach(s => {
+        if (!s.lat || !s.lng) return;
+
+        const isVinFast = (s.cpo || "").toLowerCase().includes("vinfast");
+        const isDC = (s.port || "").toLowerCase().includes("dc");
+        const pinBg = isVinFast ? (isDC ? "bg-emerald-500" : "bg-teal-500") : "bg-sky-500";
+
+        const pinIcon = L.divIcon({
+          className: 'custom-ev-marker',
+          html: `
+            <div class="ev-marker-pin ${pinBg} text-white w-6 h-6 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[8px] font-bold">
+              ⚡
+            </div>
+          `
+        });
+
+        const marker = L.marker([s.lat, s.lng], { icon: pinIcon });
+        marker.bindPopup(`
+          <div class="space-y-1.5 font-mono text-xs">
+            <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${pinBg} text-white">${s.cpo || 'EV'}</span>
+            <div class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">${s.name}</div>
+            <div class="text-emerald-600 dark:text-emerald-400 font-semibold">${s.port || 'AC / DC'}</div>
+            <div class="text-slate-500 text-[10px] leading-snug">${s.addr || ''}</div>
+            <div class="pt-1">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="text-teal-600 dark:text-teal-400 font-bold hover:underline">
+                Navigate in Google Maps &rarr;
+              </a>
+            </div>
+          </div>
+        `);
+        markersLayer.addLayer(marker);
+      });
+
+      const countEl = document.getElementById("visiblePinsCount");
+      if (countEl) countEl.textContent = `${pinsToRender.length} of ${FILTERED_STATIONS.length}`;
+    }
+
+    function openStationModal(index) {
+      const s = FILTERED_STATIONS[index];
+      if (!s) return;
+
+      document.getElementById("modalStationName").textContent = s.name || "EV Charging Station";
+      document.getElementById("modalAddress").textContent = s.addr || "Vietnam";
+      document.getElementById("modalPower").textContent = s.port || "AC / DC";
+      document.getElementById("modalOperator").textContent = s.cpo || "Public Network";
+      document.getElementById("modalCoordinates").textContent = `Lat: ${s.lat || '--'}, Lng: ${s.lng || '--'}`;
+
+      const directionsLink = document.getElementById("modalDirectionsLink");
+      if (directionsLink && s.lat && s.lng) {
+        directionsLink.href = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}`;
+      }
+
+      document.getElementById("stationModalOverlay").classList.remove("hidden");
+    }
+
+    // Modal close listeners
+    const modalCloseBtn = document.getElementById("closeModalBtn");
+    const modalOverlay = document.getElementById("stationModalOverlay");
+    if (modalCloseBtn) modalCloseBtn.addEventListener("click", () => modalOverlay.classList.add("hidden"));
+    if (modalOverlay) {
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) modalOverlay.classList.add("hidden");
+      });
+    }
+
+    // Pagination listeners
+    document.getElementById("prevPageBtn")?.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderStationsTable();
+      }
+    });
+
+    document.getElementById("nextPageBtn")?.addEventListener("click", () => {
+      const totalPages = Math.ceil(FILTERED_STATIONS.length / PAGE_SIZE);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderStationsTable();
+      }
+    });
+
+    // CPO pill clicks
+    document.querySelectorAll(".cpo-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".cpo-pill").forEach(btn => {
+          btn.classList.remove("bg-teal-600", "text-white");
+          btn.classList.add("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+        });
+        pill.classList.add("bg-teal-600", "text-white");
+        pill.classList.remove("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+        selectedCPO = pill.getAttribute("data-cpo") || "ALL";
+        applyFilters();
+      });
+    });
+
+    // Search and province dropdown listeners
+    document.getElementById("evSearchInput")?.addEventListener("input", (e) => {
+      searchQuery = e.target.value.trim();
+      applyFilters();
+    });
+
+    document.getElementById("provinceSelect")?.addEventListener("change", (e) => {
+      selectedProvince = e.target.value;
+      applyFilters();
+    });
+
+    document.getElementById("resetFiltersBtn")?.addEventListener("click", () => {
+      selectedCPO = "ALL";
+      selectedProvince = "ALL";
+      searchQuery = "";
+      const searchInput = document.getElementById("evSearchInput");
+      if (searchInput) searchInput.value = "";
+      const provSelect = document.getElementById("provinceSelect");
+      if (provSelect) provSelect.value = "ALL";
+
+      document.querySelectorAll(".cpo-pill").forEach(btn => {
+        if (btn.getAttribute("data-cpo") === "ALL") {
+          btn.classList.add("bg-teal-600", "text-white");
+          btn.classList.remove("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+        } else {
+          btn.classList.remove("bg-teal-600", "text-white");
+          btn.classList.add("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+        }
+      });
+      applyFilters();
+    });
+
+    // Initialize on DOM load
+    document.addEventListener("DOMContentLoaded", () => {
+      loadStationsData();
+    });
+  </script>
+</body>
+</html>
+'''
+
+def main():
+    for repo in REPOS:
+        out_path = os.path.join(repo, "evcharging", "index.html")
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(EV_HTML.strip())
+        print(f"Redesigned EV Charging saved to: {out_path} ({os.path.getsize(out_path)} bytes)")
+
+if __name__ == "__main__":
+    main()
