@@ -201,7 +201,7 @@
 
         <!-- Right Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2">
-          <a href="#marketWire" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg font-mono text-[10px] sm:text-[11px] text-inkPrimary dark:text-textDarkPrimary bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400/40 transition-all shadow-sm">
+          <a href="/#marketWire" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg font-mono text-[10px] sm:text-[11px] text-inkPrimary dark:text-textDarkPrimary bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400/40 transition-all shadow-sm">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
             <span>Live Wire</span>
           </a>
@@ -448,51 +448,6 @@
       </div>
     </section>
 
-    <!-- REAL-TIME INDUSTRY MARKET INTELLIGENCE WIRE (RSS & APIS) -->
-    <section id="marketWire" class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="space-y-0.5">
-          <div class="flex items-center gap-2">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="font-mono text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
-              Live Intelligence Wire &middot; Clean Energy Dispatches
-            </span>
-          </div>
-          <h2 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
-            Vietnam Clean Energy &amp; Power Market Wire
-          </h2>
-          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light">
-            Real-time regulatory decrees (Decree 80/2024/ND-CP), DPPA wheeling, offshore wind, and grid interconnects.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2 font-mono text-[11px] shrink-0">
-          <span id="newsSyncStatus" class="text-inkMuted dark:text-textDarkMuted bg-white dark:bg-darkSurface px-2.5 py-1 rounded-md border border-borderSlate dark:border-darkBorder shadow-sm">
-            Syncing...
-          </span>
-          <button id="refreshNewsBtn" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors cursor-pointer shadow-sm">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span>Refresh</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Breaking Ticker -->
-      <div id="breakingTicker" class="p-2.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-xs flex items-center gap-3 overflow-hidden shadow-sm">
-        <span class="px-2 py-0.5 rounded bg-teal-600 text-white font-mono text-[10px] uppercase font-bold shrink-0">BREAKING</span>
-        <div id="tickerContent" class="truncate font-mono text-[11px] text-inkPrimary dark:text-textDarkPrimary">
-          Vietnam And Denmark's CIP Plan $4 Billion Investment In 1,000 MW Offshore Wind Project
-        </div>
-      </div>
-
-      <!-- News Cards Grid -->
-      <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered via JavaScript -->
-      </div>
-    </section>
-
   </main>
 
   <!-- ==================================================================== -->
@@ -653,7 +608,6 @@
 
       applyFilters();
       initEnergyMap();
-      renderNewsGrid();
     }
 
     function applyFilters() {
@@ -958,44 +912,7 @@
         }
       });
       applyFilters();
-    });
-
-    // Market News Feed
-    async function renderNewsGrid() {
-      const container = document.getElementById("newsGrid");
-      const statusEl = document.getElementById("newsSyncStatus");
-      if (!container) return;
-
-      try {
-        const res = await fetch("/data/industry_news.json?t=" + Date.now());
-        if (!res.ok) throw new Error("Local news offline");
-        const data = await res.json();
-        const articles = data.articles || [];
-        if (articles.length === 0) return;
-
-        let html = "";
-        articles.slice(0, 6).forEach(a => {
-          html += `
-            <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder space-y-2.5 shadow-sm hover:border-teal-500 transition-all flex flex-col justify-between">
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-[10px] font-mono text-inkMuted dark:text-textDarkMuted">
-                  <span class="text-teal-600 dark:text-teal-400 uppercase font-semibold">${a.category || "ENERGY"}</span>
-                  <span>${a.time_ago || "Recent"}</span>
-                </div>
-                <h3 class="text-sm font-semibold text-inkPrimary dark:text-textDarkPrimary leading-snug line-clamp-2">
-                  ${a.title}
-                </h3>
-                <p class="text-xs text-inkMuted dark:text-textDarkMuted line-clamp-2 font-light">
-                  ${a.snippet || a.summary || ""}
-                </p>
-              </div>
-              <a href="${a.link || '#'}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono text-[10px] text-teal-600 dark:text-teal-400 hover:underline pt-2">
-                <span>Read Dispatch</span>
-                <span>&rarr;</span>
-              </a>
-            </div>
-          `;
-        });
+    }););
         container.innerHTML = html;
         if (statusEl) statusEl.textContent = "Live Synced";
       } catch (e) {
