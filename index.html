@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <!--
-  Renewable Viet Nam - Homepage & Integrated Renewable Industrial Hub Portal
-  Rev 0.50  Integrated Renewable Industrial Hub Intelligence & 4-Domain Infrastructure System:
-            - Elevated Industrial Hubs to primary domain standing alongside Energy Map, EV Stations, and The Library.
-            - Restored 4-column balanced layout on desktop with dedicated Teal hover wash (.card-teal).
-            - Embedded full-featured Eco-Industrial Park Screener & Data Table with instant search, parametric
-              filters (Region, DPPA Tier, Substation kV), and sortable columns.
-            - Added interactive Technical Park Dossier Modal for deep-dive substation, PV, and tenant analysis.
-            - Added Corporate Clean Power Siting & Energy Sizing Calculator (MW peak load, RE100 fraction,
-              Scope 2 carbon abatement via EVN grid emission factor 0.7221 tCO2e/MWh).
-            - Synchronized live domain telemetry with 30-minute persistent localStorage caching (rvn_domain_stats_v4).
+  Renewable Viet Nam - Primary Root Homepage & Renewable Industrial Hub Portal
+  Rev 1.00  Promoted Renewable Industrial Hubs & DPPA Siting Intelligence to Primary Root Homepage:
+            - Full-screen institutional portal for Vietnam's eco-industrial parks, rooftop solar, and DPPA Decree 80/2024.
+            - Direct top navigation across all infrastructure domains: Energy Map, EV Stations, and The Library.
+            - Macro transition telemetry: 11,480 ha tracked, 417 MWp clean potential, 9 DPPA qualified zones, ~285k tCO2e mitigation.
+            - Multi-facet parametric screener, sortable table, and technical park dossier modal.
+            - Corporate Clean Power Siting & Energy Sizing Calculator with live Scope 2 carbon abatement telemetry.
+            - Zero-dependency architecture with persistent theme synchronization and 0ms repeat load.
 -->
 <html lang="en" class="h-full scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Renewable Viet Nam | Renewable Infrastructure & Industrial Hub Intelligence</title>
-  <meta name="description" content="Vietnam's clean energy transition platform: utility-scale generation fleets, EV charging corridors, eco-industrial parks, and Decree 80/2024 DPPA corporate clean power siting.">
+  <title>Renewable Viet Nam | Renewable Industrial Hubs &amp; Clean Siting Portal</title>
+  <meta name="description" content="Explore Vietnam's clean energy transition: eco-industrial parks, utility power grids, rooftop solar capacity, and Decree 80/2024 Direct PPA corporate clean power procurement.">
   <meta name="keywords" content="Vietnam renewable energy, eco industrial parks Vietnam, DPPA Decree 80 2024, green industrial zone Vietnam, EV charging stations, solar wind PDP8, clean power siting Vietnam">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="author" content="Renewable Viet Nam">
   <link rel="canonical" href="https://renewablevietnam.com/">
 
-  <!-- Open Graph / Social Previews -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://renewablevietnam.com/">
   <meta property="og:site_name" content="Renewable Viet Nam">
-  <meta property="og:title" content="Renewable Viet Nam | Renewable Infrastructure & Industrial Hub Intelligence">
+  <meta property="og:title" content="Renewable Viet Nam | Renewable Industrial Hubs &amp; Clean Siting Portal">
   <meta property="og:description" content="Vietnam's clean energy transition platform: utility-scale generation fleets, EV charging corridors, eco-industrial parks, and Decree 80/2024 DPPA corporate clean power siting.">
   <meta property="og:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg">
   <meta property="og:locale" content="en_US">
@@ -34,7 +32,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://renewablevietnam.com/">
-  <meta name="twitter:title" content="Renewable Viet Nam | Renewable Infrastructure & Industrial Hub Intelligence">
+  <meta name="twitter:title" content="Renewable Viet Nam | Renewable Industrial Hubs &amp; Clean Siting Portal">
   <meta name="twitter:description" content="Vietnam's clean energy transition platform: utility-scale generation fleets, EV charging corridors, eco-industrial parks, and Decree 80/2024 DPPA corporate clean power siting.">
   <meta name="twitter:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg">
 
@@ -63,17 +61,9 @@
       },
       {
         "@type": "Dataset",
-        "name": "Vietnam Renewable Energy Projects & EV Charging Stations Registry",
-        "description": "Geospatial database and registry of utility-scale solar, wind, hydro assets and EV charging stations in Vietnam.",
-        "url": "https://renewablevietnam.com/projectenergy/",
-        "license": "https://creativecommons.org/licenses/by/4.0/",
-        "spatialCoverage": "VN"
-      },
-      {
-        "@type": "Dataset",
         "name": "Vietnam Green Industrial Hubs & DPPA Siting Directory",
         "description": "Comprehensive registry of Vietnam's eco-industrial parks, substation interconnects, rooftop solar capacities, and Decree 80/2024 DPPA readiness.",
-        "url": "https://renewablevietnam.com/green/",
+        "url": "https://renewablevietnam.com/",
         "license": "https://creativecommons.org/licenses/by/4.0/",
         "spatialCoverage": "VN"
       }
@@ -104,7 +94,6 @@
               'BlinkMacSystemFont',
               '"SF Pro Text"',
               '"SF Pro Display"',
-              '"SF Pro"',
               '"Roboto"',
               '"Helvetica Neue"',
               'sans-serif'
@@ -123,7 +112,6 @@
             obsidian: '#0A0C10',
             darkSurface: '#11141A',
             darkCard: '#151921',
-            darkBorder: 'rgba(255, 255, 255, 0.08)',
             surface: '#FFFFFF',
           }
         }
@@ -138,80 +126,6 @@
       -moz-osx-font-smoothing: grayscale;
       -webkit-tap-highlight-color: transparent;
       letter-spacing: -0.011em;
-    }
-
-    /* Domain Card Whole-Card Hover Transitions */
-    .domain-card {
-      transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform, background-color, box-shadow;
-    }
-    .domain-card:hover {
-      transform: translateY(-5px);
-    }
-
-    /* CARD 01: Energy Projects (Emerald wash) */
-    .card-emerald:hover {
-      background-color: #ECFDF5;
-      border-color: rgba(16, 185, 129, 0.35);
-      box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.16), 0 4px 12px -2px rgba(16, 185, 129, 0.08);
-    }
-    .dark .card-emerald:hover {
-      background-color: #062b1e;
-      border-color: rgba(52, 211, 153, 0.4);
-      box-shadow: 0 20px 40px -12px rgba(5, 150, 105, 0.35), 0 0 24px -2px rgba(16, 185, 129, 0.2);
-    }
-
-    /* CARD 02: EV Charging (Amber wash) */
-    .card-amber:hover {
-      background-color: #FFFBEB;
-      border-color: rgba(245, 158, 11, 0.35);
-      box-shadow: 0 20px 40px -12px rgba(245, 158, 11, 0.16), 0 4px 12px -2px rgba(245, 158, 11, 0.08);
-    }
-    .dark .card-amber:hover {
-      background-color: #2e1a05;
-      border-color: rgba(251, 191, 36, 0.4);
-      box-shadow: 0 20px 40px -12px rgba(217, 119, 6, 0.35), 0 0 24px -2px rgba(245, 158, 11, 0.2);
-    }
-
-    /* CARD 03: Industrial Hubs (Teal wash) */
-    .card-teal:hover {
-      background-color: #F0FDFA;
-      border-color: rgba(20, 184, 166, 0.35);
-      box-shadow: 0 20px 40px -12px rgba(20, 184, 166, 0.16), 0 4px 12px -2px rgba(20, 184, 166, 0.08);
-    }
-    .dark .card-teal:hover {
-      background-color: #042f2e;
-      border-color: rgba(45, 212, 191, 0.4);
-      box-shadow: 0 20px 40px -12px rgba(13, 148, 136, 0.35), 0 0 24px -2px rgba(20, 184, 166, 0.2);
-    }
-
-    /* CARD 04: The Library / Hub (Sky wash) */
-    .card-sky:hover {
-      background-color: #F0F9FF;
-      border-color: rgba(14, 165, 233, 0.35);
-      box-shadow: 0 20px 40px -12px rgba(14, 165, 233, 0.16), 0 4px 12px -2px rgba(14, 165, 233, 0.08);
-    }
-    .dark .card-sky:hover {
-      background-color: #0c2338;
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 20px 40px -12px rgba(2, 132, 199, 0.35), 0 0 24px -2px rgba(14, 165, 233, 0.2);
-    }
-
-    .icon-pod {
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 0.4s ease,
-                  background-color 0.4s ease,
-                  color 0.4s ease,
-                  box-shadow 0.4s ease;
-    }
-    .domain-card:hover .icon-pod {
-      transform: scale(1.05);
-    }
-    .domain-card:hover .action-glyph {
-      transform: translate(2px, -2px);
     }
 
     /* Custom Scrollbars */
@@ -232,7 +146,6 @@
   </style>
 
   <script>
-    // Theme initialization with persistence
     const savedTheme = localStorage.getItem('rvn-theme');
     if (savedTheme === 'light') {
       document.documentElement.classList.remove('dark');
@@ -248,7 +161,7 @@
   <!-- ==================================================================== -->
   <!-- TOP EXECUTIVE NAVIGATION BAR                                        -->
   <!-- ==================================================================== -->
-  <header class="relative z-20 w-full max-w-6xl mx-auto flex items-center justify-between pb-6 sm:pb-8 border-b border-black/[0.05] dark:border-white/[0.06]">
+  <header class="relative z-20 w-full max-w-6xl mx-auto flex items-center justify-between pb-6 border-b border-black/[0.05] dark:border-white/[0.06]">
     <div class="flex items-center gap-6">
       <a href="/" class="flex items-center gap-3 group" aria-label="Renewable Vietnam — home">
         <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="34" height="34" class="w-8.5 h-8.5 rounded-lg shrink-0 shadow-sm" />
@@ -257,19 +170,19 @@
         </span>
       </a>
 
-      <!-- Quick Domain Jump Nav (Hidden on very small screens) -->
+      <!-- Quick Inter-Domain Jump Navigation -->
       <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-zinc-500 dark:text-zinc-400">
-        <a href="/projectenergy/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors">Energy Map</a>
+        <a href="/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-medium bg-teal-500/10">Industrial Hubs</a>
         <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-amber-600 dark:hover:text-amber-400 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors">EV Stations</a>
+        <a href="/projectenergy/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Energy Map</a>
         <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="#hubs" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-medium hover:bg-teal-500/10 transition-colors">Industrial Hubs</a>
+        <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-amber-600 dark:hover:text-amber-400 transition-colors">EV Stations</a>
         <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/hub/" class="px-2.5 py-1 rounded-md hover:text-sky-600 dark:hover:text-sky-400 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors">The Library</a>
+        <a href="/hub/" class="px-2.5 py-1 rounded-md hover:text-sky-600 dark:hover:text-sky-400 transition-colors">The Library</a>
       </nav>
     </div>
 
-    <!-- Theme Switcher -->
+    <!-- Right Controls -->
     <div class="flex items-center gap-2">
       <a href="#calculator" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-zinc-700 dark:text-zinc-300 bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.1] hover:border-black/20 dark:hover:border-white/30 transition-all shadow-sm">
         <svg class="w-3.5 h-3.5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -292,20 +205,20 @@
   <!-- ==================================================================== -->
   <!-- MAIN WORKSPACE                                                       -->
   <!-- ==================================================================== -->
-  <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto py-6 sm:py-8 space-y-10 sm:space-y-12">
+  <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto py-6 sm:py-8 space-y-8 sm:space-y-10">
 
     <!-- HERO & MACRO TELEMETRY HEADER -->
     <section class="space-y-4">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div class="space-y-1.5 max-w-2xl">
-          <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400 font-semibold">
-            National Energy Transition Intelligence
-          </p>
-          <h2 class="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-900 dark:text-zinc-50">
-            Renewable Infrastructure & Industrial Hub Platform
-          </h2>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold px-2 py-0.5 rounded bg-teal-500/10">
+            Decree 80/2024/ND-CP &middot; Direct Power Purchase Agreement (DPPA)
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-900 dark:text-zinc-50">
+            Vietnam Renewable Industrial Hubs &amp; Clean Siting Portal
+          </h1>
           <p class="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed font-light">
-            Unified telemetry tracking utility generation fleets, EV fast-charging corridors, eco-industrial parks, and Decree 80/2024 Direct PPA (DPPA) corporate clean power siting across Vietnam.
+            Comprehensive institutional intelligence on Vietnam's Tier-1 eco-industrial parks: high-voltage substation interties (110kV/220kV), rooftop solar installations, DPPA bilateral wheeling readiness, and ESG certifications for multinational manufacturing siting.
           </p>
         </div>
 
@@ -316,239 +229,60 @@
       </div>
 
       <!-- 4 MACRO TELEMETRY METRIC PILLS -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 pt-2">
-        <!-- 01 Energy Fleet -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 pt-1">
         <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm flex flex-col justify-between">
-          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Fleet Baseload</span>
+          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Monitored Land</span>
           <div class="mt-1 flex items-baseline gap-1.5">
-            <span id="heroEnergyMw" class="text-lg sm:text-xl font-mono font-semibold text-emerald-600 dark:text-emerald-400">80.6 GW</span>
-            <span class="text-[10px] font-mono text-zinc-400">/ 960 assets</span>
+            <span class="text-lg sm:text-xl font-mono font-semibold text-zinc-900 dark:text-zinc-100">11,480 ha</span>
           </div>
-          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Utility solar, wind & hydro</p>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Across 14 Tier-1 Parks</p>
         </div>
 
-        <!-- 02 EV Infrastructure -->
         <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm flex flex-col justify-between">
-          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">EV Stations</span>
+          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Clean Solar Potential</span>
           <div class="mt-1 flex items-baseline gap-1.5">
-            <span id="heroEvCount" class="text-lg sm:text-xl font-mono font-semibold text-amber-600 dark:text-amber-400">22,055</span>
-            <span class="text-[10px] font-mono text-zinc-400">stations</span>
+            <span class="text-lg sm:text-xl font-mono font-semibold text-teal-600 dark:text-teal-400">417 MWp</span>
           </div>
-          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">90,268 charging ports</p>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Rooftop &amp; Onsite Solar</p>
         </div>
 
-        <!-- 03 Green Hubs -->
         <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm flex flex-col justify-between">
-          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Green Eco-Parks</span>
-          <div class="mt-1 flex items-baseline gap-1.5">
-            <span id="heroHubsCount" class="text-lg sm:text-xl font-mono font-semibold text-teal-600 dark:text-teal-400">14 Parks</span>
-            <span class="text-[10px] font-mono text-zinc-400">/ 417 MWp</span>
-          </div>
-          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Rooftop & onsite solar/wind</p>
-        </div>
-
-        <!-- 04 DPPA Qualified -->
-        <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm flex flex-col justify-between">
-          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Decree 80 DPPA</span>
+          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">DPPA Qualified Hubs</span>
           <div class="mt-1 flex items-baseline gap-1.5">
             <span class="text-lg sm:text-xl font-mono font-semibold text-sky-600 dark:text-sky-400">9 Zones</span>
-            <span class="text-[10px] font-mono text-zinc-400">Ready</span>
           </div>
-          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Direct line & grid wheeling</p>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Direct Wire &amp; Wheeling</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm flex flex-col justify-between">
+          <span class="font-mono text-[10px] tracking-wider uppercase text-zinc-400 dark:text-zinc-500">Annual CO<sub>2</sub>e Mitigation</span>
+          <div class="mt-1 flex items-baseline gap-1.5">
+            <span class="text-lg sm:text-xl font-mono font-semibold text-emerald-600 dark:text-emerald-400">~285k tCO<sub>2</sub>e</span>
+          </div>
+          <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 font-light">Grid displacement</p>
         </div>
       </div>
     </section>
 
     <!-- ==================================================================== -->
-    <!-- 4 DOMAIN INFRASTRUCTURE CARDS GRID                                  -->
-    <!-- ==================================================================== -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch">
-
-      <!-- CARD 01: ENERGY PROJECTS (Emerald whole-card wash) -->
-      <a href="/projectenergy/" class="domain-card card-emerald group relative flex flex-col justify-between min-h-[380px] sm:min-h-[440px] p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm cursor-pointer overflow-hidden">
-        <!-- Index -->
-        <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-          <span class="tracking-widest font-medium group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">01</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80 group-hover:scale-125 transition-transform"></span>
-        </div>
-
-        <!-- Center Icon Pod -->
-        <div class="flex flex-col items-center justify-center my-auto py-2">
-          <div class="icon-pod w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-2xl bg-[#FAFAFA] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] flex flex-col items-center justify-center gap-2.5 px-3 text-center text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:text-emerald-700 dark:group-hover:text-emerald-300 group-hover:bg-white dark:group-hover:bg-black/30 group-hover:border-emerald-500/40 dark:group-hover:border-emerald-400/30">
-            <svg class="w-10 h-10 sm:w-12 sm:h-12 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.15">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
-              <circle cx="12" cy="10" r="1.75" stroke-linecap="round"/>
-            </svg>
-            <span id="statEnergy" class="block font-mono text-[10px] leading-tight text-zinc-600 dark:text-zinc-300 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">960 projects &middot; 80.6 GW</span>
-          </div>
-        </div>
-
-        <!-- Bottom Domain Title & Action -->
-        <div class="flex items-end justify-between pt-3 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-emerald-500/25 gap-2 transition-colors">
-          <div class="space-y-0.5">
-            <h3 class="text-base font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-950 dark:group-hover:text-white transition-colors">
-              Energy Map
-            </h3>
-            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 group-hover:text-emerald-900/80 dark:group-hover:text-emerald-200/75 font-light leading-snug">
-              Geospatial solar, wind, and storage pipeline.
-            </p>
-          </div>
-          <div class="shrink-0 p-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] group-hover:bg-emerald-600 group-hover:text-white transition-all">
-            <svg class="action-glyph w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-            </svg>
-          </div>
-        </div>
-      </a>
-
-      <!-- CARD 02: EV CHARGING (Amber whole-card wash) -->
-      <a href="/evcharging/" class="domain-card card-amber group relative flex flex-col justify-between min-h-[380px] sm:min-h-[440px] p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm cursor-pointer overflow-hidden">
-        <!-- Index -->
-        <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-          <span class="tracking-widest font-medium group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">02</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-500/80 group-hover:scale-125 transition-transform"></span>
-        </div>
-
-        <!-- Center Icon Pod -->
-        <div class="flex flex-col items-center justify-center my-auto py-2">
-          <div class="icon-pod w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-2xl bg-[#FAFAFA] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] flex flex-col items-center justify-center gap-2.5 px-3 text-center text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:text-amber-700 dark:group-hover:text-amber-300 group-hover:bg-white dark:group-hover:bg-black/30 group-hover:border-amber-500/40 dark:group-hover:border-amber-400/30">
-            <svg class="w-10 h-10 sm:w-12 sm:h-12 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.15">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
-            </svg>
-            <span id="statEv" class="block font-mono text-[10px] leading-tight text-zinc-600 dark:text-zinc-300 group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">22,055 st &middot; 90k ports</span>
-          </div>
-        </div>
-
-        <!-- Bottom Domain Title & Action -->
-        <div class="flex items-end justify-between pt-3 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-amber-500/25 gap-2 transition-colors">
-          <div class="space-y-0.5">
-            <h3 class="text-base font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-amber-950 dark:group-hover:text-white transition-colors">
-              EV Stations
-            </h3>
-            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 group-hover:text-amber-900/80 dark:group-hover:text-amber-200/75 font-light leading-snug">
-              Fast-charging network and high-power corridors.
-            </p>
-          </div>
-          <div class="shrink-0 p-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] group-hover:bg-amber-600 group-hover:text-white transition-all">
-            <svg class="action-glyph w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-            </svg>
-          </div>
-        </div>
-      </a>
-
-      <!-- CARD 03: INDUSTRIAL HUBS (Teal whole-card wash) -->
-      <a href="#hubs" class="domain-card card-teal group relative flex flex-col justify-between min-h-[380px] sm:min-h-[440px] p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm cursor-pointer overflow-hidden">
-        <!-- Index -->
-        <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-          <span class="tracking-widest font-medium group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">03</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-teal-500/80 group-hover:scale-125 transition-transform"></span>
-        </div>
-
-        <!-- Center Icon Pod -->
-        <div class="flex flex-col items-center justify-center my-auto py-2">
-          <div class="icon-pod w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-2xl bg-[#FAFAFA] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] flex flex-col items-center justify-center gap-2.5 px-3 text-center text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:text-teal-700 dark:group-hover:text-teal-300 group-hover:bg-white dark:group-hover:bg-black/30 group-hover:border-teal-500/40 dark:group-hover:border-teal-400/30">
-            <!-- Modern Eco-Industrial Zone SVG -->
-            <svg class="w-10 h-10 sm:w-12 sm:h-12 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.15">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-            </svg>
-            <span id="statGreen" class="block font-mono text-[10px] leading-tight text-zinc-600 dark:text-zinc-300 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors">14 parks &middot; 417 MWp</span>
-          </div>
-        </div>
-
-        <!-- Bottom Domain Title & Action -->
-        <div class="flex items-end justify-between pt-3 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-teal-500/25 gap-2 transition-colors">
-          <div class="space-y-0.5">
-            <h3 class="text-base font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-teal-950 dark:group-hover:text-white transition-colors">
-              Industrial Hubs
-            </h3>
-            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 group-hover:text-teal-900/80 dark:group-hover:text-teal-200/75 font-light leading-snug">
-              Eco-parks, DPPA readiness & siting directory.
-            </p>
-          </div>
-          <div class="shrink-0 p-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] group-hover:bg-teal-600 group-hover:text-white transition-all">
-            <svg class="action-glyph w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-            </svg>
-          </div>
-        </div>
-      </a>
-
-      <!-- CARD 04: THE LIBRARY (Sky whole-card wash) -->
-      <a href="/hub/" class="domain-card card-sky group relative flex flex-col justify-between min-h-[380px] sm:min-h-[440px] p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm cursor-pointer overflow-hidden">
-        <!-- Index -->
-        <div class="flex items-center justify-between font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-          <span class="tracking-widest font-medium group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors">04</span>
-          <span class="w-1.5 h-1.5 rounded-full bg-sky-500/80 group-hover:scale-125 transition-transform"></span>
-        </div>
-
-        <!-- Center Icon Pod -->
-        <div class="flex flex-col items-center justify-center my-auto py-2">
-          <div class="icon-pod w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] rounded-2xl bg-[#FAFAFA] dark:bg-white/[0.03] border border-black/[0.06] dark:border-white/[0.08] flex flex-col items-center justify-center gap-2.5 px-3 text-center text-zinc-700 dark:text-zinc-300 shadow-sm group-hover:text-sky-700 dark:group-hover:text-sky-300 group-hover:bg-white dark:group-hover:bg-black/30 group-hover:border-sky-500/40 dark:group-hover:border-sky-400/30">
-            <svg class="w-10 h-10 sm:w-12 sm:h-12 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.15">
-              <circle cx="12" cy="12" r="2.75" />
-              <circle cx="12" cy="4.25" r="1.75" />
-              <circle cx="19.25" cy="8.75" r="1.75" />
-              <circle cx="17" cy="18.25" r="1.75" />
-              <circle cx="7" cy="18.25" r="1.75" />
-              <circle cx="4.75" cy="8.75" r="1.75" />
-              <line x1="12" y1="6" x2="12" y2="9.25" stroke-linecap="round" />
-              <line x1="17.65" y1="9.8" x2="14.4" y2="10.9" stroke-linecap="round" />
-              <line x1="15.65" y1="16.9" x2="13.7" y2="14.3" stroke-linecap="round" />
-              <line x1="8.35" y1="16.9" x2="10.3" y2="14.3" stroke-linecap="round" />
-              <line x1="6.35" y1="9.8" x2="9.6" y2="10.9" stroke-linecap="round" />
-            </svg>
-            <span class="block font-mono text-[10px] leading-tight text-zinc-600 dark:text-zinc-300 group-hover:text-sky-700 dark:group-hover:text-sky-300 transition-colors">Documents &middot; Policy</span>
-          </div>
-        </div>
-
-        <!-- Bottom Domain Title & Action -->
-        <div class="flex items-end justify-between pt-3 border-t border-black/[0.06] dark:border-white/[0.08] group-hover:border-sky-500/25 gap-2 transition-colors">
-          <div class="space-y-0.5">
-            <h3 class="text-base font-normal tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-sky-950 dark:group-hover:text-white transition-colors">
-              The Library
-            </h3>
-            <p class="text-[11px] text-zinc-500 dark:text-zinc-400 group-hover:text-sky-900/80 dark:group-hover:text-sky-200/75 font-light leading-snug">
-              Official datasets, decrees, and research briefs.
-            </p>
-          </div>
-          <div class="shrink-0 p-1.5 rounded-lg bg-zinc-100 dark:bg-white/[0.04] group-hover:bg-sky-600 group-hover:text-white transition-all">
-            <svg class="action-glyph w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
-            </svg>
-          </div>
-        </div>
-      </a>
-
-    </section>
-
-    <!-- ==================================================================== -->
     <!-- INTERACTIVE RENEWABLE INDUSTRIAL HUB SCREENER & DIRECTORY           -->
     <!-- ==================================================================== -->
-    <section id="hubs" class="space-y-6 pt-6 border-t border-black/[0.06] dark:border-white/[0.08]">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div class="space-y-1">
+    <section id="hubs" class="space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-0.5">
           <div class="flex items-center gap-2">
             <span class="inline-block w-2.5 h-2.5 rounded-full bg-teal-500"></span>
             <span class="font-mono text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
               Vietnam Industrial Zone Directory
             </span>
           </div>
-          <h2 class="text-xl sm:text-2xl font-normal tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h2 class="text-lg sm:text-xl font-normal tracking-tight text-zinc-900 dark:text-zinc-50">
             Eco-Industrial Parks &amp; Clean Power Interconnections
           </h2>
-          <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-2xl font-light">
-            Parametric database of Tier-1 manufacturing hubs across Vietnam: grid substation capacity, installed and pipeline rooftop solar (MWp), Decree 80/2024 Direct PPA eligibility, and ESG benchmarks.
-          </p>
         </div>
 
-        <div class="flex items-center gap-2">
-          <a href="/green/" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-teal-600 dark:text-teal-400 bg-teal-500/10 border border-teal-500/20 hover:bg-teal-500/20 transition-all">
-            <span>Direct Canonical Route (/green)</span>
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
+        <div class="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
+          <span>Sort &amp; Filter Database</span>
         </div>
       </div>
 
@@ -573,7 +307,6 @@
 
         <!-- Facet Filter Pills -->
         <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-black/[0.04] dark:border-white/[0.05] text-[11px] font-mono">
-          <!-- Region -->
           <span class="text-zinc-400 dark:text-zinc-500 uppercase tracking-wider text-[10px]">Region:</span>
           <button data-filter-region="all" class="filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors">All</button>
           <button data-filter-region="North" class="filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-white/[0.1] transition-colors">North</button>
@@ -582,7 +315,6 @@
 
           <span class="mx-1 text-zinc-300 dark:text-zinc-700">|</span>
 
-          <!-- DPPA Tier -->
           <span class="text-zinc-400 dark:text-zinc-500 uppercase tracking-wider text-[10px]">DPPA Status:</span>
           <select id="filterDppaSelect" class="bg-zinc-100 dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.1] text-zinc-700 dark:text-zinc-300 rounded-md px-2 py-1 text-[11px] focus:outline-none">
             <option value="all">All DPPA Tiers</option>
@@ -591,7 +323,6 @@
             <option value="developing">Developing</option>
           </select>
 
-          <!-- Substation Voltage -->
           <span class="text-zinc-400 dark:text-zinc-500 uppercase tracking-wider text-[10px]">Substation:</span>
           <select id="filterSubstationSelect" class="bg-zinc-100 dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.1] text-zinc-700 dark:text-zinc-300 rounded-md px-2 py-1 text-[11px] focus:outline-none">
             <option value="all">All Voltages</option>
@@ -599,7 +330,6 @@
             <option value="110">110kV Onsite Substation</option>
           </select>
 
-          <!-- Reset -->
           <button id="resetFiltersBtn" class="ml-auto text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-[10px] underline cursor-pointer">
             Reset
           </button>
@@ -841,8 +571,6 @@
     </div>
 
     <div class="flex items-center gap-3">
-      <a href="/green/" class="text-teal-600 dark:text-teal-400 hover:underline">/green</a>
-      <span>&middot;</span>
       <a href="/projectenergy/" class="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">Energy Map</a>
       <span>&middot;</span>
       <a href="/evcharging/" class="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">EV Stations</a>
@@ -857,9 +585,6 @@
   <!-- DATASET & REACTIVE ENGINES JAVASCRIPT                                -->
   <!-- ==================================================================== -->
   <script>
-    // ------------------------------------------------------------------
-    // 1. VERIFIED 14 TIER-1 GREEN INDUSTRIAL HUBS DATASET
-    // ------------------------------------------------------------------
     const HUBS = [
       {
         id: "deep-c-hp",
@@ -1143,9 +868,6 @@
       }
     ];
 
-    // ------------------------------------------------------------------
-    // 2. STATE & FILTER CONTROLLER
-    // ------------------------------------------------------------------
     let currentFilter = {
       search: "",
       region: "all",
@@ -1161,7 +883,6 @@
       if (!tbody) return;
 
       const filtered = HUBS.filter(hub => {
-        // Search text
         if (currentFilter.search) {
           const q = currentFilter.search.toLowerCase();
           const matchName = hub.name.toLowerCase().includes(q);
@@ -1171,19 +892,14 @@
           if (!matchName && !matchDev && !matchProv && !matchTenants) return false;
         }
 
-        // Region
-        if (currentFilter.region !== "all" && hub.region !== currentFilter.region) {
-          return false;
-        }
+        if (currentFilter.region !== "all" && hub.region !== currentFilter.region) return false;
 
-        // DPPA
         if (currentFilter.dppa !== "all") {
           if (currentFilter.dppa === "ready" && hub.dppaClass !== "ready") return false;
           if (currentFilter.dppa === "cat2" && hub.dppaClass !== "cat2") return false;
           if (currentFilter.dppa === "developing" && hub.dppaClass !== "developing") return false;
         }
 
-        // Substation
         if (currentFilter.substation !== "all") {
           if (currentFilter.substation === "220" && hub.substationKv < 220) return false;
           if (currentFilter.substation === "110" && hub.substationKv > 110) return false;
@@ -1192,7 +908,6 @@
         return true;
       });
 
-      // Sorting
       filtered.sort((a, b) => {
         let valA, valB;
         if (currentFilter.sortKey === "name") {
@@ -1230,7 +945,6 @@
         tr.className = "hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer group";
         tr.onclick = () => openHubModal(hub);
 
-        // Badge styling for DPPA
         let dppaBadge = "";
         if (hub.dppaClass === "ready") {
           dppaBadge = `<span class="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20">Cat 1 &amp; 2 Ready</span>`;
@@ -1280,9 +994,6 @@
       });
     }
 
-    // ------------------------------------------------------------------
-    // 3. TECHNICAL DOSSIER MODAL LOGIC
-    // ------------------------------------------------------------------
     function openHubModal(hub) {
       document.getElementById("modalHubName").textContent = hub.name;
       document.getElementById("modalHubVietnamese").textContent = hub.vietnameseName;
@@ -1307,9 +1018,6 @@
       document.getElementById("hubModalOverlay").classList.add("hidden");
     }
 
-    // ------------------------------------------------------------------
-    // 4. CORPORATE SITING SIZING CALCULATOR ENGINE
-    // ------------------------------------------------------------------
     function updateCalculator() {
       const demandMw = parseFloat(document.getElementById("calcDemandSlider").value);
       const monthlyMwh = parseFloat(document.getElementById("calcMwhSlider").value);
@@ -1319,19 +1027,15 @@
       document.getElementById("calcMwhVal").textContent = `${Number(monthlyMwh).toLocaleString()} MWh`;
       document.getElementById("calcReVal").textContent = `${rePct}%`;
 
-      // Annual total consumption
       const annualMwh = monthlyMwh * 12;
       const targetCleanMwh = annualMwh * (rePct / 100);
 
-      // Onsite rooftop PV potential (assumes ~35% of peak load can be sited on factory roof)
       const rooftopPvMw = Math.min(demandMw * 0.35, 12);
-      const rooftopAnnualYieldMwh = rooftopPvMw * 1400; // ~1400 kWh/kWp in Vietnam
+      const rooftopAnnualYieldMwh = rooftopPvMw * 1400;
 
-      // Remainder needed via DPPA wheeling
       const dppaGapMwh = Math.max(0, targetCleanMwh - rooftopAnnualYieldMwh);
       const gridFirmingMwh = Math.max(0, annualMwh - targetCleanMwh);
 
-      // Carbon Avoidance (EVN Grid emission factor: 0.7221 tCO2e/MWh)
       const co2AvoidedTons = targetCleanMwh * 0.7221;
 
       document.getElementById("calcRooftopPv").textContent = `${rooftopPvMw.toFixed(1)} MWp`;
@@ -1339,7 +1043,6 @@
       document.getElementById("calcGridFirming").textContent = `${Math.round(gridFirmingMwh).toLocaleString()} MWh`;
       document.getElementById("calcCo2Avoided").textContent = `${Math.round(co2AvoidedTons).toLocaleString()} tCO2e`;
 
-      // Filter hubs with sufficient substation capacity & rooftop headroom
       const recContainer = document.getElementById("calcRecommendedHubs");
       const suitableHubs = HUBS.filter(h => h.rooftopPotentialMWp >= rooftopPvMw)
                                .sort((a, b) => b.cleanEnergyShare - a.cleanEnergyShare)
@@ -1353,7 +1056,6 @@
       `).join("");
     }
 
-    // Copy brief to clipboard
     document.getElementById("copyCalcBriefBtn")?.addEventListener("click", () => {
       const demand = document.getElementById("calcDemandVal").textContent;
       const consumption = document.getElementById("calcMwhVal").textContent;
@@ -1376,20 +1078,15 @@
       });
     });
 
-    // ------------------------------------------------------------------
-    // 5. EVENT LISTENERS SETUP
-    // ------------------------------------------------------------------
     document.addEventListener("DOMContentLoaded", () => {
       renderTable();
       updateCalculator();
 
-      // Search input
       document.getElementById("hubSearchInput").addEventListener("input", (e) => {
         currentFilter.search = e.target.value.trim();
         renderTable();
       });
 
-      // Region filter pills
       document.querySelectorAll(".filter-pill-region").forEach(btn => {
         btn.addEventListener("click", () => {
           document.querySelectorAll(".filter-pill-region").forEach(b => {
@@ -1401,19 +1098,16 @@
         });
       });
 
-      // DPPA select
       document.getElementById("filterDppaSelect").addEventListener("change", (e) => {
         currentFilter.dppa = e.target.value;
         renderTable();
       });
 
-      // Substation select
       document.getElementById("filterSubstationSelect").addEventListener("change", (e) => {
         currentFilter.substation = e.target.value;
         renderTable();
       });
 
-      // Reset
       document.getElementById("resetFiltersBtn").addEventListener("click", () => {
         document.getElementById("hubSearchInput").value = "";
         document.getElementById("filterDppaSelect").value = "all";
@@ -1429,7 +1123,6 @@
         renderTable();
       });
 
-      // Table headers sort
       document.querySelectorAll("th[data-sort]").forEach(th => {
         th.addEventListener("click", () => {
           const key = th.dataset.sort;
@@ -1443,12 +1136,10 @@
         });
       });
 
-      // Sliders
       document.getElementById("calcDemandSlider").addEventListener("input", updateCalculator);
       document.getElementById("calcMwhSlider").addEventListener("input", updateCalculator);
       document.getElementById("calcReSlider").addEventListener("input", updateCalculator);
 
-      // Modal Close
       document.getElementById("closeModalBtn").addEventListener("click", closeHubModal);
       document.getElementById("hubModalOverlay").addEventListener("click", (e) => {
         if (e.target.id === "hubModalOverlay") closeHubModal();
@@ -1457,7 +1148,6 @@
         if (e.key === "Escape") closeHubModal();
       });
 
-      // Theme toggle
       const themeToggleBtn = document.getElementById('themeToggleBtn');
       const sunIcon = document.getElementById('sunIcon');
       const moonIcon = document.getElementById('moonIcon');
@@ -1479,45 +1169,6 @@
         updateIcons(isDark);
       });
     });
-
-    // ------------------------------------------------------------------
-    // 6. LIVE DOMAIN STATS SYNC & CACHING
-    // ------------------------------------------------------------------
-    (function () {
-      var CACHE_KEY = "rvn_domain_stats_v4";
-      var TTL = 30 * 60 * 1000;
-
-      function fmt(n) { return Number(n).toLocaleString("en-US"); }
-      function set(id, t) { var e = document.getElementById(id); if (e && t) e.textContent = t; }
-
-      var EV_URL = "https://nkkwegvplpozirrjcxsn.supabase.co";
-      var EV_KEY = "sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU";
-
-      function paint(v) {
-        if (v.energy) {
-          set("statEnergy", v.energy);
-          set("heroEnergyMw", "80.6 GW");
-        }
-        if (v.ev) {
-          set("statEv", v.ev);
-          set("heroEvCount", "22,055");
-        }
-      }
-
-      function boot() {
-        var cached = null;
-        try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
-        if (cached && cached.v && (Date.now() - cached.t) < TTL) {
-          paint(cached.v);
-          return;
-        }
-        // Fallback default baked values
-        paint({ energy: "960 projects \u00b7 80.6 GW", ev: "22,055 st \u00b7 90k ports" });
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: { energy: "960 projects \u00b7 80.6 GW", ev: "22,055 st \u00b7 90k ports" } })); } catch (e) {}
-      }
-
-      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
-    })();
   </script>
 </body>
 </html>
