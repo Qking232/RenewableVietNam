@@ -2815,28 +2815,55 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 </style>
 
+<style>
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 </head>
 <body>
 <div id="app">
-    <header class="app-header">
-    <button class="header-icon-btn" id="toggleSide" title="Ẩn / hiện thanh bên" data-i18n-title="panel_t" aria-label="Menu">&#9776;</button>
-    <div class="app-brand">
-      <span class="brand-title">⚡ Trạm Sạc EV</span>
-      <span class="brand-badge">22,055 trạm &middot; Offline</span>
+    <header class="app-header" style="padding: 6px 14px; background: #090B0E; border-bottom: 1px solid #232834; display: flex; flex-direction: column; gap: 6px; z-index: 1000;">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="header-icon-btn" id="toggleSide" title="Ẩn / hiện thanh bên" data-i18n-title="panel_t" aria-label="Menu" style="width: 30px; height: 30px; border-radius: 6px; border: 1px solid #232834; background: #171C26; color: #fff; cursor: pointer; font-size: 13px;">&#9776;</button>
+        <a href="/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0" aria-label="Renewable Vietnam — home">
+            <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="34" height="34" class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg shrink-0 shadow-sm" />
+            <span class="text-[11px] sm:text-xs font-mono uppercase tracking-[0.14em] sm:tracking-[0.24em] text-white font-semibold">
+              RENEWABLE INFRASTRUCTURE
+            </span>
+          </a>
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-slate-400">
+            <a href="/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Industrial Hubs</a> <span class="text-slate-600">&middot;</span> <a href="/projectenergy/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-emerald-400 hover:bg-slate-800/40 transition-colors">Energy Map</a> <span class="text-slate-600">&middot;</span> <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-white font-semibold bg-white/10 border border-white/40 shadow-sm transition-all">EV Stations</a> <span class="text-slate-600">&middot;</span> <a href="/calculator/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Power Sizer &amp; Tariffs</a> <span class="text-slate-600">&middot;</span> <a href="/hub/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-sky-400 hover:bg-slate-800/40 transition-colors">The Library</a>
+          </nav>
+      </div>
+
+      <!-- Right Controls -->
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="/#marketWire" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-white bg-[#171C26] border border-[#232834] hover:border-teal-500 transition-all shadow-sm" style="text-decoration:none;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#10b981;"></span>
+          <span>Live Wire</span>
+        </a>
+        <a href="/calculator/" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-white bg-[#171C26] border border-[#232834] hover:border-teal-500 transition-all shadow-sm" style="text-decoration:none;">
+          <svg style="width:14px; height:14px; color:#2dd4bf;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>Power Sizer</span>
+        </a>
+        <button class="header-btn" id="langBtn" title="Ngôn ngữ / Language" data-i18n-title="lang_t" style="height:30px; padding:0 8px; border-radius:6px; border:1px solid #232834; background:#171C26; color:#fff; cursor:pointer; font-size:11px;">
+          <span class="lang-icon">🌐</span> <span id="langTxt">EN</span>
+        </button>
+        <button class="header-icon-btn" id="themeBtn" title="Đổi sáng / tối" data-i18n-title="theme_t" aria-label="Theme" style="width:30px; height:30px; border-radius:6px; border:1px solid #232834; background:#171C26; color:#fbbf24; cursor:pointer; font-size:13px;">&#9788;</button>
+      </div>
     </div>
-    <div class="spacer"></div>
-    <div class="header-actions">
-      <a href="/" class="header-btn" title="Khu công nghiệp / Industrial Hubs" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
-        <span>🏛️</span> <span class="hidden sm:inline">Hubs</span>
-      </a>
-      <a href="/calculator/" class="header-btn" title="Bộ tính toán / Calculators" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
-        <span>⚡</span> <span class="hidden sm:inline">Tariffs</span>
-      </a>
-      <button class="header-btn" id="langBtn" title="Ngôn ngữ / Language" data-i18n-title="lang_t">
-        <span class="lang-icon">🌐</span> <span id="langTxt">EN</span>
-      </button>
-      <button class="header-icon-btn" id="themeBtn" title="Đổi sáng / tối" data-i18n-title="theme_t" aria-label="Theme">&#9788;</button>
-    </div>
+    <nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap">
+        <a href="/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Industrial Hubs</a>
+        <a href="/projectenergy/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Energy Map</a>
+        <a href="/evcharging/" class="px-2.5 py-1.5 rounded-lg text-white font-semibold bg-white/10 border border-white/40 shrink-0">EV Stations</a>
+        <a href="/calculator/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Power Sizer</a>
+        <a href="/hub/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">The Library</a>
+      </nav>
   </header>
   <main>
     

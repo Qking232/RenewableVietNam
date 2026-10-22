@@ -161,8 +161,8 @@ const dest1 = path.resolve(__dirname, '..', 'hub', 'index.html');
 fs.writeFileSync(dest1, productionHtml, 'utf8');
 console.log('✓ Successfully compiled to:', dest1);
 
-// 7. Write to destination 2: C:\Gemini\Qking232.github.io\hub\index.html
-const dest2Dir = path.resolve('C:\\Gemini\\Qking232.github.io\\hub');
+// 7. Write to destination 2: G:\My Drive\7. AI\Gemini\Qking232.github.io\hub\index.html
+const dest2Dir = path.resolve(__dirname, '..', '..', 'Qking232.github.io', 'hub');
 if (!fs.existsSync(dest2Dir)) {
   fs.mkdirSync(dest2Dir, { recursive: true });
 }
