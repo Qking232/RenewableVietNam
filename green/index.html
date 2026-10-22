@@ -2,7 +2,7 @@
 <!--
   Vietnam Renewable Industrial Hubs & Clean Energy Zone Portal
   Canonical Route: /green/
-  Integrated with Decree 80/2024/ND-CP (DPPA) & PDP8 Grid Interconnections
+  OLED Deep Midnight Blue Architecture
 -->
 <html lang="en" class="h-full scroll-smooth">
 <head>
@@ -63,10 +63,16 @@
             mono: ['"SF Mono"', '"JetBrains Mono"', 'Menlo', 'monospace']
           },
           colors: {
-            alabaster: '#FAFAFA',
-            obsidian: '#0A0C10',
-            darkSurface: '#11141A',
-            darkCard: '#151921'
+            alabaster: '#F8FAFC',
+            borderSlate: '#E2E8F0',
+            inkPrimary: '#0F172A',
+            inkMuted: '#475569',
+            obsidian: '#070A12',
+            darkSurface: '#0D1322',
+            darkCard: '#131B2E',
+            darkBorder: 'rgba(59, 130, 246, 0.16)',
+            textDarkPrimary: '#F1F5F9',
+            textDarkMuted: '#94A3B8',
           }
         }
       }
@@ -77,6 +83,12 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Roboto", sans-serif;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      letter-spacing: -0.011em;
+    }
+    .font-mono, td, th, .tabular-nums {
+      font-variant-numeric: tabular-nums lining-nums;
     }
   </style>
 
@@ -91,37 +103,35 @@
   </script>
 </head>
 
-<body class="min-h-screen text-zinc-900 dark:text-zinc-100 antialiased bg-alabaster dark:bg-obsidian font-sans flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+<body class="min-h-screen text-inkPrimary dark:text-textDarkPrimary antialiased bg-alabaster dark:bg-obsidian font-sans flex flex-col justify-between p-4 sm:p-6 lg:p-8">
 
   <!-- HEADER -->
-  <header class="w-full max-w-6xl mx-auto flex items-center justify-between pb-6 border-b border-black/[0.05] dark:border-white/[0.06]">
+  <header class="w-full max-w-6xl mx-auto flex items-center justify-between pb-6 border-b border-borderSlate dark:border-darkBorder">
     <div class="flex items-center gap-6">
       <a href="/" class="flex items-center gap-3 group" aria-label="Renewable Vietnam — home">
         <img src="/assets/images/logo.svg" alt="Logo" width="34" height="34" class="w-8.5 h-8.5 rounded-lg shrink-0" />
-        <span class="text-[11px] sm:text-xs font-mono uppercase tracking-[0.16em] sm:tracking-[0.24em] text-zinc-900 dark:text-zinc-100 font-semibold">
+        <span class="text-[11px] sm:text-xs font-mono uppercase tracking-[0.16em] sm:tracking-[0.24em] text-inkPrimary dark:text-textDarkPrimary font-semibold">
           RENEWABLE INFRASTRUCTURE
         </span>
       </a>
 
-      <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-zinc-500 dark:text-zinc-400">
-        <a href="/" class="px-2.5 py-1 rounded-md hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Home</a>
-        <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/projectenergy/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Energy Map</a>
-        <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-amber-600 dark:hover:text-amber-400 transition-colors">EV Stations</a>
-        <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/green/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-medium bg-teal-500/10">Industrial Hubs</a>
-        <span class="text-zinc-300 dark:text-zinc-700">&middot;</span>
-        <a href="/hub/" class="px-2.5 py-1 rounded-md hover:text-sky-600 dark:hover:text-sky-400 transition-colors">The Library</a>
+      <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
+        <a href="/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 border border-teal-500/20">Industrial Hubs</a>
+        <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+        <a href="/projectenergy/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Energy Map</a>
+        <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+        <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">EV Stations</a>
+        <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+        <a href="/hub/" class="px-2.5 py-1 rounded-md hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">The Library</a>
       </nav>
     </div>
 
     <!-- Theme Switcher -->
-    <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8.5 h-8.5 rounded-lg bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.1] text-zinc-600 dark:text-zinc-300 transition-all cursor-pointer">
-      <svg id="sunIcon" class="hidden w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+    <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8.5 h-8.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted transition-all cursor-pointer">
+      <svg id="sunIcon" class="hidden w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
       </svg>
-      <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+      <svg id="moonIcon" class="w-4 h-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
       </svg>
     </button>
@@ -132,109 +142,109 @@
     
     <!-- Hero Banner -->
     <div class="space-y-2">
-      <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold px-2 py-0.5 rounded bg-teal-500/10">
+      <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold px-2 py-0.5 rounded bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20">
         Decree 80/2024/ND-CP &middot; Direct Power Purchase Agreement (DPPA)
       </span>
-      <h1 class="text-2xl sm:text-3xl font-normal tracking-tight text-zinc-900 dark:text-zinc-50">
+      <h1 class="text-2xl sm:text-3xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
         Vietnam Renewable Industrial Hubs &amp; Clean Siting Portal
       </h1>
-      <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-3xl leading-relaxed">
+      <p class="text-xs sm:text-sm text-inkMuted dark:text-textDarkMuted max-w-3xl leading-relaxed font-light">
         Comprehensive institutional intelligence on 14 Tier-1 eco-industrial parks: grid substation interconnection voltage (110kV/220kV), rooftop solar installations, DPPA bilateral wheeling readiness, and ESG certifications for multinational manufacturing siting.
       </p>
     </div>
 
     <!-- Macro Indicators Strip -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm">
-        <span class="font-mono text-[10px] uppercase text-zinc-400">Total Monitored Land</span>
-        <p class="text-lg font-mono font-semibold text-zinc-900 dark:text-zinc-100 mt-1">11,480 ha</p>
-        <span class="text-[10px] text-zinc-500">Across 14 Tier-1 Parks</span>
+      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm">
+        <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Total Monitored Land</span>
+        <p class="text-lg font-mono font-semibold text-inkPrimary dark:text-textDarkPrimary mt-1">11,480 ha</p>
+        <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">Across 14 Tier-1 Parks</span>
       </div>
-      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm">
-        <span class="font-mono text-[10px] uppercase text-zinc-400">Clean Generation Potential</span>
+      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm">
+        <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Clean Solar Potential</span>
         <p class="text-lg font-mono font-semibold text-teal-600 dark:text-teal-400 mt-1">417 MWp</p>
-        <span class="text-[10px] text-zinc-500">Rooftop &amp; Onsite Solar</span>
+        <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">Rooftop &amp; Onsite Solar</span>
       </div>
-      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm">
-        <span class="font-mono text-[10px] uppercase text-zinc-400">DPPA Qualified Hubs</span>
+      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm">
+        <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">DPPA Qualified Hubs</span>
         <p class="text-lg font-mono font-semibold text-sky-600 dark:text-sky-400 mt-1">9 Zones</p>
-        <span class="text-[10px] text-zinc-500">Direct Wire &amp; Wheeling</span>
+        <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">Direct Wire &amp; Wheeling</span>
       </div>
-      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-black/[0.05] dark:border-white/[0.06] shadow-sm">
-        <span class="font-mono text-[10px] uppercase text-zinc-400">Annual CO<sub>2</sub>e Mitigation</span>
+      <div class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm">
+        <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Annual CO<sub>2</sub>e Mitigation</span>
         <p class="text-lg font-mono font-semibold text-emerald-600 dark:text-emerald-400 mt-1">~285k tCO<sub>2</sub>e</p>
-        <span class="text-[10px] text-zinc-500">Grid displacement</span>
+        <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">Grid displacement</span>
       </div>
     </div>
 
     <!-- FILTER TOOLBAR -->
-    <div class="p-4 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm space-y-3.5">
+    <div class="p-4 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
       <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
         <div class="relative flex-1">
-          <input type="text" id="hubSearchInput" placeholder="Search park, developer, province, tenant (e.g. DEEP C, Lego, Pegatron)..." class="w-full px-4 py-2 text-xs rounded-xl bg-zinc-50 dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-teal-500" />
+          <input type="text" id="hubSearchInput" placeholder="Search park, developer, province, tenant (e.g. DEEP C, Lego, Pegatron)..." class="w-full px-4 py-2 text-xs rounded-xl bg-slate-50 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500" />
         </div>
-        <div class="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 shrink-0">
-          Showing <span id="filteredHubsCount" class="font-semibold text-zinc-900 dark:text-zinc-100">14</span> of 14 hubs
+        <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted shrink-0">
+          Showing <span id="filteredHubsCount" class="font-semibold text-inkPrimary dark:text-textDarkPrimary">14</span> of 14 hubs
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-black/[0.04] dark:border-white/[0.05] text-[11px] font-mono">
-        <span class="text-zinc-400 uppercase tracking-wider text-[10px]">Region:</span>
+      <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-white/[0.04] text-[11px] font-mono">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px]">Region:</span>
         <button data-filter-region="all" class="filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium">All</button>
-        <button data-filter-region="North" class="filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300">North</button>
-        <button data-filter-region="Central" class="filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300">Central</button>
-        <button data-filter-region="South" class="filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300">South</button>
+        <button data-filter-region="North" class="filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted">North</button>
+        <button data-filter-region="Central" class="filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted">Central</button>
+        <button data-filter-region="South" class="filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted">South</button>
 
-        <span class="mx-1 text-zinc-300 dark:text-zinc-700">|</span>
+        <span class="mx-1 text-slate-300 dark:text-slate-700">|</span>
 
-        <span class="text-zinc-400 uppercase tracking-wider text-[10px]">DPPA Status:</span>
-        <select id="filterDppaSelect" class="bg-zinc-100 dark:bg-white/[0.05] border border-black/[0.08] dark:border-white/[0.1] text-zinc-700 dark:text-zinc-300 rounded-md px-2 py-1 text-[11px]">
+        <span class="text-slate-400 uppercase tracking-wider text-[10px]">DPPA Status:</span>
+        <select id="filterDppaSelect" class="bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary rounded-md px-2 py-1 text-[11px]">
           <option value="all">All DPPA Tiers</option>
           <option value="ready">Category 1 &amp; 2 Ready</option>
           <option value="cat2">Category 2 Wheeling</option>
           <option value="developing">Developing</option>
         </select>
 
-        <button id="resetFiltersBtn" class="ml-auto text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 text-[10px] underline">
+        <button id="resetFiltersBtn" class="ml-auto text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] underline">
           Reset
         </button>
       </div>
     </div>
 
     <!-- TABLE -->
-    <div class="overflow-x-auto rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm">
+    <div class="overflow-x-auto rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm">
       <table class="w-full text-left text-xs border-collapse">
         <thead>
-          <tr class="font-mono text-[11px] text-zinc-400 dark:text-zinc-500 border-b border-black/[0.06] dark:border-white/[0.06] bg-zinc-50/75 dark:bg-white/[0.02]">
+          <tr class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder bg-slate-50/80 dark:bg-darkCard/60">
             <th class="py-3 px-3.5 font-medium">#</th>
-            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-200" data-sort="name">Industrial Park</th>
-            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-200" data-sort="province">Province</th>
+            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-inkPrimary dark:hover:text-white" data-sort="name">Industrial Park</th>
+            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-inkPrimary dark:hover:text-white" data-sort="province">Province</th>
             <th class="py-3 px-3.5 font-medium">Substation Intertie</th>
-            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-200" data-sort="solar">Rooftop Solar</th>
-            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-200" data-sort="clean">Clean Share</th>
+            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-inkPrimary dark:hover:text-white" data-sort="solar">Rooftop Solar</th>
+            <th class="py-3 px-3.5 font-medium cursor-pointer hover:text-inkPrimary dark:hover:text-white" data-sort="clean">Clean Share</th>
             <th class="py-3 px-3.5 font-medium">DPPA Decree 80</th>
             <th class="py-3 px-3.5 font-medium text-right">Details</th>
           </tr>
         </thead>
-        <tbody id="hubsTableBody" class="divide-y divide-black/[0.04] dark:divide-white/[0.04] font-sans">
+        <tbody id="hubsTableBody" class="divide-y divide-slate-100 dark:divide-white/[0.04] font-sans">
           <!-- Populated by JS -->
         </tbody>
       </table>
     </div>
 
     <!-- CORPORATE POWER SIZER -->
-    <div id="calculator" class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.06] dark:border-white/[0.08] shadow-sm space-y-5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/[0.05] dark:border-white/[0.06] pb-3">
+    <div id="calculator" class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate dark:border-darkBorder pb-3">
         <div>
           <span class="font-mono text-[10px] uppercase text-teal-600 dark:text-teal-400 font-semibold">Corporate Procurement</span>
-          <h3 class="text-lg font-normal text-zinc-900 dark:text-zinc-50">Clean Power Allocation &amp; Carbon Abatement Sizer</h3>
+          <h3 class="text-lg font-normal text-inkPrimary dark:text-textDarkPrimary">Clean Power Allocation &amp; Carbon Abatement Sizer</h3>
         </div>
-        <div class="font-mono text-[11px] text-zinc-400">Baseline: 0.7221 tCO<sub>2</sub>e/MWh</div>
+        <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted">Baseline: 0.7221 tCO<sub>2</sub>e/MWh</div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div class="lg:col-span-6 space-y-4 text-xs font-sans">
-          <div class="space-y-1 p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02]">
+          <div class="space-y-1 p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
             <div class="flex justify-between font-medium">
               <span>Peak Demand (MW):</span>
               <span id="calcDemandVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold">10 MW</span>
@@ -242,7 +252,7 @@
             <input type="range" id="calcDemandSlider" min="2" max="60" step="1" value="10" class="w-full accent-teal-600" />
           </div>
 
-          <div class="space-y-1 p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02]">
+          <div class="space-y-1 p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
             <div class="flex justify-between font-medium">
               <span>Monthly Consumption (MWh):</span>
               <span id="calcMwhVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold">4,500 MWh</span>
@@ -250,7 +260,7 @@
             <input type="range" id="calcMwhSlider" min="500" max="25000" step="500" value="4500" class="w-full accent-teal-600" />
           </div>
 
-          <div class="space-y-1 p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02]">
+          <div class="space-y-1 p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
             <div class="flex justify-between font-medium">
               <span>Target RE100 Fraction (%):</span>
               <span id="calcReVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold">80%</span>
@@ -259,35 +269,35 @@
           </div>
         </div>
 
-        <div class="lg:col-span-6 p-4 rounded-xl bg-zinc-50 dark:bg-darkCard border border-black/[0.06] dark:border-white/[0.08] space-y-3">
+        <div class="lg:col-span-6 p-4 rounded-xl bg-slate-50 dark:bg-darkCard border border-borderSlate dark:border-darkBorder space-y-3">
           <div class="flex items-center justify-between">
-            <span class="font-mono text-[11px] font-semibold uppercase text-zinc-700 dark:text-zinc-300">Procurement Telemetry</span>
-            <button id="copyCalcBriefBtn" class="px-2.5 py-1 rounded bg-white dark:bg-white/[0.06] border border-black/[0.08] dark:border-white/[0.1] font-mono text-[10px] text-zinc-700 dark:text-zinc-300 hover:border-teal-500">
+            <span class="font-mono text-[11px] font-semibold uppercase text-inkPrimary dark:text-textDarkPrimary">Procurement Telemetry</span>
+            <button id="copyCalcBriefBtn" class="px-2.5 py-1 rounded bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-[10px] text-inkPrimary dark:text-textDarkPrimary hover:border-teal-500">
               Copy Brief
             </button>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5 text-xs font-mono">
-            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-black/[0.04] dark:border-white/[0.05]">
-              <span class="text-[10px] text-zinc-400">Onsite Solar</span>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+              <span class="text-[10px] text-slate-400">Onsite Solar</span>
               <p id="calcRooftopPv" class="text-sm font-semibold text-teal-600 dark:text-teal-400">3.5 MWp</p>
             </div>
-            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-black/[0.04] dark:border-white/[0.05]">
-              <span class="text-[10px] text-zinc-400">DPPA Wheeling</span>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+              <span class="text-[10px] text-slate-400">DPPA Wheeling</span>
               <p id="calcDppaGap" class="text-sm font-semibold text-sky-600 dark:text-sky-400">38,300 MWh</p>
             </div>
-            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-black/[0.04] dark:border-white/[0.05]">
-              <span class="text-[10px] text-zinc-400">Grid Firming</span>
-              <p id="calcGridFirming" class="text-sm font-semibold text-zinc-700 dark:text-zinc-300">10,800 MWh</p>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+              <span class="text-[10px] text-slate-400">Grid Firming</span>
+              <p id="calcGridFirming" class="text-sm font-semibold text-slate-700 dark:text-slate-300">10,800 MWh</p>
             </div>
-            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-black/[0.04] dark:border-white/[0.05]">
-              <span class="text-[10px] text-zinc-400">CO<sub>2</sub>e Avoidance</span>
+            <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+              <span class="text-[10px] text-slate-400">CO<sub>2</sub>e Avoidance</span>
               <p id="calcCo2Avoided" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">31,195 tCO<sub>2</sub>e</p>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-black/[0.04] dark:border-white/[0.05] space-y-1">
-            <span class="font-mono text-[10px] text-zinc-400 uppercase">Top Suitable Hubs:</span>
+          <div class="pt-2 border-t border-slate-200 dark:border-darkBorder space-y-1">
+            <span class="font-mono text-[10px] text-slate-400 uppercase">Top Suitable Hubs:</span>
             <div id="calcRecommendedHubs" class="space-y-1 font-mono text-[11px]"></div>
           </div>
         </div>
@@ -296,56 +306,56 @@
   </main>
 
   <!-- MODAL -->
-  <div id="hubModalOverlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-darkSurface border border-black/[0.1] dark:border-white/[0.1] shadow-2xl p-6 space-y-4">
-      <div class="flex items-start justify-between pb-3 border-b border-black/[0.06] dark:border-white/[0.08]">
+  <div id="hubModalOverlay" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-2xl p-6 space-y-4">
+      <div class="flex items-start justify-between pb-3 border-b border-borderSlate dark:border-darkBorder">
         <div>
-          <span id="modalHubRegion" class="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold"></span>
-          <h3 id="modalHubName" class="text-xl font-normal text-zinc-900 dark:text-zinc-50 mt-1"></h3>
-          <p id="modalHubVietnamese" class="text-xs text-zinc-500 dark:text-zinc-400"></p>
+          <span id="modalHubRegion" class="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold border border-teal-500/20"></span>
+          <h3 id="modalHubName" class="text-xl font-normal text-inkPrimary dark:text-textDarkPrimary mt-1"></h3>
+          <p id="modalHubVietnamese" class="text-xs text-inkMuted dark:text-textDarkMuted"></p>
         </div>
-        <button id="closeModalBtn" class="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 bg-zinc-100 dark:bg-white/[0.05]">
+        <button id="closeModalBtn" class="p-1.5 rounded-lg text-slate-400 hover:text-inkPrimary dark:hover:text-white bg-slate-100 dark:bg-darkCard">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
-        <div class="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05]">
-          <span class="text-[10px] text-zinc-400">Total Area</span>
-          <p id="modalHubArea" class="font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5"></p>
+        <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+          <span class="text-[10px] text-slate-400">Total Area</span>
+          <p id="modalHubArea" class="font-semibold text-inkPrimary dark:text-textDarkPrimary mt-0.5"></p>
         </div>
-        <div class="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05]">
-          <span class="text-[10px] text-zinc-400">Substation</span>
-          <p id="modalHubSubstation" class="font-semibold text-zinc-900 dark:text-zinc-100 mt-0.5"></p>
+        <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+          <span class="text-[10px] text-slate-400">Substation</span>
+          <p id="modalHubSubstation" class="font-semibold text-inkPrimary dark:text-textDarkPrimary mt-0.5"></p>
         </div>
-        <div class="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05]">
-          <span class="text-[10px] text-zinc-400">Solar PV</span>
+        <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+          <span class="text-[10px] text-slate-400">Solar PV</span>
           <p id="modalHubSolar" class="font-semibold text-teal-600 dark:text-teal-400 mt-0.5"></p>
         </div>
-        <div class="p-2.5 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05]">
-          <span class="text-[10px] text-zinc-400">Clean Share</span>
+        <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+          <span class="text-[10px] text-slate-400">Clean Share</span>
           <p id="modalHubClean" class="font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5"></p>
         </div>
       </div>
 
       <div class="space-y-2.5 text-xs font-sans">
-        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05] space-y-1">
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
           <span class="font-mono text-[11px] font-semibold text-teal-600 dark:text-teal-400 uppercase">Decree 80 DPPA Mechanism</span>
-          <p id="modalHubDppaDesc" class="text-zinc-700 dark:text-zinc-300"></p>
+          <p id="modalHubDppaDesc" class="text-inkPrimary dark:text-textDarkPrimary"></p>
         </div>
-        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05] space-y-1">
-          <span class="font-mono text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 uppercase">Certifications</span>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+          <span class="font-mono text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase">Certifications</span>
           <div id="modalHubCerts" class="flex flex-wrap gap-1.5 pt-1"></div>
         </div>
-        <div class="p-3 rounded-xl bg-zinc-50 dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.05] space-y-1">
-          <span class="font-mono text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 uppercase">Anchor Tenants</span>
-          <p id="modalHubTenants" class="text-zinc-600 dark:text-zinc-400"></p>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+          <span class="font-mono text-[11px] font-semibold text-slate-700 dark:text-slate-300 uppercase">Anchor Tenants</span>
+          <p id="modalHubTenants" class="text-inkMuted dark:text-textDarkMuted"></p>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-black/[0.06] dark:border-white/[0.08] flex items-center justify-between text-xs">
-        <span class="font-mono text-zinc-400">Developer: <span id="modalHubDeveloper" class="text-zinc-700 dark:text-zinc-300 font-semibold"></span></span>
-        <a href="mailto:info@renewablevietnam.com?subject=Industrial%20Hub%20Siting%20Inquiry" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-medium">
+      <div class="pt-3 border-t border-borderSlate dark:border-darkBorder flex items-center justify-between text-xs">
+        <span class="font-mono text-slate-400">Developer: <span id="modalHubDeveloper" class="text-inkPrimary dark:text-textDarkPrimary font-semibold"></span></span>
+        <a href="mailto:info@renewablevietnam.com?subject=Industrial%20Hub%20Siting%20Inquiry" class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-medium shadow-sm">
           Contact Advisory
         </a>
       </div>
@@ -353,7 +363,7 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-y-2 pt-6 border-t border-black/[0.05] dark:border-white/[0.06] text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
+  <footer class="w-full max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-y-2 pt-6 border-t border-borderSlate dark:border-darkBorder text-[11px] font-mono text-inkMuted dark:text-textDarkMuted">
     <div class="flex items-center gap-3">
       <span>&copy; 2026 Renewable Viet Nam</span>
       <span>&middot;</span>
@@ -416,7 +426,7 @@
 
       filtered.forEach((hub, idx) => {
         const tr = document.createElement("tr");
-        tr.className = "hover:bg-zinc-50 dark:hover:bg-white/[0.02] transition-colors cursor-pointer";
+        tr.className = "hover:bg-slate-50 dark:hover:bg-darkCard/60 transition-colors cursor-pointer";
         tr.onclick = () => openHubModal(hub);
 
         let dppaBadge = hub.dppaClass === "ready" 
@@ -426,14 +436,14 @@
           : `<span class="px-2 py-0.5 rounded font-mono text-[10px] bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold border border-amber-500/20">Developing</span>`;
 
         tr.innerHTML = `
-          <td class="py-3 px-3.5 font-mono text-zinc-400 text-[11px]">${String(idx + 1).padStart(2, '0')}</td>
-          <td class="py-3 px-3.5 font-medium text-zinc-900 dark:text-zinc-100">${hub.name}<div class="text-[10px] text-zinc-400 font-light truncate max-w-[180px]">${hub.developer}</div></td>
-          <td class="py-3 px-3.5 font-mono text-zinc-600 dark:text-zinc-300">${hub.province} <span class="text-zinc-400 text-[10px]">(${hub.region})</span></td>
-          <td class="py-3 px-3.5 font-mono text-zinc-600 dark:text-zinc-300">${hub.substation}</td>
-          <td class="py-3 px-3.5 font-mono"><span class="font-semibold text-teal-600 dark:text-teal-400">${hub.rooftopInstalledMWp}</span> <span class="text-zinc-400">/ ${hub.rooftopPotentialMWp} MWp</span></td>
-          <td class="py-3 px-3.5 font-mono text-zinc-600 dark:text-zinc-400 font-medium">${hub.cleanEnergyShare}%</td>
+          <td class="py-3 px-3.5 font-mono text-slate-400 dark:text-slate-500 text-[11px]">${String(idx + 1).padStart(2, '0')}</td>
+          <td class="py-3 px-3.5 font-medium text-inkPrimary dark:text-textDarkPrimary">${hub.name}<div class="text-[10px] text-inkMuted dark:text-textDarkMuted font-light truncate max-w-[180px]">${hub.developer}</div></td>
+          <td class="py-3 px-3.5 font-mono text-inkPrimary dark:text-textDarkPrimary">${hub.province} <span class="text-slate-400 dark:text-slate-500 text-[10px]">(${hub.region})</span></td>
+          <td class="py-3 px-3.5 font-mono text-inkPrimary dark:text-textDarkPrimary">${hub.substation}</td>
+          <td class="py-3 px-3.5 font-mono"><span class="font-semibold text-teal-600 dark:text-teal-400">${hub.rooftopInstalledMWp}</span> <span class="text-slate-400 dark:text-slate-500">/ ${hub.rooftopPotentialMWp} MWp</span></td>
+          <td class="py-3 px-3.5 font-mono text-inkMuted dark:text-textDarkMuted font-medium">${hub.cleanEnergyShare}%</td>
           <td class="py-3 px-3.5">${dppaBadge}</td>
-          <td class="py-3 px-3.5 text-right"><button class="px-2 py-1 rounded bg-zinc-100 dark:bg-white/[0.05] font-mono text-[10px]">Inspect &rarr;</button></td>
+          <td class="py-3 px-3.5 text-right"><button class="px-2 py-1 rounded bg-slate-100 dark:bg-darkCard font-mono text-[10px]">Inspect &rarr;</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -450,7 +460,7 @@
       document.getElementById("modalHubClean").textContent = `${hub.cleanEnergyShare}% clean`;
       document.getElementById("modalHubDppaDesc").textContent = hub.dppaSummary;
       document.getElementById("modalHubTenants").textContent = hub.anchorTenants.join(" \u2022 ");
-      document.getElementById("modalHubCerts").innerHTML = hub.certifications.map(c => `<span class="px-2 py-0.5 rounded font-mono text-[10px] bg-white dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.1] text-zinc-700 dark:text-zinc-300">${c}</span>`).join("");
+      document.getElementById("modalHubCerts").innerHTML = hub.certifications.map(c => `<span class="px-2 py-0.5 rounded font-mono text-[10px] bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary">${c}</span>`).join("");
       document.getElementById("hubModalOverlay").classList.remove("hidden");
     }
 
@@ -480,7 +490,7 @@
 
       const suitableHubs = HUBS.filter(h => h.rooftopPotentialMWp >= rooftopPvMw).sort((a, b) => b.cleanEnergyShare - a.cleanEnergyShare).slice(0, 3);
       document.getElementById("calcRecommendedHubs").innerHTML = suitableHubs.map((h, i) => `
-        <div class="flex items-center justify-between p-1.5 rounded bg-white dark:bg-darkSurface border border-black/[0.04] dark:border-white/[0.04]">
+        <div class="flex items-center justify-between p-1.5 rounded bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
           <span>${i + 1}. ${h.name} (${h.province})</span>
           <span class="text-teal-600 dark:text-teal-400 font-semibold">${h.cleanEnergyShare}% clean</span>
         </div>
@@ -498,7 +508,7 @@
 
       document.querySelectorAll(".filter-pill-region").forEach(btn => {
         btn.addEventListener("click", () => {
-          document.querySelectorAll(".filter-pill-region").forEach(b => b.className = "filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300");
+          document.querySelectorAll(".filter-pill-region").forEach(b => b.className = "filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted");
           btn.className = "filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium";
           currentFilter.region = btn.dataset.filterRegion;
           renderTable();
@@ -514,7 +524,7 @@
         document.getElementById("hubSearchInput").value = "";
         document.getElementById("filterDppaSelect").value = "all";
         currentFilter.search = ""; currentFilter.region = "all"; currentFilter.dppa = "all";
-        document.querySelectorAll(".filter-pill-region").forEach((b, i) => b.className = i === 0 ? "filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium" : "filter-pill-region px-2.5 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.05] text-zinc-700 dark:text-zinc-300");
+        document.querySelectorAll(".filter-pill-region").forEach((b, i) => b.className = i === 0 ? "filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium" : "filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted");
         renderTable();
       });
 
