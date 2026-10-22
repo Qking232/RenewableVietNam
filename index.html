@@ -529,13 +529,10 @@
             <!-- Basemap Switcher -->
             <span class="text-slate-400 uppercase tracking-wider hidden sm:inline">Basemap:</span>
             <div class="flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder">
-              <button data-basemap="osmfr" class="map-basemap-btn px-2 py-0.5 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer">
+              <button data-basemap="osmfr" class="map-basemap-btn px-2.5 py-0.5 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer">
                 OSM France
               </button>
-              <button data-basemap="dark" class="map-basemap-btn px-2 py-0.5 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-colors cursor-pointer">
-                OLED Dark
-              </button>
-              <button data-basemap="satellite" class="map-basemap-btn px-2 py-0.5 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-colors cursor-pointer">
+              <button data-basemap="satellite" class="map-basemap-btn px-2.5 py-0.5 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-colors cursor-pointer">
                 Satellite
               </button>
             </div>
@@ -608,20 +605,45 @@
     </section>
 
     <!-- ==================================================================== -->
-    <!-- CORPORATE CLEAN POWER SITING & ENERGY SIZING CALCULATOR             -->
+    <!-- CLEAN POWER & EVN TARIFF CALCULATOR SUITE (B2B & B2C)               -->
     <!-- ==================================================================== -->
     <section id="calculator" class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate dark:border-darkBorder pb-4">
-        <div>
-          <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">Corporate Energy Procurement</span>
-          <h3 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
-            Clean Power Siting &amp; Allocation Sizer
-          </h3>
+      <!-- CALCULATOR SUITE TAB SWITCHER -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-borderSlate dark:border-darkBorder pb-4">
+        <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder font-mono text-xs">
+          <button id="tabCorporateSizerBtn" class="calc-tab-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span>Corporate Power Sizer (B2B &middot; DPPA)</span>
+          </button>
+          <button id="tabEvnEstimatorBtn" class="calc-tab-btn px-3 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>EVN Tariff &amp; Consumption Estimator (English)</span>
+          </button>
         </div>
-        <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted">
-          EVN Grid Emission Baseline: <span class="font-semibold text-inkPrimary dark:text-textDarkPrimary">0.7221 tCO<sub>2</sub>e/MWh</span>
+
+        <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>EVN STATUTORY TARIFF 2026</span>
         </div>
       </div>
+
+      <!-- TAB 1: CORPORATE CLEAN POWER SITING & ALLOCATION SIZER -->
+      <div id="corporateSizerContainer" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate dark:border-darkBorder pb-4">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">Corporate Energy Procurement</span>
+            <h3 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+              Clean Power Siting &amp; Allocation Sizer
+            </h3>
+          </div>
+          <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted">
+            EVN Grid Emission Baseline: <span class="font-semibold text-inkPrimary dark:text-textDarkPrimary">0.7221 tCO<sub>2</sub>e/MWh</span>
+          </div>
+        </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <!-- Sliders Form -->
@@ -720,6 +742,194 @@
             <span class="font-mono text-[10px] text-slate-400 uppercase tracking-wider">Top Recommended Siting Hubs:</span>
             <div id="calcRecommendedHubs" class="space-y-1 font-mono text-[11px]">
               <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+      </div> <!-- /corporateSizerContainer -->
+
+      <!-- TAB 2: EVN ELECTRICITY CONSUMPTION & STATUTORY TARIFF ESTIMATOR (ENGLISH TOOL) -->
+      <div id="evnEstimatorContainer" class="hidden space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate dark:border-darkBorder pb-4">
+          <div>
+            <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">EVN Retail Tariff Simulator &middot; Decision 2699/QD-BCT</span>
+            <h3 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+              National Electricity Consumption &amp; Tiered Bill Estimator
+            </h3>
+          </div>
+          <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted">
+            Exchange Rate: <span class="font-semibold text-inkPrimary dark:text-textDarkPrimary">1 USD = 25,400 VND</span> &middot; VAT: <span class="font-semibold text-inkPrimary dark:text-textDarkPrimary">8%</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Left Column: Appliance Inventory & Daily Usage Modeler -->
+          <div class="lg:col-span-6 space-y-4 font-sans text-xs">
+            <!-- Region & Climate Factor -->
+            <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+              <div class="flex justify-between items-center">
+                <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">Geographic Climate Region:</label>
+                <span class="font-mono text-[11px] text-teal-600 dark:text-teal-400 font-semibold" id="evnRegionLabel">Southern Vietnam (Tropical Cooling)</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+                <button type="button" data-evn-region="south" class="evn-region-btn px-2.5 py-1.5 rounded-lg bg-teal-600 text-white font-medium transition-colors cursor-pointer text-center">Southern (Tropical)</button>
+                <button type="button" data-evn-region="central" class="evn-region-btn px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:bg-slate-100 transition-colors cursor-pointer text-center">Central (Coastal)</button>
+                <button type="button" data-evn-region="north" class="evn-region-btn px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:bg-slate-100 transition-colors cursor-pointer text-center">Northern (Subtropical)</button>
+              </div>
+            </div>
+
+            <!-- Appliance 1: Inverter Air Conditioners -->
+            <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+              <div class="flex justify-between items-center">
+                <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">
+                  Air Conditioning (Inverter 9k-12k BTU):
+                </label>
+                <span id="evnAcVal" class="font-mono text-sm font-semibold text-teal-600 dark:text-teal-400">2 Units &middot; 8 hrs/day</span>
+              </div>
+              <div class="grid grid-cols-2 gap-3 pt-1">
+                <div>
+                  <span class="text-[10px] text-slate-400 font-mono">Installed Units:</span>
+                  <input type="range" id="evnAcUnitsSlider" min="0" max="6" step="1" value="2" class="w-full accent-teal-600 cursor-pointer" />
+                  <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>0</span><span>3</span><span>6 units</span></div>
+                </div>
+                <div>
+                  <span class="text-[10px] text-slate-400 font-mono">Daily Runtime:</span>
+                  <input type="range" id="evnAcHoursSlider" min="1" max="24" step="1" value="8" class="w-full accent-teal-600 cursor-pointer" />
+                  <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>1 hr</span><span>12 hrs</span><span>24 hrs</span></div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-darkBorder text-[10px] text-slate-400 font-mono">
+                <span>Thermostat Target:</span>
+                <select id="evnAcTempSelect" class="bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder rounded px-2 py-0.5 text-[11px] text-inkPrimary dark:text-textDarkPrimary focus:outline-none cursor-pointer">
+                  <option value="24">24°C (High Power Consumption)</option>
+                  <option value="25">25°C (Standard)</option>
+                  <option value="26" selected>26°C (Recommended Eco)</option>
+                  <option value="27">27°C (Energy Saving)</option>
+                  <option value="28">28°C (Max Economy)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Appliance 2: Refrigerator -->
+            <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+              <div class="flex justify-between items-center">
+                <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">
+                  Refrigeration &amp; Cooling:
+                </label>
+                <span id="evnFridgeVal" class="font-mono text-sm font-semibold text-teal-600 dark:text-teal-400">Standard 300L</span>
+              </div>
+              <select id="evnFridgeSelect" class="w-full bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder rounded-lg p-2 text-xs text-inkPrimary dark:text-textDarkPrimary focus:outline-none font-sans cursor-pointer">
+                <option value="25">Compact / Studio (150L Inverter) &middot; ~25 kWh/mo</option>
+                <option value="38" selected>Standard Family (300L Dual-Door Inverter) &middot; ~38 kWh/mo</option>
+                <option value="55">Large French Door / Side-by-Side (550L) &middot; ~55 kWh/mo</option>
+                <option value="75">Multi-Fridge + Dedicated Deep Freezer &middot; ~75 kWh/mo</option>
+              </select>
+            </div>
+
+            <!-- Appliance 3: Water Heating & Kitchen Cooking -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+                <div class="flex justify-between items-center">
+                  <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">Water Heater (2.5kW):</label>
+                  <span id="evnWaterVal" class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400">45 min/day</span>
+                </div>
+                <input type="range" id="evnWaterSlider" min="0" max="90" step="15" value="45" class="w-full accent-teal-600 cursor-pointer" />
+                <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>Off</span><span>45 min</span><span>90 min</span></div>
+              </div>
+
+              <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+                <div class="flex justify-between items-center">
+                  <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">Induction Cooktop (2kW):</label>
+                  <span id="evnCookVal" class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400">60 min/day</span>
+                </div>
+                <input type="range" id="evnCookSlider" min="15" max="180" step="15" value="60" class="w-full accent-teal-600 cursor-pointer" />
+                <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>15m</span><span>1 hr</span><span>3 hrs</span></div>
+              </div>
+            </div>
+
+            <!-- Appliance 4: Washing & Laundry + Lighting/PC -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+                <div class="flex justify-between items-center">
+                  <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">Laundry (Washer/Dryer):</label>
+                  <span id="evnWashVal" class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400">4 loads/wk</span>
+                </div>
+                <input type="range" id="evnWashSlider" min="1" max="14" step="1" value="4" class="w-full accent-teal-600 cursor-pointer" />
+                <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>1</span><span>4 loads</span><span>14 loads</span></div>
+              </div>
+
+              <div class="space-y-1.5 p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder">
+                <div class="flex justify-between items-center">
+                  <label class="font-medium text-inkPrimary dark:text-textDarkPrimary">LED Array &amp; PCs (350W):</label>
+                  <span id="evnElecVal" class="font-mono text-xs font-semibold text-teal-600 dark:text-teal-400">6 hrs/day</span>
+                </div>
+                <input type="range" id="evnElecSlider" min="2" max="16" step="1" value="6" class="w-full accent-teal-600 cursor-pointer" />
+                <div class="flex justify-between font-mono text-[10px] text-slate-400"><span>2 hrs</span><span>6 hrs</span><span>16 hrs</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: EVN Tariff & Progressive Billing Telemetry -->
+          <div class="lg:col-span-6 p-4 rounded-xl bg-slate-50 dark:bg-darkCard border border-borderSlate dark:border-darkBorder space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">
+                EVN Bill &amp; Progressive Tier Telemetry
+              </span>
+              <button id="copyEvnBriefBtn" class="px-2.5 py-1 rounded bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary font-mono text-[10px] hover:border-teal-500 transition-all flex items-center gap-1 cursor-pointer">
+                <svg class="w-3 h-3 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Copy Calculation</span>
+              </button>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+                <span class="text-[10px] font-mono text-slate-400">Monthly Consumption</span>
+                <p id="evnTotalKwh" class="text-base sm:text-lg font-mono font-semibold text-teal-600 dark:text-teal-400 mt-0.5">485 kWh</p>
+                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted" id="evnDailyAvg">~16.2 kWh/day</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
+                <span class="text-[10px] font-mono text-slate-400">Total Monthly Bill</span>
+                <p id="evnTotalVnd" class="text-base sm:text-lg font-mono font-semibold text-emerald-600 dark:text-emerald-400 mt-0.5">₫ 1,434,800</p>
+                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted" id="evnTotalUsd">≈ $56.48 USD (incl. 8% VAT)</span>
+              </div>
+            </div>
+
+            <!-- 6-Tier Progressive Breakdown Table -->
+            <div class="space-y-1 pt-1">
+              <span class="font-mono text-[10px] text-slate-400 uppercase tracking-wider">EVN 6-Tier Statutory Progressive Waterfall:</span>
+              <div class="overflow-hidden rounded-lg border border-slate-200 dark:border-darkBorder font-mono text-[10px]">
+                <table class="w-full text-left border-collapse bg-white dark:bg-darkSurface">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-darkCard text-slate-400 border-b border-slate-200 dark:border-darkBorder text-[9px] uppercase tracking-wider">
+                      <th class="py-1 px-2 font-medium">Tier</th>
+                      <th class="py-1 px-2 font-medium">Range</th>
+                      <th class="py-1 px-2 font-medium">Rate (₫)</th>
+                      <th class="py-1 px-2 font-medium text-right">kWh</th>
+                      <th class="py-1 px-2 font-medium text-right">Subtotal (₫)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="evnTierTableBody" class="divide-y divide-slate-100 dark:divide-white/[0.04]">
+                    <!-- Dynamically rendered -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Rooftop Solar Mitigation Advisor -->
+            <div class="p-3 rounded-xl bg-teal-500/10 dark:bg-teal-400/5 border border-teal-500/20 space-y-1.5">
+              <div class="flex items-center gap-1.5 text-teal-600 dark:text-teal-400 font-mono text-[11px] font-semibold">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <span>Rooftop Solar Peak Mitigation Strategy</span>
+              </div>
+              <p id="evnSolarAdvice" class="text-xs text-inkPrimary dark:text-textDarkPrimary leading-relaxed font-light">
+                <!-- Dynamically generated solar advice -->
+              </p>
             </div>
           </div>
         </div>
@@ -1316,7 +1526,17 @@
         }
 
         tr.innerHTML = `
-          <td class="py-3 px-3.5 font-mono text-slate-400 dark:text-slate-500 text-[11px]">${String(idx + 1).padStart(2, '0')}</td>
+          <td class="py-3 px-3.5 font-mono text-slate-400 dark:text-slate-500 text-[11px] whitespace-nowrap" onclick="event.stopPropagation()">
+            <div class="flex items-center gap-1.5">
+              <button onclick="locateHubOnMap('${hub.id}')" title="Locate on Map" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-teal-600 hover:text-white text-teal-600 dark:text-teal-400 transition-colors cursor-pointer inline-flex items-center">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+              <span>${String(idx + 1).padStart(2, '0')}</span>
+            </div>
+          </td>
           <td class="py-3 px-3.5">
             <div class="font-medium text-inkPrimary dark:text-textDarkPrimary group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
               ${hub.name}
@@ -1344,14 +1564,7 @@
           <td class="py-3 px-3.5">
             ${dppaBadge}
           </td>
-          <td class="py-3 px-3.5 text-right whitespace-nowrap space-x-1.5" onclick="event.stopPropagation()">
-            <button onclick="locateHubOnMap('${hub.id}')" title="Locate on Map" class="px-2 py-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-teal-600 hover:text-white text-inkMuted dark:text-textDarkMuted font-mono text-[10px] transition-all cursor-pointer inline-flex items-center gap-1">
-              <svg class="w-3 h-3 text-teal-500 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              <span>Map</span>
-            </button>
+          <td class="py-3 px-3.5 text-right whitespace-nowrap" onclick="event.stopPropagation()">
             <button onclick="openHubModal('${hub.id}')" class="px-2 py-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-teal-600 hover:text-white text-inkMuted dark:text-textDarkMuted font-mono text-[10px] transition-all cursor-pointer">
               Inspect &rarr;
             </button>
@@ -1401,11 +1614,6 @@
         attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19
       },
-      dark: {
-        url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap',
-        maxZoom: 19
-      },
       satellite: {
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
@@ -1417,8 +1625,7 @@
       const mapEl = document.getElementById("ecoParkMap");
       if (!mapEl || hubMap || typeof L === "undefined") return;
 
-      const isDark = document.documentElement.classList.contains('dark');
-      const defaultProvider = isDark ? 'dark' : 'osmfr';
+      const defaultProvider = 'osmfr';
 
       hubMap = L.map('ecoParkMap', {
         center: [15.8, 107.5],
@@ -1426,6 +1633,11 @@
         minZoom: 5,
         maxZoom: 18,
         scrollWheelZoom: false
+      });
+
+      // Enable scroll-wheel zoom upon user click
+      hubMap.on('click', () => {
+        hubMap.scrollWheelZoom.enable();
       });
 
       baseTileLayer = L.tileLayer(MAP_BASEMAPS[defaultProvider].url, {
@@ -1656,10 +1868,201 @@
       });
     });
 
+    // ====================================================================
+    // EVN RETAIL TARIFF & APPLIANCE CONSUMPTION ESTIMATOR ENGINE
+    // ====================================================================
+    let evnSelectedRegion = "south"; // south, central, north
+
+    // Statutory EVN 6-Tier Progressive Rates (Decision 2699/QD-BCT, late 2024 / 2026)
+    const EVN_TIERS = [
+      { tier: 1, label: "Tier 1 (Bậc 1)", range: "0 – 50", maxKwh: 50, rate: 1893 },
+      { tier: 2, label: "Tier 2 (Bậc 2)", range: "51 – 100", maxKwh: 50, rate: 1956 },
+      { tier: 3, label: "Tier 3 (Bậc 3)", range: "101 – 200", maxKwh: 100, rate: 2271 },
+      { tier: 4, label: "Tier 4 (Bậc 4)", range: "201 – 300", maxKwh: 100, rate: 2860 },
+      { tier: 5, label: "Tier 5 (Bậc 5)", range: "301 – 400", maxKwh: 100, rate: 3197 },
+      { tier: 6, label: "Tier 6 (Bậc 6)", range: "> 400", maxKwh: Infinity, rate: 3302 }
+    ];
+
+    function updateEvnEstimator() {
+      const acUnitsSlider = document.getElementById("evnAcUnitsSlider");
+      if (!acUnitsSlider) return;
+
+      const acUnits = parseInt(acUnitsSlider.value, 10);
+      const acHours = parseInt(document.getElementById("evnAcHoursSlider").value, 10);
+      const acTemp = parseInt(document.getElementById("evnAcTempSelect").value, 10);
+      const fridgeSelect = document.getElementById("evnFridgeSelect");
+      const fridgeKwhMonth = parseFloat(fridgeSelect.value);
+      const waterMin = parseInt(document.getElementById("evnWaterSlider").value, 10);
+      const cookMin = parseInt(document.getElementById("evnCookSlider").value, 10);
+      const washLoads = parseInt(document.getElementById("evnWashSlider").value, 10);
+      const elecHours = parseInt(document.getElementById("evnElecSlider").value, 10);
+
+      document.getElementById("evnAcVal").textContent = `${acUnits} Units \u00b7 ${acHours} hrs/day`;
+      if (fridgeSelect) {
+        const fText = fridgeSelect.options[fridgeSelect.selectedIndex].text.split('\u00b7')[0].trim();
+        const fridgeValEl = document.getElementById("evnFridgeVal");
+        if (fridgeValEl) fridgeValEl.textContent = fText;
+      }
+      document.getElementById("evnWaterVal").textContent = `${waterMin} min/day`;
+      document.getElementById("evnCookVal").textContent = `${cookMin} min/day`;
+      document.getElementById("evnWashVal").textContent = `${washLoads} loads/wk`;
+      document.getElementById("evnElecVal").textContent = `${elecHours} hrs/day`;
+
+      let climateFactor = 1.0;
+      if (evnSelectedRegion === "north") climateFactor = 0.90;
+      else if (evnSelectedRegion === "central") climateFactor = 0.95;
+
+      const tempFactor = Math.max(0.70, 1.0 - 0.05 * (acTemp - 24));
+      const acMonthlyKwh = acUnits * (0.85 * acHours * 30 * tempFactor * climateFactor);
+      const fridgeTotalKwh = fridgeKwhMonth;
+      const waterFactor = evnSelectedRegion === "north" ? 1.25 : 1.0;
+      const waterMonthlyKwh = (waterMin / 60) * 2.5 * 30 * waterFactor;
+      const cookMonthlyKwh = (cookMin / 60) * 2.0 * 30;
+      const washMonthlyKwh = washLoads * 1.2 * 4.3;
+      const elecMonthlyKwh = (elecHours) * 0.35 * 30;
+
+      const totalKwh = Math.round(acMonthlyKwh + fridgeTotalKwh + waterMonthlyKwh + cookMonthlyKwh + washMonthlyKwh + elecMonthlyKwh);
+      const dailyAvg = (totalKwh / 30).toFixed(1);
+
+      document.getElementById("evnTotalKwh").textContent = `${totalKwh.toLocaleString()} kWh`;
+      document.getElementById("evnDailyAvg").textContent = `~${dailyAvg} kWh/day`;
+
+      let remainingKwh = totalKwh;
+      let totalPreTax = 0;
+      let tierHtml = "";
+
+      EVN_TIERS.forEach(t => {
+        let consumedInTier = 0;
+        if (remainingKwh > 0) {
+          consumedInTier = Math.min(remainingKwh, t.maxKwh);
+          remainingKwh -= consumedInTier;
+        }
+
+        const tierSubtotal = Math.round(consumedInTier * t.rate);
+        totalPreTax += tierSubtotal;
+
+        const isTierActive = consumedInTier > 0;
+        const rowClass = isTierActive ? "font-semibold text-inkPrimary dark:text-textDarkPrimary" : "text-slate-400 dark:text-slate-600";
+        const badgeColor = isTierActive ? "text-teal-600 dark:text-teal-400" : "text-slate-400";
+
+        tierHtml += `
+          <tr class="${rowClass}">
+            <td class="py-1 px-2 ${badgeColor}">${t.label}</td>
+            <td class="py-1 px-2 text-slate-400">${t.range}</td>
+            <td class="py-1 px-2">${t.rate.toLocaleString()}</td>
+            <td class="py-1 px-2 text-right">${consumedInTier.toLocaleString()}</td>
+            <td class="py-1 px-2 text-right font-semibold">${tierSubtotal.toLocaleString()}</td>
+          </tr>
+        `;
+      });
+
+      const vat = Math.round(totalPreTax * 0.08);
+      const totalVnd = totalPreTax + vat;
+      const totalUsd = (totalVnd / 25400).toFixed(2);
+
+      document.getElementById("evnTotalVnd").textContent = `\u20ab ${totalVnd.toLocaleString()}`;
+      document.getElementById("evnTotalUsd").textContent = `\u2248 $${totalUsd} USD (incl. 8% VAT)`;
+      document.getElementById("evnTierTableBody").innerHTML = tierHtml;
+
+      const adviceEl = document.getElementById("evnSolarAdvice");
+      if (adviceEl) {
+        if (totalKwh > 400) {
+          const highTierKwh = totalKwh - 300;
+          const highTierSavings = Math.round(highTierKwh * 3250 * 1.08);
+          adviceEl.innerHTML = `You are consuming heavily in <strong>Tier 5 &amp; Tier 6 (3,197 &ndash; 3,302 \u20ab/kWh)</strong>. Installing a <strong>3.5 &ndash; 5 kWp rooftop solar PV system</strong> (~420&ndash;600 kWh/mo yield) will eliminate high-bracket surcharges completely, cutting your monthly bill by <strong>~75&ndash;85%</strong> (saving <strong>~\u20ab ${highTierSavings.toLocaleString()} / month</strong>) with an estimated payback of ~3.8 years.`;
+        } else if (totalKwh > 200) {
+          const midSavings = Math.round((totalKwh - 100) * 2500 * 1.08);
+          adviceEl.innerHTML = `Your consumption reaches <strong>Tier 3 &amp; Tier 4 (2,271 &ndash; 2,860 \u20ab/kWh)</strong>. A compact <strong>2 &ndash; 3 kWp residential rooftop solar array</strong> will offset high daytime air conditioning loads, saving <strong>~\u20ab ${midSavings.toLocaleString()} / month</strong>.`;
+        } else {
+          adviceEl.innerHTML = `Your consumption is within the baseline subsidized brackets (Tiers 1&ndash;2). Standard energy efficiency practices (keeping AC at 26&deg;C, LED lighting) keep your electricity costs optimal.`;
+        }
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       renderTable();
       updateCalculator();
+      updateEvnEstimator();
       initEcoParkMap();
+
+      // Calculator Suite Tab Switcher
+      const tabCorporateSizerBtn = document.getElementById("tabCorporateSizerBtn");
+      const tabEvnEstimatorBtn = document.getElementById("tabEvnEstimatorBtn");
+      const corporateSizerContainer = document.getElementById("corporateSizerContainer");
+      const evnEstimatorContainer = document.getElementById("evnEstimatorContainer");
+
+      if (tabCorporateSizerBtn && tabEvnEstimatorBtn && corporateSizerContainer && evnEstimatorContainer) {
+        tabCorporateSizerBtn.addEventListener("click", () => {
+          tabCorporateSizerBtn.className = "calc-tab-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer flex items-center gap-2";
+          tabEvnEstimatorBtn.className = "calc-tab-btn px-3 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer flex items-center gap-2";
+          corporateSizerContainer.classList.remove("hidden");
+          evnEstimatorContainer.classList.add("hidden");
+        });
+
+        tabEvnEstimatorBtn.addEventListener("click", () => {
+          tabEvnEstimatorBtn.className = "calc-tab-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer flex items-center gap-2";
+          tabCorporateSizerBtn.className = "calc-tab-btn px-3 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer flex items-center gap-2";
+          evnEstimatorContainer.classList.remove("hidden");
+          corporateSizerContainer.classList.add("hidden");
+          updateEvnEstimator();
+        });
+      }
+
+      // EVN Region Selection Listeners
+      document.querySelectorAll(".evn-region-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          evnSelectedRegion = btn.getAttribute("data-evn-region");
+          document.querySelectorAll(".evn-region-btn").forEach(b => {
+            b.className = "evn-region-btn px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:bg-slate-100 transition-colors cursor-pointer text-center";
+          });
+          btn.className = "evn-region-btn px-2.5 py-1.5 rounded-lg bg-teal-600 text-white font-medium transition-colors cursor-pointer text-center";
+
+          const labelEl = document.getElementById("evnRegionLabel");
+          if (labelEl) {
+            if (evnSelectedRegion === "south") labelEl.textContent = "Southern Vietnam (Tropical Cooling)";
+            else if (evnSelectedRegion === "central") labelEl.textContent = "Central Vietnam (Coastal & High Solar)";
+            else if (evnSelectedRegion === "north") labelEl.textContent = "Northern Vietnam (Subtropical & Winter Heating)";
+          }
+          updateEvnEstimator();
+        });
+      });
+
+      // EVN Input Sliders & Dropdowns Listeners
+      const evnInputs = ["evnAcUnitsSlider", "evnAcHoursSlider", "evnAcTempSelect", "evnFridgeSelect", "evnWaterSlider", "evnCookSlider", "evnWashSlider", "evnElecSlider"];
+      evnInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("input", updateEvnEstimator);
+          el.addEventListener("change", updateEvnEstimator);
+        }
+      });
+
+      // Copy EVN Brief Listener
+      const copyEvnBriefBtn = document.getElementById("copyEvnBriefBtn");
+      if (copyEvnBriefBtn) {
+        copyEvnBriefBtn.addEventListener("click", () => {
+          const kwh = document.getElementById("evnTotalKwh").textContent;
+          const daily = document.getElementById("evnDailyAvg").textContent;
+          const vnd = document.getElementById("evnTotalVnd").textContent;
+          const usd = document.getElementById("evnTotalUsd").textContent;
+          const region = document.getElementById("evnRegionLabel").textContent;
+
+          const summaryText = `[EVN Electricity Consumption & Statutory Bill Estimation]\n` +
+            `- Region: ${region}\n` +
+            `- Monthly Consumption: ${kwh} (${daily})\n` +
+            `- Estimated Statutory Bill: ${vnd} (${usd})\n` +
+            `- Regulatory Framework: EVN Progressive Retail Tariff (MOIT Decision 2699/QD-BCT + 8% VAT)\n` +
+            `- Source: renewablevietnam.com`;
+
+          navigator.clipboard.writeText(summaryText).then(() => {
+            const originalContent = copyEvnBriefBtn.innerHTML;
+            copyEvnBriefBtn.innerHTML = `<span class="text-emerald-500 font-semibold font-mono text-[10px]">✓ Copied!</span>`;
+            setTimeout(() => {
+              copyEvnBriefBtn.innerHTML = originalContent;
+            }, 2000);
+          });
+        });
+      }
 
       document.getElementById("hubSearchInput").addEventListener("input", (e) => {
         currentFilter.search = e.target.value.trim();
@@ -1746,27 +2149,6 @@
         const isDark = document.documentElement.classList.toggle('dark');
         localStorage.setItem('rvn-theme', isDark ? 'dark' : 'light');
         updateIcons(isDark);
-        if (hubMap && baseTileLayer) {
-          const activeBtn = document.querySelector(".map-basemap-btn.bg-teal-600");
-          const activeBasemap = activeBtn ? activeBtn.getAttribute("data-basemap") : "";
-          if (activeBasemap !== "satellite") {
-            const newProvider = isDark ? "dark" : "osmfr";
-            hubMap.removeLayer(baseTileLayer);
-            baseTileLayer = L.tileLayer(MAP_BASEMAPS[newProvider].url, {
-              attribution: MAP_BASEMAPS[newProvider].attribution,
-              maxZoom: MAP_BASEMAPS[newProvider].maxZoom
-            }).addTo(hubMap);
-            document.querySelectorAll(".map-basemap-btn").forEach(b => {
-              if (b.getAttribute("data-basemap") === newProvider) {
-                b.classList.add("bg-teal-600", "text-white");
-                b.classList.remove("bg-white", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
-              } else {
-                b.classList.remove("bg-teal-600", "text-white");
-                b.classList.add("bg-white", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
-              }
-            });
-          }
-        }
       });
 
       // ====================================================================
