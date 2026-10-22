@@ -197,6 +197,11 @@
 
     <!-- Right Controls -->
     <div class="flex items-center gap-2">
+      <a href="#marketWire" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-inkPrimary dark:text-textDarkPrimary bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400/40 transition-all shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Live Wire</span>
+      </a>
+
       <a href="#calculator" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-[11px] text-inkPrimary dark:text-textDarkPrimary bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400/40 transition-all shadow-sm">
         <svg class="w-3.5 h-3.5 text-teal-500 dark:text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
@@ -274,6 +279,96 @@
           </div>
           <p class="text-[11px] text-inkMuted dark:text-textDarkMuted mt-1 font-light">Grid displacement</p>
         </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- REAL-TIME INDUSTRY MARKET INTELLIGENCE WIRE (RSS & APIS)           -->
+    <!-- ==================================================================== -->
+    <section id="marketWire" class="space-y-4">
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
+              Live Intelligence Wire &middot; Multi-Source RSS Feed
+            </span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+            Vietnam Clean Energy &amp; Eco-Park Market Wire
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light">
+            Real-time regulatory decrees (Decree 80/2024/ND-CP), DPPA wheeling, offshore wind, and industrial siting dispatches.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-[11px] shrink-0">
+          <span id="newsSyncStatus" class="text-inkMuted dark:text-textDarkMuted bg-white dark:bg-darkSurface px-2.5 py-1 rounded-md border border-borderSlate dark:border-darkBorder shadow-sm">
+            Syncing...
+          </span>
+          <button id="refreshNewsBtn" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors cursor-pointer shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Real-time Breaking Ticker Tape -->
+      <div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-slate-100/80 dark:bg-darkCard/80 border border-borderSlate dark:border-darkBorder text-xs overflow-hidden">
+        <span class="font-mono text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-teal-600 text-white shrink-0">
+          Breaking
+        </span>
+        <div id="breakingTickerContainer" class="flex-1 truncate font-sans text-inkPrimary dark:text-textDarkPrimary">
+          <span class="text-slate-400">Loading latest market intelligence headlines...</span>
+        </div>
+      </div>
+
+      <!-- Filter & Search Toolbar -->
+      <div class="p-3.5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3">
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          <!-- Keyword Search -->
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+              </svg>
+            </div>
+            <input type="text" id="newsSearchInput" placeholder="Filter articles by keyword, entity, or policy (e.g. DPPA, Lego, offshore, substation)..." class="w-full pl-9 pr-4 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-teal-500 font-sans" />
+          </div>
+
+          <!-- Total Count -->
+          <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted shrink-0 self-center">
+            Showing <span id="filteredNewsCount" class="font-semibold text-inkPrimary dark:text-textDarkPrimary">0</span> articles
+          </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.04] text-[11px] font-mono">
+          <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px]">Sector:</span>
+          <button data-news-sector="all" class="news-sector-pill px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer">All Signals</button>
+          <button data-news-sector="Policy & DPPA" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">Policy &amp; DPPA</button>
+          <button data-news-sector="Eco-Parks & Siting" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">Eco-Parks &amp; Siting</button>
+          <button data-news-sector="Solar & Wind" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">Solar &amp; Wind</button>
+          <button data-news-sector="Grid & Interconnect" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">Grid &amp; Interconnect</button>
+        </div>
+      </div>
+
+      <!-- Articles Grid -->
+      <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        <!-- Rendered dynamically by JS -->
+      </div>
+
+      <!-- Load More / Expand Controls -->
+      <div id="newsExpandContainer" class="flex justify-center pt-2 hidden">
+        <button id="toggleNewsExpandBtn" class="px-4 py-2 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder hover:border-teal-500 dark:hover:border-teal-400 text-inkPrimary dark:text-textDarkPrimary text-xs font-mono transition-colors shadow-sm cursor-pointer flex items-center gap-1.5">
+          <span id="newsExpandBtnText">Show More Intelligence Articles</span>
+          <svg id="newsExpandIcon" class="w-3.5 h-3.5 text-teal-500 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -1181,6 +1276,256 @@
         localStorage.setItem('rvn-theme', isDark ? 'dark' : 'light');
         updateIcons(isDark);
       });
+
+      // ====================================================================
+      // REAL-TIME INDUSTRY NEWS WIRE CONTROLLER
+      // ====================================================================
+      let allNewsArticles = [];
+      let activeNewsSector = "all";
+      let newsSearchTerm = "";
+      let isNewsExpanded = false;
+      const INITIAL_NEWS_LIMIT = 6;
+      let breakingTickerIndex = 0;
+      let tickerInterval = null;
+
+      const sectorBadgeStyles = {
+        "Policy & DPPA": "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+        "Solar & Wind": "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
+        "Eco-Parks & Siting": "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+        "Grid & Interconnect": "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
+        "FDI & Infrastructure": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+      };
+
+      function updateNewsSyncBadge(isoTime) {
+        const badge = document.getElementById("newsSyncStatus");
+        if (!badge) return;
+        if (!isoTime) {
+          badge.innerHTML = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Live Static Wire';
+          return;
+        }
+        try {
+          const d = new Date(isoTime);
+          const diffMinutes = Math.max(1, Math.round((Date.now() - d.getTime()) / 60000));
+          badge.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>Live &middot; ${diffMinutes}m ago`;
+        } catch (e) {
+          badge.innerHTML = '<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Live Wire';
+        }
+      }
+
+      function renderBreakingTicker() {
+        const container = document.getElementById("breakingTickerContainer");
+        if (!container || allNewsArticles.length === 0) return;
+        
+        const topArticles = allNewsArticles.slice(0, 5);
+        if (tickerInterval) clearInterval(tickerInterval);
+
+        function showNextTicker() {
+          const art = topArticles[breakingTickerIndex % topArticles.length];
+          breakingTickerIndex++;
+          container.innerHTML = `
+            <a href="${art.link}" target="_blank" rel="noopener noreferrer" class="hover:underline font-medium text-inkPrimary dark:text-textDarkPrimary transition-colors inline-flex items-center gap-2">
+              <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 uppercase font-semibold">[${art.sector}]</span>
+              <span>${art.title}</span>
+              <span class="text-slate-400 dark:text-slate-500 font-mono text-[10px]">(${art.source} &middot; ${art.relative_time})</span>
+            </a>
+          `;
+        }
+
+        showNextTicker();
+        tickerInterval = setInterval(showNextTicker, 6000);
+      }
+
+      function renderNewsGrid() {
+        const grid = document.getElementById("newsGrid");
+        const countSpan = document.getElementById("filteredNewsCount");
+        const expandContainer = document.getElementById("newsExpandContainer");
+        const expandBtnText = document.getElementById("newsExpandBtnText");
+        const expandIcon = document.getElementById("newsExpandIcon");
+        if (!grid) return;
+
+        let filtered = allNewsArticles.filter(art => {
+          const matchesSector = activeNewsSector === "all" || art.sector === activeNewsSector;
+          const searchNorm = newsSearchTerm.toLowerCase();
+          const matchesSearch = !searchNorm ||
+            (art.title && art.title.toLowerCase().includes(searchNorm)) ||
+            (art.snippet && art.snippet.toLowerCase().includes(searchNorm)) ||
+            (art.source && art.source.toLowerCase().includes(searchNorm)) ||
+            (art.sector && art.sector.toLowerCase().includes(searchNorm));
+          return matchesSector && matchesSearch;
+        });
+
+        countSpan.innerText = filtered.length;
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full py-8 text-center font-mono text-xs text-inkMuted dark:text-textDarkMuted bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder rounded-xl">
+              No intelligence dispatches matched your current filters.
+            </div>
+          `;
+          expandContainer.classList.add("hidden");
+          return;
+        }
+
+        const displayItems = isNewsExpanded ? filtered : filtered.slice(0, INITIAL_NEWS_LIMIT);
+
+        grid.innerHTML = displayItems.map(art => {
+          const badgeClass = sectorBadgeStyles[art.sector] || "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20";
+          return `
+            <article class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm hover:border-teal-500/40 dark:hover:border-teal-400/30 transition-all flex flex-col justify-between group">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-[10px] uppercase font-semibold px-2 py-0.5 rounded border ${badgeClass}">
+                    ${art.sector}
+                  </span>
+                  <span class="font-mono text-[10px] text-slate-400 dark:text-slate-500 shrink-0">
+                    ${art.relative_time}
+                  </span>
+                </div>
+
+                <h3 class="text-xs sm:text-sm font-medium leading-snug text-inkPrimary dark:text-textDarkPrimary group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
+                  <a href="${art.link}" target="_blank" rel="noopener noreferrer">
+                    ${art.title}
+                  </a>
+                </h3>
+
+                <p class="text-[11px] sm:text-xs text-inkMuted dark:text-textDarkMuted font-light leading-relaxed line-clamp-2">
+                  ${art.snippet || "Institutional renewable market update and policy dispatch from Vietnam."}
+                </p>
+              </div>
+
+              <div class="pt-3 mt-3 border-t border-slate-100 dark:border-white/[0.04] flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-400 dark:text-slate-500 truncate max-w-[150px]">
+                  ${art.source}
+                </span>
+                <a href="${art.link}" target="_blank" rel="noopener noreferrer" class="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-medium">
+                  <span>Dispatch</span>
+                  <svg class="w-3 h-3 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        if (filtered.length > INITIAL_NEWS_LIMIT) {
+          expandContainer.classList.remove("hidden");
+          expandBtnText.innerText = isNewsExpanded ? "Show Less Articles" : `Show All Articles (${filtered.length})`;
+          if (isNewsExpanded) {
+            expandIcon.classList.add("rotate-180");
+          } else {
+            expandIcon.classList.remove("rotate-180");
+          }
+        } else {
+          expandContainer.classList.add("hidden");
+        }
+      }
+
+      async function fetchNewsData(forceRefresh = false) {
+        const syncBadge = document.getElementById("newsSyncStatus");
+        if (syncBadge) syncBadge.innerText = "Syncing...";
+
+        const cacheKey = "rvn_news_data_cache";
+        const cacheTimeKey = "rvn_news_data_time";
+
+        if (!forceRefresh) {
+          const cached = localStorage.getItem(cacheKey);
+          const cachedTime = localStorage.getItem(cacheTimeKey);
+          if (cached && cachedTime && (Date.now() - parseInt(cachedTime, 10)) < 15 * 60 * 1000) {
+            try {
+              const parsed = JSON.parse(cached);
+              allNewsArticles = parsed.articles || [];
+              updateNewsSyncBadge(parsed.updated_at);
+              renderNewsGrid();
+              renderBreakingTicker();
+              return;
+            } catch (e) {
+              console.warn("Corrupt news cache", e);
+            }
+          }
+        }
+
+        try {
+          const res = await fetch("data/industry_news.json?t=" + Date.now());
+          if (!res.ok) throw new Error("Status " + res.status);
+          const data = await res.json();
+          allNewsArticles = data.articles || [];
+          localStorage.setItem(cacheKey, JSON.stringify(data));
+          localStorage.setItem(cacheTimeKey, Date.now().toString());
+          updateNewsSyncBadge(data.updated_at);
+          renderNewsGrid();
+          renderBreakingTicker();
+        } catch (err) {
+          console.warn("Static JSON fetch failed, trying RSS fallback:", err);
+          fallbackFetchOnline();
+        }
+      }
+
+      async function fallbackFetchOnline() {
+        try {
+          const googleNewsRss = encodeURIComponent("https://news.google.com/rss/search?q=Vietnam+renewable+energy+OR+DPPA+OR+industrial+park&hl=en-US&gl=US&ceid=US:en");
+          const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${googleNewsRss}`;
+          const res = await fetch(proxyUrl);
+          const data = await res.json();
+          if (data && data.items && data.items.length > 0) {
+            allNewsArticles = data.items.map(item => ({
+              title: item.title,
+              link: item.link,
+              source: item.author || "Google News",
+              relative_time: "Recent",
+              snippet: item.description ? item.description.replace(/<[^>]+>/g, '').slice(0, 180) + '...' : '',
+              sector: item.title.toLowerCase().includes("dppa") ? "Policy & DPPA" : (item.title.toLowerCase().includes("solar") || item.title.toLowerCase().includes("wind") ? "Solar & Wind" : "Eco-Parks & Siting")
+            }));
+            updateNewsSyncBadge(null);
+            renderNewsGrid();
+            renderBreakingTicker();
+          }
+        } catch (e) {
+          console.error("All news feed vectors failed", e);
+          const syncBadge = document.getElementById("newsSyncStatus");
+          if (syncBadge) syncBadge.innerText = "Offline Archive";
+        }
+      }
+
+      // News Filter Event Listeners
+      document.querySelectorAll(".news-sector-pill").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".news-sector-pill").forEach(b => {
+            b.classList.remove("bg-teal-600", "text-white");
+            b.classList.add("bg-slate-100", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
+          });
+          btn.classList.add("bg-teal-600", "text-white");
+          btn.classList.remove("bg-slate-100", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
+          activeNewsSector = btn.getAttribute("data-news-sector");
+          renderNewsGrid();
+        });
+      });
+
+      const newsSearchInput = document.getElementById("newsSearchInput");
+      if (newsSearchInput) {
+        newsSearchInput.addEventListener("input", (e) => {
+          newsSearchTerm = e.target.value;
+          renderNewsGrid();
+        });
+      }
+
+      const toggleNewsExpandBtn = document.getElementById("toggleNewsExpandBtn");
+      if (toggleNewsExpandBtn) {
+        toggleNewsExpandBtn.addEventListener("click", () => {
+          isNewsExpanded = !isNewsExpanded;
+          renderNewsGrid();
+        });
+      }
+
+      const refreshNewsBtn = document.getElementById("refreshNewsBtn");
+      if (refreshNewsBtn) {
+        refreshNewsBtn.addEventListener("click", () => {
+          fetchNewsData(true);
+        });
+      }
+
+      // Initial harvest
+      fetchNewsData();
     });
   </script>
 </body>

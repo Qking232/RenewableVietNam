@@ -1,0 +1,40 @@
+name: Automated Industry News Feed Ingestion
+
+# Scheduled Jamstack ingestion pipeline for renewablevietnam.com
+# Fetches multi-source RSS intelligence feeds every 4 hours and writes to data/industry_news.json
+
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ingest-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Harvest multi-source industry feeds
+        run: |
+          python scripts/fetch_industry_news.py
+
+      - name: Commit and push updated dataset
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/industry_news.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(data): auto-update industry news feed [skip ci]"
+            git push
+          else
+            echo "No feed changes detected. Skipping push."
+          fi
