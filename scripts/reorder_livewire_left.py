@@ -44,8 +44,8 @@ def generate_desktop_nav(active_route):
 
     dot = """\n            <span class="text-slate-300 dark:text-slate-700">&middot;</span>\n            """
     items = [
-        link("/", "Industrial Hubs", "teal"),
         link("/livewire/", "Live Wire", "teal"),
+        link("/", "Industrial Hubs", "teal"),
         link("/projectenergy/", "PDP8 Energy", "emerald"),
         link("/evcharging/", "EV Tech", "amber"),
         link("/calculator/", "Power Sizer &amp; Tariffs", "teal"),
@@ -82,8 +82,8 @@ def generate_mobile_nav(active_route):
                 return f"""<a href="{href}" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-{color_hover}-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">{label}</a>"""
 
     items = [
-        mlink("/", "Industrial Hubs", "teal"),
         mlink("/livewire/", "Live Wire", "teal"),
+        mlink("/", "Industrial Hubs", "teal"),
         mlink("/projectenergy/", "PDP8 Energy", "emerald"),
         mlink("/evcharging/", "EV Tech", "amber"),
         mlink("/calculator/", "Power Sizer", "teal"),
@@ -121,20 +121,19 @@ def update_hub_source():
     # Desktop nav in hub source
     d_hub_regex = r'<nav class="hidden md:flex items-center gap-1 font-mono text-\[11px\] tracking-wider text-slate-400">.*?</nav>'
     new_d_hub = """<nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-slate-400">
-            <a href="/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Industrial Hubs</a> <span class="text-slate-600">&middot;</span> <a href="/livewire/" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">
+            <a href="/livewire/" class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">
               <span class="relative flex h-1.5 w-1.5 shrink-0">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
               <span>Live Wire</span>
-            </a> <span class="text-slate-600">&middot;</span> <a href="/projectenergy/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-emerald-400 hover:bg-slate-800/40 transition-colors">PDP8 Energy</a> <span class="text-slate-600">&middot;</span> <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-amber-400 hover:bg-slate-800/40 transition-colors">EV Tech</a> <span class="text-slate-600">&middot;</span> <a href="/calculator/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Power Sizer &amp; Tariffs</a> <span class="text-slate-600">&middot;</span> <a href="/hub/" class="px-2.5 py-1 rounded-md text-white font-semibold bg-white/10 border border-white/40 shadow-sm transition-all">Legal Framework</a>
+            </a> <span class="text-slate-600">&middot;</span> <a href="/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Industrial Hubs</a> <span class="text-slate-600">&middot;</span> <a href="/projectenergy/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-emerald-400 hover:bg-slate-800/40 transition-colors">PDP8 Energy</a> <span class="text-slate-600">&middot;</span> <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-amber-400 hover:bg-slate-800/40 transition-colors">EV Tech</a> <span class="text-slate-600">&middot;</span> <a href="/calculator/" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-teal-400 hover:bg-slate-800/40 transition-colors">Power Sizer &amp; Tariffs</a> <span class="text-slate-600">&middot;</span> <a href="/hub/" class="px-2.5 py-1 rounded-md text-white font-semibold bg-white/10 border border-white/40 shadow-sm transition-all">Legal Framework</a>
           </nav>"""
     content = re.sub(d_hub_regex, new_d_hub, content, flags=re.DOTALL)
 
     # Mobile nav in hub source
     m_hub_regex = r'<nav class="flex md:hidden items-center gap-1\.5 overflow-x-auto no-scrollbar pt-1\.5 pb-0\.5 font-mono text-\[11px\] tracking-wider whitespace-nowrap">.*?</nav>'
     new_m_hub = """<nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap">
-        <a href="/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Industrial Hubs</a>
         <a href="/livewire/" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">
           <span class="relative flex h-1.5 w-1.5 shrink-0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -142,6 +141,7 @@ def update_hub_source():
           </span>
           <span>Live Wire</span>
         </a>
+        <a href="/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Industrial Hubs</a>
         <a href="/projectenergy/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">PDP8 Energy</a>
         <a href="/evcharging/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">EV Tech</a>
         <a href="/calculator/" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 border border-white/10 shrink-0">Power Sizer</a>
