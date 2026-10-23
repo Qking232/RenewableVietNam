@@ -1,0 +1,1067 @@
+"""
+Refactor projectenergy/index.html to an Institutional 50/50 Split-Screen Telemetry Cockpit.
+- Left 50%: Fixed-height GIS Satellite Map with Esri World Imagery, full-extent reset, active pins count, and fuel legend.
+- Right 50%: Synchronized Dossier & PDP8 Telemetry (3-view switcher: Assets Dossier, PDP8 Priority Pipeline, Statutory Sector Gauges).
+- Bi-directional geospatial synchronization between Leaflet pins and dossier cards.
+- Mobile quick toggle button.
+"""
+
+import os
+import re
+
+HTML_PATH = r"G:\My Drive\7. AI\Gemini\RenewableVietNam\projectenergy\index.html"
+
+with open(HTML_PATH, "r", encoding="utf-8") as f:
+    orig = f.read()
+
+# Verify header presence
+assert "<header" in orig and "</header>" in orig, "Header not found!"
+header_end = orig.find("</header>") + len("</header>")
+head_and_header = orig[:header_end]
+
+# Retain everything before <main>
+# Now let us construct the new <main> section and scripts
+
+NEW_MAIN = '''
+  <!-- ==================================================================== -->
+  <!-- MAIN 50/50 SPLIT-SCREEN TELEMETRY COCKPIT                            -->
+  <!-- ==================================================================== -->
+  <main class="relative z-10 flex-1 w-full max-w-[1720px] mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5 space-y-4">
+
+    <!-- COMPACT HERO TELEMETRY STRIP -->
+    <section class="space-y-2.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
+              National Clean Energy Asset Registry &middot; Decision 500/QĐ-TTg &middot; Decision 262/QĐ-TTg
+            </span>
+          </div>
+          <h1 class="text-xl sm:text-2xl lg:text-3xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+            Vietnam PDP8 Clean Energy Map &amp; Statutory Asset Pipeline
+          </h1>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light max-w-4xl">
+            Authoritative statutory compliance tracker and geospatial asset registry comparing Vietnam's active commercial baseload (80.6 GW across 960 utility assets) against the 150.5 GW statutory capacity mandate under Decision 500/QĐ-TTg with direct DPPA bilateral wheeling corridors and high-resolution satellite cartography.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-[10px] sm:text-[11px] shrink-0">
+          <span class="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800/40 flex items-center gap-1.5 shadow-sm font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>960 Facilities Active</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 4-Metric Compact Grid -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 pt-0.5">
+        <div class="p-3 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Clean Baseload</span>
+          <div class="text-lg sm:text-xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">80,612 <span class="text-xs text-teal-600 dark:text-teal-400 font-normal">MW</span></div>
+          <p class="text-[9px] sm:text-[10px] text-inkMuted dark:text-textDarkMuted">53.6% of PDP8 Mandate Active</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Tracked Facilities</span>
+          <div class="text-lg sm:text-xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">960 <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">Assets</span></div>
+          <p class="text-[9px] sm:text-[10px] text-inkMuted dark:text-textDarkMuted">Geocoded across 63 Provinces</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">2030 Statutory Target</span>
+          <div class="text-lg sm:text-xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">150,489 <span class="text-xs text-sky-600 dark:text-sky-400 font-normal">MW</span></div>
+          <p class="text-[9px] sm:text-[10px] text-inkMuted dark:text-textDarkMuted">Decision 500/QĐ-TTg Horizon</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[9px] sm:text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Required Pipeline Delta</span>
+          <div class="text-lg sm:text-xl font-bold font-mono text-amber-600 dark:text-amber-400">+69,877 <span class="text-xs font-normal">MW</span></div>
+          <p class="text-[9px] sm:text-[10px] text-inkMuted dark:text-textDarkMuted">Mandated for 2026-2030 COD</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 50/50 SPLIT-SCREEN COCKPIT GRID -->
+    <section id="cockpitContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:h-[calc(100vh-230px)] min-h-[640px] items-stretch">
+      
+      <!-- LEFT PANE: SATELLITE GIS ATLAS COCKPIT (50%) -->
+      <div id="energyMapContainer" class="lg:col-span-6 flex flex-col h-[460px] sm:h-[520px] lg:h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm p-3 relative overflow-hidden">
+        <!-- Top Map Header -->
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-borderSlate/60 dark:border-darkBorder/60 shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            <span class="font-mono text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">
+              ArcGIS Satellite GIS Atlas (WGS84)
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5 font-mono text-[10px]">
+            <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-teal-600 dark:text-teal-400 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Esri World Imagery</span>
+            </span>
+            <button id="resetMapZoomBtn" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer" title="Reset Zoom to Vietnam extent">
+              Full Extent
+            </button>
+          </div>
+        </div>
+
+        <!-- Leaflet Map Canvas -->
+        <div id="energyMap" class="flex-1 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-darkBorder relative z-0"></div>
+
+        <!-- Bottom Map Legend Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 mt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 shrink-0 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            <span class="text-slate-400 uppercase tracking-wider">Legend:</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-500"></span>Hydro</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>Solar</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-teal-500"></span>Wind</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>LNG</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-600"></span>Biomass</span>
+          </div>
+          <div>
+            Active Pins: <strong id="visiblePinsCount" class="text-inkPrimary dark:text-textDarkPrimary font-bold">--</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANE: SYNCHRONIZED ASSET DOSSIER & PDP8 PIPELINE (50%) -->
+      <div id="dossierContainer" class="lg:col-span-6 flex flex-col h-full lg:max-h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
+        
+        <!-- View Switcher & Filter Toolbar (Sticky Header) -->
+        <div class="p-3 sm:p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 space-y-2.5 shrink-0">
+          <!-- 3-Tab View Navigation Switcher -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1 p-0.5 rounded-lg bg-slate-200/60 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-[11px] w-full sm:w-auto">
+              <button id="tabAssetsBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md bg-teal-600 text-white font-semibold transition-all cursor-pointer">
+                Assets Dossier (<span id="totalAssetsCount">960</span>)
+              </button>
+              <button id="tabPipelineBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+                PDP8 Priority (<span id="pipelineCount">10</span>)
+              </button>
+              <button id="tabGaugesBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+                Sector Targets
+              </button>
+            </div>
+
+            <button id="tableOrCardsToggleBtn" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 font-mono text-[10px] cursor-pointer" title="Toggle Cards / Table Layout">
+              <span id="viewModeIcon">☷</span>
+              <span id="viewModeText">Table</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Filter Controls (Active for Assets Dossier) -->
+          <div id="dossierFiltersContainer" class="space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="text" id="projectSearchInput" placeholder="Filter by asset name, developer, or province..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs focus:outline-none focus:border-teal-500 font-mono transition-colors" />
+                <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <select id="provinceSelect" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-teal-500 transition-colors cursor-pointer max-w-[140px] sm:max-w-[180px]">
+                <option value="ALL">All Provinces (63)</option>
+              </select>
+            </div>
+
+            <!-- Sector Pills Carousel -->
+            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar font-mono text-[10px] pt-0.5">
+              <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Fuel:</span>
+              <button data-type="ALL" class="fuel-pill px-2.5 py-0.5 rounded-md bg-teal-600 text-white font-semibold shrink-0 cursor-pointer">All</button>
+              <button data-type="Hydropower" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Hydro</button>
+              <button data-type="Solar" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Solar</button>
+              <button data-type="Wind" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Wind</button>
+              <button data-type="LNG / gas" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">LNG</button>
+              <button data-type="Biomass" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Biomass</button>
+              <button id="resetFiltersBtn" class="ml-auto text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] underline shrink-0 cursor-pointer">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable Dossier Content -->
+        <div id="dossierScrollArea" class="flex-1 overflow-y-auto p-3 sm:p-3.5 space-y-3 custom-scrollbar">
+          
+          <!-- VIEW 1: ASSETS DOSSIER (CARDS & TABLE) -->
+          <div id="viewAssetsDossier" class="space-y-2.5">
+            <!-- Cards Container -->
+            <div id="dossierCardsList" class="space-y-2">
+              <!-- Dynamically rendered via renderAssetsDossier() -->
+              <div class="p-8 text-center text-slate-400 font-mono text-xs">
+                Loading Clean Energy Assets Telemetry...
+              </div>
+            </div>
+
+            <!-- Table Container (Hidden by default, toggled via tableOrCardsToggleBtn) -->
+            <div id="dossierTableContainer" class="hidden rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-borderSlate dark:border-darkBorder bg-slate-50/50 dark:bg-darkCard/50 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted uppercase tracking-wider">
+                      <th class="p-2.5">Facility Name</th>
+                      <th class="p-2.5">Type</th>
+                      <th class="p-2.5">Capacity</th>
+                      <th class="p-2.5">Province</th>
+                      <th class="p-2.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIEW 2: PDP8 PRIORITY PIPELINE -->
+          <div id="viewPipelineContainer" class="hidden space-y-3">
+            <div class="flex items-center justify-between pb-1 font-mono text-[11px] text-inkMuted dark:text-textDarkMuted border-b border-borderSlate/60 dark:border-darkBorder/60">
+              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary">Mandated National Projects (Decision 500/QĐ-TTg)</span>
+              <span>10 Strategic Facilities</span>
+            </div>
+            <div id="pdp8ProjectsGrid" class="space-y-2.5">
+              <!-- Populated dynamically from pdp8_targets.json priority_projects -->
+            </div>
+          </div>
+
+          <!-- VIEW 3: STATUTORY SECTOR GAUGES -->
+          <div id="viewGaugesContainer" class="hidden space-y-3.5">
+            <div class="flex items-center justify-between pb-1 font-mono text-[11px] text-inkMuted dark:text-textDarkMuted border-b border-borderSlate/60 dark:border-darkBorder/60">
+              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary">Statutory Fuel Trajectory &amp; Operational Delta (MW)</span>
+              <span class="text-[10px]">Decision 500 Target Horizon</span>
+            </div>
+            <div id="pdp8SectorGauges" class="space-y-3.5">
+              <!-- Populated dynamically from pdp8_targets.json fuel_targets -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Bottom Pagination Bar -->
+        <div id="dossierPaginationBar" class="p-2.5 sm:p-3 border-t border-borderSlate dark:border-darkBorder bg-slate-50/60 dark:bg-darkCard/50 flex items-center justify-between text-xs font-mono text-inkMuted dark:text-textDarkMuted shrink-0">
+          <div id="paginationInfo" class="text-[11px]">Showing 1 to 25 of 960 assets</div>
+          <div class="flex items-center gap-1.5">
+            <button id="prevPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Previous</button>
+            <span id="currentPageIndicator" class="px-1.5 text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">1 / 39</span>
+            <button id="nextPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MOBILE FLOATING SWITCHER BUTTON (< 1024px) -->
+  <div class="lg:hidden fixed bottom-4 right-4 z-40">
+    <button id="mobileViewToggleBtn" class="flex items-center gap-2 px-3.5 py-2 rounded-full bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold shadow-lg shadow-teal-500/20 border border-teal-400/30 transition-all cursor-pointer">
+      <span id="mobileToggleIcon">📋</span>
+      <span id="mobileToggleText">View Dossier</span>
+    </button>
+  </div>
+'''
+
+# Modal and Footer
+modal_and_footer = '''
+  <!-- ==================================================================== -->
+  <!-- FACILITY TECHNICAL DOSSIER MODAL                                     -->
+  <!-- ==================================================================== -->
+  <div id="facilityModalOverlay" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5 animate-in fade-in duration-200">
+      <div class="flex items-start justify-between pb-3 border-b border-borderSlate dark:border-darkBorder">
+        <div>
+          <span id="modalTechBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-teal-500/10 text-teal-600 border border-teal-500/20">
+            Solar PV
+          </span>
+          <h3 id="modalFacilityName" class="text-xl font-bold text-inkPrimary dark:text-textDarkPrimary mt-1">
+            Facility Name
+          </h3>
+          <p id="modalLocation" class="text-xs text-inkMuted dark:text-textDarkMuted font-mono">Province, Vietnam</p>
+        </div>
+        <button id="closeModalBtn" class="text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg cursor-pointer">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-0.5">
+            <span class="text-slate-400 text-[10px] uppercase">Installed Capacity</span>
+            <div id="modalCapacity" class="text-sm font-bold text-teal-600 dark:text-teal-400">-- MW</div>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-0.5">
+            <span class="text-slate-400 text-[10px] uppercase">Grid Intertie</span>
+            <div id="modalIntertie" class="text-sm font-bold text-inkPrimary dark:text-textDarkPrimary">110kV / 220kV</div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-1">
+          <span class="text-slate-400 text-[10px] uppercase">Developer &amp; Investor Entity</span>
+          <div id="modalDeveloper" class="text-xs text-inkPrimary dark:text-textDarkPrimary font-sans font-medium">--</div>
+        </div>
+
+        <div class="p-3 rounded-lg bg-slate-50 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder space-y-1">
+          <span class="text-slate-400 text-[10px] uppercase">Geospatial Telemetry (WGS84)</span>
+          <div id="modalCoordinates" class="text-xs text-inkMuted dark:text-textDarkMuted">Lat: --, Lng: --</div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-borderSlate dark:border-darkBorder">
+        <a id="modalGmapsLink" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors">
+          <span>Satellite Locator</span>
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- INSTITUTIONAL FOOTER                                                 -->
+  <!-- ==================================================================== -->
+  <footer class="mt-8 pt-6 pb-6 border-t border-borderSlate dark:border-darkBorder text-xs text-inkMuted dark:text-textDarkMuted font-mono px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Renewable Vietnam &middot; National Clean Energy Registry &middot; Decision 500/QĐ-TTg</span>
+      </div>
+      <div>
+        <span>Source: MOIT &middot; EVN &middot; Provincial Planning Authorities</span>
+      </div>
+    </div>
+  </footer>
+'''
+
+# Complete JavaScript Engine with Bi-directional synchronization
+NEW_SCRIPT = '''
+  <!-- ==================================================================== -->
+  <!-- CLIENT DATA ENGINE & BI-DIRECTIONAL COCKPIT INTERACTIVITY           -->
+  <!-- ==================================================================== -->
+  <script>
+    // 1. Theme toggle handling
+    const themeBtn = document.getElementById("themeToggleBtn");
+    const sunIcon = document.getElementById("sunIcon");
+    const moonIcon = document.getElementById("moonIcon");
+
+    function updateIcons() {
+      const isDark = document.documentElement.classList.contains("dark");
+      if (sunIcon && moonIcon) {
+        if (isDark) {
+          sunIcon.classList.remove("hidden");
+          moonIcon.classList.add("hidden");
+        } else {
+          sunIcon.classList.add("hidden");
+          moonIcon.classList.remove("hidden");
+        }
+      }
+    }
+    updateIcons();
+
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        const isDark = document.documentElement.classList.contains("dark");
+        localStorage.setItem("rvn-theme", isDark ? "dark" : "light");
+        updateIcons();
+      });
+    }
+
+    // 2. Global State & Datasets
+    let ALL_PROJECTS = [];
+    let FILTERED_PROJECTS = [];
+    let currentPage = 1;
+    const PAGE_SIZE = 25;
+    let selectedFuel = "ALL";
+    let selectedProvince = "ALL";
+    let searchQuery = "";
+    let activeDossierView = "cards"; // "cards" or "table"
+    let activeTab = "assets"; // "assets", "pipeline", "gauges"
+    let pdp8Dataset = null;
+
+    // Leaflet map & synchronization registry
+    let energyMap = null;
+    let markersLayer = null;
+    window.markerByIdx = new Map();
+
+    const FUEL_COLORS = {
+      'Hydropower': 'bg-sky-500',
+      'Solar': 'bg-amber-500',
+      'Wind': 'bg-teal-500',
+      'LNG / gas': 'bg-indigo-500',
+      'Biomass': 'bg-emerald-600',
+      'Coal': 'bg-slate-500',
+      'Oil': 'bg-rose-500',
+      'Nuclear': 'bg-purple-600'
+    };
+
+    // 3. Load External Projects Data
+    async function loadProjectsData() {
+      try {
+        const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
+        if (res.ok) {
+          ALL_PROJECTS = await res.json();
+          initDirectory();
+          return;
+        }
+      } catch (e) {
+        console.warn("Could not fetch external json, attempting inline projects", e);
+      }
+    }
+
+    // 4. Load PDP8 Statutory Pipeline Data
+    async function loadPdp8Data() {
+      try {
+        const res = await fetch("/data/pdp8_targets.json?t=" + Date.now());
+        if (!res.ok) throw new Error("Status " + res.status);
+        pdp8Dataset = await res.json();
+        renderPdp8Gauges();
+        renderPdp8Projects();
+      } catch (e) {
+        console.warn("PDP8 JSON fetch error:", e);
+      }
+    }
+
+    // 5. Initialize Directory & Province Dropdown
+    function initDirectory() {
+      const provinces = new Set();
+      ALL_PROJECTS.forEach(p => {
+        if (p.location) provinces.add(p.location.trim());
+      });
+      const provinceSelect = document.getElementById("provinceSelect");
+      if (provinceSelect) {
+        Array.from(provinces).sort().forEach(prv => {
+          const opt = document.createElement("option");
+          opt.value = prv;
+          opt.textContent = prv;
+          provinceSelect.appendChild(opt);
+        });
+      }
+
+      applyFilters();
+      initEnergyMap();
+    }
+
+    // 6. Filter Engine
+    function applyFilters() {
+      FILTERED_PROJECTS = ALL_PROJECTS.filter(p => {
+        // Fuel type
+        if (selectedFuel !== "ALL") {
+          const pType = (p.type || "").toLowerCase();
+          const target = selectedFuel.toLowerCase();
+          if (target === "hydropower" && !pType.includes("hydro")) return false;
+          if (target === "solar" && !pType.includes("solar")) return false;
+          if (target === "wind" && !pType.includes("wind")) return false;
+          if (target === "lng / gas" && !pType.includes("lng") && !pType.includes("gas")) return false;
+          if (target === "biomass" && !pType.includes("biomass")) return false;
+        }
+
+        // Province
+        if (selectedProvince !== "ALL") {
+          if ((p.location || "").trim() !== selectedProvince) return false;
+        }
+
+        // Search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchName = (p.name || "").toLowerCase().includes(q);
+          const matchDev = (p.company || "").toLowerCase().includes(q);
+          const matchLoc = (p.location || "").toLowerCase().includes(q);
+          if (!matchName && !matchDev && !matchLoc) return false;
+        }
+
+        return true;
+      });
+
+      currentPage = 1;
+      const countEl = document.getElementById("totalAssetsCount");
+      if (countEl) countEl.textContent = FILTERED_PROJECTS.length.toLocaleString();
+
+      renderAssetsDossier();
+      renderMapPins();
+    }
+
+    // 7. Render Assets Dossier (Cards & Table)
+    function renderAssetsDossier() {
+      const cardsList = document.getElementById("dossierCardsList");
+      const tbody = document.getElementById("projectsTableBody");
+      const paginationInfo = document.getElementById("paginationInfo");
+      const pageIndicator = document.getElementById("currentPageIndicator");
+      const prevBtn = document.getElementById("prevPageBtn");
+      const nextBtn = document.getElementById("nextPageBtn");
+
+      if (FILTERED_PROJECTS.length === 0) {
+        if (cardsList) cardsList.innerHTML = `<div class="p-8 text-center text-slate-400 font-mono text-xs">No clean energy facilities found matching active criteria.</div>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-mono text-xs">No clean energy facilities found.</td></tr>`;
+        if (paginationInfo) paginationInfo.textContent = "Showing 0 to 0 of 0 assets";
+        if (pageIndicator) pageIndicator.textContent = "0 / 0";
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        return;
+      }
+
+      const totalPages = Math.ceil(FILTERED_PROJECTS.length / PAGE_SIZE);
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const startIndex = (currentPage - 1) * PAGE_SIZE;
+      const endIndex = Math.min(startIndex + PAGE_SIZE, FILTERED_PROJECTS.length);
+      const pageItems = FILTERED_PROJECTS.slice(startIndex, endIndex);
+
+      // Render Cards
+      let cardsHtml = "";
+      let tableHtml = "";
+
+      pageItems.forEach((p, idx) => {
+        const fuelColor = FUEL_COLORS[p.type] || "bg-slate-500";
+        const cleanCapacity = p.capacity || "N/A";
+        const globalIdx = ALL_PROJECTS.indexOf(p);
+        const hasCoords = p.lat && p.lon;
+
+        // Card HTML
+        cardsHtml += `
+          <div id="dossier-card-${globalIdx}" onclick="selectAssetFromDossier(${globalIdx}, event)" class="asset-dossier-card p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/70 border border-borderSlate dark:border-darkBorder hover:border-teal-500/60 dark:hover:border-teal-400/50 transition-all cursor-pointer group flex flex-col justify-between gap-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="space-y-1 flex-1 min-w-0">
+                <div class="flex items-center gap-1.5 font-mono text-[10px]">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded ${fuelColor} text-white font-semibold">
+                    ${p.type || "Clean"}
+                  </span>
+                  <span class="text-inkMuted dark:text-textDarkMuted truncate">${p.location || "Vietnam"}</span>
+                </div>
+                <h4 class="text-xs sm:text-sm font-semibold text-inkPrimary dark:text-textDarkPrimary group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
+                  ${p.name || "Unnamed Asset"}
+                </h4>
+                <div class="text-[11px] text-inkMuted dark:text-textDarkMuted truncate">
+                  ${p.company || "MOIT / Provincial EPC Allocation"}
+                </div>
+              </div>
+
+              <div class="text-right shrink-0">
+                <div class="font-mono text-xs sm:text-sm font-bold text-teal-600 dark:text-teal-400">
+                  ${cleanCapacity}
+                </div>
+                <div class="text-[9px] font-mono text-slate-400">
+                  ${hasCoords ? "WGS84 ✓" : "Unmapped"}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1.5 border-t border-borderSlate/50 dark:border-darkBorder/50 font-mono text-[10px]">
+              <div class="flex items-center gap-2">
+                ${hasCoords ? `
+                  <button type="button" onclick="event.stopPropagation(); selectAssetFromDossier(${globalIdx}, null);" class="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-semibold">
+                    <span>Fly to Satellite</span> &rarr;
+                  </button>
+                ` : `<span class="text-slate-400">Regional asset</span>`}
+              </div>
+
+              <button type="button" onclick="event.stopPropagation(); openFacilityModal(${globalIdx});" class="modal-trigger-btn px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-colors">
+                Technical Dossier &rarr;
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Table Row HTML
+        tableHtml += `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer" onclick="selectAssetFromDossier(${globalIdx}, event)">
+            <td class="p-2.5 font-semibold text-inkPrimary dark:text-textDarkPrimary truncate max-w-[160px]">
+              ${p.name}
+            </td>
+            <td class="p-2.5">
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] ${fuelColor} text-white font-semibold">
+                ${p.type || "Clean"}
+              </span>
+            </td>
+            <td class="p-2.5 font-bold text-teal-600 dark:text-teal-400">
+              ${cleanCapacity}
+            </td>
+            <td class="p-2.5 text-inkMuted dark:text-textDarkMuted truncate max-w-[100px]">
+              ${p.location || "VN"}
+            </td>
+            <td class="p-2.5 text-right">
+              <button onclick="event.stopPropagation(); openFacilityModal(${globalIdx});" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 text-[9px]">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (cardsList) cardsList.innerHTML = cardsHtml;
+      if (tbody) tbody.innerHTML = tableHtml;
+
+      if (paginationInfo) paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${FILTERED_PROJECTS.length} assets`;
+      if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+      if (prevBtn) prevBtn.disabled = currentPage <= 1;
+      if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    // 8. Leaflet Map Initialization
+    function initEnergyMap() {
+      const mapEl = document.getElementById("energyMap");
+      if (!mapEl || energyMap || typeof L === "undefined") return;
+
+      energyMap = L.map('energyMap', {
+        center: [15.8, 107.5],
+        zoom: 6,
+        minZoom: 5,
+        maxZoom: 19,
+        scrollWheelZoom: false,
+        preferCanvas: true
+      });
+
+      energyMap.on('click', () => {
+        energyMap.scrollWheelZoom.enable();
+      });
+
+      // Exclusive Satellite Basemap (ArcGIS Esri World Imagery)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        subdomains: 'abcd',
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+        maxZoom: 19
+      }).addTo(energyMap);
+
+      // Vietnamese Sovereignty Markers (Hoàng Sa & Trường Sa)
+      L.marker([16.5, 112.0], {
+        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Hoàng Sa (Việt Nam)</div>' }),
+        keyboard: false
+      }).addTo(energyMap);
+
+      L.marker([9.5, 113.5], {
+        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Trường Sa (Việt Nam)</div>' }),
+        keyboard: false
+      }).addTo(energyMap);
+
+      markersLayer = L.layerGroup().addTo(energyMap);
+      renderMapPins();
+
+      // Reset Extent Button
+      const resetBtn = document.getElementById("resetMapZoomBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          energyMap.flyTo([15.8, 107.5], 6, { duration: 1 });
+        });
+      }
+    }
+
+    // 9. Render Map Pins & Bind Spatial Synchronization
+    function renderMapPins() {
+      if (!markersLayer || typeof L === "undefined") return;
+      markersLayer.clearLayers();
+      window.markerByIdx.clear();
+
+      const pinsToRender = FILTERED_PROJECTS.slice(0, 200);
+      pinsToRender.forEach(p => {
+        if (!p.lat || !p.lon) return;
+
+        const globalIdx = ALL_PROJECTS.indexOf(p);
+        const fuelBg = FUEL_COLORS[p.type] || "bg-slate-500";
+        const pinIcon = L.divIcon({
+          className: 'custom-project-marker',
+          html: `
+            <div class="project-marker-pin ${fuelBg} text-white w-6 h-6 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[8px] font-bold">
+              ${(p.type || "P")[0]}
+            </div>
+          `
+        });
+
+        const marker = L.marker([p.lat, p.lon], { icon: pinIcon });
+        marker.bindPopup(`
+          <div class="space-y-1.5 font-mono text-xs">
+            <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${fuelBg} text-white">${p.type || 'Power'}</span>
+            <div class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">${p.name}</div>
+            <div class="text-teal-600 dark:text-teal-400 font-semibold">${p.capacity || 'N/A'}</div>
+            <div class="text-slate-500 text-[11px]">${p.location || 'Vietnam'}</div>
+            <div class="text-[10px] text-slate-400 pt-1">${p.company || ''}</div>
+          </div>
+        `);
+
+        // Bi-directional click on pin -> Select card in right pane
+        marker.on('click', () => {
+          selectAssetFromMap(globalIdx);
+        });
+
+        markersLayer.addLayer(marker);
+        window.markerByIdx.set(globalIdx, marker);
+      });
+
+      const countEl = document.getElementById("visiblePinsCount");
+      if (countEl) countEl.textContent = `${pinsToRender.length} of ${FILTERED_PROJECTS.length}`;
+    }
+
+    // 10. Bi-Directional Synchronizer: Pin Click -> Dossier Card Selection
+    function selectAssetFromMap(globalIdx) {
+      // Ensure we are viewing the assets tab
+      switchDossierTab('assets');
+
+      const targetProject = ALL_PROJECTS[globalIdx];
+      if (!targetProject) return;
+
+      const filteredIdx = FILTERED_PROJECTS.indexOf(targetProject);
+      if (filteredIdx !== -1) {
+        const targetPage = Math.floor(filteredIdx / PAGE_SIZE) + 1;
+        if (currentPage !== targetPage) {
+          currentPage = targetPage;
+          renderAssetsDossier();
+        }
+      }
+
+      highlightDossierCard(globalIdx);
+    }
+
+    // 11. Bi-Directional Synchronizer: Dossier Card Click -> Map FlyTo
+    function selectAssetFromDossier(globalIdx, event) {
+      if (event && event.target.closest('.modal-trigger-btn')) return;
+
+      const p = ALL_PROJECTS[globalIdx];
+      if (!p) return;
+
+      highlightDossierCard(globalIdx);
+
+      if (p.lat && p.lon && energyMap) {
+        energyMap.flyTo([p.lat, p.lon], 13, { duration: 0.9 });
+        const marker = window.markerByIdx.get(globalIdx);
+        if (marker) {
+          setTimeout(() => {
+            marker.openPopup();
+          }, 950);
+        }
+      }
+    }
+
+    // 12. Highlight Card Element in Dossier Pane
+    function highlightDossierCard(globalIdx) {
+      document.querySelectorAll('.asset-dossier-card').forEach(c => {
+        c.classList.remove('ring-2', 'ring-teal-500', 'bg-teal-500/10', 'dark:bg-teal-950/40');
+      });
+
+      const card = document.getElementById(`dossier-card-${globalIdx}`);
+      if (card) {
+        card.classList.add('ring-2', 'ring-teal-500', 'bg-teal-500/10', 'dark:bg-teal-950/40');
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // 13. Tab View Switcher (Assets, Pipeline, Gauges)
+    function switchDossierTab(tabKey) {
+      activeTab = tabKey;
+      const tabAssets = document.getElementById('tabAssetsBtn');
+      const tabPipeline = document.getElementById('tabPipelineBtn');
+      const tabGauges = document.getElementById('tabGaugesBtn');
+      
+      const viewAssets = document.getElementById('viewAssetsDossier');
+      const viewPipeline = document.getElementById('viewPipelineContainer');
+      const viewGauges = document.getElementById('viewGaugesContainer');
+      const filtersBox = document.getElementById('dossierFiltersContainer');
+      const paginationBar = document.getElementById('dossierPaginationBar');
+
+      [tabAssets, tabPipeline, tabGauges].forEach(btn => {
+        if (!btn) return;
+        btn.classList.remove('bg-teal-600', 'text-white', 'font-semibold');
+        btn.classList.add('text-inkMuted', 'dark:text-textDarkMuted');
+      });
+
+      [viewAssets, viewPipeline, viewGauges].forEach(v => {
+        if (v) v.classList.add('hidden');
+      });
+
+      if (tabKey === 'assets') {
+        if (tabAssets) {
+          tabAssets.classList.add('bg-teal-600', 'text-white', 'font-semibold');
+          tabAssets.classList.remove('text-inkMuted', 'dark:text-textDarkMuted');
+        }
+        if (viewAssets) viewAssets.classList.remove('hidden');
+        if (filtersBox) filtersBox.classList.remove('hidden');
+        if (paginationBar) paginationBar.classList.remove('hidden');
+      } else if (tabKey === 'pipeline') {
+        if (tabPipeline) {
+          tabPipeline.classList.add('bg-teal-600', 'text-white', 'font-semibold');
+          tabPipeline.classList.remove('text-inkMuted', 'dark:text-textDarkMuted');
+        }
+        if (viewPipeline) viewPipeline.classList.remove('hidden');
+        if (filtersBox) filtersBox.classList.add('hidden');
+        if (paginationBar) paginationBar.classList.add('hidden');
+      } else if (tabKey === 'gauges') {
+        if (tabGauges) {
+          tabGauges.classList.add('bg-teal-600', 'text-white', 'font-semibold');
+          tabGauges.classList.remove('text-inkMuted', 'dark:text-textDarkMuted');
+        }
+        if (viewGauges) viewGauges.classList.remove('hidden');
+        if (filtersBox) filtersBox.classList.add('hidden');
+        if (paginationBar) paginationBar.classList.add('hidden');
+      }
+    }
+
+    // 14. Render PDP8 Priority Pipeline
+    function renderPdp8Projects() {
+      const container = document.getElementById("pdp8ProjectsGrid");
+      if (!container || !pdp8Dataset || !pdp8Dataset.priority_projects) return;
+
+      const pipelineBadge = document.getElementById("pipelineCount");
+      if (pipelineBadge) pipelineBadge.textContent = pdp8Dataset.priority_projects.length;
+
+      let html = "";
+      pdp8Dataset.priority_projects.forEach(p => {
+        const isConstruction = p.status.includes("Construction") || p.status.includes("Testing");
+        const badgeColor = isConstruction ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
+
+        html += `
+          <div class="p-3.5 rounded-xl bg-slate-50/80 dark:bg-darkCard/80 border border-borderSlate dark:border-darkBorder hover:border-teal-500/50 dark:hover:border-teal-400/40 transition-all flex flex-col justify-between space-y-2.5">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between font-mono text-[10px]">
+                <span class="px-2 py-0.5 rounded border ${badgeColor} font-semibold">${p.status}</span>
+                <span class="text-inkMuted dark:text-textDarkMuted">COD: <b class="text-inkPrimary dark:text-textDarkPrimary">${p.target_cod}</b></span>
+              </div>
+              <h4 class="text-xs sm:text-sm font-semibold text-inkPrimary dark:text-textDarkPrimary leading-snug">
+                ${p.name}
+              </h4>
+              <p class="text-[11px] text-inkMuted dark:text-textDarkMuted font-light line-clamp-2">
+                ${p.notes}
+              </p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-1 font-mono text-[10px]">
+              <div class="flex justify-between text-inkMuted dark:text-textDarkMuted">
+                <span>Progress: <b class="text-teal-600 dark:text-teal-400">${p.progress_pct}%</b></span>
+                <span>${p.capacity_mw.toLocaleString()} MW &middot; ${p.province}</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-darkSurface overflow-hidden">
+                <div class="h-full bg-teal-500 rounded-full transition-all duration-500" style="width: ${p.progress_pct}%"></div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px]">
+              <span class="text-slate-400 truncate max-w-[200px]">${p.investor}</span>
+              <button onclick="locatePdp8ProjectOnMap('${p.name.split(' ')[0]}', '${p.province}')" class="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-semibold cursor-pointer">
+                <span>Locate on Map &rarr;</span>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 15. Locate Priority Project on Satellite Map
+    function locatePdp8ProjectOnMap(keyword, province) {
+      // Find asset by keyword or province
+      const match = ALL_PROJECTS.find(p => 
+        (p.name && p.name.toLowerCase().includes(keyword.toLowerCase())) ||
+        (p.location && p.location.toLowerCase().includes(province.toLowerCase()))
+      );
+
+      if (match && match.lat && match.lon) {
+        energyMap.flyTo([match.lat, match.lon], 12, { duration: 0.9 });
+        const globalIdx = ALL_PROJECTS.indexOf(match);
+        selectAssetFromMap(globalIdx);
+      } else {
+        searchQuery = keyword;
+        const sInput = document.getElementById("projectSearchInput");
+        if (sInput) sInput.value = keyword;
+        switchDossierTab('assets');
+        applyFilters();
+      }
+    }
+
+    // 16. Render Statutory Sector Gauges
+    function renderPdp8Gauges() {
+      const container = document.getElementById("pdp8SectorGauges");
+      if (!container || !pdp8Dataset || !pdp8Dataset.fuel_targets) return;
+
+      let html = "";
+      pdp8Dataset.fuel_targets.forEach(item => {
+        const opPct = Math.min(100, Math.round((item.current_operating_mw / item.target_2030_mw) * 100));
+        const pipePct = Math.min(100 - opPct, Math.round((item.pipeline_mw / item.target_2030_mw) * 100));
+
+        html += `
+          <div class="space-y-1 font-mono text-xs">
+            <div class="flex items-center justify-between text-inkPrimary dark:text-textDarkPrimary">
+              <span class="font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full" style="background-color: ${item.hex}"></span>
+                ${item.fuel}
+              </span>
+              <span class="text-[11px] text-inkMuted dark:text-textDarkMuted">
+                <b class="text-inkPrimary dark:text-textDarkPrimary font-bold">${item.current_operating_mw.toLocaleString()}</b> / ${item.target_2030_mw.toLocaleString()} MW 
+                <span class="text-teal-600 dark:text-teal-400 font-bold ml-1">(${opPct}%)</span>
+              </span>
+            </div>
+            <!-- Dual Progress Bar -->
+            <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-darkCard overflow-hidden flex border border-borderSlate/60 dark:border-darkBorder/60 shadow-inner">
+              <div class="h-full transition-all duration-700" style="width: ${opPct}%; background-color: ${item.hex};" title="Operating: ${item.current_operating_mw} MW (${opPct}%)"></div>
+              <div class="h-full opacity-60 transition-all duration-700" style="width: ${pipePct}%; background-color: ${item.hex}; background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.3) 4px, rgba(255,255,255,0.3) 8px);" title="Pipeline: ${item.pipeline_mw} MW"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-inkMuted dark:text-textDarkMuted">
+              <span class="truncate max-w-[70%] text-[9px] text-slate-400 dark:text-slate-500">${item.status_note}</span>
+              <span>Target Share: <b>${item.target_share_pct}%</b></span>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // 17. Deep-Dive Facility Technical Dossier Modal
+    function openFacilityModal(index) {
+      const p = ALL_PROJECTS[index] || FILTERED_PROJECTS[index];
+      if (!p) return;
+
+      document.getElementById("modalFacilityName").textContent = p.name || "Unnamed Facility";
+      document.getElementById("modalLocation").textContent = `${p.location || "Vietnam"}, Vietnam`;
+      document.getElementById("modalCapacity").textContent = p.capacity || "N/A";
+      document.getElementById("modalDeveloper").textContent = p.company || "MOIT / Provincial EPC Allocation";
+      document.getElementById("modalCoordinates").textContent = `Lat: ${p.lat || '--'}, Lng: ${p.lon || '--'}`;
+      
+      const badge = document.getElementById("modalTechBadge");
+      if (badge) {
+        badge.textContent = p.type || "Clean Generation";
+      }
+
+      const gmapsLink = document.getElementById("modalGmapsLink");
+      if (gmapsLink && p.lat && p.lon) {
+        gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}&gl=vn&hl=vi`;
+      }
+
+      document.getElementById("facilityModalOverlay").classList.remove("hidden");
+    }
+
+    // 18. Event Listeners Setup
+    document.addEventListener("DOMContentLoaded", () => {
+      // Tab Listeners
+      document.getElementById("tabAssetsBtn")?.addEventListener("click", () => switchDossierTab('assets'));
+      document.getElementById("tabPipelineBtn")?.addEventListener("click", () => switchDossierTab('pipeline'));
+      document.getElementById("tabGaugesBtn")?.addEventListener("click", () => switchDossierTab('gauges'));
+
+      // Cards / Table Toggle
+      const tableCardsBtn = document.getElementById("tableOrCardsToggleBtn");
+      const cardsList = document.getElementById("dossierCardsList");
+      const tableContainer = document.getElementById("dossierTableContainer");
+      const modeText = document.getElementById("viewModeText");
+
+      if (tableCardsBtn && cardsList && tableContainer) {
+        tableCardsBtn.addEventListener("click", () => {
+          if (activeDossierView === "cards") {
+            activeDossierView = "table";
+            cardsList.classList.add("hidden");
+            tableContainer.classList.remove("hidden");
+            if (modeText) modeText.textContent = "Cards";
+          } else {
+            activeDossierView = "cards";
+            cardsList.classList.remove("hidden");
+            tableContainer.classList.add("hidden");
+            if (modeText) modeText.textContent = "Table";
+          }
+        });
+      }
+
+      // Modal close listeners
+      const modalCloseBtn = document.getElementById("closeModalBtn");
+      const modalOverlay = document.getElementById("facilityModalOverlay");
+      if (modalCloseBtn) modalCloseBtn.addEventListener("click", () => modalOverlay.classList.add("hidden"));
+      if (modalOverlay) {
+        modalOverlay.addEventListener("click", (e) => {
+          if (e.target === modalOverlay) modalOverlay.classList.add("hidden");
+        });
+      }
+
+      // Pagination listeners
+      document.getElementById("prevPageBtn")?.addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderAssetsDossier();
+          document.getElementById("dossierScrollArea")?.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+      document.getElementById("nextPageBtn")?.addEventListener("click", () => {
+        const totalPages = Math.ceil(FILTERED_PROJECTS.length / PAGE_SIZE);
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderAssetsDossier();
+          document.getElementById("dossierScrollArea")?.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+
+      // Sector pills
+      document.querySelectorAll(".fuel-pill").forEach(pill => {
+        pill.addEventListener("click", () => {
+          document.querySelectorAll(".fuel-pill").forEach(btn => {
+            btn.classList.remove("bg-teal-600", "text-white");
+            btn.classList.add("bg-white", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+          });
+          pill.classList.add("bg-teal-600", "text-white");
+          pill.classList.remove("bg-white", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+          selectedFuel = pill.getAttribute("data-type") || "ALL";
+          applyFilters();
+        });
+      });
+
+      // Live search & province selector
+      document.getElementById("projectSearchInput")?.addEventListener("input", (e) => {
+        searchQuery = e.target.value.trim();
+        applyFilters();
+      });
+
+      document.getElementById("provinceSelect")?.addEventListener("change", (e) => {
+        selectedProvince = e.target.value;
+        applyFilters();
+      });
+
+      document.getElementById("resetFiltersBtn")?.addEventListener("click", () => {
+        selectedFuel = "ALL";
+        selectedProvince = "ALL";
+        searchQuery = "";
+        const sInput = document.getElementById("projectSearchInput");
+        if (sInput) sInput.value = "";
+        const provSelect = document.getElementById("provinceSelect");
+        if (provSelect) provSelect.value = "ALL";
+        
+        document.querySelectorAll(".fuel-pill").forEach(btn => {
+          if (btn.getAttribute("data-type") === "ALL") {
+            btn.classList.add("bg-teal-600", "text-white");
+            btn.classList.remove("bg-white", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+          } else {
+            btn.classList.remove("bg-teal-600", "text-white");
+            btn.classList.add("bg-white", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
+          }
+        });
+        applyFilters();
+      });
+
+      // Mobile Quick View Switcher
+      const mobileBtn = document.getElementById("mobileViewToggleBtn");
+      if (mobileBtn) {
+        let isMapMode = false;
+        mobileBtn.addEventListener("click", () => {
+          isMapMode = !isMapMode;
+          if (isMapMode) {
+            document.getElementById("energyMapContainer")?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById("mobileToggleIcon").textContent = "📋";
+            document.getElementById("mobileToggleText").textContent = "View Dossier";
+          } else {
+            document.getElementById("dossierContainer")?.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById("mobileToggleIcon").textContent = "🗺️";
+            document.getElementById("mobileToggleText").textContent = "View Map";
+          }
+        });
+      }
+
+      // Initial Data Loading
+      loadProjectsData();
+      loadPdp8Data();
+    });
+  </script>
+</body>
+</html>
+'''
+
+full_html = head_and_header + "\n" + NEW_MAIN + "\n" + modal_and_footer + "\n" + NEW_SCRIPT
+
+with open(HTML_PATH, "w", encoding="utf-8") as f:
+    f.write(full_html)
+
+print("[SUCCESS] Refactored projectenergy/index.html to 50/50 Split-Screen Telemetry Cockpit!")
+print(f"Total bytes written: {len(full_html.encode('utf-8'))}")
