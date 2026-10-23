@@ -2931,6 +2931,39 @@ svg.leaflet-image-layer.leaflet-interactive path {
         </button>
       </div>
 
+<!-- Select Location / Address Search Popover (Rev 0.0.30) -->
+      <div class="near-popover select-loc-popover" id="selectLocPopover" hidden>
+        <div class="select-loc-header">
+          <span class="near-popover-title" style="margin:0;padding:0;border:none">Chọn vị trí / Address Input</span>
+          <button type="button" id="closeSelectLocPopover" class="select-loc-close-btn" title="Đóng">&times;</button>
+        </div>
+        <div class="select-loc-body">
+          <div class="select-loc-input-row">
+            <input type="text" id="customAddressInput" placeholder="Nhập địa chỉ, quận huyện, thành phố..." autocomplete="off" spellcheck="false">
+            <button type="button" id="btnSubmitCustomAddress" class="select-loc-submit-btn">Tìm</button>
+          </div>
+          <div id="selectLocStatus" class="select-loc-status"></div>
+
+          <div class="select-loc-quick-section">
+            <div class="select-loc-subtitle">Địa điểm gợi ý:</div>
+            <div class="quick-city-chips-row">
+              <button type="button" class="quick-city-chip" data-lat="21.0285" data-lng="105.8542" data-name="Hà Nội">Hà Nội</button>
+              <button type="button" class="quick-city-chip" data-lat="10.7769" data-lng="106.7009" data-name="TP. HCM">TP. HCM</button>
+              <button type="button" class="quick-city-chip" data-lat="16.0544" data-lng="108.2022" data-name="Đà Nẵng">Đà Nẵng</button>
+              <button type="button" class="quick-city-chip" data-lat="20.8449" data-lng="106.6881" data-name="Hải Phòng">Hải Phòng</button>
+              <button type="button" class="quick-city-chip" data-lat="10.0452" data-lng="105.7469" data-name="Cần Thơ">Cần Thơ</button>
+            </div>
+          </div>
+
+          <div class="select-loc-map-pick">
+            <button type="button" id="btnPickOnMapMode" class="btn-pick-map-action">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>
+              <span>Chấm điểm trực tiếp trên bản đồ</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Hidden elements preserved for JS compatibility -->
       <div style="display:none !important">
         <button id="chipListToggle"></button>
@@ -3220,12 +3253,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
             <path d="M12 2v3m0 14v3M2 12h3m14 0h3" />
             <circle cx="12" cy="12" r="7" />
             <circle cx="12" cy="12" r="2.5" fill="currentColor" />
-          </svg>
-        </button>
-        <button class="map-loc-btn" id="mapBtnSelectLocation" type="button" title="Chọn vị trí trên bản đồ (Select Location)" aria-label="Select Location">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M12 21s-6-5.33-6-10a6 6 0 0 1 12 0c0 4.67-6 10-6 10z" />
-            <circle cx="12" cy="11" r="2.5" />
           </svg>
         </button>
       </div>
@@ -3854,9 +3881,7 @@ map.on("click", e=>{
       picking=false;
       map.getContainer().style.cursor="";
       const bSel = document.getElementById("btnSelectLocation");
-      const mSel = document.getElementById("mapBtnSelectLocation");
       if(bSel) { bSel.classList.remove("picking"); bSel.classList.add("active-loc"); }
-      if(mSel) { mSel.classList.remove("picking"); mSel.classList.add("active-loc"); }
       const bMy = document.getElementById("btnMyLocation");
       const mMy = document.getElementById("mapBtnMyLocation");
       if(bMy) bMy.classList.remove("active-loc");
@@ -4851,6 +4876,7 @@ var NEAR_KM = 40;
     }
     return { lat: pLat, lng: pLng, name: data[0].display_name.split(",")[0] || trimmed };
   }
+  window.geocode = geocode;
 
   // Toggle sidebar panel
   if(openBtn){
@@ -5905,17 +5931,100 @@ var NEAR_KM = 40;
     // Click handler for 'Gần tôi' chip
     if(pillNear) pillNear.addEventListener("click", toggleNearPopover);
 
-    // Event Handlers for 'My Location' and 'Select Location' Buttons
+    // Event Handlers for 'My Location' and 'Select Location' Buttons (Rev 0.0.30)
     const btnMyLocation = document.getElementById("btnMyLocation");
     const btnSelectLocation = document.getElementById("btnSelectLocation");
     const mapBtnMyLocation = document.getElementById("mapBtnMyLocation");
-    const mapBtnSelectLocation = document.getElementById("mapBtnSelectLocation");
+
+    var selectLocPopover = document.getElementById("selectLocPopover");
+    var customAddressInput = document.getElementById("customAddressInput");
+    var btnSubmitCustomAddress = document.getElementById("btnSubmitCustomAddress");
+    var closeSelectLocBtn = document.getElementById("closeSelectLocPopover");
+    var selectLocStatus = document.getElementById("selectLocStatus");
+    var btnPickOnMapMode = document.getElementById("btnPickOnMapMode");
+
+    function closeSelectLocPopover(){
+      if(selectLocPopover){
+        selectLocPopover.setAttribute("hidden", "");
+        selectLocPopover.style.display = "none";
+      }
+      if(btnSelectLocation) btnSelectLocation.classList.remove("active");
+      if(selectLocStatus) selectLocStatus.textContent = "";
+    }
+    window.closeSelectLocPopover = closeSelectLocPopover;
+
+    function openSelectLocPopover(){
+      hideItinPanel();
+      hideListPanel();
+      closeNearPopover();
+      if(selectLocPopover){
+        selectLocPopover.removeAttribute("hidden");
+        selectLocPopover.style.display = "flex";
+        if(btnSelectLocation) btnSelectLocation.classList.add("active");
+        if(customAddressInput){
+          setTimeout(function(){ customAddressInput.focus(); }, 100);
+        }
+      }
+    }
+
+    function toggleSelectLocPopover(e){
+      if(e){ e.preventDefault(); e.stopPropagation(); }
+      if(!selectLocPopover) return;
+      var isHidden = selectLocPopover.hasAttribute("hidden") || selectLocPopover.style.display === "none";
+      if(isHidden){
+        openSelectLocPopover();
+      } else {
+        closeSelectLocPopover();
+      }
+    }
+
+    async function submitCustomAddress(){
+      var q = customAddressInput ? customAddressInput.value.trim() : "";
+      if(!q){
+        if(selectLocStatus){
+          selectLocStatus.style.color = "#ef4444";
+          selectLocStatus.textContent = "Vui lòng nhập địa chỉ hoặc tên tỉnh/thành phố.";
+        }
+        return;
+      }
+      if(selectLocStatus){
+        selectLocStatus.style.color = "var(--muted)";
+        selectLocStatus.textContent = "🔍 Đang định vị: " + q + "...";
+      }
+      if(btnSubmitCustomAddress) btnSubmitCustomAddress.disabled = true;
+      try {
+        var geoFn = window.geocode || (typeof geocode === "function" ? geocode : null);
+        if(!geoFn) throw new Error("Dịch vụ định vị chưa sẵn sàng");
+        var res = await geoFn(q);
+        if(!res || !res.lat || !res.lng){
+          throw new Error("Không thể xác định tọa độ địa chỉ này.");
+        }
+        setMyLoc(res.lat, res.lng, 0);
+        closeSelectLocPopover();
+        if(btnSelectLocation){
+          btnSelectLocation.classList.add("active-loc");
+          var cTxt = btnSelectLocation.querySelector(".chip-text");
+          if(cTxt) cTxt.textContent = res.name || "Select Location";
+        }
+        if(typeof setMsg === "function"){
+          setMsg("Đã chọn vị trí: " + (res.name || q));
+          setTimeout(function(){ setMsg(""); }, 3500);
+        }
+      } catch(err){
+        if(selectLocStatus){
+          selectLocStatus.style.color = "#ef4444";
+          selectLocStatus.textContent = "Lỗi: " + (err && err.message || err);
+        }
+      } finally {
+        if(btnSubmitCustomAddress) btnSubmitCustomAddress.disabled = false;
+      }
+    }
 
     function triggerMyLocation(e) {
       if (e) e.stopPropagation();
       if (typeof closeNearPopover === "function") closeNearPopover();
+      closeSelectLocPopover();
       if (btnSelectLocation) btnSelectLocation.classList.remove("active-loc", "picking");
-      if (mapBtnSelectLocation) mapBtnSelectLocation.classList.remove("active-loc", "picking");
 
       if (btnMyLocation) btnMyLocation.classList.add("active-loc");
       if (mapBtnMyLocation) mapBtnMyLocation.classList.add("active-loc");
@@ -5923,21 +6032,53 @@ var NEAR_KM = 40;
       locateMe();
     }
 
-    function triggerSelectLocation(e) {
-      if (e) e.stopPropagation();
-      if (typeof closeNearPopover === "function") closeNearPopover();
-
-      if (btnSelectLocation) btnSelectLocation.classList.toggle("picking");
-      if (mapBtnSelectLocation) mapBtnSelectLocation.classList.toggle("picking");
-
-      startPick("Nhấp vào bất kỳ điểm nào trên bản đồ để chọn vị trí / Click map to set reference location");
-    }
-
     if (btnMyLocation) btnMyLocation.addEventListener("click", triggerMyLocation);
     if (mapBtnMyLocation) mapBtnMyLocation.addEventListener("click", triggerMyLocation);
 
-    if (btnSelectLocation) btnSelectLocation.addEventListener("click", triggerSelectLocation);
-    if (mapBtnSelectLocation) mapBtnSelectLocation.addEventListener("click", triggerSelectLocation);
+    if (btnSelectLocation) btnSelectLocation.addEventListener("click", toggleSelectLocPopover);
+    if (closeSelectLocBtn) closeSelectLocBtn.addEventListener("click", closeSelectLocPopover);
+    if (btnSubmitCustomAddress) btnSubmitCustomAddress.addEventListener("click", submitCustomAddress);
+    if (customAddressInput){
+      customAddressInput.addEventListener("keydown", function(e){
+        if(e.key === "Enter"){
+          e.preventDefault();
+          submitCustomAddress();
+        }
+      });
+    }
+
+    // Quick City Suggestions
+    document.querySelectorAll(".quick-city-chip").forEach(function(chip){
+      chip.addEventListener("click", function(e){
+        e.stopPropagation();
+        var lat = parseFloat(this.getAttribute("data-lat"));
+        var lng = parseFloat(this.getAttribute("data-lng"));
+        var name = this.getAttribute("data-name");
+        if(lat && lng){
+          setMyLoc(lat, lng, 0);
+          closeSelectLocPopover();
+          if(btnSelectLocation){
+            btnSelectLocation.classList.add("active-loc");
+            var cTxt = btnSelectLocation.querySelector(".chip-text");
+            if(cTxt) cTxt.textContent = name;
+          }
+          if(typeof setMsg === "function"){
+            setMsg("Đã chọn: " + name);
+            setTimeout(function(){ setMsg(""); }, 2500);
+          }
+        }
+      });
+    });
+
+    // Fallback: Pick directly on map
+    if (btnPickOnMapMode){
+      btnPickOnMapMode.addEventListener("click", function(e){
+        e.stopPropagation();
+        closeSelectLocPopover();
+        if(btnSelectLocation) btnSelectLocation.classList.add("picking");
+        startPick("Nhấp vào bất kỳ điểm nào trên bản đồ để chọn vị trí / Click map to set reference location");
+      });
+    }
 
     // Click handler for Menu button & List toggle
     function onToggleList(e){
@@ -5977,12 +6118,16 @@ var NEAR_KM = 40;
       if(!e.target.closest("#nearPopover") && !e.target.closest("#pillNear")){
         closeNearPopover();
       }
+      if(!e.target.closest("#selectLocPopover") && !e.target.closest("#btnSelectLocation")){
+        closeSelectLocPopover();
+      }
     });
 
     // Close popover when interacting with map
     if(window.map){
       map.on("click", function(){
         closeNearPopover();
+        closeSelectLocPopover();
       });
     }
 
