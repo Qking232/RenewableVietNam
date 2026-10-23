@@ -1235,38 +1235,13 @@ aside#side {
   pointer-events: auto !important;
   margin: 0 !important;
 }
-.leaflet-control-zoom {
-  border: 1px solid var(--line, #dadce0) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.08) !important;
-  border-radius: 10px !important;
-  overflow: hidden !important;
-  background: var(--panel, #ffffff) !important;
-}
+/* Permanently suppress Leaflet Zoom Controls */
+.leaflet-control-zoom,
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-  width: 32px !important;
-  height: 32px !important;
-  line-height: 32px !important;
-  font-size: 17px !important;
-  background-color: var(--panel, #ffffff) !important;
-  color: var(--txt, #3c4043) !important;
-  border-bottom: 1px solid var(--line, #dadce0) !important;
-  font-size: 20px !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-decoration: none !important;
-  cursor: pointer !important;
-  transition: all 0.15s ease !important;
-}
-.leaflet-control-zoom-out {
-  border-bottom: none !important;
-}
-.leaflet-control-zoom-in:hover,
-.leaflet-control-zoom-out:hover {
-  background-color: var(--panel2, #f1f3f4) !important;
-  color: var(--accent, #1a73e8) !important;
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* Admin Console Floating Button (stacked right above zoom controls at right bottom) */
@@ -3465,8 +3440,6 @@ const PROVIDERS = [
 ];
 let pIdx = 0, tileErrors = 0, tileLayer = null;
 const map = L.map("map", {zoomControl:false, worldCopyJump:true}).setView([16.0,106.5], 6);
-// Move Zoom In/Out control to right bottom corner (rev 0.0.28)
-L.control.zoom({ position: "bottomright" }).addTo(map);
 function addTiles(){
   const p = PROVIDERS[pIdx];
   tileLayer = L.tileLayer(p.url, {maxZoom:p.max, attribution:p.attr}).addTo(map);
