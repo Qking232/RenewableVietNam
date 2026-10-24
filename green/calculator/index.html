@@ -1203,9 +1203,14 @@
                                .slice(0, 3);
 
       recContainer.innerHTML = suitableHubs.map((h, i) => `
-        <div class="flex items-center justify-between p-1.5 rounded bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder">
-          <span class="font-medium text-inkPrimary dark:text-textDarkPrimary">${i + 1}. ${h.name} (${h.province})</span>
-          <span class="text-teal-600 dark:text-teal-400 font-semibold">${h.cleanEnergyShare}% clean &middot; ${h.substation}</span>
+        <div class="p-2 rounded-lg bg-white dark:bg-darkSurface border border-slate-200 dark:border-darkBorder space-y-1">
+          <div class="flex items-center justify-between gap-2 min-w-0">
+            <span class="font-medium text-inkPrimary dark:text-textDarkPrimary truncate">${i + 1}. ${h.name} <span class="text-inkMuted dark:text-textDarkMuted text-[10px]">(${h.province})</span></span>
+            <span class="text-teal-600 dark:text-teal-400 font-semibold shrink-0">${h.cleanEnergyShare}% clean</span>
+          </div>
+          <div class="text-[10px] text-slate-400 dark:text-slate-500 truncate font-mono">
+            ${h.substation}
+          </div>
         </div>
       `).join("");
     }

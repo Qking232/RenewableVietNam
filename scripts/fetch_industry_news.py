@@ -15,6 +15,7 @@ import sys
 import json
 import ssl
 import re
+import hashlib
 import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -34,49 +35,57 @@ FEED_DEFINITIONS = [
         "name": "Google News DPPA & Statutory",
         "type": "google_news",
         "query": "Vietnam DPPA OR \"Decree 80\" OR \"power purchase agreement\" OR \"direct power purchase\"",
-        "default_sector": "Policy & DPPA"
+        "default_sector": "Policy & DPPA",
+        "default_source": "Policy & DPPA Wire"
     },
     {
         "name": "Google News Eco-Parks & Siting",
         "type": "google_news",
         "query": "Vietnam \"eco-industrial park\" OR \"industrial park\" clean energy OR \"industrial zone\" solar",
-        "default_sector": "Eco-Parks & Siting"
+        "default_sector": "Eco-Parks & Siting",
+        "default_source": "Industrial Siting Wire"
     },
     {
         "name": "Google News Solar & Offshore Wind",
         "type": "google_news",
         "query": "Vietnam \"offshore wind\" OR \"rooftop solar\" OR \"clean energy transition\"",
-        "default_sector": "Solar & Wind"
+        "default_sector": "Solar & Wind",
+        "default_source": "Renewable Tech Wire"
     },
     {
         "name": "Google News High-Voltage Grid & Interconnect",
         "type": "google_news",
         "query": "Vietnam EVN OR \"500kV\" OR \"220kV\" OR \"substation\" OR \"power grid\"",
-        "default_sector": "Grid & Interconnect"
+        "default_sector": "Grid & Interconnect",
+        "default_source": "Grid & EVN Wire"
     },
     {
         "name": "Google News VIR FDI & Infrastructure",
         "type": "google_news",
         "query": "site:vir.com.vn \"renewable\" OR \"solar\" OR \"wind\" OR \"industrial park\" OR \"energy\"",
-        "default_sector": "FDI & Infrastructure"
+        "default_sector": "FDI & Infrastructure",
+        "default_source": "Vietnam Investment Review - VIR"
     },
     {
         "name": "Google News Macro & PDP8 Energy Transition",
         "type": "google_news",
         "query": "Vietnam \"PDP8\" OR \"JETP\" OR \"power development plan\" OR \"net zero\" OR \"energy transition\"",
-        "default_sector": "Policy & DPPA"
+        "default_sector": "Policy & DPPA",
+        "default_source": "PDP8 Strategic Wire"
     },
     {
         "name": "Google News Corporate Clean Siting & RE100",
         "type": "google_news",
         "query": "Vietnam \"Lego\" renewable OR \"Samsung\" solar OR \"Foxconn\" green power OR \"VSIP\" clean energy",
-        "default_sector": "Eco-Parks & Siting"
+        "default_sector": "Eco-Parks & Siting",
+        "default_source": "Corporate RE100 Wire"
     },
     {
         "name": "Google News Storage, Hydrogen & Renewables",
         "type": "google_news",
         "query": "Vietnam \"battery storage\" OR \"BESS\" OR \"green hydrogen\" OR \"floating solar\"",
-        "default_sector": "Solar & Wind"
+        "default_sector": "Solar & Wind",
+        "default_source": "Clean Storage Wire"
     },
     {
         "name": "Vietnam News Environment Feed",
@@ -98,8 +107,118 @@ FEED_DEFINITIONS = [
         "url": "https://e.vnexpress.net/rss/business.rss",
         "default_sector": "FDI & Infrastructure",
         "default_source": "VnExpress International"
+    },
+    {
+        "name": "PV Magazine International",
+        "type": "direct_rss",
+        "url": "https://www.pv-magazine.com/feed/",
+        "default_sector": "Solar & Wind",
+        "default_source": "PV Magazine"
+    },
+    {
+        "name": "CleanTechnica Global Transition Feed",
+        "type": "direct_rss",
+        "url": "https://cleantechnica.com/feed/",
+        "default_sector": "Solar & Wind",
+        "default_source": "CleanTechnica"
+    },
+    {
+        "name": "Tuoi Tre News Business & Energy",
+        "type": "direct_rss",
+        "url": "https://tuoitrenews.vn/rss/business.rss",
+        "default_sector": "FDI & Infrastructure",
+        "default_source": "Tuoi Tre News"
+    },
+    {
+        "name": "Google News Reuters Energy & Transition",
+        "type": "google_news",
+        "query": "site:reuters.com (\"Vietnam\" OR \"Southeast Asia\") AND (\"energy\" OR \"renewable\" OR \"solar\" OR \"wind\" OR \"power\" OR \"grid\")",
+        "default_sector": "FDI & Infrastructure",
+        "default_source": "Reuters"
+    },
+    {
+        "name": "Google News Bloomberg Green & Climate",
+        "type": "google_news",
+        "query": "site:bloomberg.com (\"Vietnam\" OR \"Southeast Asia\") AND (\"energy\" OR \"renewable\" OR \"clean\" OR \"power\" OR \"carbon\")",
+        "default_sector": "Finance & ESG",
+        "default_source": "Bloomberg"
+    },
+    {
+        "name": "Google News Nikkei Asia Clean Power",
+        "type": "google_news",
+        "query": "site:asia.nikkei.com Vietnam AND (\"energy\" OR \"power\" OR \"renewable\" OR \"solar\" OR \"EVN\")",
+        "default_sector": "FDI & Infrastructure",
+        "default_source": "Nikkei Asia"
+    },
+    {
+        "name": "Google News The Saigon Times",
+        "type": "google_news",
+        "query": "site:thesaigontimes.vn (\"renewable\" OR \"energy\" OR \"power\" OR \"DPPA\" OR \"solar\" OR \"green\")",
+        "default_sector": "Policy & DPPA",
+        "default_source": "The Saigon Times"
+    },
+    {
+        "name": "Google News EVN Statutory & Grid Dispatches",
+        "type": "google_news",
+        "query": "site:en.evn.com.vn OR site:evn.com.vn (\"power\" OR \"transmission\" OR \"renewable\" OR \"500kV\")",
+        "default_sector": "Grid & Interconnect",
+        "default_source": "EVN Portal"
     }
 ]
+
+SOURCE_BRAND_CONFIG = {
+    "VnExpress International": {"color": "#990000", "badge_bg": "rgba(153,0,0,0.12)", "tier": "Domestic Tier 1", "category": "National English Daily"},
+    "Vietnam News": {"color": "#034ea2", "badge_bg": "rgba(3,78,162,0.12)", "tier": "Domestic Tier 1", "category": "Official English Newspaper"},
+    "Vietnam Investment Review - VIR": {"color": "#b8860b", "badge_bg": "rgba(184,134,11,0.12)", "tier": "Domestic Tier 1", "category": "FDI & Infrastructure"},
+    "Reuters": {"color": "#ea580c", "badge_bg": "rgba(234,88,12,0.12)", "tier": "Global Wire", "category": "Global News Agency"},
+    "Bloomberg": {"color": "#2563eb", "badge_bg": "rgba(37,99,235,0.12)", "tier": "Global Wire", "category": "Financial News Wire"},
+    "PV Magazine": {"color": "#ca8a04", "badge_bg": "rgba(202,138,4,0.12)", "tier": "Specialist", "category": "Photovoltaic Global Press"},
+    "CleanTechnica": {"color": "#059669", "badge_bg": "rgba(5,150,105,0.12)", "tier": "Specialist", "category": "Clean Energy Media"},
+    "Tuoi Tre News": {"color": "#0284c7", "badge_bg": "rgba(2,132,199,0.12)", "tier": "Domestic Tier 1", "category": "National English Daily"},
+    "Nikkei Asia": {"color": "#dc2626", "badge_bg": "rgba(220,38,38,0.12)", "tier": "Regional Wire", "category": "Asia Economic Journal"},
+    "The Saigon Times": {"color": "#0d9488", "badge_bg": "rgba(13,148,136,0.12)", "tier": "Domestic Tier 1", "category": "Business Weekly"},
+    "EVN Portal": {"color": "#1e40af", "badge_bg": "rgba(30,64,175,0.12)", "tier": "Authority", "category": "National Grid Operator"}
+}
+
+def get_source_metadata(source_name: str) -> dict:
+    """Return institutional branding metadata for a news source."""
+    if not source_name:
+        return {"color": "#0d9488", "badge_bg": "rgba(13,148,136,0.12)", "tier": "Wire", "category": "Market Intelligence Wire"}
+    
+    clean = source_name.lower()
+    for brand, cfg in SOURCE_BRAND_CONFIG.items():
+        if brand.lower() in clean or clean in brand.lower():
+            return cfg
+            
+    if "reuters" in clean:
+        return SOURCE_BRAND_CONFIG["Reuters"]
+    if "bloomberg" in clean:
+        return SOURCE_BRAND_CONFIG["Bloomberg"]
+    if "pv magazine" in clean or "pv-magazine" in clean:
+        return SOURCE_BRAND_CONFIG["PV Magazine"]
+    if "cleantechnica" in clean:
+        return SOURCE_BRAND_CONFIG["CleanTechnica"]
+    if "vnexpress" in clean:
+        return SOURCE_BRAND_CONFIG["VnExpress International"]
+    if "vietnam news" in clean or "vietnamnews" in clean:
+        return SOURCE_BRAND_CONFIG["Vietnam News"]
+    if "vir" in clean or "investment review" in clean:
+        return SOURCE_BRAND_CONFIG["Vietnam Investment Review - VIR"]
+    if "tuoi tre" in clean:
+        return SOURCE_BRAND_CONFIG["Tuoi Tre News"]
+    if "nikkei" in clean:
+        return SOURCE_BRAND_CONFIG["Nikkei Asia"]
+    if "saigon" in clean:
+        return SOURCE_BRAND_CONFIG["The Saigon Times"]
+    if "evn" in clean:
+        return SOURCE_BRAND_CONFIG["EVN Portal"]
+        
+    return {"color": "#0d9488", "badge_bg": "rgba(13,148,136,0.12)", "tier": "Wire", "category": "Market Intelligence Wire"}
+
+def make_article_id(title: str, link: str) -> str:
+    """Deterministic unique MD5 identifier for an article."""
+    seed = (title.strip().lower() + link.strip().lower()).encode('utf-8')
+    return "art_" + hashlib.md5(seed).hexdigest()[:12]
 
 # Curated High-Definition Thematic Preview Images (Unsplash CDN optimized WebP/JPG)
 SECTOR_IMAGE_POOLS = {
@@ -287,10 +406,18 @@ def fetch_feed_items(feed_def: dict) -> list:
                 if not img_url:
                     img_url = get_thematic_sector_image(sector, clean_title)
                 
+                src_meta = get_source_metadata(source_name)
+                art_id = make_article_id(clean_title, raw_link)
+
                 items_out.append({
+                    "id": art_id,
                     "title": clean_title,
                     "link": raw_link,
                     "source": source_name,
+                    "source_tier": src_meta.get("tier", "Wire"),
+                    "source_color": src_meta.get("color", "#0d9488"),
+                    "source_badge_bg": src_meta.get("badge_bg", "rgba(13,148,136,0.12)"),
+                    "source_category": src_meta.get("category", "Market Intelligence Wire"),
                     "pub_date_raw": raw_pub_date,
                     "iso_date": pub_dt.isoformat(),
                     "timestamp": int(pub_dt.timestamp()),
