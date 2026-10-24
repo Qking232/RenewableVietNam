@@ -154,10 +154,39 @@ const tariffRows = [
 console.log(`[4] Tariff Schedules: Prepared ${tariffRows.length} rows.`);
 
 // ---------------------------------------------------------------------------
-// 4. Seeding Action (Live or Dry-Run)
+// 4. Prepare Market Intelligence Dispatches
+// ---------------------------------------------------------------------------
+const newsFile = join(ROOT, 'data', 'industry_news.json');
+let dispatchRows = [];
+
+if (existsSync(newsFile)) {
+  const newsJson = JSON.parse(readFileSync(newsFile, 'utf8'));
+  const articles = newsJson.articles || [];
+  dispatchRows = articles.map(a => ({
+    id: a.id,
+    title: a.title,
+    link: a.link,
+    source: a.source,
+    source_tier: a.source_tier || 'Wire',
+    source_color: a.source_color || '#0d9488',
+    source_badge_bg: a.source_badge_bg || 'rgba(13,148,136,0.12)',
+    source_category: a.source_category || 'Market Intelligence Wire',
+    sector: a.sector,
+    snippet: a.snippet || null,
+    image_url: a.image_url || null,
+    pub_date_raw: a.pub_date_raw || null,
+    iso_date: a.iso_date || new Date().toISOString(),
+    timestamp: a.timestamp || Math.floor(Date.now() / 1000),
+    relative_time: a.relative_time || 'Recent'
+  }));
+}
+console.log(`[5] Market Dispatches: Parsed ${dispatchRows.length} rows.`);
+
+// ---------------------------------------------------------------------------
+// 5. Seeding Action (Live or Dry-Run)
 // ---------------------------------------------------------------------------
 if (DRY || !KEY) {
-  console.log('\n✓ Dry run complete: All 4 schemas successfully formatted and validated.');
+  console.log('\n✓ Dry run complete: All 5 schemas successfully formatted and validated.');
   process.exit(0);
 }
 
@@ -187,6 +216,9 @@ async function run() {
     await upsertTable('pdp8_fuel_targets', fuelRows);
     await upsertTable('pdp8_priority_projects', priorityRows);
     await upsertTable('tariff_schedules', tariffRows);
+    if (dispatchRows.length > 0) {
+      await upsertTable('market_dispatches', dispatchRows);
+    }
     console.log('\n>>> ALL SUPABASE TABLES SUCCESSFULLY SEEDED <<<');
   } catch (err) {
     console.error('Seeding error:', err.message);

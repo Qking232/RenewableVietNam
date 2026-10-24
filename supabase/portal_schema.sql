@@ -118,3 +118,38 @@ grant select on public.tariff_schedules to anon, authenticated;
 
 drop policy if exists tariff_schedules_read on public.tariff_schedules;
 create policy tariff_schedules_read on public.tariff_schedules for select to anon, authenticated using (true);
+
+
+-- ---------------------------------------------------------------------------
+-- 5. Real-Time Market Dispatches & Multi-Source Wire Feeds (public.market_dispatches)
+-- ---------------------------------------------------------------------------
+create table if not exists public.market_dispatches (
+  id                    text primary key,
+  title                 text not null,
+  link                  text not null,
+  source                text not null,
+  source_tier           text default 'Wire',
+  source_color          text default '#0d9488',
+  source_badge_bg       text default 'rgba(13,148,136,0.12)',
+  source_category       text default 'Market Intelligence Wire',
+  sector                text not null,
+  snippet               text,
+  image_url             text,
+  pub_date_raw          text,
+  iso_date              timestamptz not null default now(),
+  timestamp             bigint,
+  relative_time         text,
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz not null default now()
+);
+
+create index if not exists market_dispatches_date_idx on public.market_dispatches (iso_date desc);
+create index if not exists market_dispatches_sector_idx on public.market_dispatches (sector);
+create index if not exists market_dispatches_source_idx on public.market_dispatches (source);
+
+alter table public.market_dispatches enable row level security;
+grant select on public.market_dispatches to anon, authenticated;
+
+drop policy if exists market_dispatches_read on public.market_dispatches;
+create policy market_dispatches_read on public.market_dispatches for select to anon, authenticated using (true);
+
