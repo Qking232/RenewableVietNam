@@ -1288,7 +1288,7 @@
     let activeHubView = "cards"; // "cards" or "table"
     window.hubMarkerMap = new Map();
 
-    function renderHubsDossier(filtered) {
+    function renderHubsDossier(filtered, updateMapMarkers = true) {
       const cardsList = document.getElementById("hubCardsList");
       const tbody = document.getElementById("hubsTableBody");
       const countEl = document.getElementById("filteredHubsCount");
@@ -1301,6 +1301,9 @@
         if (cardsList) cardsList.innerHTML = `<div class="p-8 text-center text-slate-400 font-mono text-xs">No industrial hubs match active filters across ${HUBS.length} national records.</div>`;
         if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400 font-mono text-xs">No matching industrial hubs.</td></tr>`;
         updatePaginationBar(0, 0, 0);
+        if (hubMap && hubMarkersLayer && updateMapMarkers) {
+          renderMapMarkers([]);
+        }
         return;
       }
 
@@ -1390,8 +1393,8 @@
       if (cardsList) cardsList.innerHTML = cardsHtml;
       if (tbody) tbody.innerHTML = tableHtml;
 
-      if (hubMap && hubMarkersLayer) {
-        renderMapMarkers(paged.length > 0 ? paged : filtered.slice(0, 50));
+      if (hubMap && hubMarkersLayer && updateMapMarkers) {
+        renderMapMarkers(filtered);
       }
     }
 
@@ -1404,11 +1407,20 @@
         const targetPage = Math.floor(idx / effectivePageSize) + 1;
         if (currentPage !== targetPage) {
           currentPage = targetPage;
-          renderHubsDossier(filtered);
+          renderHubsDossier(filtered, false);
         }
       }
 
       highlightHubCard(hubId);
+
+      // Highlight active pin
+      document.querySelectorAll('.hub-marker-pin').forEach(p => {
+        p.classList.remove('ring-4', 'ring-teal-400', 'scale-125');
+      });
+      const activePin = document.querySelector(`.hub-marker-pin[data-marker-id="${hubId}"]`);
+      if (activePin) {
+        activePin.classList.add('ring-4', 'ring-teal-400', 'scale-125');
+      }
     }
 
     // Bi-Directional Synchronizer: Dossier Card Click -> Map FlyTo
@@ -1425,6 +1437,15 @@
             marker.openPopup();
           }, 900);
         }
+      }
+
+      // Highlight active pin
+      document.querySelectorAll('.hub-marker-pin').forEach(p => {
+        p.classList.remove('ring-4', 'ring-teal-400', 'scale-125');
+      });
+      const activePin = document.querySelector(`.hub-marker-pin[data-marker-id="${hubId}"]`);
+      if (activePin) {
+        activePin.classList.add('ring-4', 'ring-teal-400', 'scale-125');
       }
     }
 
@@ -1469,9 +1490,9 @@
       });
     }
 
-    function renderTable() {
+    function renderTable(updateMapMarkers = true) {
       const filtered = getFilteredHubs();
-      renderHubsDossier(filtered);
+      renderHubsDossier(filtered, updateMapMarkers);
     }
 
     function updatePaginationBar(totalFiltered, startIdx, endIdx) {
@@ -1575,7 +1596,8 @@
       }).addTo(hubMap);
 
       hubMarkersLayer = L.layerGroup().addTo(hubMap);
-      renderMapMarkers(HUBS.slice(0, 50));
+      const initialHubs = (typeof getFilteredHubs === "function") ? getFilteredHubs() : HUBS;
+      renderMapMarkers(initialHubs);
 
       // Reset zoom button
       const resetBtn = document.getElementById("resetMapZoomBtn");
@@ -1617,10 +1639,9 @@
       const countEl = document.getElementById("visibleHubPinsCount");
       if (countEl) countEl.textContent = hubsToRender.length;
 
+      const validHubs = (hubsToRender || []).filter(h => h.lat && h.lng);
 
-      hubsToRender.forEach(hub => {
-        if (!hub.lat || !hub.lng) return;
-
+      validHubs.forEach(hub => {
         const isReady = hub.dppaClass === "ready";
         const isCat2 = hub.dppaClass === "cat2";
         const pinBg = isReady ? "bg-emerald-500" : (isCat2 ? "bg-sky-500" : "bg-slate-500");
@@ -1628,7 +1649,7 @@
         const customIcon = L.divIcon({
           className: 'custom-hub-marker',
           html: `
-            <div class="hub-marker-pin ${pinBg} text-white w-7 h-7 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[9px] font-bold">
+            <div class="hub-marker-pin ${pinBg} text-white w-7 h-7 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[9px] font-bold" data-marker-id="${hub.id}">
               ${hub.substationKv || 110}k
             </div>
           `,
@@ -1687,6 +1708,16 @@
         hubMarkersLayer.addLayer(marker);
         window.hubMarkerMap.set(hub.id, marker);
       });
+
+      // Smart Spatial Bounding: when filtering to a province or search query, auto-fit map view
+      if (hubMap && validHubs.length > 0 && validHubs.length < HUBS.length) {
+        try {
+          const group = L.featureGroup(Array.from(window.hubMarkerMap.values()));
+          hubMap.fitBounds(group.getBounds().pad(0.15), { maxZoom: 12 });
+        } catch (e) {
+          // ignore geometry fitting errors
+        }
+      }
     }
 
     function locateHubOnMap(hubId) {
@@ -1706,77 +1737,25 @@
       }
 
       mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      hubMap.flyTo([hub.lat, hub.lng], 13, { duration: 0.95 });
 
-      hubMap.flyTo([hub.lat, hub.lng], 12, { duration: 1.2 });
+      const marker = window.hubMarkerMap.get(hubId);
+      if (marker) {
+        setTimeout(() => {
+          marker.openPopup();
+        }, 950);
+      }
 
-      setTimeout(() => {
-        let found = false;
-        hubMarkersLayer.eachLayer(layer => {
-          if (layer.getLatLng && 
-              Math.abs(layer.getLatLng().lat - hub.lat) < 0.001 && 
-              Math.abs(layer.getLatLng().lng - hub.lng) < 0.001) {
-            layer.openPopup();
-            found = true;
-          }
-        });
+      // Highlight active pin
+      document.querySelectorAll('.hub-marker-pin').forEach(p => {
+        p.classList.remove('ring-4', 'ring-teal-400', 'scale-125');
+      });
+      const activePin = document.querySelector(`.hub-marker-pin[data-marker-id="${hubId}"]`);
+      if (activePin) {
+        activePin.classList.add('ring-4', 'ring-teal-400', 'scale-125');
+      }
 
-        if (!found) {
-          const isReady = hub.dppaClass === "ready";
-          const isCat2 = hub.dppaClass === "cat2";
-          const pinBg = isReady ? "bg-emerald-500" : (isCat2 ? "bg-sky-500" : "bg-slate-500");
-          const customIcon = L.divIcon({
-            className: 'custom-hub-marker',
-            html: `
-              <div class="hub-marker-pin ${pinBg} text-white w-7 h-7 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[9px] font-bold">
-                ${hub.substationKv || 110}k
-              </div>
-            `,
-            iconSize: [28, 28],
-            iconAnchor: [14, 14],
-            popupAnchor: [0, -14]
-          });
-          const popupContent = `
-            <div class="space-y-2 p-1 text-xs font-sans">
-              <div class="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-white/10 pb-1.5">
-                <span class="font-mono text-[10px] uppercase font-semibold text-teal-600 dark:text-teal-400">
-                  ${hub.province} &middot; ${hub.region}
-                </span>
-                <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${isReady ? 'bg-emerald-500/20 text-emerald-400' : 'bg-sky-500/20 text-sky-400'} font-semibold">
-                  ${hub.substationKv}kV
-                </span>
-              </div>
-              <div>
-                <h4 class="font-medium text-xs sm:text-sm text-inkPrimary dark:text-textDarkPrimary leading-tight">
-                  ${hub.name}
-                </h4>
-                <p class="text-[11px] text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
-                  ${hub.developer}
-                </p>
-              </div>
-              <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-[10px]">
-                <div class="bg-slate-100 dark:bg-darkCard p-1.5 rounded">
-                  <span class="text-slate-400 block">Rooftop Solar</span>
-                  <span class="font-semibold text-teal-600 dark:text-teal-400">${hub.rooftopInstalledMWp} / ${hub.rooftopPotentialMWp} MWp</span>
-                </div>
-                <div class="bg-slate-100 dark:bg-darkCard p-1.5 rounded">
-                  <span class="text-slate-400 block">Clean Share</span>
-                  <span class="font-semibold text-emerald-600 dark:text-emerald-400">${hub.cleanEnergyShare}%</span>
-                </div>
-              </div>
-              <div class="pt-1.5 flex items-center justify-between gap-2">
-                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted font-mono">
-                  ${hub.dppaTier}
-                </span>
-                <button onclick="openHubModal('${hub.id}')" class="px-2.5 py-1 rounded bg-teal-600 hover:bg-teal-500 text-white font-mono text-[10px] font-medium transition-colors cursor-pointer shadow-sm">
-                  View Dossier &rarr;
-                </button>
-              </div>
-            </div>
-          `;
-          const m = L.marker([hub.lat, hub.lng], { icon: customIcon }).addTo(hubMarkersLayer);
-          m.bindPopup(popupContent, { maxWidth: 280 }).openPopup();
-        }
-      }, 1300);
+      highlightHubCard(hubId);
     }
 
     function closeHubModal() {
@@ -2240,7 +2219,7 @@
         pageSizeSelect.addEventListener("change", (e) => {
           pageSize = e.target.value === "all" ? "all" : parseInt(e.target.value, 10);
           currentPage = 1;
-          renderTable();
+          renderTable(false);
         });
       }
 
@@ -2251,14 +2230,14 @@
         prevPageBtn.addEventListener("click", () => {
           if (currentPage > 1) {
             currentPage--;
-            renderTable();
+            renderTable(false);
           }
         });
       }
       if (nextPageBtn) {
         nextPageBtn.addEventListener("click", () => {
           currentPage++;
-          renderTable();
+          renderTable(false);
         });
       }
 
