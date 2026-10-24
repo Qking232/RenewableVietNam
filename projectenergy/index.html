@@ -4,34 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
-  <title>Vietnam Clean Energy Projects Map | National Clean Energy Atlas & Grid Pipeline</title>
+  <title>Vietnam Clean Energy Asset Registry | National Clean Energy Atlas & Grid Pipeline</title>
   <meta name="description" content="Authoritative geospatial intelligence atlas on Vietnam's 960+ utility-scale clean generation facilities: Solar, Wind, Hydro, Biomass, and LNG with direct DPPA corridors and grid capacity on high-resolution satellite cartography." />
-  <meta name="keywords" content="Vietnam renewable energy map, clean energy projects Vietnam, solar power plants Vietnam, wind farms Vietnam, hydropower Vietnam, DPPA Vietnam, PDP8 energy atlas" />
+  <meta name="keywords" content="Vietnam renewable energy registry, clean energy projects Vietnam, solar power plants Vietnam, wind farms Vietnam, hydropower Vietnam, DPPA Vietnam, PDP8 energy atlas" />
   <link rel="canonical" href="https://renewablevietnam.com/projectenergy/" />
 
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://renewablevietnam.com/projectenergy/" />
-  <meta property="og:title" content="Vietnam Clean Energy Projects Map | National Clean Energy Atlas" />
+  <meta property="og:title" content="Vietnam Clean Energy Asset Registry | National Clean Energy Atlas" />
   <meta property="og:description" content="Explore 960+ utility-scale clean energy generation facilities across Vietnam with satellite cartography and capacity telemetry." />
   <meta property="og:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
 
   <!-- Twitter Meta -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://renewablevietnam.com/projectenergy/" />
-  <meta name="twitter:title" content="Vietnam Clean Energy Projects Map | National Clean Energy Atlas" />
+  <meta name="twitter:title" content="Vietnam Clean Energy Asset Registry | National Clean Energy Atlas" />
   <meta name="twitter:description" content="Explore 960+ utility-scale clean energy generation facilities across Vietnam with satellite cartography." />
   <meta name="twitter:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
 
   <!-- Performance & Resource Hints -->
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
-  <link rel="dns-prefetch" href="https://server.arcgisonline.com">
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
   <script src="/assets/js/supabase-client.js"></script>
-
-  <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Tailwind CSS Play CDN & Institutional Color Palette Configuration -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -104,40 +99,7 @@
       background: rgba(59, 130, 246, 0.4);
     }
 
-    /* Leaflet High-DPI & OLED Midnight Styling */
-    .leaflet-container {
-      background: #070A12;
-      font-family: inherit;
-    }
-    .leaflet-popup-content-wrapper {
-      background: #0D1322 !important;
-      color: #F8FAFC !important;
-      border: 1px solid rgba(59, 130, 246, 0.25) !important;
-      border-radius: 14px !important;
-      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6) !important;
-      padding: 2px !important;
-    }
-    .leaflet-popup-content {
-      margin: 10px 14px !important;
-      line-height: 1.4 !important;
-    }
-    .leaflet-popup-tip {
-      background: #0D1322 !important;
-      border: 1px solid rgba(59, 130, 246, 0.25) !important;
-    }
-    html:not(.dark) .leaflet-container {
-      background: #F1F5F9;
-    }
-    html:not(.dark) .leaflet-popup-content-wrapper {
-      background: #FFFFFF !important;
-      color: #0F172A !important;
-      border: 1px solid #CBD5E1 !important;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
-    }
-    html:not(.dark) .leaflet-popup-tip {
-      background: #FFFFFF !important;
-      border: 1px solid #CBD5E1 !important;
-    }
+    /* Leaflet styles purged for full-width layout */
     .project-marker-pin {
       display: flex;
       align-items: center;
@@ -254,10 +216,10 @@
             </span>
           </div>
           <h1 class="text-xl sm:text-2xl lg:text-3xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
-            Vietnam PDP8 Clean Energy Map &amp; Statutory Asset Pipeline
+            Vietnam PDP8 Clean Energy Registry &amp; Statutory Asset Pipeline
           </h1>
           <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light max-w-4xl">
-            Authoritative statutory compliance tracker and geospatial asset registry comparing Vietnam's active commercial baseload (80.6 GW across 960 utility assets) against the 150.5 GW statutory capacity mandate under Decision 500/QĐ-TTg with direct DPPA bilateral wheeling corridors and high-resolution satellite cartography.
+            Authoritative statutory compliance tracker and geospatial asset registry comparing Vietnam's active commercial baseload (80.6 GW across 960 utility assets) against the 150.5 GW statutory capacity mandate under Decision 500/QĐ-TTg with direct DPPA bilateral wheeling corridors and comprehensive asset intelligence.
           </p>
         </div>
 
@@ -1073,7 +1035,7 @@
     let pdp8Dataset = null;
 
     // Leaflet map & synchronization registry
-    let energyMap = null;
+    // let energyMap = null; purged
     let markersLayer = null;
     window.markerByIdx = new Map();
 
@@ -1175,7 +1137,7 @@
       }
 
       applyFilters();
-      initEnergyMap();
+      // initEnergyMap(); purged
     }
 
     // 6. Filter Engine
@@ -1214,7 +1176,7 @@
       if (countEl) countEl.textContent = FILTERED_PROJECTS.length.toLocaleString();
 
       renderAssetsDossier();
-      renderMapPins();
+      // renderMapPins(); purged
     }
 
     // 7. Render Assets Dossier (Cards & Table)
@@ -1333,98 +1295,7 @@
       if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
     }
 
-    // 8. Leaflet Map Initialization
-    function initEnergyMap() {
-      const mapEl = document.getElementById("energyMap");
-      if (!mapEl || energyMap || typeof L === "undefined") return;
-
-      energyMap = L.map('energyMap', {
-        center: [15.8, 107.5],
-        zoom: 6,
-        minZoom: 5,
-        maxZoom: 19,
-        scrollWheelZoom: false,
-        preferCanvas: true
-      });
-
-      energyMap.on('click', () => {
-        energyMap.scrollWheelZoom.enable();
-      });
-
-      // Exclusive Satellite Basemap (ArcGIS Esri World Imagery)
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        subdomains: 'abcd',
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
-        maxZoom: 19
-      }).addTo(energyMap);
-
-      // Vietnamese Sovereignty Markers (Hoàng Sa & Trường Sa)
-      L.marker([16.5, 112.0], {
-        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Hoàng Sa (Việt Nam)</div>' }),
-        keyboard: false
-      }).addTo(energyMap);
-
-      L.marker([9.5, 113.5], {
-        icon: L.divIcon({ className: "island-lbl", html: '<div style="background:rgba(20,30,40,0.85);color:#2dd4bf;padding:2px 6px;border-radius:4px;border:1px solid #2dd4bf;font-weight:700;font-size:10px;white-space:nowrap;font-family:monospace;">🇻🇳 QĐ. Trường Sa (Việt Nam)</div>' }),
-        keyboard: false
-      }).addTo(energyMap);
-
-      markersLayer = L.layerGroup().addTo(energyMap);
-      renderMapPins();
-
-      // Reset Extent Button
-      const resetBtn = document.getElementById("resetMapZoomBtn");
-      if (resetBtn) {
-        resetBtn.addEventListener("click", () => {
-          energyMap.flyTo([15.8, 107.5], 6, { duration: 1 });
-        });
-      }
-    }
-
-    // 9. Render Map Pins & Bind Spatial Synchronization
-    function renderMapPins() {
-      if (!markersLayer || typeof L === "undefined") return;
-      markersLayer.clearLayers();
-      window.markerByIdx.clear();
-
-      const pinsToRender = FILTERED_PROJECTS.slice(0, 200);
-      pinsToRender.forEach(p => {
-        if (!p.lat || !p.lon) return;
-
-        const globalIdx = ALL_PROJECTS.indexOf(p);
-        const fuelBg = FUEL_COLORS[p.type] || "bg-slate-500";
-        const pinIcon = L.divIcon({
-          className: 'custom-project-marker',
-          html: `
-            <div class="project-marker-pin ${fuelBg} text-white w-6 h-6 rounded-full border-2 border-white dark:border-obsidian shadow-lg flex items-center justify-center font-mono text-[8px] font-bold">
-              ${(p.type || "P")[0]}
-            </div>
-          `
-        });
-
-        const marker = L.marker([p.lat, p.lon], { icon: pinIcon });
-        marker.bindPopup(`
-          <div class="space-y-1.5 font-mono text-xs">
-            <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${fuelBg} text-white">${p.type || 'Power'}</span>
-            <div class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">${p.name}</div>
-            <div class="text-teal-600 dark:text-teal-400 font-semibold">${p.capacity || 'N/A'}</div>
-            <div class="text-slate-500 text-[11px]">${p.location || 'Vietnam'}</div>
-            <div class="text-[10px] text-slate-400 pt-1">${p.company || ''}</div>
-          </div>
-        `);
-
-        // Bi-directional click on pin -> Select card in right pane
-        marker.on('click', () => {
-          selectAssetFromMap(globalIdx);
-        });
-
-        markersLayer.addLayer(marker);
-        window.markerByIdx.set(globalIdx, marker);
-      });
-
-      const countEl = document.getElementById("visiblePinsCount");
-      if (countEl) countEl.textContent = `${pinsToRender.length} of ${FILTERED_PROJECTS.length}`;
-    }
+    // Leaflet Map Engine Purged for Clean Registry Layout
 
     // 10. Bi-Directional Synchronizer: Pin Click -> Dossier Card Selection
     function selectAssetFromMap(globalIdx) {
@@ -1449,21 +1320,9 @@
     // 11. Bi-Directional Synchronizer: Dossier Card Click -> Map FlyTo
     function selectAssetFromDossier(globalIdx, event) {
       if (event && event.target.closest('.modal-trigger-btn')) return;
-
       const p = ALL_PROJECTS[globalIdx];
       if (!p) return;
-
       highlightDossierCard(globalIdx);
-
-      if (p.lat && p.lon && energyMap) {
-        energyMap.flyTo([p.lat, p.lon], 13, { duration: 0.9 });
-        const marker = window.markerByIdx.get(globalIdx);
-        if (marker) {
-          setTimeout(() => {
-            marker.openPopup();
-          }, 950);
-        }
-      }
     }
 
     // 12. Highlight Card Element in Dossier Pane
@@ -1579,11 +1438,7 @@
         (p.location && p.location.toLowerCase().includes(province.toLowerCase()))
       );
 
-      if (match && match.lat && match.lon && energyMap) {
-        energyMap.flyTo([match.lat, match.lon], 12, { duration: 0.9 });
-        const globalIdx = ALL_PROJECTS.indexOf(match);
-        selectAssetFromMap(globalIdx);
-      } else if (match) {
+      if (match) {
         const globalIdx = ALL_PROJECTS.indexOf(match);
         selectAssetFromMap(globalIdx);
       } else {
