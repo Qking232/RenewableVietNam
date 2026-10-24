@@ -375,6 +375,39 @@
           <button data-news-sector="Finance & ESG" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">Finance &amp; ESG</button>
           <button data-news-sector="FDI & Infrastructure" class="news-sector-pill px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer">FDI &amp; Infrastructure</button>
         </div>
+
+        <!-- Multi-Source Internet Wire Filter Pills -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100 dark:border-white/[0.04] text-[11px] font-mono">
+          <span class="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[10px] mr-1">Source Wire:</span>
+          <button data-news-source="all" class="news-source-pill px-2.5 py-0.5 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer">All Sources</button>
+          <button data-news-source="Reuters" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>Reuters
+          </button>
+          <button data-news-source="Bloomberg" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>Bloomberg
+          </button>
+          <button data-news-source="Nikkei" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>Nikkei Asia
+          </button>
+          <button data-news-source="VnExpress" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>VnExpress
+          </button>
+          <button data-news-source="Vietnam News" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span>Vietnam News
+          </button>
+          <button data-news-source="VIR" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>VIR
+          </button>
+          <button data-news-source="CleanTechnica" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>CleanTechnica
+          </button>
+          <button data-news-source="PV Magazine" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>PV Magazine
+          </button>
+          <button data-news-source="EVN" class="news-source-pill px-2 py-0.5 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>EVN Grid
+          </button>
+        </div>
       </section>
 
       <!-- ==================================================================== -->
@@ -477,6 +510,7 @@
       // 2. Data State
       let allNewsArticles = [];
       let activeNewsSector = "all";
+      let activeNewsSource = "all";
       let newsSearchTerm = "";
       let isNewsExpanded = false;
       const INITIAL_PREVIEW_LIMIT = 50; // User specification: 50 preview articles initially
@@ -494,20 +528,17 @@
         return "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20";
       }
 
-      function updateNewsSyncBadge(isoDate) {
+      function updateNewsSyncBadge(isoDate, sourceTier = "Live Feed") {
         const syncBadge = document.getElementById("newsSyncStatus");
         if (!syncBadge) return;
-        if (!isoDate) {
-          syncBadge.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Live Feed`;
-          return;
-        }
-        try {
-          const d = new Date(isoDate);
-          const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          syncBadge.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Synced ${timeStr}`;
-        } catch {
-          syncBadge.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Synced`;
-        }
+        const d = isoDate ? new Date(isoDate) : new Date();
+        const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        let dotClass = "bg-emerald-500";
+        if (sourceTier.includes("Snapshot") || sourceTier.includes("Cache")) dotClass = "bg-amber-500";
+        if (sourceTier.includes("Direct") || sourceTier.includes("RSS")) dotClass = "bg-sky-500";
+
+        syncBadge.innerHTML = `<span class="inline-flex items-center gap-1.5"><span class="inline-block w-2 h-2 rounded-full ${dotClass} animate-pulse"></span><span>${sourceTier} &middot; ${timeStr}</span></span>`;
       }
 
       // 3. Render Dedicated 5-Row Breaking News Telemetry Stream
@@ -529,6 +560,8 @@
           const badgeClass = getSectorBadgeClass(item.sector);
           const relTime = item.relative_time || "Recent";
           const src = item.source || "Industry Gazette";
+          const srcColor = item.source_color || "#0d9488";
+          const srcBg = item.source_badge_bg || "rgba(13,148,136,0.12)";
           const snippet = item.snippet ? item.snippet.replace(/<[^>]*>?/gm, "") : "";
 
           html += `
@@ -548,8 +581,11 @@
                       <span class="px-2 py-0.5 rounded font-mono text-[10px] font-medium border ${badgeClass}">
                         ${item.sector || 'Energy Policy'}
                       </span>
+                      <span style="color: ${srcColor}; background-color: ${srcBg};" class="px-2 py-0.5 rounded font-mono text-[10px] font-semibold border border-current/20 shadow-xs">
+                        ${src}
+                      </span>
                       <span class="font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-                        ${src} &middot; ${relTime}
+                        ${relTime}
                       </span>
                     </div>
 
@@ -594,6 +630,11 @@
           filtered = filtered.filter(a => a.sector && a.sector.toLowerCase().includes(activeNewsSector.toLowerCase()));
         }
 
+        if (activeNewsSource !== "all") {
+          const srcQ = activeNewsSource.toLowerCase();
+          filtered = filtered.filter(a => (a.source || "").toLowerCase().includes(srcQ));
+        }
+
         if (newsSearchTerm.trim()) {
           const q = newsSearchTerm.toLowerCase().trim();
           filtered = filtered.filter(a => {
@@ -615,7 +656,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
               <div class="text-xs font-mono text-inkPrimary dark:text-textDarkPrimary">No market intelligence dispatches match the query.</div>
-              <p class="text-[11px] text-inkMuted dark:text-textDarkMuted mt-1">Try resetting search keywords or selecting "All Signals".</p>
+              <p class="text-[11px] text-inkMuted dark:text-textDarkMuted mt-1">Try resetting search keywords or selecting "All Signals" / "All Sources".</p>
             </div>
           `;
           if (expandContainer) expandContainer.classList.add("hidden");
@@ -650,6 +691,8 @@
           const snippet = article.snippet ? article.snippet.replace(/<[^>]*>?/gm, "") : "";
           const relTime = article.relative_time || "Recent";
           const src = article.source || "Official Gazette";
+          const srcColor = article.source_color || "#0d9488";
+          const srcBg = article.source_badge_bg || "rgba(13,148,136,0.12)";
 
           html += `
             <article class="flex flex-col justify-between rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden hover:border-teal-500/40 dark:hover:border-teal-400/40 transition-all group">
@@ -657,15 +700,18 @@
                 <img src="${imgSrc}" alt="${article.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=80';"/>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 
-                <div class="absolute top-2.5 left-2.5">
+                <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
                   <span class="px-2 py-0.5 rounded font-mono text-[10px] font-semibold tracking-wider backdrop-blur-md border ${badgeClass} shadow-sm">
                     ${article.sector || 'Policy'}
+                  </span>
+                  <span style="color: ${srcColor}; background-color: ${srcBg};" class="px-2 py-0.5 rounded font-mono text-[10px] font-semibold tracking-wider backdrop-blur-md border border-white/20 shadow-sm">
+                    ${src}
                   </span>
                 </div>
 
                 <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono text-white/90">
-                  <span class="bg-black/40 backdrop-blur-md px-2 py-0.5 rounded">${src}</span>
-                  <span class="bg-black/40 backdrop-blur-md px-2 py-0.5 rounded">${relTime}</span>
+                  <span class="bg-black/50 backdrop-blur-md px-2 py-0.5 rounded">${article.source_category || src}</span>
+                  <span class="bg-black/50 backdrop-blur-md px-2 py-0.5 rounded">${relTime}</span>
                 </div>
               </div>
 
@@ -684,7 +730,7 @@
                     ${article.zone_match || 'Clean Telemetry'}
                   </span>
                   <a href="${article.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                    <span>Read</span>
+                    <span>Read Wire</span>
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
@@ -698,10 +744,13 @@
         grid.innerHTML = html;
       }
 
-      // 5. Fetch News Data Pipeline
+      // 5. Fetch News Data Pipeline (Three-Tier Resilient Architecture)
       async function fetchNewsData(forceRefresh = false) {
         const syncBadge = document.getElementById("newsSyncStatus");
-        if (syncBadge) syncBadge.innerText = "Syncing...";
+        const refreshBtn = document.getElementById("refreshNewsBtn");
+        const refreshSvg = refreshBtn ? refreshBtn.querySelector("svg") : null;
+        if (syncBadge) syncBadge.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-teal-500 mr-1.5 animate-ping"></span>Syncing feeds...`;
+        if (refreshSvg) refreshSvg.classList.add("animate-spin");
 
         const cacheKey = "rvn_news_data_cache";
         const cacheTimeKey = "rvn_news_data_time";
@@ -710,15 +759,16 @@
         if (!forceRefresh) {
           const cached = localStorage.getItem(cacheKey);
           const cachedTime = localStorage.getItem(cacheTimeKey);
-          if (cached && cachedTime && (Date.now() - parseInt(cachedTime, 10) < 900000)) { // 15 min cache
+          if (cached && cachedTime && (Date.now() - parseInt(cachedTime, 10) < 600000)) { // 10 min cache
             try {
               const parsed = JSON.parse(cached);
               allNewsArticles = parsed.articles || [];
               const macroDispatches = document.getElementById("macroTotalDispatches");
               if (macroDispatches) macroDispatches.textContent = `${allNewsArticles.length} Articles`;
-              updateNewsSyncBadge(parsed.updated_at);
+              updateNewsSyncBadge(parsed.updated_at, parsed.source_tier || "Cache");
               renderBreakingNewsRows();
               renderNewsGrid();
+              if (refreshSvg) refreshSvg.classList.remove("animate-spin");
               return;
             } catch (e) {
               console.warn("Corrupt news cache", e);
@@ -726,7 +776,41 @@
           }
         }
 
-        // Fetch fresh JSON from data repository
+        // TIER 1: Supabase PostgREST Real-Time Telemetry
+        if (window.RV_Supabase && typeof window.RV_Supabase.query === 'function') {
+          try {
+            const sbDispatches = await window.RV_Supabase.query('market_dispatches', {
+              order: 'timestamp.desc',
+              limit: 200,
+              timeout: 4000
+            });
+            if (Array.isArray(sbDispatches) && sbDispatches.length > 0) {
+              allNewsArticles = sbDispatches;
+              const cachePayload = {
+                status: "success",
+                updated_at: new Date().toISOString(),
+                source_tier: "Supabase PostgREST",
+                articles: sbDispatches
+              };
+              localStorage.setItem(cacheKey, JSON.stringify(cachePayload));
+              localStorage.setItem(cacheTimeKey, Date.now().toString());
+
+              const macroDispatches = document.getElementById("macroTotalDispatches");
+              if (macroDispatches) macroDispatches.textContent = `${allNewsArticles.length} Articles`;
+
+              const telemetry = window.RV_Supabase.getTelemetry();
+              updateNewsSyncBadge(new Date().toISOString(), `Supabase Live (${telemetry.latencyMs || 24}ms)`);
+              renderBreakingNewsRows();
+              renderNewsGrid();
+              if (refreshSvg) refreshSvg.classList.remove("animate-spin");
+              return;
+            }
+          } catch (sbErr) {
+            console.warn("Tier 1 Supabase live query failed or empty, descending to Tier 2 snapshot:", sbErr.message);
+          }
+        }
+
+        // TIER 2: Local Deterministic Static Snapshot
         try {
           const fetchPaths = [
             "/data/industry_news.json?t=" + Date.now(),
@@ -748,25 +832,33 @@
           if (!data) throw new Error("Could not load industry_news.json from candidate paths");
 
           allNewsArticles = data.articles || [];
+          data.source_tier = "CDN Snapshot";
           localStorage.setItem(cacheKey, JSON.stringify(data));
           localStorage.setItem(cacheTimeKey, Date.now().toString());
 
           const macroDispatches = document.getElementById("macroTotalDispatches");
           if (macroDispatches) macroDispatches.textContent = `${allNewsArticles.length} Articles`;
 
-          updateNewsSyncBadge(data.updated_at);
+          updateNewsSyncBadge(data.updated_at, "CDN Snapshot");
           renderBreakingNewsRows();
           renderNewsGrid();
+          if (refreshSvg) refreshSvg.classList.remove("animate-spin");
         } catch (err) {
-          console.warn("Primary JSON fetch failed, trying RSS fallback:", err);
-          fallbackFetchOnline();
+          console.warn("Tier 2 JSON snapshot failed, descending to Tier 3 browser RSS wire:", err);
+          await fallbackFetchOnline();
+          if (refreshSvg) refreshSvg.classList.remove("animate-spin");
         }
       }
 
-      // Fallback: Real-time RSS Proxy
+      // Fallback: Real-time Multi-Query RSS Proxy
       async function fallbackFetchOnline() {
         try {
-          const rssUrl = encodeURIComponent("https://news.google.com/rss/search?q=Vietnam+(renewable+OR+solar+OR+wind+OR+DPPA+OR+industrial+park)&hl=en-US&gl=US&ceid=US:en");
+          const rssQueries = [
+            "Vietnam+(renewable+OR+solar+OR+wind+OR+DPPA+OR+industrial+park)",
+            "Vietnam+energy+infrastructure+EVN+500kV"
+          ];
+          const query = rssQueries[Math.floor(Math.random() * rssQueries.length)];
+          const rssUrl = encodeURIComponent(`https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`);
           const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
           if (!res.ok) throw new Error("RSS Proxy status " + res.status);
           const data = await res.json();
@@ -776,13 +868,15 @@
               title: item.title,
               link: item.link,
               source: item.author || "News Wire",
+              source_color: "#0d9488",
+              source_badge_bg: "rgba(13,148,136,0.12)",
               snippet: item.description ? item.description.replace(/<[^>]*>?/gm, "").slice(0, 150) + "..." : "",
               sector: idx % 3 === 0 ? "Solar & Wind" : idx % 3 === 1 ? "Policy & DPPA" : "Eco-Parks & Siting",
               relative_time: "Just now",
               image_url: item.enclosure && item.enclosure.link ? item.enclosure.link : "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=80",
               zone_match: "National Grid"
             }));
-            updateNewsSyncBadge(null);
+            updateNewsSyncBadge(new Date().toISOString(), "Direct RSS Wire");
             renderBreakingNewsRows();
             renderNewsGrid();
           }
@@ -793,7 +887,7 @@
         }
       }
 
-      // 6. Wire Category Filter Pills
+      // 6. Wire Category & Source Filter Pills
       const sectorButtons = document.querySelectorAll(".news-sector-pill");
       sectorButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -804,6 +898,20 @@
           btn.classList.add("bg-teal-600", "text-white");
           btn.classList.remove("bg-slate-100", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
           activeNewsSector = btn.getAttribute("data-news-sector");
+          renderNewsGrid();
+        });
+      });
+
+      const sourceButtons = document.querySelectorAll(".news-source-pill");
+      sourceButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          sourceButtons.forEach((b) => {
+            b.classList.remove("bg-teal-600", "text-white");
+            b.classList.add("bg-slate-100", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
+          });
+          btn.classList.add("bg-teal-600", "text-white");
+          btn.classList.remove("bg-slate-100", "dark:bg-darkCard", "text-inkPrimary", "dark:text-textDarkMuted");
+          activeNewsSource = btn.getAttribute("data-news-source") || "all";
           renderNewsGrid();
         });
       });
