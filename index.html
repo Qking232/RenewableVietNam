@@ -539,50 +539,11 @@
         </div>
       </div>
 
-      <!-- 50/50 SPLIT-SCREEN COCKPIT GRID -->
-      <div id="hubCockpitContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:h-[calc(100vh-210px)] min-h-[640px] items-stretch">
+      <!-- FULL-WIDTH INDUSTRIAL HUB DOSSIER WORKSPACE -->
+      <div id="hubCockpitContainer" class="w-full flex flex-col min-h-[640px] lg:h-[calc(100vh-210px)]">
         
-        <!-- LEFT PANE: SATELLITE GIS ATLAS COCKPIT (50%) -->
-        <div id="ecoParkMapContainer" class="lg:col-span-6 flex flex-col h-[460px] sm:h-[520px] lg:h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm p-3 relative overflow-hidden">
-          <!-- Top Map Controls -->
-          <div class="flex items-center justify-between pb-2 mb-2 border-b border-borderSlate/60 dark:border-darkBorder/60 shrink-0">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
-              <span class="font-mono text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">
-                ArcGIS Satellite GIS Atlas (WGS84)
-              </span>
-            </div>
-            <div class="flex items-center gap-1.5 font-mono text-[10px]">
-              <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-teal-600 dark:text-teal-400 font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Esri World Imagery</span>
-              </span>
-              <button id="resetMapZoomBtn" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer" title="Reset Zoom to Vietnam extent">
-                Full Extent
-              </button>
-            </div>
-          </div>
-
-          <!-- Leaflet Map Canvas -->
-          <div id="ecoParkMap" class="flex-1 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-darkBorder relative z-0"></div>
-
-          <!-- Bottom Map Legend Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 mt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 shrink-0 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-              <span class="text-slate-400 uppercase tracking-wider">Legend:</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Cat 1 &amp; 2 Ready</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-500"></span>Cat 2 Wheeling</span>
-              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500"></span>Developing</span>
-              <span class="flex items-center gap-1"><span class="px-1 py-0.2 rounded bg-purple-500/20 text-purple-400 font-bold border border-purple-500/30 text-[9px]">220k</span>220kV Intertie</span>
-            </div>
-            <div>
-              Active Pins: <strong id="visibleHubPinsCount" class="text-inkPrimary dark:text-textDarkPrimary font-bold">168</strong>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT PANE: SYNCHRONIZED INDUSTRIAL HUB DOSSIER (50%) -->
-        <div id="hubDossierContainer" class="lg:col-span-6 flex flex-col h-full lg:max-h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
+        <!-- SYNCHRONIZED INDUSTRIAL HUB DOSSIER (FULL WIDTH) -->
+        <div id="hubDossierContainer" class="w-full flex flex-col h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
           
           <!-- Top Sticky Filter & Mode Toolbar -->
           <div class="p-3 sm:p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 space-y-2.5 shrink-0">
@@ -2334,18 +2295,8 @@
       // Mobile Quick View Switcher
       const mobileHubBtn = document.getElementById("mobileHubViewToggleBtn");
       if (mobileHubBtn) {
-        let isMapMode = false;
         mobileHubBtn.addEventListener("click", () => {
-          isMapMode = !isMapMode;
-          if (isMapMode) {
-            document.getElementById("ecoParkMapContainer")?.scrollIntoView({ behavior: 'smooth' });
-            document.getElementById("mobileHubToggleIcon").textContent = "📋";
-            document.getElementById("mobileHubToggleText").textContent = "View Dossier";
-          } else {
-            document.getElementById("hubDossierContainer")?.scrollIntoView({ behavior: 'smooth' });
-            document.getElementById("mobileHubToggleIcon").textContent = "🗺️";
-            document.getElementById("mobileHubToggleText").textContent = "View Map";
-          }
+          document.getElementById("hubDossierContainer")?.scrollIntoView({ behavior: 'smooth' });
         });
       }
 
