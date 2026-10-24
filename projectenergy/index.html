@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
   <link rel="dns-prefetch" href="https://server.arcgisonline.com">
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <script src="/assets/js/supabase-client.js"></script>
 
   <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -1130,6 +1131,17 @@
     // 3. Load External Projects Data
     async function loadProjectsData() {
       try {
+        if (window.RV_Supabase) {
+          const raw = await window.RV_Supabase.getWithFallback('energy_projects', '/data/vietnam_clean_energy_projects.json', {
+            cacheKey: 'energy_projects',
+            order: 'name.asc'
+          });
+          if (Array.isArray(raw) && raw.length > 0) {
+            ALL_PROJECTS = raw;
+            initDirectory();
+            return;
+          }
+        }
         const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
         if (res.ok) {
           ALL_PROJECTS = await res.json();
@@ -1144,6 +1156,15 @@
     // 4. Load PDP8 Statutory Pipeline Data
     async function loadPdp8Data() {
       try {
+        if (window.RV_Supabase) {
+          const raw = await window.RV_Supabase.getWithFallback('pdp8_fuel_targets', '/data/pdp8_targets.json', {
+            cacheKey: 'pdp8_fuel_targets'
+          });
+          if (raw && raw.fuel_targets) {
+            pdp8Dataset = raw;
+            return;
+          }
+        }
         const res = await fetch("/data/pdp8_targets.json?t=" + Date.now());
         if (!res.ok) throw new Error("Status " + res.status);
         pdp8Dataset = await res.json();

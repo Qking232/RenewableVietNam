@@ -8,6 +8,8 @@
   <link rel="canonical" href="https://renewablevietnam.com/calculator/" />
 
   <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <script src="/assets/js/supabase-client.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -1147,6 +1149,28 @@
     ];
 
     let HUBS = [...FALLBACK_HUBS];
+
+    async function initSupabaseCalculatorTelemetry() {
+      if (!window.RV_Supabase) return;
+      try {
+        const full = await window.RV_Supabase.getWithFallback('industrial_hubs', '/data/vietnam_industrial_parks.json', {
+          cacheKey: 'industrial_hubs'
+        });
+        const list = Array.isArray(full) ? full : (full && full.hubs) ? full.hubs : null;
+        if (list && list.length > 0) {
+          HUBS = list;
+          if (typeof renderTable === 'function') renderTable();
+          if (typeof updateCalculator === 'function') updateCalculator();
+        }
+      } catch (e) {
+        console.warn("[Calculator] Using local static fallback", e);
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSupabaseCalculatorTelemetry);
+    } else {
+      initSupabaseCalculatorTelemetry();
+    }
 
     function updateCalculator() {
       const demandMw = parseFloat(document.getElementById("calcDemandSlider").value);

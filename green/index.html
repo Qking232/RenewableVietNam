@@ -74,6 +74,7 @@
   <link rel="dns-prefetch" href="https://basemaps.cartocdn.com">
   <link rel="dns-prefetch" href="https://server.arcgisonline.com">
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <script src="/assets/js/supabase-client.js"></script>
 
   <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -1107,11 +1108,23 @@
 
     async function loadNationalIndustrialHubs() {
       try {
-        const resp = await fetch('data/vietnam_industrial_parks.json?v=' + Date.now());
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && data.hubs && data.hubs.length > 0) {
-            HUBS = data.hubs;
+        if (window.RV_Supabase) {
+          const raw = await window.RV_Supabase.getWithFallback('industrial_hubs', 'data/vietnam_industrial_parks.json', {
+            cacheKey: 'industrial_hubs',
+            order: 'name.asc'
+          });
+          if (Array.isArray(raw) && raw.length > 0) {
+            HUBS = raw;
+          } else if (raw && raw.hubs && raw.hubs.length > 0) {
+            HUBS = raw.hubs;
+          }
+        } else {
+          const resp = await fetch('data/vietnam_industrial_parks.json?v=' + Date.now());
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.hubs && data.hubs.length > 0) {
+              HUBS = data.hubs;
+            }
           }
         }
       } catch (err) {
