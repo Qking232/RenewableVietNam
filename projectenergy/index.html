@@ -909,6 +909,7 @@
                   <thead>
                     <tr class="border-b border-borderSlate dark:border-darkBorder bg-slate-50/50 dark:bg-darkCard/50 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted uppercase tracking-wider">
                       <th class="p-2.5">Facility Name</th>
+                      <th class="p-2.5">Developer / Sponsor</th>
                       <th class="p-2.5">Type</th>
                       <th class="p-2.5">Capacity</th>
                       <th class="p-2.5">Province</th>
@@ -1094,6 +1095,19 @@
     };
 
     // 3. Load External Projects Data
+    function normalizeProjects(list) {
+      return (list || []).map(p => ({
+        ...p,
+        name: p.name || "Unnamed Facility",
+        company: p.company || p.developer || "MOIT / Provincial EPC Allocation",
+        developer: p.company || p.developer || "MOIT / Provincial EPC Allocation",
+        capacity: p.capacity || p.cap || (p.capacity_mw ? `${p.capacity_mw} MW` : "Planned"),
+        location: p.location || p.loc || p.province || "Vietnam",
+        lat: p.lat || null,
+        lon: p.lon || p.lng || null
+      }));
+    }
+
     async function loadProjectsData() {
       try {
         if (window.RV_Supabase) {
@@ -1102,14 +1116,15 @@
             order: 'name.asc'
           });
           if (Array.isArray(raw) && raw.length > 0) {
-            ALL_PROJECTS = raw;
+            ALL_PROJECTS = normalizeProjects(raw);
             initDirectory();
             return;
           }
         }
         const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
         if (res.ok) {
-          ALL_PROJECTS = await res.json();
+          const jsonRaw = await res.json();
+          ALL_PROJECTS = normalizeProjects(jsonRaw);
           initDirectory();
           return;
         }
@@ -1233,7 +1248,7 @@
 
       if (FILTERED_PROJECTS.length === 0) {
         if (cardsList) cardsList.innerHTML = `<div class="p-8 text-center text-slate-400 font-mono text-xs">No clean energy facilities found matching active criteria.</div>`;
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 font-mono text-xs">No clean energy facilities found.</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-mono text-xs">No clean energy facilities found.</td></tr>`;
         if (paginationInfo) paginationInfo.textContent = "Showing 0 to 0 of 0 assets";
         if (pageIndicator) pageIndicator.textContent = "0 / 0";
         if (prevBtn) prevBtn.disabled = true;
@@ -1254,7 +1269,8 @@
 
       pageItems.forEach((p, idx) => {
         const fuelColor = FUEL_COLORS[p.type] || "bg-slate-500";
-        const cleanCapacity = p.capacity || "N/A";
+        const cleanCapacity = p.capacity || p.cap || "Planned";
+        const cleanDeveloper = p.company || p.developer || "Provincial Allocation / EVN";
         const globalIdx = ALL_PROJECTS.indexOf(p);
         const hasCoords = p.lat && (p.lon || p.lng);
         const pLon = p.lon || p.lng;
@@ -1318,7 +1334,7 @@
         // Table Row HTML
         tableHtml += `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer" onclick="selectAssetFromDossier(${globalIdx}, event)">
-            <td class="p-2.5 font-semibold text-inkPrimary dark:text-textDarkPrimary truncate max-w-[160px]">
+            <td class="p-2.5 font-semibold text-inkPrimary dark:text-textDarkPrimary truncate max-w-[170px]">
               <div class="flex items-center gap-1.5">
                 <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${p.name || 'Plant'} in Google Maps" onclick="event.stopPropagation()" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
                   <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
@@ -1326,12 +1342,15 @@
                 <span class="truncate">${p.name}</span>
               </div>
             </td>
+            <td class="p-2.5 text-slate-700 dark:text-slate-300 font-medium truncate max-w-[160px]">
+              ${cleanDeveloper}
+            </td>
             <td class="p-2.5">
               <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] ${fuelColor} text-white font-semibold">
                 ${p.type || "Clean"}
               </span>
             </td>
-            <td class="p-2.5 font-bold text-teal-600 dark:text-teal-400">
+            <td class="p-2.5 font-bold text-teal-600 dark:text-teal-400 font-mono">
               ${cleanCapacity}
             </td>
             <td class="p-2.5 text-inkMuted dark:text-textDarkMuted truncate max-w-[100px]">
@@ -1790,7 +1809,7 @@
 
       document.getElementById("modalFacilityName").textContent = p.name || "Unnamed Facility";
       document.getElementById("modalLocation").textContent = `${p.location || "Vietnam"}, Vietnam`;
-      document.getElementById("modalCapacity").textContent = p.capacity || "N/A";
+      document.getElementById("modalCapacity").textContent = p.capacity || p.cap || "Planned";
       document.getElementById("modalDeveloper").textContent = p.company || "MOIT / Provincial EPC Allocation";
       document.getElementById("modalCoordinates").textContent = `Lat: ${p.lat || '--'}, Lng: ${p.lon || '--'}`;
       
