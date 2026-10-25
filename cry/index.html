@@ -559,7 +559,7 @@
           <span class="sub" style="font-size:10.5px">pivot</span>
         </div>
         <button class="chip on" id="trend-auto-toggle" title="Toggle automatic pivot lines">Auto: ON</button>
-        <button class="chip" id="trend-draw-toggle" title="Click chart to draw trend lines">✏️ Draw Line</button>
+        <button class="chip" id="trend-draw-toggle" title="Click chart to draw trend lines">Draw Line</button>
         <div class="color-picker" id="trend-color-picker" style="display:none">
           <button class="color-dot on" data-color="#3FC0F5" style="background:#3FC0F5" title="Cyan"></button>
           <button class="color-dot" data-color="#3FD07E" style="background:#3FD07E" title="Support (Green)"></button>
@@ -568,7 +568,7 @@
           <button class="color-dot" data-color="#FFFFFF" style="background:#FFFFFF" title="White"></button>
         </div>
         <button class="chip" id="trend-undo" style="display:none" title="Undo last drawn line">↩️ Undo</button>
-        <button class="chip" id="trend-clear" style="display:none" title="Clear your drawn lines">🗑️ Clear</button>
+        <button class="chip" id="trend-clear" style="display:none" title="Clear your drawn lines">Clear</button>
       </div>
       <div class="status" id="trend-summary"></div>
       <div class="chart-wrap">
@@ -1127,8 +1127,8 @@
     const bits = [];
     if (ds.kind) bits.push(`<span class="badge ${ds.kind === 'buy' ? 'up' : 'down'}">${ds.kind === 'buy' ? '▲ BUY' : '▼ SELL'} streak · ${ds.count}d</span>`);
     else bits.push('<span class="badge">no directional streak</span>');
-    if (gr.kind === 'correct') bits.push(`<span class="badge up">✅ correct · ${gr.count}d</span>`);
-    else if (gr.kind === 'incorrect') bits.push(`<span class="badge down">❌ incorrect · ${gr.count}d</span>`);
+    if (gr.kind === 'correct') bits.push(`<span class="badge up">Correct · ${gr.count}d</span>`);
+    else if (gr.kind === 'incorrect') bits.push(`<span class="badge down">Incorrect · ${gr.count}d</span>`);
     else bits.push('<span class="badge">no graded run</span>');
     $('d-streaks').innerHTML = bits.join('');
   }
@@ -1215,8 +1215,8 @@
   function runBadge(gr) {
     if (!gr || !gr.kind) return '<span class="mini">—</span>';
     return gr.kind === 'correct'
-      ? `<span class="mini ok">✅ correct · ${gr.count}d</span>`
-      : `<span class="mini bad">❌ incorrect · ${gr.count}d</span>`;
+      ? `<span class="mini ok">Correct · ${gr.count}d</span>`
+      : `<span class="mini bad">Incorrect · ${gr.count}d</span>`;
   }
 
   function renderPortfolio() {
@@ -1845,7 +1845,7 @@
     const drawBtn = $('trend-draw-toggle');
     if (drawBtn) {
       drawBtn.classList.toggle('active', isDrawingMode);
-      drawBtn.textContent = isDrawingMode ? (drawPt1 ? '📍 Click Point 2' : '📍 Click Point 1') : '✏️ Draw Line';
+      drawBtn.textContent = isDrawingMode ? (drawPt1 ? 'Select Point 2' : 'Select Point 1') : 'Draw Line';
     }
     const colorPicker = $('trend-color-picker');
     if (colorPicker) colorPicker.style.display = isDrawingMode ? 'inline-flex' : 'none';
@@ -1893,7 +1893,7 @@
 
       if (!drawPt1) {
         drawPt1 = pt;
-        $('trend-summary').textContent = '📍 Point 1 anchored at ' + usd(pt.price) + ' (' + shortDate(pt.t) + '). Click point 2 to finish.';
+        $('trend-summary').textContent = 'Point 1: ' + usd(pt.price) + ' (' + shortDate(pt.t) + '). Click point 2 to finish.';
         renderTrend();
       } else {
         const pt2 = pt;
@@ -1909,7 +1909,7 @@
             color: drawColor,
           });
           saveDrawnLines(lines);
-          $('trend-summary').textContent = '✅ Line added (' + usd(first.price) + ' → ' + usd(second.price) + ')! Click 1st point to draw another or exit Draw.';
+          $('trend-summary').textContent = 'Trendline anchored: (' + usd(first.price) + ' → ' + usd(second.price) + ')! Click 1st point to draw another or exit Draw.';
         }
         drawPt1 = null;
         drawHoverPt = null;
@@ -2094,7 +2094,7 @@
 
     let meta;
     try { meta = await resolveCoin(text); }
-    catch (err) { busy = false; setStatus('⚠️ Search is unavailable right now. ' + err.message, true); return; }
+    catch (err) { busy = false; setStatus('Search is currently unavailable. ' + err.message, true); return; }
     if (!meta) {
       busy = false;
       setStatus(`No coin found matching “${text}”. Try the full name (e.g. "Arbitrum") or ticker (e.g. "ARB").`, true);
@@ -2109,7 +2109,7 @@
       $('overview').classList.add('show');
       history.replaceState(null, '', '?q=' + encodeURIComponent(text));
     } catch {
-      setStatus(`🔎 ${meta.name} (${meta.base}) — no live Binance market for ${meta.id}.`, true);
+      setStatus(`${meta.name} (${meta.base}) — no live Binance market for ${meta.id}.`, true);
     }
     try {
       const H = await klines(meta.id);
@@ -2203,7 +2203,7 @@
     isDrawingMode = !isDrawingMode;
     drawPt1 = null;
     drawHoverPt = null;
-    $('trend-summary').textContent = isDrawingMode ? '✏️ Draw mode active: tap or click 1st point on chart.' : '';
+    $('trend-summary').textContent = isDrawingMode ? 'Draw mode active: select point 1 on chart.' : '';
     renderTrend();
   };
 
@@ -2227,7 +2227,7 @@
   $('trend-clear').onclick = () => {
     if (confirm('Clear all custom trend lines for this coin?')) {
       saveDrawnLines([]);
-      $('trend-summary').textContent = '🗑️ All custom trend lines cleared.';
+      $('trend-summary').textContent = 'All custom trendlines cleared.';
       renderTrend();
     }
   };
