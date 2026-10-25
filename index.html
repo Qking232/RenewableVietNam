@@ -1587,6 +1587,9 @@
 
       paged.forEach((hub, idx) => {
         const globalIdx = startIdx + idx;
+        const gmapsUrl = (hub.lat && hub.lng)
+          ? `https://www.google.com/maps/search/?api=1&query=${hub.lat},${hub.lng}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((hub.name || '') + ' ' + (hub.province || 'Vietnam'))}`;
         const isReady = hub.dppaClass === "ready";
         const isCat2 = hub.dppaClass === "cat2";
         const dppaBadge = isReady 
@@ -1600,7 +1603,11 @@
         cardsHtml += `
           <div id="hub-card-${hub.id}" onclick="selectHubFromCard('${hub.id}', ${hub.lat}, ${hub.lng}, event)" class="hub-dossier-card p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/70 border border-borderSlate dark:border-darkBorder hover:border-teal-500/60 dark:hover:border-teal-400/50 transition-all cursor-pointer group flex flex-col justify-between gap-2">
             <div class="flex items-start justify-between gap-2">
-              <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex items-start gap-2 flex-1 min-w-0">
+                <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${hub.name} in Google Maps" onclick="event.stopPropagation()" class="mt-0.5 p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </a>
+                <div class="space-y-1 flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 font-mono text-[10px]">
                   ${dppaBadge}
                   <span class="text-inkMuted dark:text-textDarkMuted truncate">${hub.province} &middot; ${hub.region}</span>
@@ -1612,6 +1619,7 @@
                   ${hub.developer} &middot; <span class="font-mono text-teal-600 dark:text-teal-400 font-semibold">${hub.totalAreaHa} ha</span>
                 </div>
                 ${tenantsList ? `<div class="text-[10px] text-slate-400 dark:text-slate-500 truncate">Tenants: ${tenantsList}</div>` : ""}
+                </div>
               </div>
 
               <div class="text-right shrink-0 font-mono">
@@ -1641,7 +1649,14 @@
 
         tableHtml += `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer" onclick="selectHubFromCard('${hub.id}', ${hub.lat}, ${hub.lng}, event)">
-            <td class="py-2.5 px-3 text-slate-400 font-mono">${String(globalIdx + 1).padStart(3, '0')}</td>
+            <td class="py-2.5 px-3 text-slate-400 font-mono">
+              <div class="flex items-center gap-1.5">
+                <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${hub.name} in Google Maps" onclick="event.stopPropagation()" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </a>
+                <span>${String(globalIdx + 1).padStart(3, '0')}</span>
+              </div>
+            </td>
             <td class="py-2.5 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary truncate max-w-[170px]">${hub.name}</td>
             <td class="py-2.5 px-3 text-inkMuted dark:text-textDarkMuted">${hub.province}</td>
             <td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-bold">${hub.substationKv}kV</td>

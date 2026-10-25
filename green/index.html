@@ -1603,6 +1603,9 @@
 
       paged.forEach((hub, idx) => {
         const globalIdx = startIdx + idx;
+        const gmapsUrl = (hub.lat && hub.lng)
+          ? `https://www.google.com/maps/search/?api=1&query=${hub.lat},${hub.lng}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((hub.name || '') + ' ' + (hub.province || 'Vietnam'))}`;
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 dark:hover:bg-darkCard/60 transition-colors cursor-pointer group";
         tr.onclick = () => openHubModal(hub);
@@ -1619,6 +1622,9 @@
         tr.innerHTML = `
           <td class="py-3 px-3.5 font-mono text-slate-400 dark:text-slate-500 text-[11px] whitespace-nowrap" onclick="event.stopPropagation()">
             <div class="flex items-center gap-1.5">
+              <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${hub.name} in Google Maps" onclick="event.stopPropagation()" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+              </a>
               <button onclick="locateHubOnMap('${hub.id}')" title="Locate on Map" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-teal-600 hover:text-white text-teal-600 dark:text-teal-400 transition-colors cursor-pointer inline-flex items-center">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

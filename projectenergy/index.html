@@ -1256,13 +1256,21 @@
         const fuelColor = FUEL_COLORS[p.type] || "bg-slate-500";
         const cleanCapacity = p.capacity || "N/A";
         const globalIdx = ALL_PROJECTS.indexOf(p);
-        const hasCoords = p.lat && p.lon;
+        const hasCoords = p.lat && (p.lon || p.lng);
+        const pLon = p.lon || p.lng;
+        const gmapsUrl = (p.lat && pLon)
+          ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${pLon}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.location || 'Vietnam'))}`;
 
         // Card HTML
         cardsHtml += `
           <div id="dossier-card-${globalIdx}" onclick="selectAssetFromDossier(${globalIdx}, event)" class="asset-dossier-card p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/70 border border-borderSlate dark:border-darkBorder hover:border-teal-500/60 dark:hover:border-teal-400/50 transition-all cursor-pointer group flex flex-col justify-between gap-2">
             <div class="flex items-start justify-between gap-2">
-              <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex items-start gap-2 flex-1 min-w-0">
+                <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${p.name || 'Plant'} in Google Maps" onclick="event.stopPropagation()" class="mt-0.5 p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </a>
+                <div class="space-y-1 flex-1 min-w-0">
                 <div class="flex items-center gap-1.5 font-mono text-[10px]">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded ${fuelColor} text-white font-semibold">
                     ${p.type || "Clean"}
@@ -1274,6 +1282,7 @@
                 </h4>
                 <div class="text-[11px] text-inkMuted dark:text-textDarkMuted truncate">
                   ${p.company || "MOIT / Provincial EPC Allocation"}
+                </div>
                 </div>
               </div>
 
@@ -1307,7 +1316,12 @@
         tableHtml += `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer" onclick="selectAssetFromDossier(${globalIdx}, event)">
             <td class="p-2.5 font-semibold text-inkPrimary dark:text-textDarkPrimary truncate max-w-[160px]">
-              ${p.name}
+              <div class="flex items-center gap-1.5">
+                <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${p.name || 'Plant'} in Google Maps" onclick="event.stopPropagation()" class="p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </a>
+                <span class="truncate">${p.name}</span>
+              </div>
             </td>
             <td class="p-2.5">
               <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] ${fuelColor} text-white font-semibold">
@@ -1433,6 +1447,10 @@
       pdp8Dataset.priority_projects.forEach(p => {
         const isConstruction = p.status.includes("Construction") || p.status.includes("Testing");
         const badgeColor = isConstruction ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-slate-600/10 text-slate-700 dark:text-slate-300 border-amber-500/20";
+        const pLon = p.lon || p.lng;
+        const gmapsUrl = (p.lat && pLon)
+          ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${pLon}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.province || p.location || 'Vietnam'))}`;
 
         html += `
           <div class="p-3.5 rounded-xl bg-slate-50/80 dark:bg-darkCard/80 border border-borderSlate dark:border-darkBorder hover:border-teal-500/50 dark:hover:border-teal-400/40 transition-all flex flex-col justify-between space-y-2.5">
@@ -1441,9 +1459,14 @@
                 <span class="px-2 py-0.5 rounded border ${badgeColor} font-semibold">${p.status}</span>
                 <span class="text-inkMuted dark:text-textDarkMuted">COD: <b class="text-inkPrimary dark:text-textDarkPrimary">${p.target_cod}</b></span>
               </div>
-              <h4 class="text-xs sm:text-sm font-semibold text-inkPrimary dark:text-textDarkPrimary leading-snug">
-                ${p.name}
-              </h4>
+              <div class="flex items-start gap-2">
+                <a href="${gmapsUrl}" target="_blank" rel="noopener" title="Open ${p.name} in Google Maps" onclick="event.stopPropagation()" class="mt-0.5 p-1 rounded bg-slate-100 dark:bg-darkCard hover:bg-slate-700 hover:text-white text-slate-500 dark:text-slate-400 transition-colors inline-flex items-center shrink-0">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+                </a>
+                <h4 class="text-xs sm:text-sm font-semibold text-inkPrimary dark:text-textDarkPrimary leading-snug">
+                  ${p.name}
+                </h4>
+              </div>
               <p class="text-[11px] text-inkMuted dark:text-textDarkMuted font-light line-clamp-2">
                 ${p.notes}
               </p>
