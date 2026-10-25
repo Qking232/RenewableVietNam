@@ -803,23 +803,33 @@
           }
         }
 
-        // TIER 2: Local Deterministic Static Snapshot
+        // TIER 2: Unified Static Snapshot with Native GZIP Stream Acceleration
         try {
-          const fetchPaths = [
-            "/data/industry_news.json?t=" + Date.now(),
-            "../data/industry_news.json?t=" + Date.now(),
-            "data/industry_news.json?t=" + Date.now()
-          ];
-          
           let data = null;
-          for (const path of fetchPaths) {
+          if (window.RV_Supabase) {
             try {
-              const res = await fetch(path);
-              if (res.ok) {
-                data = await res.json();
-                break;
-              }
-            } catch {}
+              data = await window.RV_Supabase.fetchStatic('/data/industry_news.json', {
+                cacheKey: 'industry_news_snapshot',
+                ttl: 15 * 60 * 1000
+              });
+            } catch (e) {}
+          }
+
+          if (!data) {
+            const fetchPaths = [
+              "/data/industry_news.json?t=" + Date.now(),
+              "../data/industry_news.json?t=" + Date.now(),
+              "data/industry_news.json?t=" + Date.now()
+            ];
+            for (const path of fetchPaths) {
+              try {
+                const res = await fetch(path);
+                if (res.ok) {
+                  data = await res.json();
+                  break;
+                }
+              } catch {}
+            }
           }
 
           if (!data) throw new Error("Could not load industry_news.json from candidate paths");

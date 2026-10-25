@@ -2797,6 +2797,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
+  <link rel="preconnect" href="https://nkkwegvplpozirrjcxsn.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <script src="/assets/js/supabase-client.js"></script>
 </head>
 <body>
 <div id="app">
@@ -4320,39 +4323,41 @@ var EVDB = (function(){
 
     var existingKeys = new Set(STATIONS.map(function(s){ return s.id; }));
 
-    // 1. Try static datastore for instant national synchronization
+    // 1. Try unified RV_Supabase with IndexedDB & native GZIP streaming
     try {
-      var candidatePaths = [
-        "/data/vietnam_ev_stations.json?v=20261025",
-        "../../data/vietnam_ev_stations.json?v=20261025",
-        "../data/vietnam_ev_stations.json?v=20261025"
-      ];
-      for (var p = 0; p < candidatePaths.length; p++) {
-        var res = await fetch(candidatePaths[p]);
-        if (res.ok) {
-          var raw = await res.json();
-          if (Array.isArray(raw) && raw.length > 0) {
-            var formatted = raw.map(formatStation);
-            formatted.forEach(function(r){
-              if(!existingKeys.has(r.id)){
-                STATIONS.push(r);
-                existingKeys.add(r.id);
-              }
-            });
-            await cacheSaveStations(formatted);
-            if(badgeTxt) badgeTxt.textContent = "Supabase · " + STATIONS.length.toLocaleString() + " Trạm";
-            state.stations = STATIONS.slice();
-            state.open = new Set(state.stations.map(function(s){ return s.port; }));
-            if(window.renderTree) window.renderTree();
-            if(window.refreshView) window.refreshView();
-            if(window.updateStationCountBadge) window.updateStationCountBadge(STATIONS.length);
-            isSyncing = false;
-            return;
+      if (window.RV_Supabase) {
+        var rawStations = await window.RV_Supabase.getWithFallback(
+          'ev_stations',
+          '/data/vietnam_ev_stations.json',
+          {
+            select: 'name,lat,lng,port,cpo,addr,conn,site_key',
+            order: 'site_key.asc',
+            limit: 25000,
+            cacheKey: 'ev_stations_22055',
+            ttl: 60 * 60 * 1000
           }
+        );
+        if (Array.isArray(rawStations) && rawStations.length > 0) {
+          var formatted = rawStations.map(formatStation);
+          formatted.forEach(function(r){
+            if(!existingKeys.has(r.id)){
+              STATIONS.push(r);
+              existingKeys.add(r.id);
+            }
+          });
+          await cacheSaveStations(formatted);
+          if(badgeTxt) badgeTxt.textContent = "Supabase · " + STATIONS.length.toLocaleString() + " Trạm";
+          state.stations = STATIONS.slice();
+          state.open = new Set(state.stations.map(function(s){ return s.port; }));
+          if(window.renderTree) window.renderTree();
+          if(window.refreshView) window.refreshView();
+          if(window.updateStationCountBadge) window.updateStationCountBadge(STATIONS.length);
+          isSyncing = false;
+          return;
         }
       }
     } catch(e) {
-      console.warn("[EV SYNC] Static sync fell back to Supabase live stream", e);
+      console.warn("[EV SYNC] RV_Supabase acceleration error, falling back", e);
     }
 
     var pageSize = 1000;

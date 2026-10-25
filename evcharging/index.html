@@ -28,6 +28,9 @@
   <link rel="dns-prefetch" href="https://server.arcgisonline.com">
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
 
+    <link rel="preconnect" href="https://nkkwegvplpozirrjcxsn.supabase.co" crossorigin>
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+  <script src="/assets/js/supabase-client.js"></script>
   <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -602,41 +605,48 @@
     let markersLayer = null;
 
     async function loadStationsData() {
+      // 1. Unified Supabase + IndexedDB + GZIP stream decompression engine
+      if (window.RV_Supabase) {
+        try {
+          ALL_STATIONS = await window.RV_Supabase.getWithFallback(
+            'ev_stations',
+            '/data/vietnam_ev_stations.json',
+            {
+              select: 'name,lat,lng,port,cpo,addr,conn,site_key',
+              order: 'site_key.asc',
+              limit: 25000,
+              cacheKey: 'ev_stations_22055',
+              ttl: 60 * 60 * 1000
+            }
+          );
+          if (Array.isArray(ALL_STATIONS) && ALL_STATIONS.length > 0) {
+            const tel = window.RV_Supabase.getTelemetry();
+            console.log(`[EV DIRECTORY] Ingested ${ALL_STATIONS.length.toLocaleString()} stations via RV_Supabase (${tel.lastSource}).`);
+            initDirectory();
+            return;
+          }
+        } catch (e) {
+          console.warn("[EV DIRECTORY] RV_Supabase loader error, falling back to candidates", e);
+        }
+      }
+
+      // 2. Direct static candidate paths fallback
       const candidatePaths = [
         "/data/vietnam_ev_stations.json?v=20261025",
         "../data/vietnam_ev_stations.json?v=20261025",
         "data/vietnam_ev_stations.json?v=20261025"
       ];
-
-      // 1. Try static dataset containing all 22,055 nationwide stations
       for (const p of candidatePaths) {
         try {
           const res = await fetch(p);
           if (res.ok) {
             ALL_STATIONS = await res.json();
             if (Array.isArray(ALL_STATIONS) && ALL_STATIONS.length > 0) {
-              console.log(`[EV DIRECTORY] Ingested ${ALL_STATIONS.length.toLocaleString()} stations from national datastore.`);
               initDirectory();
               return;
             }
           }
-        } catch (e) {
-          // Continue to next candidate
-        }
-      }
-
-      // 2. Fallback to Supabase live endpoint if static file is unavailable
-      try {
-        console.warn("[EV DIRECTORY] Static datastore unreachable, querying Supabase...");
-        const url = `${SUPABASE_URL}/rest/v1/ev_stations?select=name,lat,lng,port,cpo,addr,conn,site_key&limit=5000`;
-        const res = await fetch(url, { headers: HEADERS });
-        if (res.ok) {
-          ALL_STATIONS = await res.json();
-          initDirectory();
-          return;
-        }
-      } catch (e) {
-        console.error("Could not query Supabase directly, falling back", e);
+        } catch (e) {}
       }
     }
 
