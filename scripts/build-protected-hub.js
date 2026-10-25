@@ -88,6 +88,10 @@ ${seoHead}
 </style>
 </head>
 <body>
+<header style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+  <h1>Vietnam Clean Energy Transition Statutory Library & Legal Directives</h1>
+  <p>Shared repository of Decree 80/2024 DPPA, PDP8 implementation plans, MOIT circulars, and power sector legal directives.</p>
+</header>
 <div id="loader">Loading The Library&hellip;</div>
 
 <script>
