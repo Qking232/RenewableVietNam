@@ -1261,6 +1261,9 @@
         const gmapsUrl = (p.lat && pLon)
           ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${pLon}`
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.location || 'Vietnam'))}`;
+        const satUrl = (p.lat && pLon)
+          ? `https://maps.google.com/maps?t=k&q=loc:${p.lat},${pLon}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.location || 'Vietnam'))}&t=k`;
 
         // Card HTML
         cardsHtml += `
@@ -1299,9 +1302,9 @@
             <div class="flex items-center justify-between pt-1.5 border-t border-borderSlate/50 dark:border-darkBorder/50 font-mono text-[10px]">
               <div class="flex items-center gap-2">
                 ${hasCoords ? `
-                  <button type="button" onclick="event.stopPropagation(); selectAssetFromDossier(${globalIdx}, null);" class="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-semibold">
+                  <a href="${satUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1 font-semibold">
                     <span>Fly to Satellite</span> &rarr;
-                  </button>
+                  </a>
                 ` : `<span class="text-slate-400">Regional asset</span>`}
               </div>
 
@@ -1797,8 +1800,13 @@
       }
 
       const gmapsLink = document.getElementById("modalGmapsLink");
-      if (gmapsLink && p.lat && p.lon) {
-        gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}&gl=vn&hl=vi`;
+      if (gmapsLink) {
+        const pLon = p.lon || p.lng;
+        if (p.lat && pLon) {
+          gmapsLink.href = `https://maps.google.com/maps?t=k&q=loc:${p.lat},${pLon}&gl=vn&hl=vi`;
+        } else {
+          gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.location || 'Vietnam'))}&t=k`;
+        }
       }
 
       document.getElementById("facilityModalOverlay").classList.remove("hidden");
