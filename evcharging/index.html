@@ -311,7 +311,7 @@
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-2">
         <div class="p-4 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-1">
           <span class="font-mono text-[10px] uppercase tracking-wider text-inkMuted dark:text-textDarkMuted">Total Ports &amp; Outlets</span>
-          <div class="text-xl sm:text-2xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">22,055 <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">Plugs</span></div>
+          <div id="totalPortsCount" class="text-xl sm:text-2xl font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">22,055 <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">Plugs</span></div>
           <p class="text-[10px] text-inkMuted dark:text-textDarkMuted">DC Superchargers &amp; AC Sockets</p>
         </div>
 
@@ -602,9 +602,33 @@
     let markersLayer = null;
 
     async function loadStationsData() {
+      const candidatePaths = [
+        "/data/vietnam_ev_stations.json?v=20261025",
+        "../data/vietnam_ev_stations.json?v=20261025",
+        "data/vietnam_ev_stations.json?v=20261025"
+      ];
+
+      // 1. Try static dataset containing all 22,055 nationwide stations
+      for (const p of candidatePaths) {
+        try {
+          const res = await fetch(p);
+          if (res.ok) {
+            ALL_STATIONS = await res.json();
+            if (Array.isArray(ALL_STATIONS) && ALL_STATIONS.length > 0) {
+              console.log(`[EV DIRECTORY] Ingested ${ALL_STATIONS.length.toLocaleString()} stations from national datastore.`);
+              initDirectory();
+              return;
+            }
+          }
+        } catch (e) {
+          // Continue to next candidate
+        }
+      }
+
+      // 2. Fallback to Supabase live endpoint if static file is unavailable
       try {
-        // Query top dense stations from Supabase (or recent cached)
-        const url = `${SUPABASE_URL}/rest/v1/ev_stations?select=name,lat,lng,port,cpo,addr,conn,site_key&limit=500`;
+        console.warn("[EV DIRECTORY] Static datastore unreachable, querying Supabase...");
+        const url = `${SUPABASE_URL}/rest/v1/ev_stations?select=name,lat,lng,port,cpo,addr,conn,site_key&limit=5000`;
         const res = await fetch(url, { headers: HEADERS });
         if (res.ok) {
           ALL_STATIONS = await res.json();
@@ -612,31 +636,45 @@
           return;
         }
       } catch (e) {
-        console.warn("Could not query Supabase directly, falling back", e);
+        console.error("Could not query Supabase directly, falling back", e);
       }
     }
 
     function initDirectory() {
-      // Populate province dropdown
-      const provinces = new Set();
+      // 1. Update total telemetry metrics in UI
+      const totalCount = ALL_STATIONS.length;
+      const countEl = document.getElementById("totalPortsCount");
+      if (countEl) {
+        countEl.innerHTML = `${totalCount.toLocaleString()} <span class="text-xs text-emerald-600 dark:text-emerald-400 font-normal">Plugs</span>`;
+      }
+
+      // 2. Populate province dropdown with normalized administrative names & counts
+      const provCounter = {};
       ALL_STATIONS.forEach(s => {
         if (s.addr) {
           const parts = s.addr.split(",");
           if (parts.length > 0) {
-            const prov = parts[parts.length - 1].trim();
-            if (prov.length < 30) provinces.add(prov);
+            const raw = parts[parts.length - 1].trim();
+            const clean = raw.replace(/^(Thành phố Trung ương|Thành phố|Tỉnh)\s+/i, '').trim();
+            if (clean && clean.length < 35 && !/[0-9]/.test(clean)) {
+              provCounter[clean] = (provCounter[clean] || 0) + 1;
+            }
           }
         }
       });
 
       const provinceSelect = document.getElementById("provinceSelect");
       if (provinceSelect) {
-        Array.from(provinces).sort().forEach(prv => {
-          const opt = document.createElement("option");
-          opt.value = prv;
-          opt.textContent = prv;
-          provinceSelect.appendChild(opt);
-        });
+        provinceSelect.innerHTML = '<option value="ALL">All Regions (Vietnam)</option>';
+        Object.keys(provCounter)
+          .filter(p => provCounter[p] >= 5)
+          .sort((a, b) => a.localeCompare(b, 'vi'))
+          .forEach(prv => {
+            const opt = document.createElement("option");
+            opt.value = prv;
+            opt.textContent = `${prv} (${provCounter[prv].toLocaleString()})`;
+            provinceSelect.appendChild(opt);
+          });
       }
 
       applyFilters();
@@ -654,18 +692,19 @@
           if (selectedCPO === "Other" && cpoLower.includes("vinfast")) return false;
         }
 
-        // Province
+        // Province matching
         if (selectedProvince !== "ALL") {
           if (!(s.addr || "").includes(selectedProvince)) return false;
         }
 
-        // Search query
+        // Search query matching across name, address, operator, and port type
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
           const matchName = (s.name || "").toLowerCase().includes(q);
           const matchAddr = (s.addr || "").toLowerCase().includes(q);
           const matchCpo = (s.cpo || "").toLowerCase().includes(q);
-          if (!matchName && !matchAddr && !matchCpo) return false;
+          const matchPort = (s.port || "").toLowerCase().includes(q);
+          if (!matchName && !matchAddr && !matchCpo && !matchPort) return false;
         }
 
         return true;
@@ -707,6 +746,7 @@
         const isDC = (s.port || "").toLowerCase().includes("dc");
         const badgeColor = isVinFast ? (isDC ? "bg-emerald-500" : "bg-teal-500") : "bg-sky-500";
         const globalIdx = startIndex + idx;
+        const navUrl = s.lat && s.lng ? `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}` : "#";
 
         html += `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-darkCard/50 transition-colors cursor-pointer group" onclick="openStationModal(${globalIdx})">
@@ -722,13 +762,14 @@
             <td class="p-3.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
               ${s.port || "AC / DC"}
             </td>
-            <td class="p-3.5 text-inkMuted dark:text-textDarkMuted max-w-[240px] truncate">
+            <td class="p-3.5 text-inkMuted dark:text-textDarkMuted max-w-[240px] truncate" title="${s.addr || ''}">
               ${s.addr || "Vietnam"}
             </td>
             <td class="p-3.5 text-right font-mono">
-              <button class="px-2 py-1 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-[10px]">
-                Navigate &rarr;
-              </button>
+              <a href="${navUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted group-hover:text-emerald-600 dark:group-hover:text-emerald-400 text-[10px] hover:border-emerald-500 transition-colors">
+                <span>Navigate</span>
+                <span>&rarr;</span>
+              </a>
             </td>
           </tr>
         `;
@@ -736,8 +777,8 @@
 
       tbody.innerHTML = html;
 
-      if (paginationInfo) paginationInfo.textContent = `Showing ${startIndex + 1} to ${endIndex} of ${FILTERED_STATIONS.length} stations`;
-      if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+      if (paginationInfo) paginationInfo.textContent = `Showing ${(startIndex + 1).toLocaleString()} to ${endIndex.toLocaleString()} of ${FILTERED_STATIONS.length.toLocaleString()} stations`;
+      if (pageIndicator) pageIndicator.textContent = `${currentPage} / ${totalPages.toLocaleString()}`;
       if (prevBtn) prevBtn.disabled = currentPage <= 1;
       if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
     }
@@ -880,7 +921,7 @@
       });
 
       const countEl = document.getElementById("visiblePinsCount");
-      if (countEl) countEl.textContent = `${pinsToRender.length} of ${FILTERED_STATIONS.length}`;
+      if (countEl) countEl.textContent = `${pinsToRender.length.toLocaleString()} of ${FILTERED_STATIONS.length.toLocaleString()}`;
     }
 
     function openStationModal(index) {
