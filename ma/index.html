@@ -1640,9 +1640,9 @@
                 ${escapeHtml(task.title)}
               </div>
               ${task.law ? `
-                <div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer mt-1 text-[11px] text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-100/90 inline-flex items-center gap-1">
-                  <i data-lucide="book-open" class="w-3 h-3 text-blue-500 shrink-0"></i>
-                  <span class="truncate">${escapeHtml(task.law)}</span>
+                <div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer mt-1.5 text-[11.5px] text-blue-800 bg-blue-50/80 px-2.5 py-1.5 rounded-lg border border-blue-200/80 flex items-start gap-1.5 leading-relaxed">
+                  <i data-lucide="book-open" class="w-3.5 h-3.5 text-blue-600 mt-0.5 shrink-0"></i>
+                  <span class="break-words whitespace-normal font-medium leading-relaxed select-text">${escapeHtml(task.law)}</span>
                 </div>
               ` : ''}
             </div>
@@ -1658,18 +1658,18 @@
               </div>
             </div>
 
-            <!-- Dải Thời Gian: Luật vs Thực tế -->
-            <div class="grid grid-cols-2 gap-2 text-[10.5px]">
-              <div class="bg-slate-100 p-1.5 rounded border border-slate-200/80 flex items-center justify-between">
-                <span class="text-slate-400 uppercase font-semibold">Luật:</span>
-                <span class="font-mono font-bold text-slate-700">${escapeHtml(task.statutoryTime || '—')}</span>
+            <!-- Dải Thời Gian: Luật vs Thực tế (Bố cục xếp lớp rõ ràng) -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-slate-100 p-2 rounded-lg border border-slate-200/80 flex flex-col justify-between">
+                <span class="text-[9.5px] text-slate-500 uppercase font-bold tracking-wider mb-0.5">Thời hạn Luật định:</span>
+                <span class="font-mono font-bold text-slate-800 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(task.statutoryTime || '—')}</span>
               </div>
-              <div class="bg-amber-50 p-1.5 rounded border border-amber-200/80 flex items-center justify-between">
-                <span class="text-amber-600 uppercase font-semibold">Thực:</span>
-                <span class="font-mono font-bold text-amber-900">${escapeHtml(task.actualTime || '—')}</span>
+              <div class="bg-amber-50 p-2 rounded-lg border border-amber-200/80 flex flex-col justify-between">
+                <span class="text-[9.5px] text-amber-700 uppercase font-bold tracking-wider mb-0.5">Thực tế xử lý:</span>
+                <span class="font-mono font-bold text-amber-900 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(task.actualTime || '—')}</span>
               </div>
               ${task.finishDateFormatted ? `
-                <div class="col-span-2 bg-slate-100 p-1.5 rounded border border-slate-300 font-bold flex items-center justify-between text-black">
+                <div class="col-span-2 bg-slate-100 p-2 rounded-lg border border-slate-300 font-bold flex items-center justify-between text-black text-[10.5px]">
                   <span class="text-slate-500 uppercase font-bold text-[9.5px]">Tiến độ lịch:</span>
                   <span class="font-mono">${task.startDateFormatted || '...'} &rarr; ${task.finishDateFormatted}</span>
                 </div>
@@ -1693,11 +1693,11 @@
 
             <!-- Chân Thẻ: PIC, Deadline & Nút Sửa / Xóa -->
             <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <div class="flex items-center gap-1.5 truncate max-w-[190px]">
+              <div class="flex items-center gap-1.5 flex-1 min-w-0 pr-2">
                 <i data-lucide="user" class="w-3 h-3 text-slate-400 shrink-0"></i>
-                <span class="font-bold text-slate-800 truncate">${escapeHtml(task.pic || 'Chưa gán')}</span>
+                <span class="font-bold text-slate-800 truncate text-[11px]">${escapeHtml(task.pic || 'Chưa gán')}</span>
                 <span class="text-slate-400">|</span>
-                <span class="font-mono">${escapeHtml(formatVnDate(task.deadline))}</span>
+                <span class="font-mono text-slate-500 whitespace-nowrap text-[10.5px]">${escapeHtml(formatVnDate(task.deadline))}</span>
               </div>
 
               <div class="flex items-center gap-1 shrink-0">
