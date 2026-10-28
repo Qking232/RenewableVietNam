@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.13 -->
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -309,6 +310,11 @@
           <div class="col-span-1 sm:col-span-2 xl:col-auto flex items-center gap-2">
             <button id="btnApplyScenario" onclick="openDateSyncModal()" class="w-full sm:w-auto justify-center px-4 py-2 sm:py-1 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 min-h-[38px] sm:min-h-0 cursor-pointer" title="Áp dụng kịch bản và đồng bộ ngày thực hiện">
               <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Áp Dụng
+            </button>
+            <button id="btnCloudSync" onclick="triggerManualCloudSync()" class="w-full sm:w-auto justify-center px-3 py-2 sm:py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 min-h-[38px] sm:min-h-0 cursor-pointer" title="Đồng bộ dữ liệu thời gian thực với Supabase Cloud">
+              <i data-lucide="cloud" class="w-3.5 h-3.5 text-slate-300"></i>
+              <span id="cloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+              <span id="cloudSyncText" class="whitespace-nowrap">Cloud: Đã kết nối</span>
             </button>
           </div>
         </div>
@@ -892,6 +898,244 @@
       return syncTasksWithBaseline(normalized);
     }
 
+    // =========================================================================
+    // HỆ THỐNG ĐỒNG BỘ ĐÁM MÂY SUPABASE CLOUD SYNC ENGINE (REV 0.13)
+    // =========================================================================
+    const RV_SUPABASE_CONFIG = {
+      url: 'https://nkkwegvplpozirrjcxsn.supabase.co',
+      key: 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU',
+      table: 'platapp_apps',
+      category: 'ma_legal_project'
+    };
+
+    const RVSupabaseEngine = {
+      syncTimeout: null,
+      isSyncing: false,
+      lastSyncTime: null,
+
+      setSyncStatus(state, message) {
+        const dot = document.getElementById('cloudSyncDot');
+        const text = document.getElementById('cloudSyncText');
+        if (!dot || !text) return;
+
+        if (state === 'syncing') {
+          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0';
+          text.innerText = message || 'Cloud: Đang lưu...';
+        } else if (state === 'synced') {
+          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+          text.innerText = message || (this.lastSyncTime ? `Cloud: ${this.lastSyncTime}` : 'Cloud: Đã đồng bộ');
+        } else if (state === 'error') {
+          dot.className = 'w-2 h-2 rounded-full bg-rose-400 shrink-0';
+          text.innerText = message || 'Cloud: Lưu máy cục bộ';
+        } else {
+          dot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+          text.innerText = message || 'Cloud: Ngoại tuyến';
+        }
+      },
+
+      formatTime(date) {
+        const d = date || new Date();
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${h}:${m}:${s}`;
+      },
+
+      async fetchCloudProjects() {
+        try {
+          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?category=eq.${RV_SUPABASE_CONFIG.category}&order=updated_at.desc`;
+          const res = await fetch(url, {
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (!res.ok) throw new Error(`Supabase query failed: ${res.status}`);
+          const data = await res.json();
+          const projects = [];
+          for (const row of data) {
+            try {
+              if (row.code) {
+                const parsed = typeof row.code === 'string' ? JSON.parse(row.code) : row.code;
+                if (parsed && parsed.id) {
+                  projects.push(parsed);
+                }
+              }
+            } catch (e) {
+              console.warn('Không thể parse dữ liệu dự án Cloud:', row.id, e);
+            }
+          }
+          return projects;
+        } catch (err) {
+          console.warn('Lỗi kết nối Supabase fetch:', err);
+          return null;
+        }
+      },
+
+      async upsertProject(proj) {
+        if (!proj || !proj.id) return false;
+        try {
+          const rowId = 'ma_proj_' + String(proj.id).replace(/^ma_proj_/, '');
+          const payload = {
+            id: rowId,
+            title: proj.name || 'Dự án Chưa Đặt Tên',
+            category: RV_SUPABASE_CONFIG.category,
+            description: proj.projectType || 'URBAN_TOWN',
+            code: JSON.stringify(proj),
+            author: proj.location || 'Vietnam Legal M&A',
+            revision: '1.0',
+            updated_at: proj.updatedAt || new Date().toISOString()
+          };
+          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=representation'
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`Supabase upsert failed: ${res.status}`);
+          return true;
+        } catch (err) {
+          console.warn('Lỗi upsert dự án lên Supabase:', err);
+          return false;
+        }
+      },
+
+      async deleteProject(projId) {
+        if (!projId) return;
+        try {
+          const rowId = 'ma_proj_' + String(projId).replace(/^ma_proj_/, '');
+          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(rowId)}`;
+          await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key
+            }
+          });
+        } catch (err) {
+          console.warn('Lỗi xóa dự án trên Supabase:', err);
+        }
+      },
+
+      queueDebouncedSync(immediate = false) {
+        if (this.syncTimeout) {
+          clearTimeout(this.syncTimeout);
+          this.syncTimeout = null;
+        }
+        this.setSyncStatus('syncing', 'Cloud: Đang lưu...');
+        const delay = immediate ? 0 : 800;
+        this.syncTimeout = setTimeout(() => {
+          this.syncActiveProjectToCloud();
+        }, delay);
+      },
+
+      async syncActiveProjectToCloud() {
+        const activeProj = projectsList.find(p => p.id === currentProjectId);
+        if (!activeProj) return;
+        const ok = await this.upsertProject(activeProj);
+        if (ok) {
+          this.lastSyncTime = this.formatTime();
+          this.setSyncStatus('synced', `Cloud: Đã lưu ${this.lastSyncTime}`);
+        } else {
+          this.setSyncStatus('error', 'Cloud: Lưu máy cục bộ');
+        }
+      },
+
+      async bidirectionalSync(showToastFeedback = false) {
+        if (this.isSyncing) return;
+        this.isSyncing = true;
+        this.setSyncStatus('syncing', 'Cloud: Đang đồng bộ...');
+
+        try {
+          const cloudProjects = await this.fetchCloudProjects();
+          if (cloudProjects === null) {
+            this.setSyncStatus('error', 'Cloud: Ngoại tuyến (Đã lưu máy)');
+            if (showToastFeedback) showToast('Không thể kết nối Supabase, đang dùng dữ liệu máy.');
+            this.isSyncing = false;
+            return;
+          }
+
+          let mergedCount = 0;
+          let pushedCount = 0;
+
+          // 1. Đồng bộ dự án từ Cloud vào projectsList cục bộ
+          for (const cp of cloudProjects) {
+            const cleanCpId = String(cp.id).replace(/^ma_proj_/, '');
+            const localIdx = projectsList.findIndex(p => {
+              const cleanPId = String(p.id).replace(/^ma_proj_/, '');
+              return cleanPId === cleanCpId;
+            });
+
+            if (localIdx === -1) {
+              projectsList.push(cp);
+              mergedCount++;
+            } else {
+              const localProj = projectsList[localIdx];
+              const localTime = new Date(localProj.updatedAt || 0).getTime();
+              const cloudTime = new Date(cp.updatedAt || 0).getTime();
+              if (cloudTime > localTime) {
+                projectsList[localIdx] = cp;
+                mergedCount++;
+              }
+            }
+          }
+
+          // 2. Đẩy các dự án mới tạo ở máy lên Cloud
+          for (const lp of projectsList) {
+            const cleanLpId = String(lp.id).replace(/^ma_proj_/, '');
+            const cp = cloudProjects.find(c => {
+              const cleanCId = String(c.id).replace(/^ma_proj_/, '');
+              return cleanCId === cleanLpId;
+            });
+            if (!cp) {
+              await this.upsertProject(lp);
+              pushedCount++;
+            } else {
+              const localTime = new Date(lp.updatedAt || 0).getTime();
+              const cloudTime = new Date(cp.updatedAt || 0).getTime();
+              if (localTime > cloudTime) {
+                await this.upsertProject(lp);
+                pushedCount++;
+              }
+            }
+          }
+
+          // 3. Chuẩn hóa task và lưu cục bộ
+          projectsList = projectsList.map(p => ({
+            ...p,
+            tasks: normalizeTasks(p.tasks || [])
+          }));
+
+          localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projectsList));
+          const activeStillExists = projectsList.some(p => p.id === currentProjectId);
+          if (!activeStillExists && projectsList.length > 0) {
+            currentProjectId = projectsList[0].id;
+          }
+          syncActiveProjectData();
+          updateProjectSelectorUI();
+          render();
+
+          this.lastSyncTime = this.formatTime();
+          this.setSyncStatus('synced', `Cloud: Đã lưu ${this.lastSyncTime}`);
+          if (showToastFeedback) {
+            showToast(`Đồng bộ Cloud Supabase thành công (${projectsList.length} dự án)`);
+          }
+        } catch (err) {
+          console.error('Lỗi quá trình đồng bộ Supabase:', err);
+          this.setSyncStatus('error', 'Cloud: Lỗi đồng bộ');
+        } finally {
+          this.isSyncing = false;
+        }
+      }
+    };
+
+    function triggerManualCloudSync() {
+      RVSupabaseEngine.bidirectionalSync(true);
+    }
+
     // Load and Migrate Projects from LocalStorage
     function loadProjects() {
       const storedRegistry = localStorage.getItem(PROJECTS_STORAGE_KEY);
@@ -942,6 +1186,11 @@
       currentProjectId = found ? found.id : projectsList[0].id;
       syncActiveProjectData();
       updateProjectSelectorUI();
+      if (typeof RVSupabaseEngine !== 'undefined') {
+        setTimeout(() => {
+          RVSupabaseEngine.bidirectionalSync(false);
+        }, 300);
+      }
     }
 
     function syncActiveProjectData() {
@@ -991,6 +1240,9 @@
       localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projectsList));
       localStorage.setItem(ACTIVE_PROJ_KEY, currentProjectId);
       localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify(taskList));
+      if (typeof RVSupabaseEngine !== 'undefined') {
+        RVSupabaseEngine.queueDebouncedSync(false);
+      }
     }
 
     function saveTasks() {
@@ -1047,6 +1299,9 @@
       saveProjects();
       updateProjectSelectorUI();
       render();
+      if (typeof RVSupabaseEngine !== 'undefined') {
+        RVSupabaseEngine.queueDebouncedSync(true);
+      }
       showToast(`Đã tạo thành công dự án mới: ${newProj.name}`);
     }
 
@@ -1068,6 +1323,10 @@
       const activeProj = projectsList.find(p => p.id === currentProjectId);
       const name = activeProj ? activeProj.name : '';
       if (confirm(`Bạn có chắc chắn muốn xóa dự án "${name}" cùng toàn bộ dữ liệu pháp lý của dự án này?`)) {
+        const deletedId = currentProjectId;
+        if (typeof RVSupabaseEngine !== 'undefined') {
+          RVSupabaseEngine.deleteProject(deletedId);
+        }
         projectsList = projectsList.filter(p => p.id !== currentProjectId);
         currentProjectId = projectsList[0].id;
         expandedRows.clear();
