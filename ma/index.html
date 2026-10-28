@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.13 -->
+<!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.14 -->
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -448,7 +448,7 @@
     </div>
 
     <!-- KPI Metric Dashboard Cards (5-Column Unified Layout) -->
-    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 no-print">
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-3 no-print">
       <!-- Tổng thủ tục & Hồ sơ thành phần (Combined KPI Card) -->
       <div id="cardTotal" class="col-span-2 sm:col-span-1 bg-white rounded-xl p-3 shadow-sm border border-slate-200/90 flex flex-col justify-between cursor-pointer hover:border-slate-400 hover:shadow-md transition group" title="Bấm để xem tất cả thủ tục">
         <div class="flex items-center justify-between">
@@ -506,6 +506,17 @@
         </div>
       </div>
 
+      <!-- Thủ tục pháp lý còn lại -->
+      <div id="cardRemaining" class="bg-white rounded-xl p-3.5 shadow-sm border border-amber-200/90 flex flex-col justify-between bg-gradient-to-br from-white to-amber-50/30 cursor-pointer hover:border-amber-400 hover:shadow-md transition group" title="Bấm để lọc các thủ tục pháp lý còn lại (chưa hoàn thành)">
+        <span class="text-[11px] font-semibold text-amber-700 uppercase tracking-wider group-hover:text-amber-900 truncate">Thủ Tục Còn Lại</span>
+        <div class="flex items-baseline justify-between mt-1">
+          <h3 id="statRemaining" class="text-2xl font-bold text-amber-700">0</h3>
+          <span class="p-1.5 bg-amber-100 rounded-lg text-amber-600 group-hover:bg-amber-200 transition">
+            <i data-lucide="list-todo" class="w-4 h-4"></i>
+          </span>
+        </div>
+      </div>
+
       <!-- Đang xử lý -->
       <div id="cardInProgress" class="bg-white rounded-xl p-3.5 shadow-sm border border-blue-100 flex flex-col justify-between bg-gradient-to-br from-white to-blue-50/30 cursor-pointer hover:border-blue-300 hover:shadow-md transition group" title="Bấm để lọc các thủ tục đang xử lý">
         <span class="text-[11px] font-semibold text-blue-600 uppercase tracking-wider group-hover:text-blue-800">Đang Thực Hiện / Thẩm Định</span>
@@ -560,6 +571,7 @@
 
         <select id="statusFilter" class="w-full md:w-48 py-2 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition font-medium truncate">
           <option value="ALL">Tất cả trạng thái</option>
+          <option value="REMAINING">Còn lại (Chưa hoàn thành)</option>
           <option value="Đã hoàn thành">Đã hoàn thành</option>
           <option value="Đang xử lý">Đang xử lý</option>
           <option value="Chưa bắt đầu">Chưa bắt đầu</option>
@@ -1377,6 +1389,10 @@
 
       const statCompletedEl = document.getElementById('statCompleted');
       if (statCompletedEl) statCompletedEl.textContent = completed;
+
+      const remaining = Math.max(0, total - completed);
+      const statRemainingEl = document.getElementById('statRemaining');
+      if (statRemainingEl) statRemainingEl.textContent = remaining;
 
       const statInProgressEl = document.getElementById('statInProgress');
       if (statInProgressEl) statInProgressEl.textContent = inProgress;
@@ -2263,7 +2279,9 @@
         }
 
         if (statusVal !== 'ALL') {
-          if (statusVal === 'Đã hoàn thành') {
+          if (statusVal === 'REMAINING') {
+            if (task.completed || task.status === 'Đã hoàn thành') return false;
+          } else if (statusVal === 'Đã hoàn thành') {
             if (!task.completed && task.status !== 'Đã hoàn thành') return false;
           } else if (statusVal === 'Đang xử lý') {
             if (task.completed || task.status !== 'Đang xử lý') return false;
@@ -2901,6 +2919,7 @@
     };
     bindKpiFilter('cardTotal', 'ALL');
     bindKpiFilter('cardCompleted', 'Đã hoàn thành');
+    bindKpiFilter('cardRemaining', 'REMAINING');
     bindKpiFilter('cardInProgress', 'Đang xử lý');
     bindKpiFilter('cardDelayed', 'Bị nghẽn / Trễ hạn');
 
