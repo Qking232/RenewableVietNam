@@ -285,7 +285,7 @@
           <!-- Bước 1: Chọn Loại Hình Dự Án -->
           <div class="flex items-center gap-1.5 text-xs bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700">
             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Loại Hình:</label>
-            <select id="homeProjectTypeSelector" class="w-full sm:w-auto py-1 px-1.5 bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
+            <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="w-full sm:w-auto py-1 px-1.5 bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
               <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Khu Đô Thị / Nhà Ở</option>
               <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp (KCN)</option>
               <option value="ENERGY" class="bg-slate-900">3. Năng Lượng Tái Tạo</option>
@@ -948,6 +948,26 @@
       const activeProj = projectsList.find(p => p.id === currentProjectId) || projectsList[0];
       if (activeProj) {
         currentProjectId = activeProj.id;
+
+        // Khôi phục chính xác loại hình dự án đã lưu
+        if (activeProj.projectType && PROJECT_LEGAL_ARCHETYPES[activeProj.projectType]) {
+          currentProjectType = activeProj.projectType;
+        } else {
+          currentProjectType = 'URBAN_TOWN';
+          activeProj.projectType = 'URBAN_TOWN';
+        }
+        VIETNAM_LEGAL_BASELINE = PROJECT_LEGAL_ARCHETYPES[currentProjectType];
+
+        const homeSelector = document.getElementById('homeProjectTypeSelector');
+        if (homeSelector) {
+          homeSelector.value = currentProjectType;
+        }
+
+        const ganttSelector = document.getElementById('ganttProjectTypeSelect');
+        if (ganttSelector) {
+          ganttSelector.value = currentProjectType;
+        }
+
         taskList = activeProj.tasks || [];
         const scenarioSelector = document.getElementById('maEntrySelector');
         if (scenarioSelector && activeProj.scenarioKey) {
@@ -2319,7 +2339,6 @@
       const activeProj = (Array.isArray(projectsList) ? projectsList.find(p => p.id === currentProjectId) : null);
       if (activeProj) {
         activeProj.projectType = newType;
-        saveProjects();
       }
 
       const homeSelector = document.getElementById('homeProjectTypeSelector');
@@ -2332,7 +2351,7 @@
         ganttSelector.value = newType;
       }
 
-      // Tái lập danh mục taskList theo baseline của loại hình mới nhưng bảo lưu trạng thái hoàn thành và ghi chú
+      // Tái lập danh mục taskList theo baseline của loại hình mới nhưng bảo lưu trạng thái hoàn thành, ghi chú và deadline
       const archetypeMap = new Map(VIETNAM_LEGAL_BASELINE.map(b => [b.id, b]));
       taskList = taskList.map(task => {
         const arch = archetypeMap.get(task.id);
@@ -2345,16 +2364,24 @@
             authority: arch.authority,
             workingDays: arch.workingDays,
             statutoryTime: arch.statutoryTime,
-            desc: arch.desc,
-            cpsCount: arch.cpsCount,
-            subInputs: arch.subInputs.map((sub, sIdx) => {
+            actualTime: arch.actualTime || task.actualTime,
+            outputs: arch.outputs || task.outputs,
+            notes: arch.notes || task.notes,
+            desc: arch.desc || task.desc,
+            cpsCount: arch.cpsCount || task.cpsCount,
+            subInputs: Array.isArray(arch.subInputs) ? arch.subInputs.map((sub, sIdx) => {
               const oldSub = (Array.isArray(task.subInputs) && task.subInputs[sIdx]) || {};
               return { ...sub, done: Boolean(oldSub.done || task.completed) };
-            })
+            }) : []
           };
         }
         return task;
       });
+
+      if (activeProj) {
+        activeProj.tasks = taskList;
+        saveProjects();
+      }
 
       saveTasks();
       render();
@@ -2505,8 +2532,19 @@
     function initScenarioFeatures() {
       const applyBtn = document.getElementById('btnApplyScenario');
       const selector = document.getElementById('maEntrySelector');
+      const homeTypeSelector = document.getElementById('homeProjectTypeSelector');
+
+      if (homeTypeSelector) {
+        homeTypeSelector.addEventListener('change', (e) => {
+          applyProjectType(e.target.value);
+        });
+      }
+
       if (applyBtn && selector) {
         applyBtn.addEventListener('click', () => {
+          if (homeTypeSelector && homeTypeSelector.value !== currentProjectType) {
+            applyProjectType(homeTypeSelector.value);
+          }
           applyScenario(selector.value);
         });
         selector.addEventListener('change', () => {
