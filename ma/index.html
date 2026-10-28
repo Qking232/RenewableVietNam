@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>Hệ Thống Quản Lý Dự Án Đầu Tư</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -40,6 +40,17 @@
     }
   </script>
   <style>
+    /* Strict Mobile Viewport Containment & No Horizontal Blowout */
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+      position: relative;
+      width: 100%;
+    }
+    .table-container {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+    }
     @page {
       size: A4 landscape;
       margin: 8mm;
@@ -230,20 +241,20 @@
 
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900 w-full max-w-full min-w-0 overflow-x-hidden">
 
   <!-- Header Banner (Slimline Executive Navbar) -->
-  <header class="bg-slate-900 text-white border-b border-slate-800 static xl:sticky xl:top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95 no-print">
-    <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 space-y-2">
+  <header class="w-full max-w-full bg-slate-900 text-white border-b border-slate-800 static xl:sticky xl:top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95 no-print overflow-hidden">
+    <div class="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 space-y-2.5">
       <!-- Hàng 1: Tiêu Đề Duy Nhất + Dự Án + Điều Phối M&A + Nút Tác Vụ -->
-      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-2.5 sm:gap-3">
         <!-- Cụm Trái: Tiêu Đề Duy Nhất & Quản Lý Dự Án -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 xl:gap-3 flex-wrap">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 xl:gap-3 flex-wrap w-full xl:w-auto">
           <div class="flex items-center gap-2">
-            <span class="inline-flex items-center justify-center p-1.5 bg-slate-800 rounded-lg text-white border border-slate-700 shadow-2xs">
+            <span class="inline-flex items-center justify-center p-1.5 bg-slate-800 rounded-lg text-white border border-slate-700 shadow-2xs shrink-0">
               <i data-lucide="layers" class="w-4 h-4 text-white"></i>
             </span>
-            <h1 class="text-sm sm:text-base font-bold tracking-tight text-white uppercase whitespace-nowrap">
+            <h1 class="text-xs sm:text-base font-bold tracking-tight text-white uppercase whitespace-normal sm:whitespace-nowrap leading-tight">
               HỆ THỐNG QUẢN LÝ DỰ ÁN ĐẦU TƯ
             </h1>
           </div>
@@ -266,34 +277,34 @@
           </div>
         </div>
 
-        <!-- Cụm Phải: Loại Hình -> Mốc Tiếp Quản -> Áp Dụng -> In PDF -->
-        <div class="grid grid-cols-2 sm:flex sm:items-center gap-2 xl:gap-2.5 w-full xl:w-auto">
+        <!-- Cụm Phải: Loại Hình -> Mốc Tiếp Quản -> Áp Dụng -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:flex sm:items-center gap-2 xl:gap-2.5 w-full xl:w-auto">
           <!-- Bước 1: Chọn Loại Hình Dự Án -->
-          <div class="flex items-center gap-1 text-xs">
+          <div class="flex items-center gap-1.5 text-xs bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700">
             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Loại Hình:</label>
-            <select id="homeProjectTypeSelector" class="w-full sm:w-auto py-1 px-2 bg-slate-800 border border-slate-700 rounded-lg text-xs font-semibold text-white focus:outline-none cursor-pointer">
-              <option value="URBAN_TOWN" selected>1. Khu Đô Thị / Nhà Ở</option>
-              <option value="INDUSTRIAL">2. BĐS Công Nghiệp (KCN)</option>
-              <option value="ENERGY">3. Năng Lượng Tái Tạo</option>
-              <option value="RESORT">4. Du Lịch Nghỉ Dưỡng</option>
+            <select id="homeProjectTypeSelector" class="w-full sm:w-auto py-1 px-1.5 bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer">
+              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Khu Đô Thị / Nhà Ở</option>
+              <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp (KCN)</option>
+              <option value="ENERGY" class="bg-slate-900">3. Năng Lượng Tái Tạo</option>
+              <option value="RESORT" class="bg-slate-900">4. Du Lịch Nghỉ Dưỡng</option>
             </select>
           </div>
 
           <!-- Bước 2: Chọn Mốc Tiếp Quản & Nút Áp Dụng -->
-          <div class="flex items-center gap-1 text-xs">
+          <div class="flex items-center gap-1.5 text-xs bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700">
             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Mốc Tiếp Quản:</label>
-            <select id="maEntrySelector" class="w-full sm:w-auto py-1 px-2 bg-slate-800 border border-slate-700 rounded-lg text-xs font-semibold text-white focus:outline-none cursor-pointer max-w-[210px] truncate">
-              <option value="GREENFIELD">1. Phát triển từ đầu</option>
-              <option value="AFTER_APPROVAL">2. Sau Chấp thuận chủ trương</option>
-              <option value="AFTER_1_500">3. Sau Quy hoạch 1/500</option>
-              <option value="AFTER_LAND">4. Sau Giao đất &amp; Nghĩa vụ TC</option>
-              <option value="AFTER_EIA_FIRE">5. Sau ĐTM &amp; PCCC</option>
-              <option value="AFTER_PERMIT">6. Sau Giấy phép xây dựng</option>
+            <select id="maEntrySelector" class="w-full sm:w-auto py-1 px-1.5 bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer max-w-full sm:max-w-[210px] truncate">
+              <option value="GREENFIELD" class="bg-slate-900">1. Phát triển từ đầu</option>
+              <option value="AFTER_APPROVAL" class="bg-slate-900">2. Sau Chấp thuận chủ trương</option>
+              <option value="AFTER_1_500" class="bg-slate-900">3. Sau Quy hoạch 1/500</option>
+              <option value="AFTER_LAND" class="bg-slate-900">4. Sau Giao đất &amp; Nghĩa vụ TC</option>
+              <option value="AFTER_EIA_FIRE" class="bg-slate-900">5. Sau ĐTM &amp; PCCC</option>
+              <option value="AFTER_PERMIT" class="bg-slate-900">6. Sau Giấy phép xây dựng</option>
             </select>
           </div>
 
-          <div class="col-span-2 sm:col-auto flex items-center gap-2">
-            <button id="btnApplyScenario" onclick="openDateSyncModal()" class="flex-1 sm:flex-none justify-center px-3 py-1 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg transition shadow-xs flex items-center gap-1 shrink-0" title="Áp dụng kịch bản và đồng bộ ngày thực hiện">
+          <div class="col-span-1 sm:col-span-2 xl:col-auto flex items-center gap-2">
+            <button id="btnApplyScenario" onclick="openDateSyncModal()" class="w-full sm:w-auto justify-center px-4 py-2 sm:py-1 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 min-h-[38px] sm:min-h-0 cursor-pointer" title="Áp dụng kịch bản và đồng bộ ngày thực hiện">
               <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Áp Dụng
             </button>
           </div>
@@ -304,8 +315,8 @@
     </div>
   </header>
 
-  <main class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 flex-1">
-    <div id="dashboardRoot" class="space-y-5">
+  <main class="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 space-y-4 sm:space-y-5 flex-1 min-w-0 overflow-x-hidden">
+    <div id="dashboardRoot" class="w-full max-w-full min-w-0 space-y-4 sm:space-y-5">
       <!-- BOX PHÂN LOẠI HỒ SƠ KHI ÁP DỤNG MA TRẬN M&A (3 DANH MỤC HÀNH ĐỘNG) -->
       <div id="maBreakdownBox" class="hidden mt-4 pt-4 border-t border-slate-200 animate-in fade-in duration-300">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
@@ -417,7 +428,7 @@
         </div>
       </div>
       <div id="mainGanttBtnWrapper" class="w-full sm:w-auto flex items-center">
-        <button id="btnOpenGantt" onclick="openGanttModal()" class="w-full sm:w-auto justify-center px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs sm:text-sm rounded-xl border border-slate-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2.5 group cursor-pointer shrink-0" title="Mở tiến độ dự án &amp; biểu đồ Gantt toàn diện (CPM)">
+        <button id="btnOpenGantt" onclick="openGanttModal()" class="w-full sm:w-auto justify-center px-4 py-2.5 sm:py-2 bg-slate-900 hover:bg-black text-white font-bold text-xs sm:text-sm rounded-xl border border-slate-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2.5 group cursor-pointer shrink-0 min-h-[42px] sm:min-h-0" title="Mở tiến độ dự án &amp; biểu đồ Gantt toàn diện (CPM)">
           <span class="p-1 bg-white/10 text-white rounded-lg border border-white/20 group-hover:bg-white group-hover:text-black transition-colors">
             <i data-lucide="calendar-range" class="w-4 h-4"></i>
           </span>
@@ -525,8 +536,8 @@
           class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition" />
       </div>
 
-      <!-- Lọc Giai đoạn & Trạng thái (2 Cột trên Mobile, Flex trên Desktop) -->
-      <div class="grid grid-cols-2 md:flex items-center gap-2 w-full md:w-auto">
+      <!-- Lọc Giai đoạn & Trạng thái (1 Cột trên Mobile hẹp, 2 Cột trên Tablet, Flex trên Desktop) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:flex items-center gap-2 w-full md:w-auto">
         <select id="phaseFilter" class="w-full md:w-72 py-2 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition font-medium truncate">
           <option value="ALL">Tất cả Danh mục &amp; Giai đoạn</option>
           <option value="M&A & DD">Khối M&amp;A: Thẩm định chuyên sâu (DD)</option>
@@ -562,9 +573,18 @@
     </section>
 
     <!-- Table Matrix Container (Natural Page Scroll) -->
-    <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
-      <div class="overflow-x-auto table-container">
-        <table class="w-full text-left border-collapse text-xs">
+    <section class="w-full max-w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
+      <!-- Mobile Touch Swipe Helper Bar (Visible on mobile only) -->
+      <div class="sm:hidden px-3 py-2 bg-slate-100 border-b border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-medium select-none">
+        <div class="flex items-center gap-1.5">
+          <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-blue-600 animate-pulse"></i>
+          <span>Vuốt ngang để xem 8 cột dữ liệu</span>
+        </div>
+        <span class="text-[10px] text-slate-400 font-semibold bg-white px-1.5 py-0.5 rounded border border-slate-200">Bấm mã để mở chi tiết</span>
+      </div>
+
+      <div class="w-full max-w-full overflow-x-auto table-container touch-pan-x" style="-webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;">
+        <table class="w-full min-w-[960px] text-left border-collapse text-xs">
           <thead class="bg-slate-100 border-b-2 border-slate-300">
             <tr class="text-slate-800 font-bold uppercase tracking-wider text-[11px]">
               <th scope="col" class="py-2.5 px-2 w-20 text-center border-r border-slate-200">Mã TT</th>
@@ -807,8 +827,8 @@
     <span id="toastMessage">Đã cập nhật dữ liệu</span>
   </div>
 
-  <footer class="bg-white border-t border-slate-200 py-3.5 text-center text-xs text-slate-500 no-print mt-auto">
-    <div class="max-w-[1720px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+  <footer class="w-full max-w-full bg-white border-t border-slate-200 py-3.5 text-center text-xs text-slate-500 no-print mt-auto overflow-hidden">
+    <div class="w-full max-w-[1720px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
       <p>Bảng kiểm tra pháp lý phát triển dự án bất động sản &amp; công nghiệp Việt Nam &copy; 2026. Tự động đồng bộ cục bộ.</p>
       <div class="flex items-center gap-3 text-slate-400">
         <span class="inline-flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-500"></i> Bảo mật dữ liệu trên trình duyệt cá nhân</span>
