@@ -40,16 +40,19 @@
     }
   </script>
   <style>
-    /* Strict Mobile Viewport Containment & No Horizontal Blowout */
-    html, body {
+    /* Fluid Multi-Touch Scrolling & Zero Horizontal Blowout */
+    html {
+      overflow-x: clip;
+    }
+    body {
       max-width: 100vw;
-      overflow-x: hidden;
+      overflow-x: clip;
       position: relative;
       width: 100%;
     }
     .table-container {
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
+      touch-action: pan-x pan-y;
     }
     @page {
       size: A4 landscape;
@@ -241,7 +244,7 @@
 
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900 w-full max-w-full min-w-0 overflow-x-hidden">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900 w-full max-w-full min-w-0">
 
   <!-- Header Banner (Slimline Executive Navbar) -->
   <header class="w-full max-w-full bg-slate-900 text-white border-b border-slate-800 static xl:sticky xl:top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95 no-print overflow-hidden">
@@ -315,7 +318,7 @@
     </div>
   </header>
 
-  <main class="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 space-y-4 sm:space-y-5 flex-1 min-w-0 overflow-x-hidden">
+  <main class="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 space-y-4 sm:space-y-5 flex-1 min-w-0">
     <div id="dashboardRoot" class="w-full max-w-full min-w-0 space-y-4 sm:space-y-5">
       <!-- BOX PHÂN LOẠI HỒ SƠ KHI ÁP DỤNG MA TRẬN M&A (3 DANH MỤC HÀNH ĐỘNG) -->
       <div id="maBreakdownBox" class="hidden mt-4 pt-4 border-t border-slate-200 animate-in fade-in duration-300">
@@ -583,7 +586,7 @@
         <span class="text-[10px] text-slate-400 font-semibold bg-white px-1.5 py-0.5 rounded border border-slate-200">Bấm mã để mở chi tiết</span>
       </div>
 
-      <div class="w-full max-w-full overflow-x-auto table-container touch-pan-x" style="-webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;">
+      <div class="w-full max-w-full overflow-x-auto table-container" style="-webkit-overflow-scrolling: touch; touch-action: pan-x pan-y;">
         <table class="w-full min-w-[960px] text-left border-collapse text-xs">
           <thead class="bg-slate-100 border-b-2 border-slate-300">
             <tr class="text-slate-800 font-bold uppercase tracking-wider text-[11px]">
