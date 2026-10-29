@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hệ Thống Dữ Liệu Quy Hoạch Quốc Gia (63 Tỉnh Thành) - Rev.006</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#1d4ed8',
+              600: '#1e40af',
+              700: '#1e3a8a',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="min-h-full flex flex-col text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- Top App Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-700 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            QHQG
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">BỘ XÂY DỰNG</span>
+              <span class="text-xs text-slate-400 font-mono">quyhoach.xaydung.gov.vn</span>
+              <span class="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">TOÀN QUỐC 63 TỈNH THÀNH</span>
+            </div>
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight">Cổng Dữ Liệu Quy Hoạch Xây Dựng & Đô Thị Quốc Gia</h1>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <!-- Back to INVM Link -->
+          <a href="/invm" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition" title="Quay lại Hệ thống Quản lý Dự án Đầu tư">
+            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span class="hidden sm:inline">Về Quản Lý Dự Án (/invm)</span>
+            <span class="sm:hidden">/invm</span>
+          </a>
+          
+          <!-- Live Daemon Badge -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 border border-slate-200 text-xs font-mono">
+            <span id="daemonIndicator" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-slate-600 hidden sm:inline">REST API (Port 8765)</span>
+          </div>
+
+          <!-- Open Sync Modal Button -->
+          <button onclick="openSyncModal()" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-sm transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Trung Tâm Đồng Bộ
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Metric Cards Grid -->
+    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Đồ Án</span>
+        <div class="text-2xl font-bold text-slate-900 mt-1 font-mono" id="kpi-total">0</div>
+        <span class="text-[10px] text-slate-400">Toàn quốc</span>
+      </div>
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-blue-700 uppercase tracking-wider">Hà Nội</span>
+        <div class="text-2xl font-bold text-blue-700 mt-1 font-mono" id="kpi-hn">0</div>
+        <span class="text-[10px] text-slate-400">Thủ đô</span>
+      </div>
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider">TP. Hồ Chí Minh</span>
+        <div class="text-2xl font-bold text-emerald-700 mt-1 font-mono" id="kpi-hcm">0</div>
+        <span class="text-[10px] text-slate-400">Đô thị đặc biệt</span>
+      </div>
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-purple-700 uppercase tracking-wider">Tỉnh Thành Khác</span>
+        <div class="text-2xl font-bold text-purple-700 mt-1 font-mono" id="kpi-other">0</div>
+        <span class="text-[10px] text-slate-400">61 tỉnh/thành</span>
+      </div>
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Quy Hoạch Chung</span>
+        <div class="text-2xl font-bold text-amber-700 mt-1 font-mono" id="kpi-qhc">0</div>
+        <span class="text-[10px] text-slate-400">Cấp vĩ mô</span>
+      </div>
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+        <span class="text-[11px] font-semibold text-rose-700 uppercase tracking-wider">Tệp Pháp Lý</span>
+        <div class="text-2xl font-bold text-rose-700 mt-1 font-mono" id="kpi-docs">0</div>
+        <span class="text-[10px] text-slate-400">PDF / Bản đồ</span>
+      </div>
+    </section>
+
+    <!-- Filters, Province Selector & Search Bar -->
+    <section class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+        <!-- Search Input -->
+        <div class="lg:col-span-5 relative">
+          <input type="text" id="searchInput" placeholder="Tìm theo tên đồ án, số quyết định, quận huyện, cơ quan..." 
+                 class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600 focus:bg-white transition" />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </div>
+
+        <!-- Province Selector (All 63 Provinces) -->
+        <div class="lg:col-span-3">
+          <select id="provinceSelect" onchange="applyFilters()" class="w-full px-3 py-2 text-xs font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600">
+            <option value="">Tất Cả Tỉnh Thành (Toàn Quốc)</option>
+          </select>
+        </div>
+
+        <!-- Planning Type Filter -->
+        <div class="lg:col-span-2">
+          <select id="typeSelect" onchange="applyFilters()" class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600">
+            <option value="">Tất cả loại quy hoạch</option>
+            <option value="chung">Quy hoạch chung</option>
+            <option value="phân khu">Quy hoạch phân khu</option>
+            <option value="chi tiết">Quy hoạch chi tiết</option>
+            <option value="vùng">Quy hoạch vùng</option>
+          </select>
+        </div>
+
+        <!-- View Switcher -->
+        <div class="lg:col-span-2 flex items-center justify-end gap-1 bg-slate-100 p-1 rounded-lg">
+          <button id="viewGridBtn" onclick="switchView('grid')" class="px-2.5 py-1 text-xs font-medium rounded-md bg-white text-slate-800 shadow-xs transition">Thẻ</button>
+          <button id="viewTableBtn" onclick="switchView('table')" class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition">Bảng</button>
+        </div>
+      </div>
+
+      <!-- Quick Province Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pt-1 pb-0.5 text-xs">
+        <span class="text-slate-400 font-semibold text-[11px] shrink-0">Lọc nhanh:</span>
+        <button onclick="setProvinceFilter('')" class="px-2 py-0.5 rounded-full border border-slate-200 text-slate-700 bg-slate-100 hover:bg-slate-200 font-medium shrink-0">Toàn quốc</button>
+        <button onclick="setProvinceFilter('Hà Nội')" class="px-2 py-0.5 rounded-full border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 font-semibold shrink-0">Hà Nội</button>
+        <button onclick="setProvinceFilter('TP. Hồ Chí Minh')" class="px-2 py-0.5 rounded-full border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-semibold shrink-0">TP. Hồ Chí Minh</button>
+        <button onclick="setProvinceFilter('Thanh Hóa')" class="px-2 py-0.5 rounded-full border border-amber-200 text-amber-800 bg-amber-50 hover:bg-amber-100 font-semibold shrink-0">Thanh Hóa</button>
+        <button onclick="setProvinceFilter('Bắc Ninh')" class="px-2 py-0.5 rounded-full border border-purple-200 text-purple-700 bg-purple-50 hover:bg-purple-100 font-semibold shrink-0">Bắc Ninh</button>
+        <button onclick="setProvinceFilter('Đồng Nai')" class="px-2 py-0.5 rounded-full border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 font-semibold shrink-0">Đồng Nai</button>
+        <button onclick="setProvinceFilter('Bình Dương')" class="px-2 py-0.5 rounded-full border border-cyan-200 text-cyan-700 bg-cyan-50 hover:bg-cyan-100 font-semibold shrink-0">Bình Dương</button>
+      </div>
+    </section>
+
+    <!-- Project Data Cards View -->
+    <section id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Injected by JavaScript -->
+    </section>
+
+    <!-- Project Data Table View -->
+    <section id="tableView" class="hidden bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <th class="px-4 py-3">ID</th>
+              <th class="px-4 py-3">Tỉnh Thành</th>
+              <th class="px-4 py-3">Cấp Quy Hoạch</th>
+              <th class="px-4 py-3">Số Quyết Định</th>
+              <th class="px-4 py-3">Cơ Quan Phê Duyệt</th>
+              <th class="px-4 py-3">Tên Đồ Án Quy Hoạch</th>
+              <th class="px-4 py-3 text-right">Chi Tiết</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-slate-100 text-xs">
+            <!-- Injected by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12 bg-white rounded-xl border border-slate-200 p-8">
+      <svg class="mx-auto h-12 w-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-bold text-slate-900">Không tìm thấy đồ án phù hợp</h3>
+      <p class="mt-1 text-xs text-slate-500">Hãy thử đổi từ khóa tìm kiếm hoặc chọn tỉnh thành khác.</p>
+    </div>
+
+  </main>
+
+  <!-- Synchronization Center Modal -->
+  <div id="syncModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeSyncModal()"></div>
+
+      <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all my-8 max-w-2xl w-full border border-slate-200 z-10">
+        
+        <!-- Header -->
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-8 h-8 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-xs">SYNC</span>
+            <div>
+              <h2 class="text-sm font-bold text-slate-900">Trung Tâm Đồng Bộ Dữ Liệu Toàn Quốc</h2>
+              <p class="text-xs text-slate-500">Thu thập trực tiếp từ quyhoach.xaydung.gov.vn không qua lọc</p>
+            </div>
+          </div>
+          <button onclick="closeSyncModal()" class="text-slate-400 hover:text-slate-600 transition p-1 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <!-- Presets -->
+        <div class="p-6 space-y-4">
+          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-blue-900">KHUYẾN NGHỊ THIẾT LẬP THU THẬP TOÀN QUỐC</span>
+              <span class="text-[11px] font-mono text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200">Mới nhất: #21621</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button type="button" onclick="applyPreset(21630, 21000, 8, this)" class="preset-btn ring-2 ring-blue-600 bg-blue-50/80 px-2.5 py-2 text-left rounded-lg border border-blue-300 transition shadow-xs cursor-pointer">
+                <div class="text-[11px] font-bold text-blue-900">1. Đồ án mới nhất</div>
+                <div class="text-[10px] text-slate-500 font-mono mt-0.5">21,630 -&gt; 21,000 (8 luồng)</div>
+                <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">Thu thập ~630 đồ án toàn quốc</div>
+              </button>
+              <button type="button" onclick="applyPreset(21630, 17000, 10, this)" class="preset-btn bg-white hover:bg-blue-50/50 px-2.5 py-2 text-left rounded-lg border border-slate-200 hover:border-blue-300 transition shadow-xs cursor-pointer">
+                <div class="text-[11px] font-bold text-slate-800">2. 5 năm gần đây (2020+)</div>
+                <div class="text-[10px] text-slate-500 font-mono mt-0.5">21,630 -&gt; 17,000 (10 luồng)</div>
+                <div class="text-[10px] text-blue-700 font-semibold mt-0.5">Quét mở rộng (~5 phút)</div>
+              </button>
+              <button type="button" onclick="applyPreset(21630, 7650, 12, this)" class="preset-btn bg-white hover:bg-blue-50/50 px-2.5 py-2 text-left rounded-lg border border-slate-200 hover:border-blue-300 transition shadow-xs cursor-pointer">
+                <div class="text-[11px] font-bold text-slate-800">3. Toàn bộ lịch sử</div>
+                <div class="text-[10px] text-slate-500 font-mono mt-0.5">21,630 -&gt; 7,650 (12 luồng)</div>
+                <div class="text-[10px] text-amber-700 font-semibold mt-0.5">Toàn tập ~14,000 đồ án</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cursor Bắt Đầu (ID)</label>
+              <input type="number" id="syncStartId" value="21630" class="w-full px-2.5 py-1.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Cursor Kết Thúc (ID)</label>
+              <input type="number" id="syncEndId" value="21000" class="w-full px-2.5 py-1.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Số Luồng (Workers)</label>
+              <input type="number" id="syncWorkers" value="8" class="w-full px-2.5 py-1.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600" />
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-3 pt-1">
+            <button id="startSyncBtn" onclick="triggerServerSync()" class="flex-1 py-2.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-sm transition cursor-pointer">
+              BẮT ĐẦU ĐỒNG BỘ TOÀN QUỐC
+            </button>
+            <button id="stopSyncBtn" onclick="stopServerSync()" disabled class="px-4 py-2.5 text-xs font-semibold text-slate-400 bg-slate-100 rounded-lg border border-slate-200 transition cursor-not-allowed">
+              Dừng Quét
+            </button>
+          </div>
+
+          <!-- Progress -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-mono">
+              <span id="liveStatusText" class="text-slate-600 font-medium">Trạng thái: Sẵn sàng</span>
+              <span id="liveMetricsText" class="text-blue-700 font-semibold">Đã quét: 0 | Thu thập: 0</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div id="liveProgressBar" class="h-full bg-blue-600 transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+
+          <!-- Activity Terminal -->
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-1">
+              <span>NHẬT KÝ THỜI GIAN THỰC (TẤT CẢ TỈNH THÀNH)</span>
+              <span id="liveCurrentId">Cursor: #21630</span>
+            </div>
+            <div id="liveTerminalLogs" class="h-36 bg-slate-900 text-slate-300 p-3 rounded-xl font-mono text-[11px] overflow-y-auto space-y-1">
+              <p class="text-slate-500">Chờ lệnh kích hoạt đồng bộ...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-50 px-6 py-3.5 border-t border-slate-200 flex justify-end">
+          <button onclick="closeSyncModal()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg transition cursor-pointer">
+            Đóng Cửa Sổ
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Project Detail Modal -->
+  <div id="projectModal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeProjectModal()"></div>
+
+      <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all my-8 max-w-3xl w-full border border-slate-200 z-10">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span id="modal-badge-province" class="text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200"></span>
+            <span id="modal-badge-tier" class="text-xs font-medium px-2 py-0.5 rounded bg-slate-200 text-slate-700"></span>
+            <span id="modal-id" class="text-xs font-mono text-slate-400"></span>
+          </div>
+          <button onclick="closeProjectModal()" class="text-slate-400 hover:text-slate-600 transition p-1 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+
+        <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+          <h2 id="modal-title" class="text-base font-bold text-slate-900 leading-snug"></h2>
+
+          <div class="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-mono">
+            <div><span class="text-slate-400">Số Quyết Định:</span> <span id="modal-decision" class="font-bold text-slate-900 block truncate"></span></div>
+            <div><span class="text-slate-400">Ngày Phê Duyệt:</span> <span id="modal-date" class="text-slate-800 block"></span></div>
+            <div><span class="text-slate-400">Cơ Quan Phê Duyệt:</span> <span id="modal-authority" class="text-slate-800 block truncate"></span></div>
+            <div><span class="text-slate-400">Đơn Vị Lập:</span> <span id="modal-agency" class="text-slate-800 block truncate"></span></div>
+            <div><span class="text-slate-400">Quy Mô Diện Tích:</span> <span id="modal-area" class="text-slate-800 block"></span></div>
+            <div><span class="text-slate-400">Đơn Vị Tư Vấn:</span> <span id="modal-consultant" class="text-slate-800 block truncate"></span></div>
+          </div>
+
+          <div>
+            <h4 class="text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Tài Liệu & Bản Đồ Quy Hoạch Đính Kèm</h4>
+            <div id="modal-files" class="space-y-1.5"></div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+            <a id="modal-source" href="#" target="_blank" rel="noopener noreferrer" class="font-semibold text-blue-700 hover:underline">
+              Mở Trang Gốc Cổng Bộ Xây Dựng &rarr;
+            </a>
+            <span id="modal-ingested" class="text-slate-400 font-mono text-[11px]"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-20 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    let RAW_PROJECTS = [{"project_id": 21621, "province": "Thanh Hóa", "title": "điều chỉnh cục bộ Quy hoạch chung xây dựng xã Định Tăng, huyện Yên Định đến năm 2030 (nay thuộc xã Yên Định, tỉnh Thanh Hóa)", "planning_type": "Quy hoạch chung", "approval_decision": "3358/QĐ-UBND", "approval_date": "22/9/2022", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "901/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/73258682-f757-4a9f-a3a7-b1a483e6a910_qd901_pdqh.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21621/a.aspx", "raw_summary": "điều chỉnh cục bộ Quy hoạch chung xây dựng xã Định Tăng, huyện Yên Định đến năm 2030 (nay thuộc xã Yên Định, tỉnh Thanh Hóa)", "ingested_at": "2026-10-29 11:15:12"}, {"project_id": 21620, "province": "Thanh Hóa", "title": "điều chỉnh cục bộ Quy hoạch chung thị trấn Triệu Sơn, huyện Triệu Sơn đến năm 2030 (nay thuộc xã Triệu Sơn, tỉnh Thanh Hóa)", "planning_type": "Quy hoạch chung", "approval_decision": "4542/QĐ-UBND", "approval_date": "01/11/2019", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "1313/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/a495efc4-546e-46c2-8e60-9ee01664506e_qd1313_pdqh dccb.pdf", "type": "pdf"}, {"name": "Thuyết minh quy hoạch", "url": "http://quyhoach.xaydung.gov.vn/Images/editor/files/Vi%E1%BB%87n%20QH-KT%20Thanh%20Ho%C3%A1/QHC_TTTrieuSon_DCCB_2026_TMQH.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21620/a.aspx", "raw_summary": "điều chỉnh cục bộ Quy hoạch chung thị trấn Triệu Sơn, huyện Triệu Sơn đến năm 2030 (nay thuộc xã Triệu Sơn, tỉnh Thanh Hóa)", "ingested_at": "2026-10-29 11:15:13"}, {"project_id": 21619, "province": "Thanh Hóa", "title": "điều chỉnh cục bộ Quy hoạch chung thị trấn Quán Lào, huyện Yên Định đến năm 2035 (nay thuộc xã Yên Định, tỉnh Thanh Hóa)", "planning_type": "Quy hoạch chung", "approval_decision": "4364/QĐ-UBND", "approval_date": "08/12/2022", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "900/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/34b34cab-6a25-4152-94d8-970ffa0eeffa_qd900_pdqh.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21619/a.aspx", "raw_summary": "điều chỉnh cục bộ Quy hoạch chung thị trấn Quán Lào, huyện Yên Định đến năm 2035 (nay thuộc xã Yên Định, tỉnh Thanh Hóa)", "ingested_at": "2026-10-29 11:15:15"}, {"project_id": 21618, "province": "Thanh Hóa", "title": "Điều chỉnh cục bộ Quy hoạch phân khu tỷ lệ 1/2000 Khu G - Khu nhà ở, dịch vụ, trung tâm văn hóa thể thao, cây xanh đô thị thành phố Sầm Sơn (khu vực trường tiểu học Quảng Tiến 2)", "planning_type": "Quy hoạch phân khu", "approval_decision": "1145/QĐ-UBND", "approval_date": "16/12/2024", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "1145/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/25da9410-4b74-4e4c-9825-f69ec7a9bc07_qd1145_pdqh.pdf", "type": "pdf"}, {"name": "Thuyết minh quy hoạch", "url": "http://quyhoach.xaydung.gov.vn/Images/editor/files/Vi%E1%BB%87n%20QH-KT%20Thanh%20Ho%C3%A1/SamSon_QPK_PhanKhuG_2026_DCCB.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21618/a.aspx", "raw_summary": "Điều chỉnh cục bộ Quy hoạch phân khu tỷ lệ 1/2000 Khu G - Khu nhà ở, dịch vụ, trung tâm văn hóa thể thao, cây xanh đô thị thành phố Sầm Sơn (khu vực trường tiểu học Quảng Tiến 2)", "ingested_at": "2026-10-29 11:15:22"}, {"project_id": 21615, "province": "Bắc Ninh", "title": "Quy hoạch tổng mặt bằng dự án đầu tư xây dựng công trình thương mại, dịch vụ kết hợp kinh doanh văn phòng tại phường Tân Hồng, thành phố Từ Sơn", "planning_type": "Quy hoạch xây dựng", "approval_decision": "69/QĐ-UBND", "approval_date": "07/02/2025", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "208/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/ce1095a2-aab2-423c-8210-96d02022afdb_ubnd 208 - quyet dinh phe duyet quy hoach tmb.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21615/a.aspx", "raw_summary": "Quy hoạch tổng mặt bằng dự án đầu tư xây dựng công trình thương mại, dịch vụ kết hợp kinh doanh văn phòng tại phường Tân Hồng, thành phố Từ Sơn", "ingested_at": "2026-10-29 11:18:03"}, {"project_id": 21614, "province": "Bắc Ninh", "title": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 dự án: Đầu tư xây dựng Khu nhà ở đấu giá quyền sử dụng đất tại phường Đình Bảng, thành phố Từ Sơn", "planning_type": "Quy hoạch xây dựng", "approval_decision": "107/QĐ-UBND", "approval_date": "", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "Khu phố Long Vỹ, phường Đình Bảng, thành phố Từ Sơn.", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "107/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/035b4690-5961-4c0f-8fb1-aecf2d2a1e24_ubnd 107 - quyet dinh phe duyet quy hoach tmb.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21614/a.aspx", "raw_summary": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 dự án: Đầu tư xây dựng Khu nhà ở đấu giá quyền sử dụng đất tại phường Đình Bảng, thành phố Từ Sơn", "ingested_at": "2026-10-29 11:18:09"}, {"project_id": 21613, "province": "Bắc Ninh", "title": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 khu tái định cư 03 thuộc dự án thành phần 7: Bồi thường, hỗ trợ, tái định cư thuộc địa phận tỉnh Bắc Ninh dự án đầu tư xây dựng tuyến đường sắt Lào Cai - Hà Nội - Hải Phòng", "planning_type": "Quy hoạch xây dựng", "approval_decision": "", "approval_date": "", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "Khu phố Thọ Môn và khu phố Thịnh Lang, phường Từ Sơn, tỉnh Bắc Ninh.", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "244/UBND-KTHTĐT", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/3c8c5bfd-7006-4d26-8e9a-291b3f91a0ff_ubnd 244 - chap thuan quy hoach tmb.PDF", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21613/a.aspx", "raw_summary": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 khu tái định cư 03 thuộc dự án thành phần 7: Bồi thường, hỗ trợ, tái định cư thuộc địa phận tỉnh Bắc Ninh dự án đầu tư xây dựng tuyến đường sắt Lào Cai - Hà Nội - Hải Phòng", "ingested_at": "2026-10-29 11:18:04"}, {"project_id": 21612, "province": "Bắc Ninh", "title": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 khu tái định cư 02 thuộc dự án thành phần 7: Bồi thường, hỗ trợ, tái định cư thuộc địa phận tỉnh Bắc Ninh dự án đầu tư xây dựng tuyến đường sắt Lào Cai - Hà Nội - Hải Phòng", "planning_type": "Quy hoạch xây dựng", "approval_decision": "", "approval_date": "", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "Khu phố Ao Sen, phường Từ Sơn, tỉnh Bắc Ninh.", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "243/UBND-KTHTĐT", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/a7e209db-b261-4461-81a2-8034b40cf5a7_ubnd 243 - chap thuan quy hoach tmb.PDF", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21612/a.aspx", "raw_summary": "Quy hoạch tổng mặt bằng tỷ lệ 1/500 khu tái định cư 02 thuộc dự án thành phần 7: Bồi thường, hỗ trợ, tái định cư thuộc địa phận tỉnh Bắc Ninh dự án đầu tư xây dựng tuyến đường sắt Lào Cai - Hà Nội - Hải Phòng", "ingested_at": "2026-10-29 11:18:05"}, {"project_id": 21611, "province": "Bắc Ninh", "title": "Quy hoạch chi tiết tỷ lệ 1/500 Trường Cao đẳng Lý Thái Tổ tại phường Đình Bảng, thành phố Từ Sơn", "planning_type": "Quy hoạch chi tiết", "approval_decision": "44/QĐ-UBND", "approval_date": "15/01/2018", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "Phường Đình Bảng, thành phố Từ Sơn, tỉnh Bắc Ninh.", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "181/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/d36f7c64-1efa-423d-969e-8ac8ff450d2c_ubnd 181 - quyet dinh phe duyet do an dieu chinh qhct.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21611/a.aspx", "raw_summary": "Quy hoạch chi tiết tỷ lệ 1/500 Trường Cao đẳng Lý Thái Tổ tại phường Đình Bảng, thành phố Từ Sơn", "ingested_at": "2026-10-29 11:18:06"}, {"project_id": 21610, "province": "Thanh Hóa", "title": "Điều chỉnh cục bộ quy hoạch chi tiết xây dựng tỷ lệ 1/500 Cảng cá Lạch Hới và khu neo đậu tránh trú bão cho tàu cá tại phường Sầm Sơn", "planning_type": "Quy hoạch chi tiết", "approval_decision": "4676/QĐ-UBND", "approval_date": "27/11/2024", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "1649/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/30b8e7db-9a38-4a3f-9fb3-2984beae1689_5  qd phe duyet dieu chinh cuc bo cang ca lach hoi.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21610/a.aspx", "raw_summary": "Điều chỉnh cục bộ quy hoạch chi tiết xây dựng tỷ lệ 1/500 Cảng cá Lạch Hới và khu neo đậu tránh trú bão cho tàu cá tại phường Sầm Sơn", "ingested_at": "2026-10-29 11:15:29"}, {"project_id": 21600, "province": "Bắc Ninh", "title": "Quy hoạch chi tiết  tỷ lệ 1/500 mở rộng nghĩa trang nhân dân thành phố Bắc Ninh (nay là phường Vũ Ninh, tỉnh Bắc Ninh)", "planning_type": "Quy hoạch chi tiết", "approval_decision": "1387/QĐ-UBND", "approval_date": "", "approval_authority": "", "organizing_agency": "", "consultant": "", "location_desc": "", "total_area_m2": null, "land_use_table": "[]", "attached_files": [{"name": "1387/QĐ-UBND", "url": "http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/954f978d-c2f3-4ac9-aaff-48afbd3b06e1_20251230 qd 1387 ubnd p vn phe duyet quy hoach chi tiet mo rong nghia trang thanh pho.pdf", "type": "pdf"}], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/21600/a.aspx", "raw_summary": "Quy hoạch chi tiết  tỷ lệ 1/500 mở rộng nghĩa trang nhân dân thành phố Bắc Ninh (nay là phường Vũ Ninh, tỉnh Bắc Ninh)", "ingested_at": "2026-10-29 11:15:31"}, {"project_id": 12515, "province": "TP. Hồ Chí Minh", "title": "Quy hoạch phân khu xây dựng Đại học Quốc gia Thành phố Hồ Chí Minh", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "790/QĐ-TTg", "approval_date": null, "approval_authority": "Thủ tướng Chính phủ", "organizing_agency": null, "consultant": null, "location_desc": "thành phố Thủ Đức, thành phố Hồ Chí Minh - thành phố Dĩ An, tỉnh Bình Dương", "total_area_m2": 643.7, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/cbe7ef77-5562-4520-a87f-bdc144b06a59_790_qd-ttg_03072023-phan khu dhqg tphcm_230704_140256.pdf", "http://quyhoach.xaydung.gov.vn/Images/editor/files/H%E1%BB%93%20Ch%C3%AD%20Minh/DAQH%20Dai%20Hoc%20Quoc%20Gia.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/12515/a.aspx", "raw_summary": "Quy hoạch phân khu xây dựng Đại học Quốc gia Thành phố Hồ Chí Minh", "ingested_at": "2026-10-29T02:59:48.445068+00:00"}, {"project_id": 8022, "province": "TP. Hồ Chí Minh", "title": "Điều chỉnh Quy hoạch chi tiết xây dựng 1/2000 Đại học Quốc gia thành phố Hồ Chí Minh", "planning_type": "Quy hoạch chi tiết 1/500", "approval_decision": "409/QĐ-TTg", "approval_date": null, "approval_authority": "Thủ tướng Chính phủ", "organizing_agency": null, "consultant": null, "location_desc": "Quận Thủ Đức - Thành phố Hồ Chí Minh và Thị xã Dĩ An - Tỉnh Bình Dương", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/bf6e37b9-d024-4751-95c6-e2cc16356994_409 signed.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/8022/a.aspx", "raw_summary": "Điều chỉnh Quy hoạch chi tiết xây dựng 1/2000 Đại học Quốc gia thành phố Hồ Chí Minh", "ingested_at": "2026-10-29T02:59:25.079693+00:00"}, {"project_id": 4256, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị N4", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "4761/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các xã Đại Mạch, Võng La, Kim Chung, Kim Nỗ, Hải Bối - huyện Đông Anh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/fc3738e5-0614-40f5-8c71-c732985ee116_04-n4.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4256/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị N4", "ingested_at": "2026-10-29T02:59:16.693814+00:00"}, {"project_id": 4255, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị N3", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "1598/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "Thị trấn Quang Minh, xã Tiến Phong - huyện Mê Linh và xã Nam Hồng - huyện Đông Anh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/d50a83f3-14d7-4180-b018-dd0d76a3fbe6_03-n3.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4255/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị N3", "ingested_at": "2026-10-29T02:59:10.724371+00:00"}, {"project_id": 4254, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị N1", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "1911/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "thị trấn Quang Minh, các xã Kim Hoa, Thanh Lâm, Đại Thịnh, Văn Khê, Mê Linh, Tráng Việt, Tiền Phong huyện Mê Linh và xã Đại Mạch huyện Đông Anh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/5d1a41f0-2995-4711-a66d-f93419ecc08a_02-n1.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4254/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị N1", "ingested_at": "2026-10-29T02:59:11.734588+00:00"}, {"project_id": 4253, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị N2", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "1597/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "Thị trấn Quang Minh, Chi Đông; các xã Thanh Lâm, Kim Hoa - huyện Mê Linh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/bfbf63ca-2ba5-40d3-88b8-34bfaf315363_01-n2.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4253/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị N2", "ingested_at": "2026-10-29T02:59:11.893882+00:00"}, {"project_id": 4250, "province": "Hà Nội", "title": "Bản đồ quy hoạch phân khu đô thị H2-4", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "6499/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các quận: Hai Bà Trưng, Hoàng Mai, Thanh Xuân và huyện Thanh Trì", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/4f502900-48b8-4480-bb2e-8342c3d93ec7_h2-4.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4250/a.aspx", "raw_summary": "Bản đồ quy hoạch phân khu đô thị H2-4", "ingested_at": "2026-10-29T03:06:13.921158+00:00"}, {"project_id": 4249, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị GS(A)", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "Chưa công bố số QĐ", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các huyện Thanh Trì, Thường Tín", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/ca6afc71-6d3a-4f1b-8817-106c8413355b_gs-a.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4249/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị GS(A)", "ingested_at": "2026-10-29T03:06:06.948316+00:00"}, {"project_id": 4248, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị GS", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "3976/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các Quận Bắc Từ Liêm, Nam Từ Liêm, Hà Đông, Hoàng Mai; các huyện Đan Phượng, Hoài Đức, Thanh Trì, Thanh Oai, Thường Tín", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/b18f273e-5e14-4851-8ae1-e126bfda5b2f_gs.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4248/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị GS", "ingested_at": "2026-10-29T03:05:59.904061+00:00"}, {"project_id": 4247, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị GN(C)", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "6620/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các huyện Mê Linh và Đông Anh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/42bfd992-fada-48e1-83fd-6acea90f959e_14-gn(c).pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4247/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị GN(C)", "ingested_at": "2026-10-29T03:05:52.889416+00:00"}, {"project_id": 4246, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị GN(B)", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "6500/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "Thị trấn Đông Anh và các xã: Xuân Nộn, Uy Nỗ, Việt Hùng, Liên Hà huyện Đông Anh", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/6402d2d1-b247-4299-882c-4f09b7b00314_13-gn(b).pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4246/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị GN(B)", "ingested_at": "2026-10-29T03:05:45.937926+00:00"}, {"project_id": 4245, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị GN", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "06/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": "các huyện Mê Linh, Đông Anh và Gia Lâm", "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/7d43b872-e561-4a58-ab07-21e302dde7bc_12-gn.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4245/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị GN", "ingested_at": "2026-10-29T03:05:38.986187+00:00"}, {"project_id": 4244, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị Khu vực Hồ Tây và Phụ cận (A6)", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "Chưa công bố số QĐ", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/7f4f94f0-4979-4284-b69a-c56e5473aaa9_a6.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4244/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị Khu vực Hồ Tây và Phụ cận (A6)", "ingested_at": "2026-10-29T03:05:32.009518+00:00"}, {"project_id": 4243, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị H2-1", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "6632/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/0164c59e-ca16-4bcb-acc6-be47134a932b_h2-1.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4243/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị H2-1", "ingested_at": "2026-10-29T03:05:24.226672+00:00"}, {"project_id": 4242, "province": "Hà Nội", "title": "Quy hoạch phân khu đô thị H2-2", "planning_type": "Quy hoạch phân khu 1/2000", "approval_decision": "6631/QĐ-UBND", "approval_date": null, "approval_authority": "UBND TP. Hà Nội", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/c2390cb1-46ed-4050-a96b-47827b1e7f73_h2-2.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/4242/a.aspx", "raw_summary": "Quy hoạch phân khu đô thị H2-2", "ingested_at": "2026-10-29T03:05:17.040597+00:00"}, {"project_id": 2078, "province": "TP. Hồ Chí Minh", "title": "Điều chỉnh Quy hoạch chung xây dựng Thành phố Hồ Chí Minh đến năm 2025", "planning_type": "Quy hoạch chung", "approval_decision": "24/QĐ-TTg", "approval_date": null, "approval_authority": "Thủ tướng Chính phủ", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": ["http://quyhoach.xaydung.gov.vn/Images/Quyhoach/fileDK/d353a82e-a656-48be-9f26-3918fd384b87_qd24ttg.pdf"], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/2078/a.aspx", "raw_summary": "Điều chỉnh Quy hoạch chung xây dựng Thành phố Hồ Chí Minh đến năm 2025", "ingested_at": "2026-10-29T03:05:16.090652+00:00"}, {"project_id": 2077, "province": "Hà Nội", "title": "Quy hoạch chung xây dựng khu đô thị trung tâm thành phố Hà Nội đến năm 2030 tầm nhìn đến năm 2050 tỉ lệ 1/10000", "planning_type": "Quy hoạch chung", "approval_decision": "1259/QĐ-TTg", "approval_date": null, "approval_authority": "Thủ tướng Chính phủ", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": [], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/2077/a.aspx", "raw_summary": "Quy hoạch chung xây dựng khu đô thị trung tâm thành phố Hà Nội đến năm 2030 tầm nhìn đến năm 2050 tỉ lệ 1/10000", "ingested_at": "2026-10-29T03:05:15.127143+00:00"}, {"project_id": 2076, "province": "Hà Nội", "title": "Quy hoạch chung xây dựng thành phố Hà Nội đến năm 2030 tầm nhìn đến năm 2050 tỷ lệ 1/25000", "planning_type": "Quy hoạch chung", "approval_decision": "1259/QĐ-TTg", "approval_date": null, "approval_authority": "Thủ tướng Chính phủ", "organizing_agency": null, "consultant": null, "location_desc": null, "total_area_m2": null, "land_use_table": "[]", "attached_files": [], "source_url": "http://quyhoach.xaydung.gov.vn/vn/quy-hoach/2076/a.aspx", "raw_summary": "Quy hoạch chung xây dựng thành phố Hà Nội đến năm 2030 tầm nhìn đến năm 2050 tỷ lệ 1/25000", "ingested_at": "2026-10-29T03:05:14.198337+00:00"}];
+    let filteredProjects = [...RAW_PROJECTS];
+    let currentView = 'grid';
+    let pollInterval = null;
+
+    function init() {
+      populateProvinceSelect();
+      updateKPIs();
+      render();
+      checkDaemonStatus();
+      
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+    }
+
+    function populateProvinceSelect() {
+      const select = document.getElementById('provinceSelect');
+      const provCounts = {};
+      RAW_PROJECTS.forEach(p => {
+        const prov = p.province || 'Toàn quốc';
+        provCounts[prov] = (provCounts[prov] || 0) + 1;
+      });
+      
+      const sortedProvinces = Object.keys(provCounts).sort((a,b) => provCounts[b] - provCounts[a]);
+      select.innerHTML = '<option value="">Tất Cả 63 Tỉnh Thành (' + RAW_PROJECTS.length + ' đồ án)</option>' +
+        sortedProvinces.map(pr => `<option value="${pr}">${pr} (${provCounts[pr]} đồ án)</option>`).join('');
+    }
+
+    function checkDaemonStatus() {
+      fetch('http://127.0.0.1:8765/api/sync/status')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('daemonIndicator').className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+          fetchFreshProjects();
+        })
+        .catch(() => {
+          document.getElementById('daemonIndicator').className = "inline-block w-2.5 h-2.5 rounded-full bg-amber-500";
+        });
+    }
+
+    function fetchFreshProjects() {
+      fetch('http://127.0.0.1:8765/api/projects')
+        .then(res => res.json())
+        .then(projects => {
+          if (Array.isArray(projects) && projects.length > 0) {
+            RAW_PROJECTS = projects;
+            populateProvinceSelect();
+            applyFilters();
+            updateKPIs();
+          }
+        })
+        .catch(() => {});
+    }
+
+    function updateKPIs() {
+      document.getElementById('kpi-total').textContent = RAW_PROJECTS.length;
+      document.getElementById('kpi-hn').textContent = RAW_PROJECTS.filter(p => p.province === 'Hà Nội').length;
+      document.getElementById('kpi-hcm').textContent = RAW_PROJECTS.filter(p => p.province === 'TP. Hồ Chí Minh').length;
+      document.getElementById('kpi-other').textContent = RAW_PROJECTS.filter(p => p.province !== 'Hà Nội' && p.province !== 'TP. Hồ Chí Minh').length;
+      document.getElementById('kpi-qhc').textContent = RAW_PROJECTS.filter(p => (p.planning_type || '').includes('chung')).length;
+      
+      let totalDocs = 0;
+      RAW_PROJECTS.forEach(p => {
+        if (p.attached_files && Array.isArray(p.attached_files)) totalDocs += p.attached_files.length;
+      });
+      document.getElementById('kpi-docs').textContent = totalDocs;
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const prov = document.getElementById('provinceSelect').value;
+      const type = document.getElementById('typeSelect').value;
+
+      filteredProjects = RAW_PROJECTS.filter(p => {
+        const mProv = !prov || p.province === prov;
+        const mType = !type || (p.planning_type || '').toLowerCase().includes(type);
+        const mSearch = !query || 
+          p.title.toLowerCase().includes(query) ||
+          (p.approval_decision || '').toLowerCase().includes(query) ||
+          (p.approval_authority || '').toLowerCase().includes(query) ||
+          (p.location_desc || '').toLowerCase().includes(query) ||
+          String(p.project_id).includes(query);
+        return mProv && mType && mSearch;
+      });
+
+      render();
+    }
+
+    function setProvinceFilter(provName) {
+      document.getElementById('provinceSelect').value = provName;
+      applyFilters();
+    }
+
+    function switchView(view) {
+      currentView = view;
+      if (view === 'grid') {
+        document.getElementById('gridView').classList.remove('hidden');
+        document.getElementById('tableView').classList.add('hidden');
+        document.getElementById('viewGridBtn').className = "px-2.5 py-1 text-xs font-medium rounded-md bg-white text-slate-800 shadow-xs transition";
+        document.getElementById('viewTableBtn').className = "px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition";
+      } else {
+        document.getElementById('gridView').classList.add('hidden');
+        document.getElementById('tableView').classList.remove('hidden');
+        document.getElementById('viewGridBtn').className = "px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition";
+        document.getElementById('viewTableBtn').className = "px-2.5 py-1 text-xs font-medium rounded-md bg-white text-slate-800 shadow-xs transition";
+      }
+    }
+
+    function render() {
+      const emptyState = document.getElementById('emptyState');
+      if (filteredProjects.length === 0) {
+        emptyState.classList.remove('hidden');
+        document.getElementById('gridView').innerHTML = '';
+        document.getElementById('tableBody').innerHTML = '';
+        return;
+      }
+      emptyState.classList.add('hidden');
+      renderGrid();
+      renderTable();
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('gridView');
+      container.innerHTML = filteredProjects.map(p => {
+        const provBadge = getProvinceBadge(p.province);
+        const hasFiles = p.attached_files && p.attached_files.length > 0;
+        const fileCountBadge = hasFiles
+          ? `<span class="text-[11px] font-mono text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">${p.attached_files.length} file</span>`
+          : '<span class="text-[11px] text-slate-400">Không có file</span>';
+
+        return `
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-1.5">
+                  ${provBadge}
+                  <span class="text-[11px] font-mono text-slate-400">#${p.project_id}</span>
+                </div>
+                ${fileCountBadge}
+              </div>
+              
+              <h3 class="text-sm font-bold text-slate-900 line-clamp-2 leading-snug mb-3 hover:text-blue-700 transition cursor-pointer" onclick="openProjectModal(${p.project_id})">
+                ${p.title}
+              </h3>
+
+              <div class="space-y-1 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mb-3 font-mono">
+                <div class="flex justify-between"><span class="text-slate-400">Số QĐ:</span> <span class="font-semibold text-slate-800 truncate max-w-[170px]">${p.approval_decision || 'Đang lưu trữ'}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Thẩm quyền:</span> <span class="text-slate-700 truncate max-w-[170px]">${p.approval_authority || '-'}</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Cấp Q.Hoạch:</span> <span class="text-slate-700 truncate max-w-[170px]">${p.planning_type || 'Quy hoạch xây dựng'}</span></div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <a href="${p.source_url}" target="_blank" rel="noopener noreferrer" class="text-[11px] font-semibold text-slate-500 hover:text-blue-700">
+                Cổng BXD &rarr;
+              </a>
+              <button onclick="openProjectModal(${p.project_id})" class="px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md border border-blue-200 transition cursor-pointer">
+                Chi Tiết
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = filteredProjects.map(p => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="px-4 py-3 font-mono text-xs text-slate-400 font-semibold">${p.project_id}</td>
+          <td class="px-4 py-3">${getProvinceBadge(p.province)}</td>
+          <td class="px-4 py-3 text-xs text-slate-600">${p.planning_type || '-'}</td>
+          <td class="px-4 py-3 font-mono text-xs font-semibold text-blue-800">${p.approval_decision || '-'}</td>
+          <td class="px-4 py-3 text-xs text-slate-600 truncate max-w-[160px]">${p.approval_authority || '-'}</td>
+          <td class="px-4 py-3 font-medium text-slate-900 max-w-xs truncate cursor-pointer hover:text-blue-700" onclick="openProjectModal(${p.project_id})">
+            ${p.title}
+          </td>
+          <td class="px-4 py-3 text-right">
+            <button onclick="openProjectModal(${p.project_id})" class="text-xs font-semibold text-blue-700 hover:underline cursor-pointer">Xem</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function getProvinceBadge(prov) {
+      if (prov === 'Hà Nội') return '<span class="text-[11px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded">Hà Nội</span>';
+      if (prov === 'TP. Hồ Chí Minh') return '<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">TP.HCM</span>';
+      return `<span class="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded">${prov || 'Khác'}</span>`;
+    }
+
+    function openProjectModal(pid) {
+      const p = RAW_PROJECTS.find(x => x.project_id === pid);
+      if (!p) return;
+
+      document.getElementById('modal-badge-province').textContent = p.province;
+      document.getElementById('modal-badge-tier').textContent = p.planning_type || 'Quy hoạch xây dựng';
+      document.getElementById('modal-id').textContent = '#' + p.project_id;
+      document.getElementById('modal-title').textContent = p.title;
+      document.getElementById('modal-decision').textContent = p.approval_decision || 'Chưa công bố';
+      document.getElementById('modal-date').textContent = p.approval_date || '-';
+      document.getElementById('modal-authority').textContent = p.approval_authority || '-';
+      document.getElementById('modal-agency').textContent = p.organizing_agency || '-';
+      document.getElementById('modal-consultant').textContent = p.consultant || '-';
+      document.getElementById('modal-area').textContent = p.total_area_m2 ? (p.total_area_m2/10000).toLocaleString('vi-VN') + ' ha' : '-';
+      document.getElementById('modal-source').href = p.source_url;
+      document.getElementById('modal-ingested').textContent = 'Nạp lúc: ' + p.ingested_at;
+
+      const fBox = document.getElementById('modal-files');
+      if (p.attached_files && p.attached_files.length > 0) {
+        fBox.innerHTML = p.attached_files.map(f => `
+          <a href="${f.url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 transition text-xs">
+            <span class="font-medium text-slate-800 truncate">${f.name}</span>
+            <span class="font-mono text-[10px] uppercase font-bold text-blue-700 bg-blue-100/60 px-1.5 py-0.5 rounded">${f.type}</span>
+          </a>
+        `).join('');
+      } else {
+        fBox.innerHTML = '<p class="text-xs text-slate-400 italic">Không có tệp đính kèm nào được công bố.</p>';
+      }
+
+      document.getElementById('projectModal').classList.remove('hidden');
+    }
+
+    function closeProjectModal() {
+      document.getElementById('projectModal').classList.add('hidden');
+    }
+
+    function openSyncModal() {
+      document.getElementById('syncModal').classList.remove('hidden');
+    }
+
+    function closeSyncModal() {
+      document.getElementById('syncModal').classList.add('hidden');
+    }
+
+    function applyPreset(start, end, workers, btn) {
+      document.getElementById('syncStartId').value = start;
+      document.getElementById('syncEndId').value = end;
+      document.getElementById('syncWorkers').value = workers;
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.remove('ring-2', 'ring-blue-600', 'bg-blue-50/80');
+        b.classList.add('bg-white');
+      });
+      if (btn) {
+        btn.classList.remove('bg-white');
+        btn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-50/80');
+      }
+    }
+
+    function triggerServerSync() {
+      const startId = parseInt(document.getElementById('syncStartId').value) || 21630;
+      const endId = parseInt(document.getElementById('syncEndId').value) || 21000;
+      const workers = parseInt(document.getElementById('syncWorkers').value) || 8;
+
+      fetch('http://127.0.0.1:8765/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_id: startId, end_id: endId, workers: workers })
+      })
+      .then(res => res.json())
+      .then(() => {
+        document.getElementById('startSyncBtn').disabled = true;
+        document.getElementById('startSyncBtn').className = "flex-1 py-2.5 text-xs font-bold text-slate-400 bg-slate-100 rounded-lg border border-slate-200 cursor-not-allowed";
+        document.getElementById('stopSyncBtn').disabled = false;
+        document.getElementById('stopSyncBtn').className = "px-4 py-2.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition cursor-pointer";
+        startPollingSync(startId, endId);
+      })
+      .catch(() => {
+        alert("Không thể kết nối máy chủ nội bộ. Hãy chạy Run_National_Urban_Planning_Engine_Rev.006.bat trước.");
+      });
+    }
+
+    function stopServerSync() {
+      fetch('http://127.0.0.1:8765/api/sync/stop', { method: 'POST' });
+    }
+
+    function startPollingSync(startId, endId) {
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(() => {
+        fetch('http://127.0.0.1:8765/api/sync/status')
+          .then(res => res.json())
+          .then(st => {
+            const totalSpan = Math.max(1, startId - endId);
+            const currentDone = Math.max(0, startId - st.current_id);
+            const pct = Math.min(100, Math.round((currentDone / totalSpan) * 100));
+
+            document.getElementById('liveProgressBar').style.width = pct + '%';
+            document.getElementById('liveMetricsText').textContent = `Đã quét: ${st.total_scanned} | Thu thập: ${st.total_found}`;
+            document.getElementById('liveCurrentId').textContent = `Cursor: #${st.current_id} (${pct}%)`;
+
+            if (st.running) {
+              document.getElementById('liveStatusText').textContent = `Đang quét ID #${st.current_id}...`;
+            } else {
+              document.getElementById('liveStatusText').innerHTML = `<span class="text-emerald-700 font-bold">Hoàn tất! Đã thu thập ${st.total_found} đồ án vào SQLite Master.</span>`;
+              document.getElementById('startSyncBtn').disabled = false;
+              document.getElementById('startSyncBtn').className = "flex-1 py-2.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-sm transition cursor-pointer";
+              document.getElementById('stopSyncBtn').disabled = true;
+              document.getElementById('stopSyncBtn').className = "px-4 py-2.5 text-xs font-semibold text-slate-400 bg-slate-100 rounded-lg border border-slate-200 cursor-not-allowed";
+              clearInterval(pollInterval);
+            }
+
+            if (st.recent_logs && st.recent_logs.length > 0) {
+              const logBox = document.getElementById('liveTerminalLogs');
+              logBox.innerHTML = st.recent_logs.map(l => `<p class="${l.includes('Tìm thấy') ? 'text-emerald-400 font-semibold' : 'text-slate-300'}">${l}</p>`).join('');
+              logBox.scrollTop = logBox.scrollHeight;
+            }
+
+            fetchFreshProjects();
+          })
+          .catch(() => {});
+      }, 1500);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
