@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.21 - Unified Compact Header & Single Viewport Cockpit - invest.renewablevietnam.com -->
+<!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.22 - Compact Right-Aligned Project Selector & Phase CPM Telemetry - invest.renewablevietnam.com -->
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -259,63 +259,56 @@
 
   <!-- Header Banner (Slimline Executive Navbar) -->
     <!-- Unified Slimline Executive Navbar (Single Compact Cockpit Header) -->
+    <!-- Unified Slimline Executive Navbar (Single Compact Cockpit Header) -->
   <header class="w-full max-w-full bg-slate-900 text-white border-b border-slate-800 static xl:sticky xl:top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95 no-print">
-    <div class="w-full max-w-[1720px] mx-auto px-3 sm:px-5 lg:px-6 py-2">
-      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
+    <div class="w-full max-w-[1720px] mx-auto px-3 sm:px-4 lg:px-5 py-1.5">
+      <div class="flex items-center justify-between gap-2 flex-wrap">
         
-        <!-- Left Group: Canonical Title & Project Selector -->
-        <div class="flex items-center gap-2.5 flex-wrap">
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="inline-flex items-center justify-center p-1.5 bg-slate-800 rounded-lg text-white border border-slate-700 shadow-2xs shrink-0">
-              <i data-lucide="layers" class="w-4 h-4 text-white"></i>
-            </span>
-            <h1 class="text-xs sm:text-sm font-bold tracking-tight text-white uppercase whitespace-normal sm:whitespace-nowrap leading-tight">
-              HỆ THỐNG ĐIỀU HÀNH DỰ ÁN ĐẦU TƯ &amp; QUẢN TRỊ PHÁP LÝ
-            </h1>
-          </div>
+        <!-- Left: Brand Title with Home Anchor Link -->
+        <a href="https://invest.renewablevietnam.com/" onclick="switchViewMode('dashboard')" class="flex items-center gap-2 shrink-0 hover:text-blue-300 transition cursor-pointer group" title="Quay về Trang chủ Bảng điều hành invest.renewablevietnam.com">
+          <span class="inline-flex items-center justify-center p-1.5 bg-slate-800 rounded-lg text-white border border-slate-700 shadow-2xs shrink-0 group-hover:border-blue-500 transition">
+            <i data-lucide="layers" class="w-4 h-4 text-white"></i>
+          </span>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight text-white uppercase whitespace-normal sm:whitespace-nowrap leading-tight">
+            HỆ THỐNG ĐIỀU HÀNH DỰ ÁN ĐẦU TƯ &amp; QUẢN TRỊ PHÁP LÝ
+          </span>
+        </a>
 
-          <!-- Compact Project Selector Strip -->
-          <div class="flex items-center gap-1 bg-slate-800/90 border border-slate-700 rounded-lg px-1.5 py-0.5 shrink-0">
+        <!-- Right Group: Project Selector (Moved to Right Side) & Compact Controls -->
+        <div class="flex items-center gap-1.5 flex-wrap shrink-0">
+
+          <!-- Compact Project Selector Strip (Right-Aligned) -->
+          <div class="flex items-center gap-0.5 bg-slate-800/90 border border-slate-700 rounded-lg px-1.5 py-0.5 shrink-0">
             <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-slate-300 shrink-0"></i>
-            <select id="projectSelector" class="bg-transparent text-white text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[160px] sm:max-w-[200px] truncate" title="Chọn dự án đang làm việc">
+            <select id="projectSelector" class="bg-transparent text-white text-[11px] font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[150px] sm:max-w-[190px] truncate" title="Chọn dự án đang làm việc">
               <!-- Rendered by JS -->
             </select>
             <button id="btnNewProject" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition cursor-pointer" title="Tạo dự án mới">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <i data-lucide="plus" class="w-3 h-3"></i>
             </button>
             <button id="btnRenameProject" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition cursor-pointer" title="Đổi tên dự án">
-              <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+              <i data-lucide="edit-2" class="w-3 h-3"></i>
             </button>
             <button id="btnDeleteProject" class="p-1 text-slate-300 hover:text-rose-400 hover:bg-slate-700 rounded transition cursor-pointer" title="Xóa dự án">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <i data-lucide="trash-2" class="w-3 h-3"></i>
             </button>
           </div>
 
-          <!-- Hidden Metadata Anchors for JS Compatibility -->
-          <span id="heroProjectId" class="hidden"></span>
-          <span id="heroProjectBadge" class="hidden"></span>
-          <span id="heroProjectTitle" class="hidden"></span>
-          <span id="heroProjectDesc" class="hidden"></span>
-        </div>
-
-        <!-- Right Group: Type Selector, Scenario Selector, Mode Switcher, and Fast Action Dispatches -->
-        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-          
-          <!-- Select 1: Loại Hình Dự Án -->
-          <div class="flex items-center gap-1 text-xs bg-slate-800/80 px-2 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Loại Hình:</label>
-            <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer py-0.5">
-              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Khu Đô Thị / Nhà Ở</option>
-              <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp (KCN)</option>
-              <option value="ENERGY" class="bg-slate-900">3. Năng Lượng Tái Tạo</option>
-              <option value="RESORT" class="bg-slate-900">4. Du Lịch Nghỉ Dưỡng</option>
+          <!-- Select 1: Loại Hình Dự Án (Compact) -->
+          <div class="hidden lg:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
+            <label class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Loại:</label>
+            <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer py-0.5">
+              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Đô Thị / Nhà Ở</option>
+              <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp</option>
+              <option value="ENERGY" class="bg-slate-900">3. Năng Lượng</option>
+              <option value="RESORT" class="bg-slate-900">4. Nghỉ Dưỡng</option>
             </select>
           </div>
 
-          <!-- Select 2: Mốc Tiếp Quản & Kịch Bản M&A -->
-          <div class="flex items-center gap-1 text-xs bg-slate-800/80 px-2 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Mốc Tiếp Quản:</label>
-            <select id="maEntrySelector" class="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer max-w-[150px] sm:max-w-[180px] truncate py-0.5">
+          <!-- Select 2: Mốc Tiếp Quản (Compact) -->
+          <div class="hidden xl:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
+            <label class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Mốc:</label>
+            <select id="maEntrySelector" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[155px] truncate py-0.5">
               <option value="GREENFIELD" class="bg-slate-900" selected>1. Phát triển từ đầu</option>
               <option value="POST_POLICY" class="bg-slate-900">2. Sau Chấp thuận CTĐT</option>
               <option value="POST_1_500" class="bg-slate-900">3. Sau Phê duyệt 1/500</option>
@@ -325,37 +318,41 @@
             </select>
           </div>
 
-          <!-- Mode Switcher: Dashboard vs Legal Engine -->
+          <!-- Mode Switcher: Dashboard vs Legal Engine (Compact) -->
           <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 shrink-0 shadow-inner">
-            <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2.5 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 bg-blue-600 text-white shadow-xs cursor-pointer" title="Bảng điều hành tổng quan dự án đầu tư">
-              <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+            <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2 sm:px-2.5 py-1 rounded-md text-[11px] font-bold transition flex items-center gap-1 bg-blue-600 text-white shadow-xs cursor-pointer" title="Bảng điều hành tổng quan dự án đầu tư">
+              <i data-lucide="layout-dashboard" class="w-3 h-3"></i>
               <span class="whitespace-nowrap">Bảng Điều Hành</span>
             </button>
-            <button id="btnViewLegalEngine" onclick="switchViewMode('legal')" class="px-2.5 py-1 rounded-md text-xs font-bold transition flex items-center gap-1.5 text-slate-300 hover:text-white hover:bg-slate-700/60 cursor-pointer" title="Chi tiết hồ sơ pháp lý & phân tích đường găng CPM">
-              <i data-lucide="list-checks" class="w-3.5 h-3.5"></i>
-              <span class="whitespace-nowrap">Hồ Sơ Pháp Lý &amp; CPM</span>
+            <button id="btnViewLegalEngine" onclick="switchViewMode('legal')" class="px-2 sm:px-2.5 py-1 rounded-md text-[11px] font-bold transition flex items-center gap-1 text-slate-300 hover:text-white hover:bg-slate-700/60 cursor-pointer" title="Chi tiết hồ sơ pháp lý & phân tích đường găng CPM">
+              <i data-lucide="list-checks" class="w-3 h-3"></i>
+              <span class="whitespace-nowrap">Hồ Sơ &amp; CPM</span>
             </button>
           </div>
 
-          <!-- Fast-Action Controls -->
-          <button onclick="openGanttModal()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Mở biểu đồ CPM Gantt toàn màn hình">
-            <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-blue-400"></i>
-            <span class="whitespace-nowrap hidden sm:inline">Biểu Đồ Gantt</span>
+          <!-- Fast-Action Controls (Compact) -->
+          <button onclick="openGanttModal()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="Mở biểu đồ CPM Gantt toàn màn hình">
+            <i data-lucide="calendar-range" class="w-3 h-3 text-blue-400"></i>
+            <span class="whitespace-nowrap hidden sm:inline">Gantt</span>
           </button>
-          <a href="./quyhoach/" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Cổng dữ liệu quy hoạch xây dựng quốc gia">
-            <i data-lucide="map" class="w-3.5 h-3.5 text-emerald-400"></i>
-            <span class="whitespace-nowrap hidden sm:inline">Quy Hoạch BXD</span>
+          <a href="./quyhoach/" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="Cổng dữ liệu quy hoạch xây dựng quốc gia">
+            <i data-lucide="map" class="w-3 h-3 text-emerald-400"></i>
+            <span class="whitespace-nowrap hidden sm:inline">Quy Hoạch</span>
           </a>
-          <button id="btnApplyScenario" onclick="openDateSyncModal()" class="px-3 py-1 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Áp dụng kịch bản và đồng bộ ngày thực hiện">
-            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+          <button id="btnApplyScenario" onclick="openDateSyncModal()" class="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-900 font-bold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="Áp dụng kịch bản và đồng bộ ngày thực hiện">
+            <i data-lucide="sliders" class="w-3 h-3"></i>
             <span class="whitespace-nowrap">Áp Dụng</span>
           </button>
-          <button id="btnCloudSync" onclick="triggerManualCloudSync()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Đồng bộ dữ liệu thời gian thực với Supabase Cloud">
-            <i data-lucide="cloud" class="w-3.5 h-3.5 text-slate-300"></i>
-            <span id="cloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
-            <span id="cloudSyncText" class="whitespace-nowrap hidden md:inline">Cloud</span>
+          <button id="btnCloudSync" onclick="triggerManualCloudSync()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="Đồng bộ dữ liệu thời gian thực với Supabase Cloud">
+            <span id="cloudSyncDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0"></span>
+            <span id="cloudSyncText" class="whitespace-nowrap text-[10px] hidden md:inline">Cloud</span>
           </button>
 
+          <!-- Hidden Metadata Anchors for JS Compatibility -->
+          <span id="heroProjectId" class="hidden"></span>
+          <span id="heroProjectBadge" class="hidden"></span>
+          <span id="heroProjectTitle" class="hidden"></span>
+          <span id="heroProjectDesc" class="hidden"></span>
         </div>
 
       </div>
@@ -370,94 +367,6 @@
     <div id="investExecutiveDashboard" class="w-full max-w-full min-w-0 space-y-5 animate-in fade-in duration-300">
       
       
-
-      <!-- EXECUTIVE 4-PILLAR KPI METRIC RIBBON (Material Design 3 Expressive) -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        
-        <!-- Metric 1: Tổng Vốn Đầu Tư -->
-        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/90 flex flex-col justify-between hover:shadow-md transition">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tổng Vốn Dự Án (CapEx)</span>
-            <span class="p-2 bg-blue-50 text-blue-600 rounded-xl">
-              <i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>
-            </span>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-baseline gap-2">
-              <h3 id="dashCapexTotal" class="text-2xl font-extrabold text-slate-900 tracking-tight">48.500</h3>
-              <span class="text-xs font-bold text-slate-500">Tỷ VNĐ</span>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-100">
-              <span>Tương đương: <strong class="text-slate-700 font-semibold">~$1.95B USD</strong></span>
-              <span class="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">FDI / Trong nước</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metric 2: Tỷ Lệ Hoàn Thành Pháp Lý -->
-        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/90 flex flex-col justify-between hover:shadow-md transition">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Chỉ Số Pháp Lý Hoàn Tất</span>
-            <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-            </span>
-          </div>
-          <div class="space-y-2">
-            <div class="flex items-baseline justify-between">
-              <div class="flex items-baseline gap-1.5">
-                <h3 id="dashLegalPercent" class="text-2xl font-extrabold text-slate-900 tracking-tight">0%</h3>
-                <span class="text-[11px] text-slate-500 font-medium">hoàn thành</span>
-              </div>
-              <span id="dashCompletedRatio" class="text-xs font-bold text-emerald-600">0/0 thủ tục</span>
-            </div>
-            <!-- Wavy Sinusoidal-style Expressive Progress Bar -->
-            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden p-0.5">
-              <div id="dashLegalProgressBar" class="bg-gradient-to-r from-blue-600 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metric 3: Quỹ Đất & Diện Tích Khảo Sát -->
-        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/90 flex flex-col justify-between hover:shadow-md transition">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Quy Mô Quỹ Đất Dự Án</span>
-            <span class="p-2 bg-purple-50 text-purple-600 rounded-xl">
-              <i data-lucide="map-pin" class="w-4 h-4"></i>
-            </span>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-baseline gap-2">
-              <h3 id="dashLandArea" class="text-2xl font-extrabold text-slate-900 tracking-tight">3.250</h3>
-              <span class="text-xs font-bold text-slate-500">Héc-ta (Ha)</span>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-100">
-              <span>Đất sạch đã GPMB: <strong class="text-slate-700 font-semibold">1.820 Ha</strong></span>
-              <span class="text-purple-700 font-bold bg-purple-50 px-1.5 py-0.5 rounded">63 Tỉnh Thành</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metric 4: Tình Trạng Tiến Độ CPM & Điểm Nghẽn -->
-        <div class="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/90 flex flex-col justify-between hover:shadow-md transition">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Đường Găng CPM & Điểm Nghẽn</span>
-            <span class="p-2 bg-amber-50 text-amber-600 rounded-xl">
-              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-            </span>
-          </div>
-          <div class="space-y-1">
-            <div class="flex items-baseline gap-2">
-              <h3 id="dashDelayedCount" class="text-2xl font-extrabold text-amber-600 tracking-tight">0</h3>
-              <span class="text-xs font-bold text-slate-500">thủ tục trễ hạn</span>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 border-t border-slate-100">
-              <span>Đang xử lý: <strong id="dashInProgressCount" class="text-slate-700 font-semibold">0</strong></span>
-              <span id="dashCpmStatusBadge" class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded">Tiến độ chuẩn</span>
-            </div>
-          </div>
-        </div>
-
-      </section>
 
       <!-- STAGE-GATE STATUTORY PIPELINE (6 GIAI ĐOẠN ĐẦU TƯ LIÊN HOÀN) -->
       <section class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-xs space-y-4">
@@ -483,6 +392,16 @@
               <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-800 text-[10px] font-extrabold uppercase">Giai Đoạn 1</span>
               <span id="phase1Ratio" class="text-[11px] font-bold text-slate-600">0/6 thủ tục</span>
             </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase1CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
+            </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition mb-1 leading-snug">
               Chuẩn Bị Đầu Tư & Chấp Thuận Chủ Trương
             </h4>
@@ -499,6 +418,16 @@
             <div class="flex items-center justify-between mb-2">
               <span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-800 text-[10px] font-extrabold uppercase">Giai Đoạn 2</span>
               <span id="phase2Ratio" class="text-[11px] font-bold text-slate-600">0/10 thủ tục</span>
+            </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase2CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
             </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-sky-600 transition mb-1 leading-snug">
               Quy Hoạch Chi Tiết 1/500 & Thiết Kế Cơ Sở
@@ -517,6 +446,16 @@
               <span class="px-2 py-0.5 rounded-md bg-orange-100 text-orange-800 text-[10px] font-extrabold uppercase">Giai Đoạn 3</span>
               <span id="phase3Ratio" class="text-[11px] font-bold text-slate-600">0/8 thủ tục</span>
             </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase3CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
+            </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-orange-600 transition mb-1 leading-snug">
               Bồi Thường GPMB, Giao Đất & Nghĩa Vụ Tài Chính
             </h4>
@@ -533,6 +472,16 @@
             <div class="flex items-center justify-between mb-2">
               <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-extrabold uppercase">Giai Đoạn 4</span>
               <span id="phase4Ratio" class="text-[11px] font-bold text-slate-600">0/6 thủ tục</span>
+            </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase4CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
             </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-emerald-600 transition mb-1 leading-snug">
               Môi Trường (ĐTM) & Phòng Cháy Chữa Cháy (PCCC)
@@ -551,6 +500,16 @@
               <span class="px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 text-[10px] font-extrabold uppercase">Giai Đoạn 5</span>
               <span id="phase5Ratio" class="text-[11px] font-bold text-slate-600">0/5 thủ tục</span>
             </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase5CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
+            </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-teal-600 transition mb-1 leading-snug">
               Giấy Phép Xây Dựng (GPXD) & Thi Công
             </h4>
@@ -567,6 +526,16 @@
             <div class="flex items-center justify-between mb-2">
               <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 text-[10px] font-extrabold uppercase">Giai Đoạn 6</span>
               <span id="phase6Ratio" class="text-[11px] font-bold text-slate-600">0/5 thủ tục</span>
+            </div>
+            <!-- Đường găng CPM & điểm nghẽn Box -->
+            <div class="my-2 px-2.5 py-1.5 rounded-lg bg-slate-100/90 border border-slate-200/90 flex items-center justify-between gap-1 text-[10.5px]">
+              <span class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i data-lucide="git-commit" class="w-3.5 h-3.5 text-blue-600"></i>
+                <span>Đường găng CPM &amp; Điểm nghẽn:</span>
+              </span>
+              <span id="phase6CpmBadge" class="font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn
+              </span>
             </div>
             <h4 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition mb-1 leading-snug">
               Nghiệm Thu Hoàn Thành, Đấu Nối & Vận Hành (COD)
@@ -4331,6 +4300,47 @@
     }
 
     function updateDashboardViewStats() {
+      const activeProj = typeof getActiveProject === 'function' ? getActiveProject() : null;
+      if (!activeProj) return;
+
+      const heroTitleEl = document.getElementById('heroProjectTitle');
+      if (heroTitleEl) heroTitleEl.textContent = activeProj.name || "Dự Án Đầu Tư Tổ Hợp";
+
+      const heroProjIdEl = document.getElementById('heroProjectId');
+      if (heroProjIdEl) heroProjIdEl.textContent = activeProj.id || "PROJ-DEFAULT";
+
+      const activeTasks = (typeof taskList !== 'undefined' && Array.isArray(taskList)) ? taskList : [];
+      const total = activeTasks.length;
+
+      for (let p = 1; p <= 6; p++) {
+        const pKey = `Giai đoạn ${p}`;
+        const pTasks = activeTasks.filter(t => t.phase && t.phase.startsWith(pKey));
+        const pTotal = pTasks.length;
+        const pDone = pTasks.filter(t => t.completed || t.status === 'Đã hoàn thành').length;
+        const pPercent = pTotal > 0 ? Math.round((pDone / pTotal) * 100) : 0;
+
+        const ratioEl = document.getElementById(`phase${p}Ratio`);
+        if (ratioEl) ratioEl.textContent = `${pDone}/${pTotal} thủ tục`;
+
+        const barEl = document.getElementById(`phase${p}Bar`);
+        if (barEl) barEl.style.width = `${pPercent}%`;
+
+        // Update Phase CPM & Bottlenecks status badge
+        const delayedTasks = pTasks.filter(t => t.status === 'Bị nghẽn / Trễ hạn');
+        const phaseCpmBadge = document.getElementById(`phase${p}CpmBadge`);
+        if (phaseCpmBadge) {
+          if (delayedTasks.length > 0) {
+            phaseCpmBadge.className = "font-bold px-2 py-0.5 rounded text-[10px] bg-amber-50 text-amber-700 border border-amber-300 animate-pulse whitespace-nowrap";
+            phaseCpmBadge.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 mr-1"></span>${delayedTasks.length} Điểm nghẽn CPM`;
+          } else {
+            phaseCpmBadge.className = "font-bold px-2 py-0.5 rounded text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap";
+            phaseCpmBadge.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>Tiến độ chuẩn`;
+          }
+        }
+      }
+    }
+
+    function _deprecated_updateDashboardViewStats() {
       const activeProj = typeof getActiveProject === 'function' ? getActiveProject() : null;
       if (!activeProj) return;
 
