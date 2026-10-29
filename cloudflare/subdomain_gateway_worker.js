@@ -17,6 +17,7 @@
  */
 
 const HOST_PATH_MAP = {
+  'energy.renewablevietnam.com': '/projectenergy',
   'wind.renewablevietnam.com': '/projectenergy',
   'ind.renewablevietnam.com': '/green',
   'ev.renewablevietnam.com': '/evcharging',

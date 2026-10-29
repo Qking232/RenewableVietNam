@@ -28,7 +28,7 @@ def get_nav_markup(active_page):
             {dot}
             {pill("Master Dashboard", "https://renewablevietnam.com/", active_page == "home")}
             {dot}
-            {pill("PDP8 Energy", "https://wind.renewablevietnam.com/", active_page == "wind")}
+            {pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
             {dot}
             {pill("Green Industrial", "https://ind.renewablevietnam.com/", active_page == "ind")}
             {dot}
@@ -48,7 +48,7 @@ def get_nav_markup(active_page):
           <span>Live Wire</span>
         </a>
         {mobile_pill("Dashboard", "https://renewablevietnam.com/", active_page == "home")}
-        {mobile_pill("PDP8 Energy", "https://wind.renewablevietnam.com/", active_page == "wind")}
+        {mobile_pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
         {mobile_pill("Green Industrial", "https://ind.renewablevietnam.com/", active_page == "ind")}
         {mobile_pill("EV Tech", "https://ev.renewablevietnam.com/", active_page == "ev")}
         {mobile_pill("Legal Framework", "https://legal.renewablevietnam.com/", active_page == "legal")}
