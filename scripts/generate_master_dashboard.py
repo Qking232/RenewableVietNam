@@ -7,7 +7,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   
   <title>Renewable Viet Nam | National Clean Energy & Ecological Transition Master Intelligence Cockpit</title>
-  <meta name="description" content="Master institutional executive dashboard unifying Vietnam's clean energy ecosystem: PDP8 power generation, 168 green industrial hubs, 22,055+ EV charging ports, statutory legal library, and M&A investment engine." />
+  <meta name="description" content="Master institutional executive dashboard unifying Vietnam's clean energy ecosystem: PDP8 power generation, 168 green industrial hubs, 22,055+ EV charging ports, and M&A investment engine." />
   <meta name="keywords" content="Vietnam renewable energy, PDP8 energy atlas, green industrial parks Vietnam, EV charging Vietnam, DPPA Decree 80, clean energy investment Vietnam" />
   <link rel="canonical" href="https://renewablevietnam.com/" />
 
@@ -15,14 +15,14 @@ DASHBOARD_HTML = """<!DOCTYPE html>
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://renewablevietnam.com/" />
   <meta property="og:title" content="Renewable Viet Nam | Master Intelligence Cockpit" />
-  <meta property="og:description" content="Institutional executive dashboard unifying Vietnam's clean generation, eco-industrial hubs, EV infrastructure, statutory legal frameworks, and M&A pipeline." />
+  <meta property="og:description" content="Institutional executive dashboard unifying Vietnam's clean generation, eco-industrial hubs, EV infrastructure, and M&A pipeline." />
   <meta property="og:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
 
   <!-- Twitter Meta -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://renewablevietnam.com/" />
   <meta name="twitter:title" content="Renewable Viet Nam | Master Intelligence Cockpit" />
-  <meta name="twitter:description" content="Institutional executive dashboard unifying Vietnam's clean generation, eco-industrial hubs, EV infrastructure, statutory legal frameworks, and M&A pipeline." />
+  <meta name="twitter:description" content="Institutional executive dashboard unifying Vietnam's clean generation, eco-industrial hubs, EV infrastructure, and M&A pipeline." />
   <meta name="twitter:image" content="https://renewablevietnam.com/assets/images/blog-cover.jpg" />
 
   <!-- Performance & Fonts -->
@@ -90,14 +90,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
           <!-- Desktop Quick Jump Navigation -->
           <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
-            <a href="https://renewablevietnam.com/livewire/" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors group">
-              <span class="relative flex h-2 w-2 shrink-0">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span>Live Wire</span>
-            </a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 transition-colors">Master Dashboard</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">PDP8 Energy</a>
@@ -105,8 +97,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <a href="https://ind.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Green Industrial</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">EV Tech</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-sky-500 dark:hover:text-sky-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Legal Framework</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-blue-500 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Investment M&A</a>
           </nav>
@@ -127,18 +117,10 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
       <!-- Mobile Touch Navigation Carousel -->
       <nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
-        <a href="https://renewablevietnam.com/livewire/" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">
-          <span class="relative flex h-2 w-2 shrink-0">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span>Live Wire</span>
-        </a>
         <a href="https://renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shrink-0">Dashboard</a>
         <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">PDP8 Energy</a>
         <a href="https://ind.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Green Industrial</a>
         <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-amber-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">EV Tech</a>
-        <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-sky-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Legal Framework</a>
         <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-blue-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Investment M&A</a>
       </nav>
     </div>
@@ -158,22 +140,22 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             Vietnam Clean Energy &amp; Ecological Transition Master Cockpit
           </h1>
           <p class="text-xs sm:text-sm text-inkMuted dark:text-textDarkMuted leading-relaxed font-light">
-            Central telemetry platform uniting statutory power generation infrastructure, eco-industrial master planning, electric mobility corridors, statutory legal frameworks, and M&amp;A transaction pipelines across specialized subdomains.
+            Central telemetry platform uniting statutory power generation infrastructure, eco-industrial master planning, electric mobility corridors, and M&amp;A transaction pipelines across specialized subdomains.
           </p>
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
           <div class="font-mono text-[10px] sm:text-[11px] text-inkMuted dark:text-textDarkMuted bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder p-2 sm:p-2.5 rounded-xl shadow-sm flex flex-wrap items-center gap-1.5 max-w-full">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-            <span class="leading-relaxed">SYSTEM STATUS &middot; <strong class="text-slate-900 dark:text-white font-semibold">5 ACTIVE SUBDOMAINS</strong> &middot; <span class="font-medium text-slate-700 dark:text-slate-300">EDGE MASKED</span> &middot; <span class="font-medium text-emerald-600 dark:text-emerald-400">100% OPERATIONAL</span></span>
+            <span class="leading-relaxed">SYSTEM STATUS &middot; <strong class="text-slate-900 dark:text-white font-semibold">4 ACTIVE SUBDOMAINS</strong> &middot; <span class="font-medium text-slate-700 dark:text-slate-300">EDGE MASKED</span> &middot; <span class="font-medium text-emerald-600 dark:text-emerald-400">100% OPERATIONAL</span></span>
           </div>
         </div>
       </div>
 
-      <!-- 5-PILLAR MACRO TELEMETRY GRID -->
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 sm:gap-3.5 pt-1">
-        <!-- Pillar 1: PDP8 Generation (wind) -->
-        <a href="https://energy.renewablevietnam.com/" class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-emerald-500/50 hover:shadow-md transition-all group">
+      <!-- 4-PILLAR MACRO TELEMETRY GRID -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 pt-1">
+        <!-- Pillar 1: PDP8 Generation (energy) -->
+        <a href="https://energy.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-emerald-500/50 hover:shadow-md transition-all group">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] tracking-wider uppercase text-emerald-600 dark:text-emerald-400 font-semibold">Clean Generation</span>
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -186,7 +168,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </a>
 
         <!-- Pillar 2: Green Industrial (ind) -->
-        <a href="https://ind.renewablevietnam.com/" class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-teal-500/50 hover:shadow-md transition-all group">
+        <a href="https://ind.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-teal-500/50 hover:shadow-md transition-all group">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] tracking-wider uppercase text-teal-600 dark:text-teal-400 font-semibold">Industrial Siting</span>
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"></span>
@@ -199,7 +181,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </a>
 
         <!-- Pillar 3: EV Infrastructure (ev) -->
-        <a href="https://ev.renewablevietnam.com/" class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-amber-500/50 hover:shadow-md transition-all group">
+        <a href="https://ev.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-amber-500/50 hover:shadow-md transition-all group">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] tracking-wider uppercase text-amber-500 dark:text-amber-400 font-semibold">EV Mobility</span>
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -211,20 +193,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           <p class="text-[11px] text-inkMuted dark:text-textDarkMuted mt-1 font-light">CCS2 / DC Fast Corridors</p>
         </a>
 
-        <!-- Pillar 4: Legal Framework (legal) -->
-        <a href="https://legal.renewablevietnam.com/" class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-sky-500/50 hover:shadow-md transition-all group">
-          <div class="flex items-center justify-between">
-            <span class="font-mono text-[10px] tracking-wider uppercase text-sky-500 dark:text-sky-400 font-semibold">Statutory Law</span>
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-          </div>
-          <div class="mt-2 flex items-baseline gap-1.5">
-            <span class="text-xl sm:text-2xl font-mono font-bold text-inkPrimary dark:text-textDarkPrimary group-hover:text-sky-500 transition-colors">Decree 80</span>
-          </div>
-          <p class="text-[11px] text-inkMuted dark:text-textDarkMuted mt-1 font-light">DPPA Directives &middot; MOIT Codes</p>
-        </a>
-
-        <!-- Pillar 5: Investment Engine (invest) -->
-        <a href="https://invest.renewablevietnam.com/" class="p-3.5 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-blue-500/50 hover:shadow-md transition-all group col-span-2 md:col-span-1">
+        <!-- Pillar 4: Investment Engine (invest) -->
+        <a href="https://invest.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-blue-500/50 hover:shadow-md transition-all group">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] tracking-wider uppercase text-blue-500 dark:text-blue-400 font-semibold">M&amp;A &amp; Permitting</span>
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
@@ -252,8 +222,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- 5 Subdomain Master Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <!-- 4 Subdomain Master Cards (2x2 Grid) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
         <!-- Card 1: energy.renewablevietnam.com -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-emerald-500/60 transition-all group">
@@ -417,62 +387,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           </div>
         </div>
 
-        <!-- Card 4: legal.renewablevietnam.com -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-sky-500/60 transition-all group">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-sky-500 dark:text-sky-400 px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">
-                legal.renewablevietnam.com
-              </span>
-              <span class="inline-flex items-center gap-1 font-mono text-[10px] text-slate-500">
-                <span class="w-2 h-2 rounded-full bg-sky-500"></span> Live
-              </span>
-            </div>
-
-            <div>
-              <h3 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary group-hover:text-sky-500 transition-colors">
-                The Library &middot; Statutory Legal Directives
-              </h3>
-              <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-1 leading-relaxed">
-                Complete repository of clean energy policy, Decree 80 DPPA statutory mechanics, PDP8 implementation directives, and EVN grid connection standards.
-              </p>
-            </div>
-
-            <!-- Metric Chips -->
-            <div class="grid grid-cols-3 gap-2 py-2 border-y border-borderSlate/60 dark:border-darkBorder/60">
-              <div class="text-center">
-                <span class="block text-xs font-mono font-bold text-sky-500">Decree 80</span>
-                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">2024/ND-CP</span>
-              </div>
-              <div class="text-center">
-                <span class="block text-xs font-mono font-bold text-inkPrimary dark:text-textDarkPrimary">Dec. 500</span>
-                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">PDP8 Approval</span>
-              </div>
-              <div class="text-center">
-                <span class="block text-xs font-mono font-bold text-slate-500">AES-256</span>
-                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted">Encrypted</span>
-              </div>
-            </div>
-
-            <!-- Feature Tags -->
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">DPPA Direct Wire</span>
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">DPPA Wheeling</span>
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">MOIT Circulars</span>
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Grid Codes</span>
-            </div>
-          </div>
-
-          <div class="pt-5">
-            <a href="https://legal.renewablevietnam.com/" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-semibold shadow-sm transition-all">
-              <span>Open Statutory Library</span>
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 5: invest.renewablevietnam.com -->
-        <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-blue-500/60 transition-all group lg:col-span-2">
+        <!-- Card 4: invest.renewablevietnam.com -->
+        <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-blue-500/60 transition-all group">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-blue-500 dark:text-blue-400 px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">
@@ -515,8 +431,8 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <!-- Feature Tags -->
             <div class="flex flex-wrap gap-1.5 pt-1">
               <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Legal Due Diligence</span>
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Investment Policy (Chấp thuận chủ trương)</span>
-              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Land Allocation (Giao đất)</span>
+              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Investment Policy</span>
+              <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">Land Allocation</span>
               <span class="font-mono text-[9px] px-2 py-0.5 rounded bg-slate-100 dark:bg-darkCard text-slate-600 dark:text-slate-300">EIA Feasibility</span>
             </div>
           </div>
@@ -548,7 +464,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-light text-inkMuted dark:text-textDarkMuted">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-light text-inkMuted dark:text-textDarkMuted">
         <div class="p-4 rounded-xl bg-slate-50 dark:bg-darkCard border border-borderSlate dark:border-darkBorder/60 space-y-2">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -568,16 +484,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             Industrial parks and 110kV/220kV transmission substations host high-power DC fast-charging hubs logged on <a href="https://ev.renewablevietnam.com/" class="text-amber-500 font-medium hover:underline">ev.renewablevietnam.com</a>, creating electrified freight logistics corridors along national expressways.
           </p>
         </div>
-
-        <div class="p-4 rounded-xl bg-slate-50 dark:bg-darkCard border border-borderSlate dark:border-darkBorder/60 space-y-2">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-            <strong class="text-inkPrimary dark:text-textDarkPrimary font-semibold">Statutory Permitting &amp; Due Diligence</strong>
-          </div>
-          <p class="leading-relaxed">
-            Statutory legal decrees verified on <a href="https://legal.renewablevietnam.com/" class="text-sky-500 font-medium hover:underline">legal.renewablevietnam.com</a> feed directly into the critical path management (CPM) and risk underwriting tools on <a href="https://invest.renewablevietnam.com/" class="text-blue-500 font-medium hover:underline">invest.renewablevietnam.com</a>.
-          </p>
-        </div>
       </div>
     </section>
 
@@ -595,7 +501,6 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         <a href="https://energy.renewablevietnam.com/" class="hover:text-emerald-500 transition-colors">Clean Generation</a>
         <a href="https://ind.renewablevietnam.com/" class="hover:text-teal-500 transition-colors">Industrial Hubs</a>
         <a href="https://ev.renewablevietnam.com/" class="hover:text-amber-500 transition-colors">EV Mobility</a>
-        <a href="https://legal.renewablevietnam.com/" class="hover:text-sky-500 transition-colors">Statutory Library</a>
         <a href="https://invest.renewablevietnam.com/" class="hover:text-blue-500 transition-colors">Investment M&amp;A</a>
       </div>
 
@@ -640,12 +545,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
 base_dir = r"G:\My Drive\7. AI\RenewableVietNam"
 index_file = os.path.join(base_dir, "index.html")
-rev3_file = os.path.join(base_dir, "index_Rev.003.html")
+rev4_file = os.path.join(base_dir, "index_Rev.004.html")
 
 # Non-destructive sequential revision
-with open(rev3_file, "w", encoding="utf-8") as f:
+with open(rev4_file, "w", encoding="utf-8") as f:
     f.write(DASHBOARD_HTML)
-print(f"Created baseline revision: {rev3_file}")
+print(f"Created baseline revision: {rev4_file}")
 
 with open(index_file, "w", encoding="utf-8") as f:
     f.write(DASHBOARD_HTML)

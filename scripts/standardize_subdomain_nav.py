@@ -14,18 +14,7 @@ def get_nav_markup(active_page):
 
     dot = '<span class="text-slate-300 dark:text-slate-700">&middot;</span>'
 
-    lw_cls = "text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shadow-sm" if active_page == "livewire" else "hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard"
-    lw_mob_cls = "text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shadow-sm" if active_page == "livewire" else "text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder"
-
     desktop_nav = f"""<nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
-            <a href="https://renewablevietnam.com/livewire/" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md {lw_cls} transition-colors group">
-              <span class="relative flex h-2 w-2 shrink-0">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-              <span>Live Wire</span>
-            </a>
-            {dot}
             {pill("Master Dashboard", "https://renewablevietnam.com/", active_page == "home")}
             {dot}
             {pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
@@ -40,13 +29,6 @@ def get_nav_markup(active_page):
           </nav>"""
 
     mobile_nav = f"""<nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
-        <a href="https://renewablevietnam.com/livewire/" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg {lw_mob_cls} shrink-0">
-          <span class="relative flex h-2 w-2 shrink-0">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span>Live Wire</span>
-        </a>
         {mobile_pill("Dashboard", "https://renewablevietnam.com/", active_page == "home")}
         {mobile_pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
         {mobile_pill("Green Industrial", "https://ind.renewablevietnam.com/", active_page == "ind")}
