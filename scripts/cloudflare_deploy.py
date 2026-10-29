@@ -7,15 +7,25 @@ import urllib.error
 ACCOUNT_ID = os.environ.get("CLOUDFLARE_ACCOUNT_ID", "a17978d12dc9d62ca76f7712fe8f758c")
 ZONE_ID = os.environ.get("CLOUDFLARE_ZONE_ID", "eed02d9917c1a0c6144972136e836eba")
 TOKEN = os.environ.get("CLOUDFLARE_API_TOKEN", "")
+EMAIL = os.environ.get("CLOUDFLARE_EMAIL", "quan.luunguyen@gmail.com")
 DOMAIN = "renewablevietnam.com"
 SUBDOMAIN = "invest.renewablevietnam.com"
 SCRIPT_NAME = "invest-subdomain-proxy"
 
 def cf_api(endpoint, method="GET", data=None, headers=None):
     if not TOKEN:
-        raise ValueError("CLOUDFLARE_API_TOKEN environment variable is required.")
+        raise ValueError("CLOUDFLARE_API_TOKEN or Global API Key is required.")
+    
     url = f"https://api.cloudflare.com/client/v4{endpoint}"
-    req_headers = {"Authorization": f"Bearer {TOKEN}"}
+    req_headers = {}
+
+    # Auto-detect authentication scheme (Global API Key vs Scoped Token)
+    if TOKEN.startswith("cfk_") or ("@" in EMAIL and not TOKEN.startswith("cfat_")):
+        req_headers["X-Auth-Key"] = TOKEN
+        req_headers["X-Auth-Email"] = EMAIL
+    else:
+        req_headers["Authorization"] = f"Bearer {TOKEN}"
+
     if headers:
         req_headers.update(headers)
     
