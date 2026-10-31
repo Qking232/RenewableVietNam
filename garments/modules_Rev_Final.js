@@ -37,11 +37,11 @@ window.PORTAL_MODULES = [
   {
     id: "domain3_esg",
     tag: "DOMAIN 3",
-    shortTitle: "Green & Solar",
-    category: "Sustainability & Energy",
-    title: "Domain 3: Green Energy & Sustainability",
+    shortTitle: "ESG & Clean Tech",
+    category: "ESG & Clean Technology",
+    title: "Domain 3: ESG, Clean Technology & Environmental Stewardship",
     description: "2.80 MWp Rooftop Solar PV, -10,838 tCO₂e/yr Net Carbon Abatement, LEED v4 BD+C Platinum (84 Pts), and Higg FEM 4.0 Standards.",
-    badge: "Sustainability",
+    badge: "ESG & Clean Tech",
     file: "modules/domain3_esg_leed_solar.html"
   },
   {
