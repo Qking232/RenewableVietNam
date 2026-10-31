@@ -55,6 +55,16 @@ window.PORTAL_MODULES = [
     file: "modules/domain4_capex_calsheet.html"
   },
   {
+    id: "domain5_handover",
+    tag: "DOMAIN 5",
+    shortTitle: "T&C Handover",
+    category: "Operational Readiness",
+    title: "Domain 5: Testing, Commissioning & Handover",
+    description: "Integrated T&C Protocols (ASHRAE 0-2019), Decree 06/2021 Statutory Hoan Cong, 9.8s Blackout ATS Transfer, FIDIC Clause 10.1 TOC, and $725k DLP Bond.",
+    badge: "T&C Handover",
+    file: "modules/domain5_commissioning_handover.html"
+  },
+  {
     id: "bod_charter",
     tag: "BOARD DOSSIER",
     shortTitle: "Board Report",
