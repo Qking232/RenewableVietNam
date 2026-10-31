@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engineering &amp; Capital Projects Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #e2e8f0;
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+    }
+
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .nav-btn, .tab-item {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Seamless Iframe without outer box borders */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .module-frame {
+      width: 100%;
+      border: none;
+      min-height: 1100px;
+      transition: opacity 0.2s ease-in-out;
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Master Top Navigation Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-2xs">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center justify-between gap-2">
+      <div>
+        <h1 class="text-base md:text-lg font-bold text-slate-900 tracking-tight">
+          Engineering &amp; Capital Projects Portal
+        </h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-mono bg-slate-100 text-slate-700 font-semibold px-2.5 py-1 border border-slate-200 rounded-md">
+          Release: Rev_Final
+        </span>
+      </div>
+    </div>
+
+    <!-- Executive 6-Segment Grid Navigation (Simultaneous Visibility Across All Screens) -->
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 border-t border-slate-100 py-2.5">
+      <nav id="module-nav-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <!-- Rendered dynamically -->
+      </nav>
+    </div>
+
+    <!-- Active Viewport Toolbar (Open & Minimal) -->
+    <div class="bg-slate-50/70 border-t border-slate-200 px-3 sm:px-6 py-1.5 sm:py-2 text-xs">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-slate-600">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="text-slate-400 uppercase font-semibold text-[9.5px] sm:text-[10px] shrink-0">Active Module:</span>
+          <strong id="active-module-title" class="text-slate-900 font-bold text-xs truncate">Loading...</strong>
+        </div>
+        <a id="open-standalone-link" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white border border-slate-200 text-sky-700 font-medium hover:bg-sky-50 transition-colors shadow-2xs text-[11px] shrink-0 self-end sm:self-auto">
+          <span>Open in Full Window</span>
+          <span class="text-[11px]">&nearr;</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Module Content Container (Completely De-Boxed: No outer container borders) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-1 py-1.5 sm:px-4 sm:py-4">
+    <iframe id="module-viewport" class="module-frame" src="modules/bod_capex_charter_report.html" title="Engineering Module Viewport"></iframe>
+  </main>
+
+  <!-- Master Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    Garments Company Regional Engineering & Capital Projects Architecture | Multi-Site Governance (Vietnam & Sri Lanka)
+  </footer>
+
+  <!-- Include External Manifest if present -->
+  <script src="modules_Rev_Final.js"></script>
+
+  <!-- Dynamic Shell Controller with Built-in Resilient Fallback -->
+  <script>
+    if (!window.PORTAL_MODULES || window.PORTAL_MODULES.length === 0) {
+      window.PORTAL_MODULES = [
+  {
+    id: "master_governance",
+    tag: "FRAMEWORK",
+    shortTitle: "Project Delivery",
+    category: "Executive Governance",
+    title: "Project Delivery Framework",
+    description: "The '5+3' Capital Delivery System: 6-Stage Gate Process, 10-Role RACI Matrix, and 8 Integrated Execution Pillars.",
+    badge: "Framework",
+    file: "modules/master_project_governance.html"
+  },
+  {
+    id: "domain1_permitting",
+    tag: "DOMAIN 1",
+    shortTitle: "Permits & Legal",
+    category: "Statutory Compliance",
+    title: "Domain 1: Permits & Legal Approvals",
+    description: "Vietnam Land Use Right (Sổ Đỏ), 1/500 Master Plan, TKCS Basic Design, QCVN 06:2022 Fire Safety, Phased GPXD Móng/Thân, and GPMT Licensing.",
+    badge: "Permits",
+    file: "modules/domain1_pccc_permitting.html"
+  },
+  {
+    id: "domain2_utilities",
+    tag: "DOMAIN 2",
+    shortTitle: "Plant & Utilities",
+    category: "Core Engineering",
+    title: "Domain 2: Plant Engineering & Utilities",
+    description: "35,000 m² 2.5D Isometric Plant Map, 15 TPH Biomass Steam, 1,573 CFM VFD Compressed Air, 35 ACH Celdek HVAC, and 1,200 m³/d ZLD ETP.",
+    badge: "Engineering",
+    file: "modules/domain2_utilities_engineering.html"
+  },
+  {
+    id: "domain3_esg",
+    tag: "DOMAIN 3",
+    shortTitle: "Green & Solar",
+    category: "Sustainability & Energy",
+    title: "Domain 3: Green Energy & Sustainability",
+    description: "2.80 MWp Rooftop Solar PV, -10,838 tCO₂e/yr Net Carbon Abatement, LEED v4 BD+C Platinum (84 Pts), and Higg FEM 4.0 Standards.",
+    badge: "Sustainability",
+    file: "modules/domain3_esg_leed_solar.html"
+  },
+  {
+    id: "domain4_capex",
+    tag: "DOMAIN 4",
+    shortTitle: "Cost & Contracts",
+    category: "Commercial & Controls",
+    title: "Domain 4: Project Cost & Contracts",
+    description: "$14.50M BAC Breakdown, EVM S-Curve Progress Verification, 7-Year Operating DCF Valuation ($1.85M NPV, 15.65% IRR), and FIDIC Risk Allocation.",
+    badge: "Cost & Contracts",
+    file: "modules/domain4_capex_calsheet.html"
+  },
+  {
+    id: "bod_charter",
+    tag: "BOARD DOSSIER",
+    shortTitle: "Board Report",
+    category: "Executive Authorization",
+    title: "Board Report & Project Charter",
+    description: "Executive Capital Authorization Dossier: Technical Sizing, Financial Sensitivity Stress Testing, and Formal Board Resolution.",
+    badge: "Board Report",
+    file: "modules/bod_capex_charter_report.html"
+  }
+];
+    }
+
+    let activeModuleId = null;
+
+    function renderModuleNavigation() {
+      const navBar = document.getElementById('module-nav-bar');
+      navBar.innerHTML = '';
+
+      window.PORTAL_MODULES.forEach((mod, index) => {
+        const btn = document.createElement('button');
+        btn.id = 'nav-mod-' + mod.id;
+        btn.type = 'button';
+        btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ' +
+          (index === 0 
+            ? 'bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30' 
+            : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300');
+        
+        btn.innerHTML = `
+          <div class="flex items-center justify-between gap-1 mb-0.5">
+            <span class="text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold ${index === 0 ? 'text-sky-200' : 'text-slate-400'}">${mod.tag || 'MODULE'}</span>
+            <span class="text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold ${index === 0 ? 'bg-sky-800 text-sky-100' : 'bg-slate-100 text-slate-500'}">${mod.badge || ''}</span>
+          </div>
+          <div class="text-[11.5px] sm:text-xs font-bold leading-tight truncate">${mod.shortTitle || mod.title}</div>
+        `;
+        
+        btn.onclick = () => loadModule(mod.id);
+        navBar.appendChild(btn);
+      });
+
+      if (window.PORTAL_MODULES.length > 0) {
+        loadModule(window.PORTAL_MODULES[0].id);
+      }
+    }
+
+    function loadModule(moduleId) {
+      const targetMod = window.PORTAL_MODULES.find(m => m.id === moduleId);
+      if (!targetMod) return;
+
+      activeModuleId = moduleId;
+
+      document.getElementById('active-module-title').innerText = targetMod.title;
+      const standaloneLink = document.getElementById('open-standalone-link');
+      standaloneLink.href = targetMod.file;
+
+      window.PORTAL_MODULES.forEach(m => {
+        const btn = document.getElementById('nav-mod-' + m.id);
+        if (btn) {
+          const tagSpan = btn.querySelector('span:nth-child(1)');
+          const badgeSpan = btn.querySelector('span:nth-child(2)');
+          if (m.id === moduleId) {
+            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30';
+            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-sky-200';
+            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-sky-800 text-sky-100';
+          } else {
+            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300';
+            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-slate-400';
+            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-slate-100 text-slate-500';
+          }
+        }
+      });
+
+      const viewport = document.getElementById('module-viewport');
+      viewport.style.opacity = '0.3';
+      viewport.src = targetMod.file;
+      viewport.onload = () => {
+        viewport.style.opacity = '1';
+        try {
+          const doc = viewport.contentDocument || viewport.contentWindow.document;
+          if (doc && doc.body) {
+            const contentHeight = Math.max(doc.body.scrollHeight + 40, 1100);
+            viewport.style.minHeight = contentHeight + 'px';
+          }
+        } catch (e) {
+          viewport.style.minHeight = '1200px';
+        }
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', renderModuleNavigation);
+  </script>
+</body>
+</html>

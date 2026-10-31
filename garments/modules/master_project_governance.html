@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Delivery Framework | Garments Company</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 420px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    /* Table Architecture */
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .gov-table th, .gov-table td {
+      white-space: nowrap !important;
+      vertical-align: middle;
+      padding: 0.5rem !important;
+    }
+    .gov-table th:first-child, .gov-table td:first-child {
+      white-space: normal !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-8">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-6 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wider font-bold text-sky-700">
+            Executive Overview: Project Delivery Framework
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tracking-tight">
+            Project Delivery Framework
+          </h1>
+          <p class="text-sm text-slate-500 mt-1.5">
+            The "5+3" Capital Delivery Formula: 6-Stage Gate Process, 10-Role RACI Matrix &amp; 8 Execution Pillars
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[10px] uppercase font-bold text-slate-400">TOTAL CAPITAL AT RISK (BAC)</div>
+          <div class="text-xl font-bold font-mono text-slate-900 mt-0.5">$14,500,000 USD</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+        <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+          <div class="text-[10px] uppercase font-bold text-slate-500">Fast-Track Schedule</div>
+          <div class="text-xl font-bold font-mono text-slate-900 mt-0.5">
+            <span class="calc-cell" 
+              data-metric="Target Commercial Operation Date (COD)" 
+              data-formula="14.0 Months (425 Calendar Days)" 
+              data-calc="Decoupled Permitting saves 45-60 days on critical path" 
+              data-desc="Fast-track construction protocol compressing conventional 16-month lifecycle.">
+              14.0 Months
+            </span>
+          </div>
+          <div class="text-xs text-emerald-700 font-semibold mt-0.5">-45 Days Phased GPXD</div>
+        </div>
+
+        <div class="p-3.5 rounded-lg bg-emerald-50 border border-emerald-100">
+          <div class="text-[10px] uppercase font-bold text-emerald-800">Unlevered Return (IRR)</div>
+          <div class="text-base sm:text-xl font-bold font-mono text-emerald-700 mt-0.5">
+            <span class="calc-cell" 
+              data-metric="7-Year Unlevered Project IRR" 
+              data-formula="Σ PV Inflows ($16.345M) - Initial Outlay ($14.50M)" 
+              data-calc="NPV = +$1,845,200 USD ($1.85M) @ 10.0% WACC Hurdle Rate" 
+              data-desc="Audited 7-year DCF model with 4.82-year simple / 5.64-year discounted payback.">
+              15.65% IRR
+            </span>
+          </div>
+          <div class="text-xs text-slate-600 mt-0.5">NPV: +$1.85M (WACC 10.0%)</div>
+        </div>
+
+        <div class="p-3.5 rounded-lg bg-amber-50 border border-amber-100">
+          <div class="text-[10px] uppercase font-bold text-amber-800">FIDIC Contract Framework</div>
+          <div class="text-base sm:text-xl font-bold font-mono text-amber-700 mt-0.5">
+            <span class="calc-cell" 
+              data-metric="FIDIC Contract Risk Allocation" 
+              data-formula="Red Book (Civil) + Yellow Book (MEP) + Silver/PPA (Solar)" 
+              data-calc="2-Envelope Procurement: Tech Envelope 1 -> Commercial Envelope 2" 
+              data-desc="Eliminates contractor design markups while shifting utility performance risk.">
+              Red + Yellow
+            </span>
+          </div>
+          <div class="text-xs text-slate-600 mt-0.5">2-Stage Procurement Gate</div>
+        </div>
+
+        <div class="p-3.5 rounded-lg bg-sky-50 border border-sky-100">
+          <div class="text-[10px] uppercase font-bold text-sky-800">HSE &amp; Green Benchmark</div>
+          <div class="text-base sm:text-xl font-bold font-mono text-sky-700 mt-0.5">
+            <span class="calc-cell" 
+              data-metric="HSE & ESG Performance" 
+              data-formula="LTIFR = 0.00 | LEED Platinum: 84 Points" 
+              data-calc="Zero Lost Time Injuries | 2.80 MWp Rooftop Solar PV" 
+              data-desc="Global flagship facility meeting Nike, Patagonia & Lululemon vendor standards.">
+              LEED Platinum
+            </span>
+          </div>
+          <div class="text-xs text-slate-600 mt-0.5">84 Pts | LTIFR = 0.00</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL TAB NAVIGATION (10 TABS - TOUCH SWIPEABLE) -->
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2 border-b border-slate-200 pb-2.5 text-xs font-semibold">
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors bg-sky-700 text-white" data-target="tab-overview">Overview Cockpit</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-stage-process">Stage Process &amp; Workflow</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-legal">1. Legal &amp; Permitting</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-schedule">2. Schedule &amp; CPM</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-budget">3. Budget &amp; EVM</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-technical">4. Technical Scope</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-contracts">5. FIDIC Contracts</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-risk">6. HSE &amp; Risk DOA</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-commissioning">7. T&amp;C Handover</button>
+        <button type="button" class="tab-btn px-2.5 sm:px-3 py-1.5 rounded-md transition-colors text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-target="tab-esg">8. ESG &amp; LEED Platinum</button>
+      </nav>
+    </header>
+
+    <!-- TAB 0: OVERVIEW COCKPIT -->
+    <div id="tab-overview" class="tab-panel space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          The "5+3" Capital Delivery System: Master Project Governance Cockpit
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Executive project delivery framework designed for Garments Company multi-site industrial governance across Vietnam and Sri Lanka:
+        </p>
+
+        
+        <!-- 8-PILLAR CAPITAL DELIVERY WHEEL -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-700 tracking-wider">Executive Governance Architecture</span>
+              <h3 class="text-sm font-bold text-slate-900">The "5+3" Capital Delivery System: 8 Integrated Governance Pillars</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200 font-semibold">
+              PMBOK 7 / FIDIC / Vietnam Law Compliant
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-500 md:hidden px-1">
+            <span class="font-mono text-[10px]">Architecture Wheel</span>
+            <span class="font-mono text-[9.5px] bg-sky-50 text-sky-800 border border-sky-200 px-2 py-0.5 rounded">Swipe to view &rarr;</span>
+          </div>
+
+          <div class="w-full overflow-x-auto scrollbar-thin bg-slate-900 rounded-lg p-2 border border-slate-800 flex justify-start md:justify-center">
+            <div class="min-w-[720px] md:min-w-0 w-full max-w-4xl flex justify-center">
+              <svg viewBox="0 0 900 360" class="w-full h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+
+              <defs>
+                <radialGradient id="hubHalo" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#0284c7" stop-opacity="0.35"/>
+                  <stop offset="65%" stop-color="#0f172a" stop-opacity="0.1"/>
+                  <stop offset="100%" stop-color="#090d16" stop-opacity="0"/>
+                </radialGradient>
+                <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.4"/>
+                </filter>
+              </defs>
+              <rect width="900" height="360" fill="#0b1120" rx="8" />
+              <!-- Subtle Background Concentric Orbit Rings -->
+              <circle cx="450" cy="180" r="130" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="6,6" opacity="0.6" />
+              <circle cx="450" cy="180" r="180" fill="url(#hubHalo)" />
+    
+              <!-- Connecting Spokes (Rim to Box Boundary) -->
+              <g stroke="#334155" stroke-width="1.8" stroke-dasharray="5,4">
+                <line x1="450.0" y1="104.0" x2="450.0" y2="65.0" stroke="#f59e0b" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="516.1" y1="142.4" x2="596.1" y2="97.0" stroke="#06b6d4" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="526.0" y1="180.0" x2="638.5" y2="180.0" stroke="#10b981" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="516.1" y1="217.6" x2="596.1" y2="263.0" stroke="#3b82f6" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="450.0" y1="256.0" x2="450.0" y2="295.0" stroke="#a855f7" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="383.9" y1="217.6" x2="303.9" y2="263.0" stroke="#ef4444" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="374.0" y1="180.0" x2="261.5" y2="180.0" stroke="#14b8a6" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+                <line x1="383.9" y1="142.4" x2="303.9" y2="97.0" stroke="#84cc16" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="4,4" />
+              </g>
+              <!-- 8 Outer Governance Pillar Cards -->
+
+              <g class="pillar-card cursor-pointer" data-target="tab-legal" filter="url(#cardShadow)">
+                <rect x="360.0" y="15.0" width="180" height="46" rx="7" fill="#151e32" stroke="#f59e0b" stroke-width="1.6" />
+                <circle cx="380.0" cy="38" r="11" fill="#f59e0b" />
+                <text x="380.0" y="42" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">1</text>
+                <text x="396.0" y="34" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Project Legal Triad</text>
+                <text x="396.0" y="48" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">LURC | TKCS | PCCC | GPMT</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-schedule" filter="url(#cardShadow)">
+                <rect x="552.5" y="49.0" width="175" height="46" rx="7" fill="#151e32" stroke="#06b6d4" stroke-width="1.6" />
+                <circle cx="572.5" cy="72" r="11" fill="#06b6d4" />
+                <text x="572.5" y="76" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">2</text>
+                <text x="588.5" y="68" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">14-Mo CPM Schedule</text>
+                <text x="588.5" y="82" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">GPXD Móng Fast-Track</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-budget" filter="url(#cardShadow)">
+                <rect x="642.5" y="157.0" width="175" height="46" rx="7" fill="#151e32" stroke="#10b981" stroke-width="1.6" />
+                <circle cx="662.5" cy="180" r="11" fill="#10b981" />
+                <text x="662.5" y="184" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">3</text>
+                <text x="678.5" y="176" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">$14.50M BAC &amp; EVM</text>
+                <text x="678.5" y="190" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">15.65% IRR | +$1.85M NPV</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-technical" filter="url(#cardShadow)">
+                <rect x="552.5" y="265.0" width="175" height="46" rx="7" fill="#151e32" stroke="#3b82f6" stroke-width="1.6" />
+                <circle cx="572.5" cy="288" r="11" fill="#3b82f6" />
+                <text x="572.5" y="292" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">4</text>
+                <text x="588.5" y="284" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Technical Scope</text>
+                <text x="588.5" y="298" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">35k m² | 15 TPH | 35 ACH</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-contracts" filter="url(#cardShadow)">
+                <rect x="357.5" y="299.0" width="185" height="46" rx="7" fill="#151e32" stroke="#a855f7" stroke-width="1.6" />
+                <circle cx="377.5" cy="322" r="11" fill="#a855f7" />
+                <text x="377.5" y="326" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">5</text>
+                <text x="393.5" y="318" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">FIDIC Contracts</text>
+                <text x="393.5" y="332" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Red / Yellow / Silver | 2-Stage</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-risk" filter="url(#cardShadow)">
+                <rect x="172.5" y="265.0" width="175" height="46" rx="7" fill="#151e32" stroke="#ef4444" stroke-width="1.6" />
+                <circle cx="192.5" cy="288" r="11" fill="#ef4444" />
+                <text x="192.5" y="292" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">6</text>
+                <text x="208.5" y="284" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Risk &amp; HSE Controls</text>
+                <text x="208.5" y="298" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">LTIFR=0.00 | Soil/Rain DOA</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-commissioning" filter="url(#cardShadow)">
+                <rect x="82.5" y="157.0" width="175" height="46" rx="7" fill="#151e32" stroke="#14b8a6" stroke-width="1.6" />
+                <circle cx="102.5" cy="180" r="11" fill="#14b8a6" />
+                <text x="102.5" y="184" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">7</text>
+                <text x="118.5" y="176" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">T&amp;C &amp; Black Start</text>
+                <text x="118.5" y="190" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Cold/Hot T&amp;C | Decree 06</text>
+              </g>
+
+              <g class="pillar-card cursor-pointer" data-target="tab-esg" filter="url(#cardShadow)">
+                <rect x="172.5" y="49.0" width="175" height="46" rx="7" fill="#151e32" stroke="#84cc16" stroke-width="1.6" />
+                <circle cx="192.5" cy="72" r="11" fill="#84cc16" />
+                <text x="192.5" y="76" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">8</text>
+                <text x="208.5" y="68" fill="#f8fafc" font-size="10" font-weight="bold" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">ESG &amp; LEED Platinum</text>
+                <text x="208.5" y="82" fill="#94a3b8" font-size="8" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">84 Pts | 2.80 MWp Solar</text>
+              </g>
+
+              <!-- Central Core Hub (Top Layer) -->
+              <g class="central-core cursor-pointer" data-target="tab-stage-process">
+                <!-- Outer Ring Halo -->
+                <circle cx="450" cy="180" r="77" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-opacity="0.5" stroke-dasharray="8,5" />
+                <!-- Solid Core Disc -->
+                <circle cx="450" cy="180" r="72" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" />
+                <!-- Core Text Content (Crisp, High-Legibility Typography) -->
+                <text x="450" y="162" fill="#ffffff" font-size="10" font-weight="bold" letter-spacing="1" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">GARMENTS COMPANY</text>
+                <text x="450" y="177" fill="#38bdf8" font-size="9.5" font-weight="bold" letter-spacing="0.5" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">CAPITAL GOVERNANCE</text>
+                <line x1="405" y1="184" x2="495" y2="184" stroke="#334155" stroke-width="1" />
+                <text x="450" y="196" fill="#fde68a" font-size="8.5" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">THE &quot;5+3&quot; SYSTEM</text>
+                <text x="450" y="208" fill="#34d399" font-size="8" font-weight="600" text-anchor="middle" font-family="'Segoe UI', Roboto, Helvetica, Arial, sans-serif">Click: Stage Process &amp; Workflow</text>
+              </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- EXECUTIVE SUMMARY COMPARISON TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-700 tracking-wider">Capital Architecture</span>
+              <h3 class="text-sm font-bold text-slate-900">Governance Matrix: 5 Core Execution Controls + 3 Strategic Value Anchors</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-200">
+              8-Pillar Alignment
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>Pillar</th>
+                  <th>Core Focus Area</th>
+                  <th>Key Quantitative Metric / Baseline</th>
+                  <th>Primary Statutory / Engineering Standard</th>
+                  <th>Boardroom Executive Value</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-amber-700">1. Project Legal</td>
+                  <td>Statutory Permitting Triad</td>
+                  <td class="font-mono">7 Statutory Gateways</td>
+                  <td>Law on Construction 2014/2020, QCVN 06:2022</td>
+                  <td>Zero stop-work exposure; guaranteed legal asset registration (Hoàn công).</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-cyan-700">2. Project Schedule</td>
+                  <td>14-Month Fast-Track CPM</td>
+                  <td class="font-mono">425 Calendar Days (T0 to COD)</td>
+                  <td>Critical Path Method (CPM), Phased GPXD Móng</td>
+                  <td>Compresses time-to-market by 45 days, accelerating revenue realization.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-emerald-700">3. Project Budget</td>
+                  <td>Cost Engineering &amp; EVM</td>
+                  <td class="font-mono">$14.50M BAC | 15.65% IRR</td>
+                  <td>Earned Value Management (CPI &ge; 1.0, SPI &ge; 1.0)</td>
+                  <td>7-year DCF yielding +$1,845,200 USD NPV (10.0% WACC); strict contingency drawdown governance.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-blue-700">4. Technical Scope</td>
+                  <td>Decarbonized Plant Complex</td>
+                  <td class="font-mono">35,000 m² GFA | 15 TPH Steam</td>
+                  <td>2.5D Isometric 10-Zone Lean Value Stream</td>
+                  <td>+$1,207,000/yr utility OPEX savings via biomass, VFD air, and ZLD recycling.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-purple-700">5. Contract Mgmt</td>
+                  <td>FIDIC Allocation Matrix</td>
+                  <td class="font-mono">Red (Civil) + Yellow (MEP)</td>
+                  <td>FIDIC 1999/2017 Conditions of Contract</td>
+                  <td>Shifts performance risk to contractors; shields Employer from scope claims.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-rose-700">6. Risk &amp; HSE</td>
+                  <td>Zero Harm &amp; DOA Matrix</td>
+                  <td class="font-mono">LTIFR = 0.00 | $150k DOA Cap</td>
+                  <td>ISO 45001 / Permit-to-Work (PTW)</td>
+                  <td>Protects corporate brand equity; mitigates piling refusal &amp; monsoon floods.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-teal-700">7. T&amp;C Handover</td>
+                  <td>Operational Readiness</td>
+                  <td class="font-mono">10s ATS Black Start | 100% Load</td>
+                  <td>ASHRAE Guideline 0-2019, Decree 06/2021</td>
+                  <td>Seamless transition from EPC construction to commercial apparel manufacturing.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-lime-700">8. ESG &amp; Solar</td>
+                  <td>Green Building Benchmark</td>
+                  <td class="font-mono">LEED Platinum (84 Pts) | 2.8 MWp</td>
+                  <td>USGBC LEED v4.1 BD+C, Higg FEM 4.0</td>
+                  <td>-10,838 tCO2e/yr decarbonization; preferred vendor status for Nike &amp; Patagonia.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: STAGE PROCESS & WORKFLOW -->
+    <div id="tab-stage-process" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Capital Delivery Stage-Gate Process, Decision Gates &amp; Operational RACI Workflow
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Standardized industrial capital project lifecycle: 6 sequential stages, 5 formal decision gates, and cross-functional RACI accountability:
+        </p>
+
+        
+        <!-- 6-STAGE GATE CAPITAL DELIVERY FLOWCHART -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-700 tracking-wider">Project Lifecycle Architecture</span>
+              <h3 class="text-sm font-bold text-slate-900">End-to-End 6-Stage Industrial Capital Delivery Process (Stage-Gate Model)</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200 font-semibold">
+              Stages 0 to 5 | 5 Formal Board Gates
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-500 md:hidden px-1">
+            <span class="font-mono text-[10px]">Interactive Flowchart</span>
+            <span class="font-mono text-[9.5px] bg-sky-50 text-sky-800 border border-sky-200 px-2 py-0.5 rounded">Swipe to view stages &rarr;</span>
+          </div>
+
+          <div class="w-full overflow-x-auto scrollbar-thin bg-slate-950 rounded-lg p-2 sm:p-3 border border-slate-800">
+            <div class="min-w-[850px] w-full">
+              <svg viewBox="0 0 1000 270" class="w-full h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="gateArr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
+                </marker>
+                <filter id="boxGlow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+                </filter>
+              </defs>
+
+              <!-- STAGE 0: ORIGINATION -->
+              <g transform="translate(15, 30)">
+                <rect x="0" y="0" width="135" height="110" rx="6" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+                <rect x="0" y="0" width="135" height="24" rx="6" fill="#334155" />
+                <text x="67" y="16" fill="#f8fafc" font-size="9" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif">STAGE 0: FEASIBILITY</text>
+                <text x="10" y="42" fill="#94a3b8" font-size="7.5" font-family="monospace">Month -3 to 0</text>
+                <text x="10" y="58" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• IP Site Selection</text>
+                <text x="10" y="72" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Geotech Due Diligence</text>
+                <text x="10" y="86" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Initial Business Case</text>
+                <text x="10" y="100" fill="#34d399" font-size="7.5" font-weight="bold" font-family="monospace">CAPEX Model $14.5M</text>
+              </g>
+
+              <!-- GATE 0 DECISION -->
+              <path d="M 150,85 L 175,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+              <g transform="translate(185, 85)">
+                <polygon points="0,-18 18,0 0,18 -18,0" fill="#f59e0b" stroke="#ffffff" stroke-width="1.2" />
+                <text x="0" y="3.5" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle" font-family="system-ui">G0</text>
+                <text x="0" y="28" fill="#fde68a" font-size="7.5" font-weight="bold" text-anchor="middle" font-family="system-ui">Board Approval</text>
+              </g>
+              <path d="M 203,85 L 228,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+
+              <!-- STAGE 1: STATUTORY CONCEPT -->
+              <g transform="translate(235, 30)">
+                <rect x="0" y="0" width="140" height="110" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5" />
+                <rect x="0" y="0" width="140" height="24" rx="6" fill="#78350f" />
+                <text x="70" y="16" fill="#fde68a" font-size="9" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif">STAGE 1: STATUTORY</text>
+                <text x="10" y="42" fill="#94a3b8" font-size="7.5" font-family="monospace">Month 1 to 3.5</text>
+                <text x="10" y="58" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• 1/500 Detailed Plan</text>
+                <text x="10" y="72" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• TKCS Basic Design</text>
+                <text x="10" y="86" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• C07 Fire Appraisal</text>
+                <text x="10" y="100" fill="#38bdf8" font-size="7.5" font-weight="bold" font-family="monospace">GPMT License Filing</text>
+              </g>
+
+              <!-- GATE 1 DECISION -->
+              <path d="M 375,85 L 395,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+              <g transform="translate(405, 85)">
+                <polygon points="0,-18 18,0 0,18 -18,0" fill="#06b6d4" stroke="#ffffff" stroke-width="1.2" />
+                <text x="0" y="3.5" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle" font-family="system-ui">G1</text>
+                <text x="0" y="28" fill="#67e8f9" font-size="7.5" font-weight="bold" text-anchor="middle" font-family="system-ui">Concept Freeze</text>
+              </g>
+              <path d="M 423,85 L 443,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+
+              <!-- STAGE 2: TENDER & PROCUREMENT -->
+              <g transform="translate(450, 30)">
+                <rect x="0" y="0" width="140" height="110" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1.5" />
+                <rect x="0" y="0" width="140" height="24" rx="6" fill="#581c87" />
+                <text x="70" y="16" fill="#d8b4fe" font-size="9" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif">STAGE 2: PROCUREMENT</text>
+                <text x="10" y="42" fill="#94a3b8" font-size="7.5" font-family="monospace">Month 2 to 5</text>
+                <text x="10" y="58" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• FIDIC Red/Yellow Specs</text>
+                <text x="10" y="72" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• 2-Stage Tender Evaluation</text>
+                <text x="10" y="86" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Long-Lead Orders (22kV)</text>
+                <text x="10" y="100" fill="#a855f7" font-size="7.5" font-weight="bold" font-family="monospace">Boiler &amp; Chiller FAT</text>
+              </g>
+
+              <!-- GATE 2 DECISION -->
+              <path d="M 590,85 L 610,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+              <g transform="translate(620, 85)">
+                <polygon points="0,-18 18,0 0,18 -18,0" fill="#10b981" stroke="#ffffff" stroke-width="1.2" />
+                <text x="0" y="3.5" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle" font-family="system-ui">G2</text>
+                <text x="0" y="28" fill="#6ee7b7" font-size="7.5" font-weight="bold" text-anchor="middle" font-family="system-ui">Contract Award</text>
+              </g>
+              <path d="M 638,85 L 658,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+
+              <!-- STAGE 3: CONSTRUCTION -->
+              <g transform="translate(665, 30)">
+                <rect x="0" y="0" width="145" height="110" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5" />
+                <rect x="0" y="0" width="145" height="24" rx="6" fill="#1e3a8a" />
+                <text x="72" y="16" fill="#93c5fd" font-size="9" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif">STAGE 3: CONSTRUCTION</text>
+                <text x="10" y="42" fill="#94a3b8" font-size="7.5" font-family="monospace">Month 4 to 12</text>
+                <text x="10" y="58" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• 1,850 Spun Piles (Móng)</text>
+                <text x="10" y="72" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• 35,000 m² PEB Frame</text>
+                <text x="10" y="86" fill="#cbd5e1" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Roof &amp; Envelope Closure</text>
+                <text x="10" y="100" fill="#38bdf8" font-size="7.5" font-weight="bold" font-family="monospace">Utilities Skids Install</text>
+              </g>
+
+              <!-- GATE 3 DECISION -->
+              <path d="M 810,85 L 830,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+              <g transform="translate(840, 85)">
+                <polygon points="0,-18 18,0 0,18 -18,0" fill="#38bdf8" stroke="#ffffff" stroke-width="1.2" />
+                <text x="0" y="3.5" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle" font-family="system-ui">G3</text>
+                <text x="0" y="28" fill="#38bdf8" font-size="7.5" font-weight="bold" text-anchor="middle" font-family="system-ui">Energization</text>
+              </g>
+              <path d="M 858,85 L 878,85" stroke="#38bdf8" stroke-width="2" marker-end="url(#gateArr)" />
+
+              <!-- STAGE 4: T&C & COD -->
+              <g transform="translate(885, 30)">
+                <rect x="0" y="0" width="100" height="110" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1.8" />
+                <rect x="0" y="0" width="100" height="24" rx="6" fill="#065f46" />
+                <text x="50" y="16" fill="#a7f3d0" font-size="9" font-weight="bold" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif">STAGE 4: COD</text>
+                <text x="8" y="42" fill="#34d399" font-size="7.5" font-family="monospace">Month 12 - 14</text>
+                <text x="8" y="58" fill="#ffffff" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Tier 1/2/3 T&amp;C</text>
+                <text x="8" y="72" fill="#ffffff" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• C07 Acceptance</text>
+                <text x="8" y="86" fill="#ffffff" font-size="8" font-family="'Segoe UI', Roboto, sans-serif">• Decree 06 Handover</text>
+                <text x="8" y="100" fill="#fde68a" font-size="7.5" font-weight="bold" font-family="monospace">Commercial COD</text>
+              </g>
+
+              <!-- BOTTOM FAST-TRACK OVERLAP & STAGE 5 ARCHITECTURE -->
+              <rect x="15" y="155" width="970" height="95" rx="6" fill="#0f172a" stroke="#334155" />
+              
+              <!-- Fast Track Decoupled Piling Indicator -->
+              <rect x="30" y="168" width="450" height="32" rx="4" fill="#1e293b" stroke="#06b6d4" stroke-width="1.2" />
+              <text x="42" y="184" fill="#67e8f9" font-size="8.5" font-weight="bold" font-family="'Segoe UI', Roboto, sans-serif">Fast-Track Permitting Overlap (GPXD Móng):</text>
+              <text x="42" y="194" fill="#cbd5e1" font-size="7.5" font-family="monospace">Piling executed under Foundation Permit while Superstructure reviews conclude (-45 days).</text>
+
+              <!-- Stage 5: Post-COD Ramp-Up & Asset Capitalization -->
+              <rect x="500" y="168" width="470" height="32" rx="4" fill="#1e293b" stroke="#84cc16" stroke-width="1.2" />
+              <text x="512" y="184" fill="#bef264" font-size="8.5" font-weight="bold" font-family="'Segoe UI', Roboto, sans-serif">STAGE 5: Operational Ramp-Up &amp; Closeout (Months 14 to 26):</text>
+              <text x="512" y="194" fill="#cbd5e1" font-size="7.5" font-family="monospace">12-Mo DLP Warranty -> 5% Retention Release -> Asset Title Registration (Hoàn Công Sổ Đỏ).</text>
+
+              <text x="35" y="222" fill="#fde68a" font-size="8" font-weight="bold" font-family="'Segoe UI', Roboto, sans-serif">Governance Rule:</text>
+              <text x="120" y="222" fill="#94a3b8" font-size="7.5" font-family="monospace">No stage may proceed past a decision diamond without formal Stage-Gate Sign-Off signed by the designated Executive Gatekeeper.</text>
+              <text x="35" y="238" fill="#38bdf8" font-size="8" font-weight="bold" font-family="'Segoe UI', Roboto, sans-serif">Gatekeepers:</text>
+              <text x="105" y="238" fill="#cbd5e1" font-size="7.5" font-family="monospace">Gate 0 (Board Investment Committee) | Gate 1 (Executive Committee &amp; CFO) | Gate 2 &amp; 3 (Regional Head of Engineering) | Gate 4 &amp; 5 (CEO &amp; Board).</text>
+            </svg>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- DETAILED STAGE-BY-STAGE GATE SPECIFICATIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 0: Site &amp; Feasibility</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-800 font-bold">Months -3 to 0</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Industrial Park site selection, geotechnical core drilling (12 exploratory boreholes), preliminary environmental due diligence, and capital DCF financial modeling.
+            </p>
+            <div class="text-[10px] font-mono text-amber-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 0 Gatekeeper: Board Investment Committee (Approval to spend due diligence capital).
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 1: Statutory Concept</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">Months 1 to 3.5</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              1/500 detailed site master planning, Basic Design (TKCS) under Decree 15/2021, C07 Police Fire Design Appraisal, and Single Environmental License (GPMT) filing.
+            </p>
+            <div class="text-[10px] font-mono text-cyan-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 1 Gatekeeper: Executive Committee &amp; CFO (Baseline budget freeze at $14.50M BAC).
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 2: Tender &amp; Procurement</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 font-bold">Months 2 to 5</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              FIDIC tender dossier compilation (Red Book Civil, Yellow Book MEP), 2-stage procurement (Technical Envelope 1 -> Commercial Envelope 2), and long-lead FAT orders.
+            </p>
+            <div class="text-[10px] font-mono text-emerald-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 2 Gatekeeper: Regional Head of Engineering &amp; CFO (Contract awards &amp; securities).
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 3: Physical Construction</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">Months 4 to 12</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Fast-track piling (1,850 spun piles under GPXD Móng), 35,000 m² PEB steel erection, building envelope weather-tight closure, and industrial utility equipment placement.
+            </p>
+            <div class="text-[10px] font-mono text-blue-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 3 Gatekeeper: Regional Head of Engineering (Energization &amp; weather-tight release).
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 4: T&amp;C &amp; Commercial COD</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Months 12 to 14</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Tier 1 Cold T&amp;C, Tier 2 Hot T&amp;C (boiler/chillers), Tier 3 Integrated Black Start (10s ATS transfer), C07 PCCC Acceptance, and Decree 06/2021 State Handover Approval.
+            </p>
+            <div class="text-[10px] font-mono text-rose-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 4 Gatekeeper: CEO &amp; Board of Directors (Commercial Operation Date - COD declaration).
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">Stage 5: Closeout &amp; Capitalization</strong>
+              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-lime-100 text-lime-800 font-bold">Months 14 to 26</span>
+            </div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Operational ramp-up to 48 sewing lines, 12-month Defect Liability Period (DLP) warranty audit, 5% retention money release, and Land Use Certificate asset registration (Hoàn công).
+            </p>
+            <div class="text-[10px] font-mono text-purple-700 font-semibold border-t border-slate-200 pt-1">
+              Gate 5 Gatekeeper: Board of Directors &amp; CFO (Final Closeout &amp; Capitalization).
+            </div>
+          </div>
+
+        </div>
+
+        <!-- OPERATIONAL RACI GOVERNANCE MATRIX TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-sky-700 tracking-wider">Stakeholder Governance Architecture</span>
+              <h3 class="text-sm font-bold text-slate-900">Operational RACI Governance Matrix Across Project Lifecycle</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-200">
+              R = Responsible | A = Accountable | C = Consulted | I = Informed
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>Lifecycle Milestone / Decision Gate</th>
+                  <th>Board / CEO</th>
+                  <th>Regional Head (Eng)</th>
+                  <th>Site Project Dir</th>
+                  <th>EPC / MEP Contractors</th>
+                  <th>Authorities (SXD/C07)</th>
+                  <th>Factory Operations</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-[11px]">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 0: Site Sublease &amp; $14.5M Business Case</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-400 font-mono">-</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 1: TKCS Basic Design, C07 Fire &amp; GPMT License</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="font-bold text-rose-700 font-mono">A / R</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 2: FIDIC Tenders &amp; 2-Stage Contract Award</td>
+                  <td class="font-bold text-rose-700 font-mono">A (&gt;$300k)</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-400 font-mono">-</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 3: Fast-Track Piling &amp; PEB Steel Erection</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 3: Scope Changes / Variation Orders (&gt;$100k)</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-400 font-mono">-</td>
+                  <td class="text-slate-400 font-mono">-</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 4: Tier 1/2/3 T&amp;C &amp; 10s ATS Black Start</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">I</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 4: C07 Acceptance &amp; Decree 06 Handover (COD)</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 5: 12-Month DLP Closeout &amp; Retention Release</td>
+                  <td class="font-bold text-rose-700 font-mono">A</td>
+                  <td class="font-bold text-sky-700 font-mono">R</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                  <td class="text-slate-400 font-mono">-</td>
+                  <td class="text-slate-500 font-mono">C</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- OPERATIONAL EXECUTION CADENCES -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-rose-700 font-mono">Daily Cadence</span>
+            <div class="font-bold text-slate-900">HSE Permit-to-Work (PTW)</div>
+            <p class="text-slate-600 text-[11px]">Daily 07:00 AM joint site toolbox briefing and electronic PTW validation for hot work, heights, and electrical isolation.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-sky-700 font-mono">Weekly Cadence</span>
+            <div class="font-bold text-slate-900">3-Week Lookahead CPM</div>
+            <p class="text-slate-600 text-[11px]">Weekly contractor progress audit reviewing actual vs planned daily productivity, crane logistics, and material arrivals.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-amber-700 font-mono">Bi-Weekly Cadence</span>
+            <div class="font-bold text-slate-900">EVM S-Curve Audit</div>
+            <p class="text-slate-600 text-[11px]">Measurement of CPI and SPI against cost baselines; validation of contractor progress payment certificates against actual work.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-emerald-700 font-mono">Monthly Cadence</span>
+            <div class="font-bold text-slate-900">Board Executive Dashboard</div>
+            <p class="text-slate-600 text-[11px]">Monthly capital performance briefing to C-suite covering milestone tracking, cash flow drawdown, and contingency status.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 1: LEGAL & PERMITTING -->
+    <div id="tab-legal" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 1: Statutory Permitting Triad &amp; Vietnam Regulatory Compliance
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Step-by-step statutory execution gateways governing industrial land acquisition, fire safety, environmental licensing, and state handover:
+        </p>
+
+        
+        <!-- STATUTORY PERMITTING & FAST-TRACK GATE FLOWCHART -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider">Statutory Execution Time-Chain</span>
+              <h3 class="text-sm font-bold text-slate-900">Vietnam Industrial Permitting &amp; Fast-Track Decoupled Phasing (14 Months)</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold">
+              Saves 45 Calendar Days via Phased GPXD Móng
+            </span>
+          </div>
+
+          <div class="w-full overflow-hidden bg-slate-950 rounded-lg p-2 border border-slate-800">
+            <svg viewBox="0 0 1000 240" class="w-full h-auto select-none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id="flowArr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" /></marker>
+              </defs>
+
+              <!-- Phase 1: Land & Basic Design -->
+              <rect x="20" y="30" width="170" height="85" rx="5" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5" />
+              <text x="30" y="50" fill="#fde68a" font-size="10" font-weight="bold">Gate 1: Land &amp; TKCS</text>
+              <text x="30" y="66" fill="#cbd5e1" font-size="8" font-family="monospace">• Land Sublease &amp; LURC</text>
+              <text x="30" y="80" fill="#cbd5e1" font-size="8" font-family="monospace">• 1/500 Detailed Master Plan</text>
+              <text x="30" y="94" fill="#34d399" font-size="8" font-family="monospace">Month 1 - 2 (45 Days)</text>
+
+              <path d="M 190,72 L 230,72" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#flowArr)" />
+
+              <!-- Phase 2: C07 Fire Appraisal & GPMT -->
+              <rect x="230" y="30" width="180" height="85" rx="5" fill="#1e293b" stroke="#ef4444" stroke-width="1.5" />
+              <text x="240" y="50" fill="#fca5a5" font-size="10" font-weight="bold">Gate 2: C07 PCCC &amp; GPMT</text>
+              <text x="240" y="66" fill="#cbd5e1" font-size="8" font-family="monospace">• C07 Fire Design Appraisal</text>
+              <text x="240" y="80" fill="#cbd5e1" font-size="8" font-family="monospace">• Environmental License GPMT</text>
+              <text x="240" y="94" fill="#34d399" font-size="8" font-family="monospace">Month 2 - 3.5 (45 Days)</text>
+
+              <path d="M 410,72 L 450,72" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#flowArr)" />
+
+              <!-- Phase 3: Fast-Track Foundation Permit -->
+              <rect x="450" y="30" width="170" height="85" rx="5" fill="#1e293b" stroke="#06b6d4" stroke-width="1.5" />
+              <text x="460" y="50" fill="#67e8f9" font-size="10" font-weight="bold">Gate 3: GPXD Móng</text>
+              <text x="460" y="66" fill="#cbd5e1" font-size="8" font-family="monospace">• Phased Foundation Permit</text>
+              <text x="460" y="80" fill="#38bdf8" font-size="8" font-family="monospace">• 1,850 Spun Piles (D400/500)</text>
+              <text x="460" y="94" fill="#34d399" font-size="8" font-family="monospace">Month 3.5 - 5.5 (-45 Days)</text>
+
+              <path d="M 620,72 L 660,72" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#flowArr)" />
+
+              <!-- Phase 4: Full Permit & Superstructure -->
+              <rect x="660" y="30" width="160" height="85" rx="5" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5" />
+              <text x="670" y="50" fill="#93c5fd" font-size="10" font-weight="bold">Gate 4: GPXD Thân</text>
+              <text x="670" y="66" fill="#cbd5e1" font-size="8" font-family="monospace">• Full Superstructure Permit</text>
+              <text x="670" y="80" fill="#cbd5e1" font-size="8" font-family="monospace">• PEB Steel Frame &amp; Envelope</text>
+              <text x="670" y="94" fill="#34d399" font-size="8" font-family="monospace">Month 5.5 - 9.5 (120 Days)</text>
+
+              <path d="M 820,72 L 850,72" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#flowArr)" />
+
+              <!-- Phase 5: Handover & COD -->
+              <rect x="850" y="30" width="130" height="85" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="1.8" />
+              <text x="860" y="50" fill="#6ee7b7" font-size="10" font-weight="bold">Gate 5: COD</text>
+              <text x="860" y="66" fill="#cbd5e1" font-size="8" font-family="monospace">• C07 PCCC Acceptance</text>
+              <text x="860" y="80" fill="#cbd5e1" font-size="8" font-family="monospace">• Decree 06 Handover</text>
+              <text x="860" y="94" fill="#34d399" font-size="8" font-family="monospace">Month 13 - 14 (COD)</text>
+
+              <!-- Critical Path Acceleration Indicator -->
+              <rect x="20" y="140" width="960" height="75" rx="5" fill="#0f172a" stroke="#334155" />
+              <text x="35" y="162" fill="#38bdf8" font-size="9.5" font-weight="bold">Fast-Track Critical Path Acceleration Mechanism:</text>
+              <text x="35" y="180" fill="#cbd5e1" font-size="8.5" font-family="monospace">
+                Decoupled Permitting allows structural piling to proceed immediately under GPXD Móng while final MEP detailed shop drawings and
+              </text>
+              <text x="35" y="196" fill="#cbd5e1" font-size="8.5" font-family="monospace">
+                architectural facade submissions undergo provincial appraisal. Result: Compresses 16-month conventional schedule to 14.0 Months flat.
+              </text>
+              <text x="35" y="208" fill="#34d399" font-size="8.5" font-weight="bold" font-family="monospace">
+                Total Critical Path Savings: 45 to 60 Calendar Days | Zero Work Stoppage Risk
+              </text>
+            </svg>
+          </div>
+        </div>
+
+
+        <!-- STATUTORY GATEWAY DIRECTORY -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">1. Land Sublease &amp; LURC (Sổ Đỏ)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Month 1</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              Execution of definitive Sublease Agreement with Industrial Park Developer (50-year term). Verification of master zone master planning approval (Quy hoạch 1/2000), master ETP capacity connection, and handover of cadastral red line boundaries with clean site elevation benchmark.
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: Provincial People's Committee (UBND) / Department of Natural Resources &amp; Environment (STNMT).
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">2. 1/500 Master Plan &amp; Basic Design (TKCS)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold">Month 2</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              Compilation of detailed architectural site master plan (1/500) and Basic Design dossier (Thiết kế cơ sở) under Decree 15/2021/NĐ-CP. Verification of building coverage ratio (&le; 60%), internal traffic turning radiuses for 40ft container trucks (&ge; 12.5m), and perimeter setbacks (&ge; 6.0m).
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: Industrial Zone Management Board (BQL KCN) / Department of Construction (SXD).
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">3. Fire Design Appraisal (Thẩm Duyệt PCCC)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">Month 3.5</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              Submission of comprehensive fire engineering dossier to Police Department C07 under QCVN 06:2022/BXD and Circular 09/2023/TT-BXD. Specification of Promatect-H calcium silicate board encasement (R90/R120) for steel columns, Annex E.3 truss fireproofing exemption, and 1,200 m³ ESFR hydraulic reservoir.
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: Department of Fire Prevention, Fighting &amp; Rescue (C07 Police).
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">4. Environmental License (Giấy Phép Môi Trường - GPMT)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-bold">Month 3.5</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              Consolidated single license under Law on Environmental Protection 2020 (Decree 08/2022/NĐ-CP). Governing effluent discharge parameters (1,200 m³/day QCVN 40:2011 Column A), biomass boiler flue gas emissions (QCVN 19:2009 Class B), continuous emission monitoring system (CEMS), and hazardous waste storage.
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: Ministry of Natural Resources &amp; Environment (BTNMT) / Provincial STNMT.
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">5. Phased Foundation Construction Permit (GPXD Móng)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">Month 4 (-45 Days)</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              Fast-track decoupled permitting approval allowing structural piling (1,850 spun piles D400/D500) and reinforced concrete pile caps to commence 45 to 60 days before the full superstructure architectural and MEP package is finalized.
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: Provincial Department of Construction (SXD) / BQL KCN.
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">6. State Handover &amp; Ownership (Decree 06/2021)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold">Month 14 (COD)</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              State inspection approval for completed construction (Nghiệm thu hoàn thành hạng mục công trình). Mandatory legal prerequisite for factory occupancy, issuance of Commercial Operation Date (COD), asset capitalization, and updating the Land Use Right Certificate (Hoàn công sở hữu nhà xưởng).
+            </p>
+            <div class="text-[11px] font-mono text-slate-500">
+              Statutory Authority: State Authority for Construction Quality Inspection (SACQI / Cục Giám định - BXD).
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SCHEDULE & CPM -->
+    <div id="tab-schedule" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 2: 14-Month Critical Path Method (CPM) Schedule &amp; Long-Lead Procurement
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Baseline schedule architecture compressing conventional 16-month industrial build to 14.0 months flat (425 calendar days):
+        </p>
+
+        <!-- SCHEDULE STAGES GANTT TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-cyan-700 tracking-wider">Master Time-Chain</span>
+              <h3 class="text-sm font-bold text-slate-900">Critical Path Network (CPM) &amp; Float Allocation</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 text-cyan-800 border border-cyan-200 font-semibold">
+              Total Duration: 425 Calendar Days
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>WBS Stage</th>
+                  <th>Task Description</th>
+                  <th>Duration</th>
+                  <th>Start -> Finish</th>
+                  <th>Total Float</th>
+                  <th>Critical Path?</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 0</td>
+                  <td class="font-sans">Due Diligence, Geotech Piling Boring &amp; IP Sublease</td>
+                  <td>45 Days</td>
+                  <td>M01 -> M02</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Critical)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 1</td>
+                  <td class="font-sans">TKCS Basic Design, C07 Fire Appraisal &amp; GPMT License</td>
+                  <td>45 Days</td>
+                  <td>M02 -> M03.5</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Critical)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 2</td>
+                  <td class="font-sans">Phased Foundation Permit (GPXD Móng) &amp; Piling (1,850 Piles)</td>
+                  <td>60 Days</td>
+                  <td>M03.5 -> M05.5</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Fast-Track)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 3</td>
+                  <td class="font-sans">PEB Steel Fabrication &amp; Erection (35,000 m² GFA)</td>
+                  <td>90 Days</td>
+                  <td>M05.5 -> M08.5</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Critical)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 4</td>
+                  <td class="font-sans">Roof Sheeting, Wall Envelope &amp; Laser Screed Flooring</td>
+                  <td>45 Days</td>
+                  <td>M07.5 -> M09.0</td>
+                  <td>10 Days</td>
+                  <td class="text-slate-600 font-semibold">Near-Critical</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 5</td>
+                  <td class="font-sans">Core Utility Installation (Biomass Boiler, Air, Chillers, ETP)</td>
+                  <td>90 Days</td>
+                  <td>M08.5 -> M11.5</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Critical)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 6</td>
+                  <td class="font-sans">22kV Substation Energization &amp; Cold Commissioning</td>
+                  <td>30 Days</td>
+                  <td>M11.5 -> M12.5</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Critical)</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">Stage 7</td>
+                  <td class="font-sans">Hot Commissioning, C07 PCCC Acceptance &amp; Decree 06 Handover</td>
+                  <td>45 Days</td>
+                  <td>M12.5 -> M14.0</td>
+                  <td>0 Days</td>
+                  <td class="text-rose-600 font-bold">YES (Target COD)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LONG-LEAD PROCUREMENT TRACKING MATRIX -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider">Procurement Gate Risk Management</span>
+              <h3 class="text-sm font-bold text-slate-900">Long-Lead Equipment Manufacturing Windows &amp; Factory Witness Testing (FAT)</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200 font-semibold">
+              Lead Time Buffer: &ge; 4 Weeks
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <strong class="text-slate-900 font-bold">22kV Substation Transformers</strong>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">22 Weeks</span>
+              </div>
+              <p class="text-slate-600 text-[11px]">2x 3,150 kVA Dyn11 cast-resin transformers &amp; 24kV SF6 RMU. Order placed at Month 2; delivery required Month 10.5.</p>
+              <div class="text-[10px] font-mono text-emerald-700 font-semibold">FAT: Factory witness dielectric test</div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <strong class="text-slate-900 font-bold">15 TPH Biomass Boiler Vessel</strong>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">20 Weeks</span>
+              </div>
+              <p class="text-slate-600 text-[11px]">Water-tube boiler pressure body, economizer, and baghouse. Order placed at Month 3; foundation pad ready Month 8.0.</p>
+              <div class="text-[10px] font-mono text-emerald-700 font-semibold">FAT: Hydrostatic pressure test (21 bar)</div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <strong class="text-slate-900 font-bold">Centrifugal Chillers (2x 650 TR)</strong>
+                <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">18 Weeks</span>
+              </div>
+              <p class="text-slate-600 text-[11px]">Magnetic bearing oil-free water-cooled chillers (0.54 kW/TR). Order placed Month 4; delivery required Month 9.5.</p>
+              <div class="text-[10px] font-mono text-emerald-700 font-semibold">FAT: AHRI 550/590 performance validation</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: BUDGET & EVM -->
+    <div id="tab-budget" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 3: Capital Budget at Completion (BAC), EVM Governance &amp; Cash Flow S-Curve
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Parametric cost allocation across 10 WBS packages totaling $14.50M USD with Earned Value Management controls:
+        </p>
+
+        <!-- WBS PACKAGE SUMMARY TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">CAPEX WBS Breakdown</span>
+              <h3 class="text-sm font-bold text-slate-900">Greenfield Factory Capital Budget: $14,500,000 USD</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold">
+              $414.29 USD / m² GFA
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>WBS Code</th>
+                  <th>Package Description</th>
+                  <th>Budget Allocation (USD)</th>
+                  <th>% of CAPEX</th>
+                  <th>Procurement Model</th>
+                  <th>Contract Risk Shift</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 1.0</td>
+                  <td class="font-sans">Site Development, Geotech Piling (1,850 Piles) &amp; Earthworks</td>
+                  <td class="font-bold text-slate-900">$1,250,000</td>
+                  <td>8.62%</td>
+                  <td class="font-sans">Re-measured Unit Rate</td>
+                  <td class="font-sans text-amber-700">FIDIC Red Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 2.0</td>
+                  <td class="font-sans">Civil &amp; PEB Steel Superstructure (35,000 m² GFA)</td>
+                  <td class="font-bold text-slate-900">$4,650,000</td>
+                  <td>32.07%</td>
+                  <td class="font-sans">Lump-Sum BoQ</td>
+                  <td class="font-sans text-amber-700">FIDIC Red Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 3.0</td>
+                  <td class="font-sans">Thermal Steam Plant: 15 TPH Biomass Boiler &amp; Baghouse</td>
+                  <td class="font-bold text-slate-900">$1,650,000</td>
+                  <td>11.38%</td>
+                  <td class="font-sans">EPC Design-Build</td>
+                  <td class="font-sans text-purple-700">FIDIC Yellow Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 4.0</td>
+                  <td class="font-sans">Electrical Substation: 22kV 2x 3,150 kVA &amp; 2,000 kVA Genset</td>
+                  <td class="font-bold text-slate-900">$1,380,000</td>
+                  <td>9.52%</td>
+                  <td class="font-sans">Turnkey Package</td>
+                  <td class="font-sans text-purple-700">FIDIC Yellow Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 5.0</td>
+                  <td class="font-sans">Industrial HVAC: 35 ACH Celdek Evap &amp; Cleanroom DX (+15 Pa)</td>
+                  <td class="font-bold text-slate-900">$980,000</td>
+                  <td>6.76%</td>
+                  <td class="font-sans">Performance Design-Build</td>
+                  <td class="font-sans text-purple-700">FIDIC Yellow Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 6.0</td>
+                  <td class="font-sans">Water Treatment &amp; ZLD: 1,200 m³/d ETP + 65% RO Recycling</td>
+                  <td class="font-bold text-slate-900">$900,000</td>
+                  <td>6.21%</td>
+                  <td class="font-sans">Performance Turnkey</td>
+                  <td class="font-sans text-purple-700">FIDIC Yellow Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 7.0</td>
+                  <td class="font-sans">Rooftop Solar PV: 2.80 MWp Array (Direct CAPEX or PPA)</td>
+                  <td class="font-bold text-slate-900">$1,820,000</td>
+                  <td>12.55%</td>
+                  <td class="font-sans">EPC Turnkey / Solar PPA</td>
+                  <td class="font-sans text-blue-700">Silver Book / PPA</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 8.0</td>
+                  <td class="font-sans">Fire Protection (PCCC): ESFR Sprinklers &amp; 1,200 m³ Tank</td>
+                  <td class="font-bold text-slate-900">$720,000</td>
+                  <td>4.97%</td>
+                  <td class="font-sans">Specialist Certified</td>
+                  <td class="font-sans text-amber-700">FIDIC Red Book</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">WBS 9.0</td>
+                  <td class="font-sans">Statutory Permitting, GPMT, LEED Consulting &amp; PM Supervision</td>
+                  <td class="font-bold text-slate-900">$450,000</td>
+                  <td>3.10%</td>
+                  <td class="font-sans">Time &amp; Materials / Milestone</td>
+                  <td class="font-sans text-slate-600">Client Direct</td>
+                </tr>
+                <tr class="hover:bg-slate-50 bg-slate-50/50">
+                  <td class="font-bold text-slate-900">WBS 10.0</td>
+                  <td class="font-sans">Project Contingency: 3% Scope + 5% Unforeseen Market</td>
+                  <td class="font-bold text-slate-900">$700,000</td>
+                  <td>4.82%</td>
+                  <td class="font-sans">DOA Delegated Drawdown</td>
+                  <td class="font-sans text-slate-600">Board Reserved</td>
+                </tr>
+                <tr class="bg-slate-100/80 font-bold border-t-2 border-slate-300">
+                  <td colspan="2" class="font-sans uppercase">TOTAL BUDGET AT COMPLETION (BAC)</td>
+                  <td class="text-slate-900 text-sm">$14,500,000</td>
+                  <td>100.00%</td>
+                  <td colspan="2" class="font-sans font-normal text-slate-500">Unlevered IRR: 15.65% | NPV: +$1,845,200 USD (+1.85M @ 10% WACC)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- EVM METRIC FORMULAS & GOVERNANCE RULES -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <span class="text-[10px] uppercase font-bold text-sky-800">Earned Value Control Gates</span>
+            <div class="font-mono text-slate-800 font-bold">CPI &ge; 1.00 | SPI &ge; 1.00</div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Cost Performance Index (<span class="font-mono">CPI = EV / AC</span>) and Schedule Performance Index (<span class="font-mono">SPI = EV / PV</span>). Any drop below 0.95 triggers an immediate mandatory Executive Variance Review with the CFO.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <span class="text-[10px] uppercase font-bold text-amber-800">Contingency Governance (DOA)</span>
+            <div class="font-mono text-slate-800 font-bold">3% Scope ($260k) | 5% Board ($440k)</div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Project Director authorized for Design Contingency up to $50k per claim. All market price escalations and geotechnical drawdowns exceeding $50k require Board of Directors / CEO sign-off.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <span class="text-[10px] uppercase font-bold text-emerald-800">Cash Flow S-Curve Profile</span>
+            <div class="font-mono text-slate-800 font-bold">Peak Drawdown: Months 6 - 9</div>
+            <p class="text-slate-600 text-[11px] leading-relaxed">
+              Peak monthly cash outlays occur during PEB steel superstructure delivery and long-lead utility arrivals ($2.1M - $2.8M USD/month), backed by milestone-verified payment certificates.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: TECHNICAL SCOPE -->
+    <div id="tab-technical" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 4: Technical Feasibility, Equipment Sizing &amp; Performance Baselines
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Parametric engineering specifications guaranteeing 35,000 m² apparel manufacturing throughput:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">1. Civil &amp; Pre-Engineered Steel (PEB)</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 2.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• Built-up GFA: 35,000 m² across 55,000 m² site (63.6% footprint)</li>
+              <li>• Foundation: 1,850 prestressed spun concrete piles (D400/D500, 24m depth)</li>
+              <li>• Clear Eaves Height: 8.5m main sewing hall; 18.0m high-bay ASRS warehouse</li>
+              <li>• Roof Structural Limit: 65.0 kg/m² total (12 base + 14.5 solar + 30 live load)</li>
+              <li>• Floor Slab: 200mm laser screed SFRC (50 kN/m² UDL, FF 45 / FL 35 tolerance)</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">2. Thermal Energy &amp; Biomass Steam</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 3.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• Boiler Body: 15.0 TPH water-tube step-grate furnace (10-14 bar sat steam)</li>
+              <li>• Steam Temperature: 198.3°C saturated (Enthalpy h_g = 2,790 kJ/kg)</li>
+              <li>• Fuel: Agricultural biomass pellets/rice husk (4,200 kcal/kg, $115/ton)</li>
+              <li>• Flue Gas Filtration: Multi-cyclone + pulse-jet baghouse (&lt; 42 mg/Nm³ dust)</li>
+              <li>• Economic Impact: -$780,000 USD/year net OPEX savings vs heavy fuel oil</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">3. Central VFD Compressed Air</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 4.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• Compressors: 4x 90 kW oil-free rotary screw (3 duty + 1 hot standby)</li>
+              <li>• Flow Capacity: 1,573 CFM @ 7.5 bar working pressure</li>
+              <li>• Air Quality: ISO 8573-1 Class 1.2.1 (-40°C pressure dew point via desiccant)</li>
+              <li>• Piping Architecture: AIRnet DN100 aluminum closed-loop ring header</li>
+              <li>• Power Optimization: VFD trim compressor saving $82,000 USD/year (380k kWh)</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">4. Industrial HVAC &amp; Cleanroom</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 5.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• Sewing Floor Ventilation: 35 ACH Celdek 5090 evaporative cooling (88% eff.)</li>
+              <li>• Indoor Setpoints: 29±2°C DB / 68-75% RH under 35°C ambient monsoon heat</li>
+              <li>• Air Distribution: Overhead micro-perforated blue fabric air socks (Prihoda)</li>
+              <li>• Cleanroom (Bonding): ISO Class 8 DX AHU (+15 Pa, 23±1°C, 50±5% RH)</li>
+              <li>• Chiller Plant: 2x 650 TR magnetic bearing centrifugal chillers (0.54 kW/TR)</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">5. Water Treatment &amp; ZLD Circularity</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 6.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• Raw Effluent Volume: 1,200 m³/day from industrial washing tumblers &amp; dye</li>
+              <li>• Treatment Train: DAF -> Moving Bed Bio-Reactor (MBBR) -> Clarifier -> UF</li>
+              <li>• Reverse Osmosis: 2-stage RO recovering 780 m³/day (65% circular reuse)</li>
+              <li>• Water Savings: -$345,000 USD/year freshwater and discharge tariff avoidance</li>
+              <li>• Effluent Standard: 100% compliant with QCVN 40:2011/BTNMT Column A</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1">
+              <strong class="text-slate-900 font-bold">6. Rooftop Solar Photovoltaic (PV)</strong>
+              <span class="font-mono text-[10px] text-slate-500">WBS 7.0</span>
+            </div>
+            <ul class="space-y-1 text-slate-600 text-[11px] font-mono">
+              <li>• DC Array Capacity: 2.80 MWp (4,745 TOPCon 590W bifacial modules)</li>
+              <li>• Inverter Matrix: 20x 110 kW string inverters (2.20 MW AC, DC/AC 1.27)</li>
+              <li>• Annual Generation: 3,294,500 kWh/year (58% of factory electricity load)</li>
+              <li>• Grid Protection: Zero-export reverse power limiter and anti-islanding relay</li>
+              <li>• Carbon Abatement: -2,379 tCO2e/year Scope 2 grid emissions reduction</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: FIDIC CONTRACTS -->
+    <div id="tab-contracts" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 5: FIDIC Contract Allocation Matrix &amp; 2-Stage Bidding Protocol
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Contract conditions, risk shifting strategy, and commercial security mechanisms:
+        </p>
+
+        <!-- FIDIC COMPARISON MATRIX TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-purple-700 tracking-wider">Commercial Governance</span>
+              <h3 class="text-sm font-bold text-slate-900">FIDIC Book Allocation Across Plant Work Breakdown Structure</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 font-semibold">
+              FIDIC 1999 / 2017 Standard
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>FIDIC Book</th>
+                  <th>Design Responsibility</th>
+                  <th>Payment Mechanism</th>
+                  <th>Assigned Packages</th>
+                  <th>Contractor Risk Burden</th>
+                  <th>Strategic Rationale</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-[11px]">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-amber-700">Red Book (Building &amp; Engineering)</td>
+                  <td>Employer (Client / Architect)</td>
+                  <td class="font-mono">Bill of Quantities (Re-measurement)</td>
+                  <td class="font-sans font-semibold">WBS 1.0 (Piling), WBS 2.0 (Civil PEB), WBS 8.0 (PCCC)</td>
+                  <td>Execution only; zero design risk</td>
+                  <td>Prevents contractor pricing heavy contingency premiums on standard civil work.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-purple-700">Yellow Book (Plant &amp; Design-Build)</td>
+                  <td>Contractor (to Employer Requirements)</td>
+                  <td class="font-mono">Lump-Sum Milestone Payments</td>
+                  <td class="font-sans font-semibold">WBS 3.0 (Boiler), WBS 4.0 (Electrical), WBS 5.0 (HVAC), WBS 6.0 (ETP)</td>
+                  <td>Full process design &amp; performance liability</td>
+                  <td>Shifts performance risk (steam purity, air dryness, chiller kW/TR, ETP COD) to vendor.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-blue-700">Silver Book (EPC / Turnkey)</td>
+                  <td>Contractor (Total Responsibility)</td>
+                  <td class="font-mono">Fixed-Price Turnkey / Solar PPA</td>
+                  <td class="font-sans font-semibold">WBS 7.0 (Rooftop Solar PV Array)</td>
+                  <td>Total site, weather, grid, and performance risk</td>
+                  <td>Protects client from typhoon, grid reverse-power, and rooftop solar operational defects.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2-STAGE PROCUREMENT & SECURITIES MATRIX -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">2-Stage / 2-Envelope Procurement Protocol</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold">Standard</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Round 1 (Technical Envelope):</strong> Evaluated strictly on QA/QC plans, track record of &ge; 3 similar plants in Vietnam, ISO certifications, project manager CVs, HSE statistics, and approved vendor list adherence. Minimum 80/100 score required to pass. Commercial envelopes remain sealed in bank safe.</li>
+              <li>• <strong class="text-slate-900">Round 2 (Commercial Envelope):</strong> Opened exclusively for technically qualified bidders. Evaluated on 7-year Total Cost of Ownership (CAPEX + OPEX energy efficiency), payment milestones, and liquidated damages acceptance.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">Contract Securities &amp; Liquidated Damages (LDs)</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold">Enforced</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Advance Payment Guarantee:</strong> 10-15% irrevocable bank guarantee prior to cash disbursement, amortized against progress certificates.</li>
+              <li>• <strong class="text-slate-900">Performance Security Bond:</strong> 10% on-demand bank guarantee valid until Taking-Over Certificate issuance.</li>
+              <li>• <strong class="text-slate-900">Delay Liquidated Damages:</strong> 0.1% per calendar day of unexcused delay, capped at 10% of total contract value.</li>
+              <li>• <strong class="text-slate-900">Defect Liability Retention:</strong> 5% cash retention held for 12 months post-handover.</li>
+              <li>• <strong class="text-slate-900">FIDIC Clause 20 Claims Rule:</strong> Strict 14-day notice of claim requirement. Failure to notify within 14 days extinguishes contractor entitlement.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: RISK & HSE -->
+    <div id="tab-risk" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 6: Industrial Project Risk Governance &amp; HSE Architecture
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Quantitative failure mode mitigation, Delegation of Authority (DOA) financial spend caps, and Zero Harm HSE controls:
+        </p>
+
+        <!-- QUANTITATIVE RISK MATRIX TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-rose-700 tracking-wider">Industrial Risk Audit</span>
+              <h3 class="text-sm font-bold text-slate-900">Top 5 Project Failure Modes &amp; Pre-emptive Engineering Defenses</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-800 border border-rose-200 font-semibold">
+              Residual Risk: Low
+            </span>
+          </div>
+
+          <div class="overflow-hidden">
+            <table class="gov-table text-xs text-left">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-slate-700 font-bold uppercase tracking-wider text-[10px]">
+                  <th>Failure Mode</th>
+                  <th>Probability</th>
+                  <th>Schedule Impact</th>
+                  <th>Cost Impact</th>
+                  <th>Pre-emptive Engineering Mitigation</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-[11px]">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">1. Piling Refusal / Hard Stratum</td>
+                  <td class="text-amber-700 font-bold">Medium</td>
+                  <td>+14 Days</td>
+                  <td>+$65,000</td>
+                  <td>Conducted 12 exploratory boreholes prior to tender; pre-drilling auger equipment mobilized on site on standby.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">2. Monsoon Site Flooding</td>
+                  <td class="text-rose-700 font-bold">High</td>
+                  <td>+21 Days</td>
+                  <td>+$45,000</td>
+                  <td>Completed perimeter storm trench drainage and sub-base leveling prior to rainy season; 4x high-head dewatering pumps installed.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">3. Steel Price Escalation</td>
+                  <td class="text-amber-700 font-bold">Medium</td>
+                  <td>0 Days</td>
+                  <td>+$180,000</td>
+                  <td>Fixed-price lump-sum contract for PEB steel with early mill procurement lock-in (Dongbu / Bluescope coils).</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">4. Local Grid Curtailment / Power Sags</td>
+                  <td class="text-rose-700 font-bold">High</td>
+                  <td>0 Days</td>
+                  <td>+$20k/yr OPEX</td>
+                  <td>Installed 2,000 kVA emergency diesel genset with 10s ATS and dynamic active harmonic power factor correction (APFC &ge; 0.98).</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-bold text-slate-900">5. Statutory PCCC Review Delays</td>
+                  <td class="text-amber-700 font-bold">Medium</td>
+                  <td>+30 Days</td>
+                  <td>+$30,000</td>
+                  <td>Pre-consulted provincial C07 Police during Concept Phase; implemented pre-certified Promatect-H encasement and E.3 truss exemption.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- HSE ARCHITECTURE & DOA -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Zero Harm HSE Governance Architecture</span>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Target Metric:</strong> Lost Time Injury Frequency Rate (<span class="font-mono">LTIFR = 0.00</span>) across &gt; 1,200,000 contractor man-hours.</li>
+              <li>• <strong class="text-slate-900">Mandatory Permit-to-Work (PTW):</strong> Strict electronic PTW clearance required daily for Work at Heights (&gt; 2m), Hot Work (welding/cutting), Confined Spaces (ETP tanks), and High-Voltage Energization.</li>
+              <li>• <strong class="text-slate-900">100% Tie-Off Rule:</strong> Mandatory dual-lanyard full-body safety harnesses during structural PEB steel erection. Instant removal from site for safety violations.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-900 uppercase tracking-wider text-[10px]">Delegation of Authority (DOA) Financial Matrix</span>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Site Project Director:</strong> Single variation approval cap of &le; $25,000 USD (Cumulative total cap: $100,000 USD).</li>
+              <li>• <strong class="text-slate-900">Regional Head of Engineering:</strong> Single variation approval cap of &le; $100,000 USD (Cumulative total cap: $300,000 USD).</li>
+              <li>• <strong class="text-slate-900">Executive Committee / CEO / Board:</strong> All variations &gt; $100,000 USD or any scope adjustment altering project completion date or contract terms.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 7: T&C HANDOVER -->
+    <div id="tab-commissioning" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          Pillar 7: Testing, Commissioning (T&amp;C), Black-Start Validation &amp; Handover
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Three-tier commissioning protocol verifying utility performance, safety interlocking, and statutory handover:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">Tier 1: Cold Commissioning</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold">Month 11.5 - 12.0</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Hydrostatic Testing:</strong> High-pressure steam piping tested to 1.5x design pressure (21.0 bar hold for 4 hours).</li>
+              <li>• <strong class="text-slate-900">Pneumatic Hold:</strong> Compressed air ring header pressurized with nitrogen to 10 bar, measuring &lt; 0.05 bar pressure loss over 24 hours.</li>
+              <li>• <strong class="text-slate-900">Electrical Megger:</strong> 22kV cable dielectric insulation resistance and transformer winding ratio checks.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">Tier 2: Hot Commissioning</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">Month 12.0 - 13.0</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Boiler Firing:</strong> Biomass step-grate furnace refractory dry-out, thermal expansion alignment, and 72-hour continuous steam run at 15.0 TPH.</li>
+              <li>• <strong class="text-slate-900">Chiller Load Balancing:</strong> 2x 650 TR chillers ramped to 100% thermal load, verifying 0.54 kW/TR specific power consumption.</li>
+              <li>• <strong class="text-slate-900">ETP Biological Seeding:</strong> Biomass sludge inoculation in MBBR tanks, achieving steady-state COD removal (&lt; 50 mg/L).</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="font-bold text-slate-900">Tier 3: Integrated Black Start</span>
+              <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Month 13.0 - 14.0</span>
+            </div>
+            <ul class="space-y-1.5 text-slate-600 text-[11px] leading-relaxed">
+              <li>• <strong class="text-slate-900">Simulated Blackout:</strong> Intentional trip of EVN 22kV grid incomer. 2,000 kVA diesel generator auto-starts and assumes critical loads within 9.8 seconds via ATS.</li>
+              <li>• <strong class="text-slate-900">BMS Fire Tripping Matrix:</strong> Activation of sprinkler flow switch automatically trips HVAC fans, drops smoke curtains, releases magnetic fire doors, and ramps smoke exhaust fans.</li>
+              <li>• <strong class="text-slate-900">Decree 06 Handover:</strong> Joint physical inspection with State Construction Authority for final operational clearance.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 8: ESG & LEED PLATINUM -->
+    <div id="tab-esg" class="tab-panel hidden space-y-6">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <div>
+            <span class="text-[10px] uppercase font-bold text-lime-700 tracking-wider">Pillar 8: Sustainable Industrial Architecture</span>
+            <h2 class="text-lg font-bold text-slate-900">Pillar 8: ESG, LEED Platinum &amp; Industrial Decarbonization</h2>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-lime-50 text-lime-800 border border-lime-200 font-semibold">
+            LEED v4 BD+C / Higg FEM 4.0 / ZDHC Level 3
+          </span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          The Garments Company flagship facility is engineered as an institutional ESG showcase, achieving LEED v4 BD+C Platinum certification (84 Points), Higg Index FEM 4.0 verification (&ge;92.4/100), and Zero Liquid Discharge (ZLD) water recycling, yielding -10,838 tCO₂e/yr in verified carbon abatement.
+        </p>
+
+        <!-- ESG EXECUTIVE KPI COCKPIT -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div class="p-3.5 rounded-lg bg-lime-50/70 border border-lime-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-lime-800">LEED v4 BD+C Rating</span>
+            <div class="text-xl font-bold font-mono text-lime-700">
+              <span class="calc-cell" 
+                data-metric="LEED v4 BD+C Scorecard" 
+                data-formula="EA (31) + WE (11) + EQ (14) + SS (16) + MR (6) + ID (6)" 
+                data-calc="84 Total Points (Threshold: 80 Points for Platinum)" 
+                data-desc="Top 1% of industrial manufacturing facilities in Southeast Asia.">
+                84 Pts (Platinum)
+              </span>
+            </div>
+            <div class="text-[11px] text-slate-600">Threshold: 80 Pts for Platinum</div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-emerald-50/70 border border-emerald-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-emerald-800">Rooftop Solar PV</span>
+            <div class="text-xl font-bold font-mono text-emerald-700">
+              <span class="calc-cell" 
+                data-metric="Rooftop Solar PV Installation" 
+                data-formula="4,375 Tier-1 N-Type TOPCon Panels × 640 Wp" 
+                data-calc="2.80 MWp (3,920,000 kWh/yr Generation)" 
+                data-desc="100% factory daytime self-consumption offsetting $352,800/yr in grid electricity.">
+                2.80 MWp
+              </span>
+            </div>
+            <div class="text-[11px] text-slate-600">3,920,000 kWh/yr Generation</div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-sky-50/70 border border-sky-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-sky-800">Carbon Abatement</span>
+            <div class="text-xl font-bold font-mono text-sky-700">
+              <span class="calc-cell" 
+                data-metric="Scope 1 &amp; 2 Carbon Reduction" 
+                data-formula="Biomass Abatement (-7,702 t) + Solar Abatement (-3,136 t)" 
+                data-calc="-10,838 tCO₂e/yr Net Abatement" 
+                data-desc="Directly qualifies Garments Company for Tier-1 apparel brand sustainability vendor preferences.">
+                -10,838 tCO₂e/yr
+              </span>
+            </div>
+            <div class="text-[11px] text-slate-600">Scope 1: -7,702 | Scope 2: -3,136</div>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-teal-50/70 border border-teal-200 space-y-1">
+            <span class="text-[10px] uppercase font-bold text-teal-800">Water Stewardship</span>
+            <div class="text-xl font-bold font-mono text-teal-700">
+              <span class="calc-cell" 
+                data-metric="Water Efficiency &amp; ZLD Permeate" 
+                data-formula="1,200 m³/d ETP ZLD × 85% Recovery + Rainwater" 
+                data-calc="48.5% Potable Water Reduction vs Baseline" 
+                data-desc="Meets ZDHC Level 3 MRSL conformance and Higg FEM 4.0 standards.">
+                1,200 m³/d ZLD
+              </span>
+            </div>
+            <div class="text-[11px] text-slate-600">85% Permeate Recovery Rate</div>
+          </div>
+        </div>
+
+        <!-- LEED PLATINUM SCORECARD (84 POINTS) TABLE -->
+        <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-lime-700 tracking-wider">USGBC Verification</span>
+              <h3 class="text-sm font-bold text-slate-900">LEED v4 BD+C Platinum Point Allocation Matrix (84 Points)</h3>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-lime-100 text-lime-800 font-bold">Platinum Verified</span>
+          </div>
+
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold">
+                  <th class="p-2.5 text-left border-r border-slate-200">LEED Category</th>
+                  <th class="p-2.5 text-center border-r border-slate-200 w-24">Points Achieved</th>
+                  <th class="p-2.5 text-center border-r border-slate-200 w-20">Max Points</th>
+                  <th class="p-2.5 text-left border-r border-slate-200">Key Engineering &amp; Design Strategies</th>
+                  <th class="p-2.5 text-left">Compliance Standard</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-sans">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Energy &amp; Atmosphere (EA)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">31</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">33</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">2.80 MWp rooftop solar PV; 15 TPH biomass boiler replacing fossil oil; 42.8% modeled energy cost reduction vs ASHRAE baseline; IE4 VFD compressors with heat recovery.</td>
+                  <td class="p-2.5 font-mono text-slate-600">ASHRAE 90.1-2016 / Title 24</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Water Efficiency (WE)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">11</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">12</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">48.5% potable water reduction; 450 m³ stormwater collection tank; ultra-low flow sensor fixtures; 1,200 m³/d ETP ZLD permeate reused for boiler feed and toilet flushing.</td>
+                  <td class="p-2.5 font-mono text-slate-600">LEED WE Prerequisite / ZDHC</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Indoor Environmental Quality (EQ)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">14</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">16</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">35 ACH positive-pressure Celdek evaporative cooling keeping sewing hall at 28°C &plusmn; 1°C; MERV 13 filtration; low-VOC adhesives and architectural coatings; 78% daylight autonomy.</td>
+                  <td class="p-2.5 font-mono text-slate-600">ASHRAE 62.1-2016 / EN 16798</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Sustainable Sites &amp; Location (SS)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">16</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">16</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">Industrial park location with access to multi-modal transit; high-albedo cool roof (SRI &gt; 82) to mitigate heat island effect; 24 EV charging stations; permeable pavement drainage.</td>
+                  <td class="p-2.5 font-mono text-slate-600">LEED SS Credit Guidelines</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Materials &amp; Resources (MR)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">6</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">13</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">86.4% construction waste diverted from landfill; building product disclosure with verified Environmental Product Declarations (EPDs); regional structural steel and cement within 500 km.</td>
+                  <td class="p-2.5 font-mono text-slate-600">ISO 14025 / EN 15804</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-2.5 font-bold text-slate-900 border-r border-slate-200">Innovation &amp; Regional Priority (ID/RP)</td>
+                  <td class="p-2.5 text-center font-mono font-bold text-emerald-700 border-r border-slate-200">6</td>
+                  <td class="p-2.5 text-center font-mono text-slate-500 border-r border-slate-200">6</td>
+                  <td class="p-2.5 border-r border-slate-200 text-slate-700">Exemplary performance in renewable power (100% daytime load); comprehensive ergonomics program for 3,500 apparel workers; zero single-use plastics factory campus policy.</td>
+                  <td class="p-2.5 font-mono text-slate-600">USGBC Innovation Catalog</td>
+                </tr>
+                <tr class="bg-lime-50/70 font-bold border-t-2 border-lime-300">
+                  <td class="p-2.5 text-slate-900 uppercase">TOTAL VERIFIED LEED PLATINUM SCORE</td>
+                  <td class="p-2.5 text-center font-mono text-lime-900 text-sm">84</td>
+                  <td class="p-2.5 text-center font-mono text-slate-700">110</td>
+                  <td colspan="2" class="p-2.5 text-slate-700 font-sans font-normal">Exceeds 80-point Platinum threshold by +4 buffer points, assuring formal USGBC certificate issuance.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- INDUSTRIAL CARBON & UTILITY SAVINGS DECOMPOSITION -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          
+          <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+            <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Carbon Abatement Engineering</span>
+            <h4 class="text-xs font-bold text-slate-900">Scope 1 &amp; Scope 2 Decarbonization Mechanism</h4>
+            
+            <div class="space-y-2 text-slate-600 leading-relaxed text-[11px]">
+              <div class="p-2.5 rounded bg-slate-50 border-l-2 border-emerald-500 space-y-1">
+                <div class="font-bold text-slate-800">Scope 1 Thermal Fuel Switch: -7,702 tCO₂e/yr</div>
+                <p>Replacing heavy fuel oil (HFO #6) with certified biomass agricultural briquettes/pellets at 15 TPH steam output reduces lifecycle fossil emissions by 92.5%, saving $775,000/yr in thermal energy costs.</p>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 border-l-2 border-sky-500 space-y-1">
+                <div class="font-bold text-slate-800">Scope 2 Grid Electricity Offset: -3,136 tCO₂e/yr</div>
+                <p>The 2.80 MWp rooftop solar system generates 3,920,000 kWh/yr. Displacing Vietnam national grid power (0.80 kg CO₂e/kWh) offsets 3,136 tCO₂e/yr and reduces OPEX by $352,800/yr.</p>
+              </div>
+              <div class="p-2.5 rounded bg-lime-50/70 border border-lime-200 space-y-1">
+                <div class="font-bold text-lime-900">Total Certified Abatement: -10,838 tCO₂e/yr</div>
+                <p class="text-lime-800">Directly secures Tier-1 preferred vendor allocation for carbon-audited brands (Nike, Patagonia, Lululemon, PVH).</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-200 bg-white p-4 space-y-3">
+            <span class="text-[10px] uppercase font-bold text-sky-700 tracking-wider">Global Brand Certifications</span>
+            <h4 class="text-xs font-bold text-slate-900">Apparel Industry ESG &amp; Chemical Compliance</h4>
+            
+            <div class="space-y-2 text-slate-600 leading-relaxed text-[11px]">
+              <div class="p-2.5 rounded bg-slate-50 border-l-2 border-sky-500 space-y-1">
+                <div class="font-bold text-slate-800">Higg Index FEM 4.0 (&ge;92.4 Score)</div>
+                <p>Comprehensive third-party verification across Environmental Management System, Energy/GHG, Water, Wastewater, Air, and Chemical Management modules.</p>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 border-l-2 border-teal-500 space-y-1">
+                <div class="font-bold text-slate-800">ZDHC Gateway &amp; MRSL Level 3 Conformance</div>
+                <p>Zero Discharge of Hazardous Chemicals standard achieved across all textile wet processing and laundry operations; electronic chemical inventory tracking via InCheck.</p>
+              </div>
+              <div class="p-2.5 rounded bg-slate-50 border-l-2 border-amber-500 space-y-1">
+                <div class="font-bold text-slate-800">ISO 14001:2015 &amp; ISO 50001:2018 Standards</div>
+                <p>Environmental Management System and Energy Management System audited and accredited by Month 16 as part of operational asset handover.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & TOOLTIP ENGINE -->
+    <script>
+      // Tab Navigation Engine
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-target');
+          
+          document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('bg-sky-700', 'text-white');
+            b.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100');
+          });
+          btn.classList.add('bg-sky-700', 'text-white');
+          btn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100');
+
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+          const targetPanel = document.getElementById(target);
+          if (targetPanel) {
+            targetPanel.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+
+      // SVG Architecture Wheel Card & Hub Navigation Engine
+      document.querySelectorAll('.pillar-card, .central-core').forEach(card => {
+        card.addEventListener('click', () => {
+          const target = card.getAttribute('data-target');
+          if (!target) return;
+          const btn = document.querySelector(`.tab-btn[data-target="${target}"]`);
+          if (btn) btn.click();
+        });
+      });
+
+      // Interactive Calculation Tooltip Engine
+      const tooltip = document.createElement('div');
+      tooltip.id = 'calc-tooltip';
+      document.body.appendChild(tooltip);
+
+      document.querySelectorAll('.calc-cell').forEach(cell => {
+        cell.addEventListener('mouseenter', (e) => {
+          const metric = cell.getAttribute('data-metric') || 'Metric Detail';
+          const formula = cell.getAttribute('data-formula') || 'N/A';
+          const calc = cell.getAttribute('data-calc') || 'N/A';
+          const desc = cell.getAttribute('data-desc') || '';
+
+          tooltip.innerHTML = `
+            <div style="font-weight: 700; color: #38bdf8; margin-bottom: 4px; font-size: 11px;">[METRIC] ${metric}</div>
+            <div style="font-family: monospace; color: #fde68a; margin-bottom: 3px; font-size: 10px;"><strong>Formula:</strong> ${formula}</div>
+            <div style="font-family: monospace; color: #34d399; margin-bottom: 4px; font-size: 10px;"><strong>Calc:</strong> ${calc}</div>
+            <div style="color: #cbd5e1; font-size: 9.5px; border-top: 1px solid #334155; padding-top: 4px;">${desc}</div>
+          `;
+          tooltip.style.display = 'block';
+        });
+
+        cell.addEventListener('mousemove', (e) => {
+          const left = Math.min(e.clientX + 14, window.innerWidth - 440);
+          const top = Math.min(e.clientY + 14, window.innerHeight - 180);
+          tooltip.style.left = Math.max(10, left) + 'px';
+          tooltip.style.top = Math.max(10, top) + 'px';
+        });
+
+        cell.addEventListener('mouseleave', () => {
+          tooltip.style.display = 'none';
+        });
+      });
+    </script>
+  </div>
+</body>
+</html>

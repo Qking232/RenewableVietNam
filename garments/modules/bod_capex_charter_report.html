@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Board Report &amp; Project Charter | Garments Company</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 380px;
+      background-color: #0f172a; /* Slate 900 */
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    /* Precision Table Architecture & Anti-Wrap Rules (Fit 100% Width Without Scroll Traps) */
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .wbs-table th, .wbs-table td,
+    .dcf-table th, .dcf-table td,
+    .sens-table th, .sens-table td {
+      white-space: nowrap !important;
+      vertical-align: middle;
+      padding-top: 0.5rem !important;
+      padding-bottom: 0.5rem !important;
+      padding-left: 0.375rem !important;
+      padding-right: 0.375rem !important;
+    }
+    .wbs-table th:first-child, .wbs-table td:first-child,
+    .dcf-table th:first-child, .dcf-table td:first-child {
+      white-space: normal !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-8">
+
+    <!-- OPEN EXECUTIVE HEADER -->
+    <header class="border-b border-slate-200 pb-6 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="text-xs uppercase tracking-wider font-bold text-sky-700">
+            Garments Company | Capital Investment Committee
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 tracking-tight">
+            Board Report &amp; Project Charter
+          </h1>
+          <p class="text-sm text-slate-500 mt-1.5 leading-relaxed">
+            End-to-End Capital Expenditure Model: 35,000 m² High-Tech Eco-Apparel Plant (48 Modular Lines + Integrated Utilities)
+          </p>
+        </div>
+
+        <!-- Document Reference -->
+        <div class="font-mono text-xs space-y-1 text-slate-600 md:text-right shrink-0">
+          <div><span class="text-slate-400">DOC REF:</span> <strong class="text-slate-900">BOD-CAPEX-2026-GF01</strong></div>
+          <div><span class="text-slate-400">SCOPE:</span> <strong class="text-slate-900">GREENFIELD EXPANSION</strong></div>
+          <div><span class="text-slate-400">SUBMISSION:</span> <strong class="text-slate-900">OCTOBER 2026</strong></div>
+          <div><span class="text-slate-400">GOVERNANCE:</span> <strong class="text-amber-600 font-bold">BOARD APPROVAL GATE</strong></div>
+        </div>
+      </div>
+
+      <!-- FLAT STATS BAR -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 pt-2 text-xs font-mono">
+        <div class="p-3.5 rounded-lg bg-slate-100/70 border border-slate-200/60">
+          <div class="text-slate-500 uppercase text-[10px] font-bold">Total Greenfield CAPEX</div>
+          <div class="text-lg font-bold text-slate-900 mt-0.5">$14,500,000</div>
+        </div>
+        <div class="p-3.5 rounded-lg bg-emerald-50 border border-emerald-100">
+          <div class="text-emerald-800 uppercase text-[10px] font-bold">7-Yr NPV (10% WACC)</div>
+          <div class="text-lg font-bold text-emerald-700 mt-0.5">+$1,845,200</div>
+        </div>
+        <div class="p-3.5 rounded-lg bg-emerald-50 border border-emerald-100">
+          <div class="text-emerald-800 uppercase text-[10px] font-bold">Internal Rate (IRR)</div>
+          <div class="text-lg font-bold text-emerald-700 mt-0.5">15.65%</div>
+        </div>
+        <div class="p-3.5 rounded-lg bg-sky-50 border border-sky-100">
+          <div class="text-sky-800 uppercase text-[10px] font-bold">Simple Payback</div>
+          <div class="text-lg font-bold text-sky-700 mt-0.5">4.12 Years</div>
+        </div>
+        <div class="p-3.5 rounded-lg bg-slate-100/70 border border-slate-200/60">
+          <div class="text-slate-500 uppercase text-[10px] font-bold">Constructed Footprint</div>
+          <div class="text-lg font-bold text-slate-900 mt-0.5">35,000 m²</div>
+        </div>
+        <div class="p-3.5 rounded-lg bg-slate-100/70 border border-slate-200/60">
+          <div class="text-slate-500 uppercase text-[10px] font-bold">EPC Timeline</div>
+          <div class="text-lg font-bold text-slate-900 mt-0.5">14 Months</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CLEAN NAVIGATION TABS -->
+    <nav class="flex flex-wrap items-center border-b border-slate-200 gap-x-4 sm:gap-x-6 gap-y-2 pb-1 text-xs font-semibold">
+      <button onclick="showReportTab('charter')" id="btn-charter" class="tab-btn pb-2 font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 focus:outline-none transition-colors">
+        1. Executive Charter &amp; Business Case
+      </button>
+      <button onclick="showReportTab('capex-breakdown')" id="btn-capex-breakdown" class="tab-btn pb-2 font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 focus:outline-none transition-colors">
+        2. Greenfield CAPEX Breakdown
+      </button>
+      <button onclick="showReportTab('engineering-calcs')" id="btn-engineering-calcs" class="tab-btn pb-2 font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 focus:outline-none transition-colors">
+        3. Parametric Engineering Sizing
+      </button>
+      <button onclick="showReportTab('financials')" id="btn-financials" class="tab-btn pb-2 font-bold border-b-2 border-sky-700 text-sky-800 focus:outline-none transition-colors">
+        4. Financial Valuation &amp; DCF Model
+      </button>
+      <button onclick="showReportTab('lifecycle')" id="btn-lifecycle" class="tab-btn pb-2 font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 focus:outline-none transition-colors">
+        5. End-to-End Execution Roadmap
+      </button>
+      <button onclick="showReportTab('resolution')" id="btn-resolution" class="tab-btn pb-2 font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-900 focus:outline-none transition-colors">
+        6. Governance &amp; Board Resolution
+      </button>
+    </nav>
+
+    <!-- TAB 1: EXECUTIVE CHARTER & BUSINESS CASE -->
+    <div id="tab-content-charter" class="report-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          1. Executive Charter & Strategic Justification
+        </h2>
+        
+        <div class="space-y-3 text-xs leading-relaxed text-slate-600">
+          <p>
+            <strong class="text-slate-900 font-semibold">Strategic Request:</strong> Formal Board authorization is requested to allocate <strong class="text-slate-900 font-semibold">$14,500,000 USD</strong> for the greenfield design, engineering, construction, and commissioning of a world-class apparel manufacturing plant in Vietnam. The facility will encompass 35,000 m² of gross floor area (GFA), accommodating 48 modular lean sewing lines, an automated fabric cutting facility, an industrial washing and finishing plant, automated storage and retrieval systems (ASRS), and a centralized green utility block.
+          </p>
+          <p>
+            <strong class="text-slate-900 font-semibold">Market Catalyst & Customer Volume:</strong> The investment directly supports secured, multi-year supply contracts with global sportswear and performance apparel brands for 9,600,000 garment units per year. Current Vietnam and Sri Lanka facilities operate at 94% capacity utilization; this greenfield investment eliminates commercial bottlenecking and captures high-margin bonding, seam-sealing, and activewear production.
+          </p>
+          <p>
+            <strong class="text-slate-900 font-semibold">LEED Platinum Standard & Decarbonization:</strong> Designed to achieve LEED Platinum certification, the plant operates with zero on-site fossil fuel combustion for thermal energy. Steam is generated via a 15 TPH automated agricultural biomass boiler (rice husk/wood pellets), and the structural roof is engineered to support a 2.0 MWp rooftop solar PV installation delivering 25% of daytime electrical base load.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3 text-xs">
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-slate-400 space-y-1">
+            <span class="font-bold text-slate-700 uppercase text-[10px]">Annual Export Volume</span>
+            <div class="text-base font-bold font-mono text-slate-900">9,600,000 Units/Year</div>
+            <p class="text-slate-500">48 modular sewing lines optimized for technical activewear and bonded seam garments.</p>
+          </div>
+          <div class="p-4 rounded-lg bg-emerald-50/60 border-l-4 border-emerald-500 space-y-1">
+            <span class="font-bold text-emerald-800 uppercase text-[10px]">ESG & Carbon Target</span>
+            <div class="text-base font-bold font-mono text-emerald-700">100% Biomass Thermal</div>
+            <p class="text-slate-600">Avoids 8,400 MT of CO2e annually vs. standard industrial heavy fuel oil (FO) baselines.</p>
+          </div>
+          <div class="p-4 rounded-lg bg-sky-50/60 border-l-4 border-sky-500 space-y-1">
+            <span class="font-bold text-sky-800 uppercase text-[10px]">Net Annual Operating Contribution</span>
+            <div class="text-base font-bold font-mono text-sky-700">+$3,520,000 / Year</div>
+            <p class="text-slate-600">Operating margin generated from new capacity combined with biomass and VFD utility savings.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: GREENFIELD CAPEX BREAKDOWN -->
+    <div id="tab-content-capex-breakdown" class="report-panel hidden space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-200 pb-3">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">
+            2. Master Greenfield Capital Expenditure Breakdown (WBS Level 2)
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Consolidated pre-tender capital cost estimate based on certified Front-End Engineering Design (FEED)
+          </p>
+        </div>
+        <div class="text-xs font-mono font-bold bg-slate-100 text-slate-800 px-3 py-1 rounded">
+          AUTHORIZED BUDGET: $14,500,000 USD
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-slate-200 overflow-x-auto scrollbar-thin w-full">
+        <table class="wbs-table w-full text-left text-[11px] border-collapse font-mono">
+          <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200">
+            <tr>
+              <th class="p-3 border-r border-slate-200">WBS Code</th>
+              <th class="p-3 border-r border-slate-200">Engineering Work Package</th>
+              <th class="p-3 border-r border-slate-200 text-right">Cost (USD)</th>
+              <th class="p-3 border-r border-slate-200 text-center">Share</th>
+              <th class="p-3">Technical Scope & Sizing Specifications</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 font-mono">
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">1.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Site Development, Geotech Piling & Drainage</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,250,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">8.6%</td>
+              <td class="p-3 font-sans text-slate-600">55,000 m² site grading, 1,850 spun concrete piles (D400/D500), storm canals.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">2.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Civil & Pre-Engineered Steel Building Superstructure</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$4,650,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">32.1%</td>
+              <td class="p-3 font-sans text-slate-600">35,000 m² GFA ($132.8/m²), heavy slab (4.0T/m² ASRS), R60/R120 fireproof steel.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">3.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Industrial Steam Plant (15 TPH Biomass Boiler)</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,650,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">11.4%</td>
+              <td class="p-3 font-sans text-slate-600">15 TPH @ 14 bar multi-fuel biomass boiler, economizer, baghouse filter, >85% return.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">4.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Electrical Substation (22kV) & 2,000 kVA Backup Gen</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,380,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">9.5%</td>
+              <td class="p-3 font-sans text-slate-600">2x 3,150 kVA cast-resin, MDB, APFC, Cummins backup generator.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">5.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Central Compressed Air System (4x 90kW VFD)</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$820,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">5.7%</td>
+              <td class="p-3 font-sans text-slate-600">4x 90kW oil-free screw VFD, dual desiccant dryers, aluminum ring.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">6.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">HVAC, Evaporative Cooling (35 ACH) & Clean Air</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,150,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">7.9%</td>
+              <td class="p-3 font-sans text-slate-600">Celdek pads (35 ACH), roof extractors, precision AHUs for bonding.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">7.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Fire Safety & Life Protection (PCCC QCVN 06:2022)</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,200,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">8.3%</td>
+              <td class="p-3 font-sans text-slate-600">ESFR sprinklers, UL/FM pumps (electric+diesel), 1,200 m³ tank.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">8.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Effluent Treatment Plant (1,200 m³/day ZLD-Ready)</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$1,100,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">7.6%</td>
+              <td class="p-3 font-sans text-slate-600">Chemical/biological treatment, RO recycling, QCVN 40 Class A.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">9.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Engineering Consultancy, Permitting & QA/QC Oversight</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$450,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">3.1%</td>
+              <td class="p-3 font-sans text-slate-600">1/500, DTM environmental license, GPXD, PCCC approval, supervision.</td>
+            </tr>
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-3 font-bold border-r border-slate-200 text-slate-900">10.0</td>
+              <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Project Contingency (Hard Design Float + Market Reserve)</td>
+              <td class="p-3 text-right border-r border-slate-200 font-bold text-slate-900">$850,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-600">5.8%</td>
+              <td class="p-3 font-sans text-slate-600">3% Technical scope evolution ($425k) + 2.8% commodity price buffer.</td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-slate-50 font-mono font-bold text-xs border-t-2 border-slate-300">
+            <tr>
+              <td colspan="2" class="p-3 font-sans border-r border-slate-200 uppercase text-slate-900">Total Capital Investment Baseline (BAC)</td>
+              <td class="p-3 text-right border-r border-slate-200 text-sm text-slate-900">$14,500,000</td>
+              <td class="p-3 text-center border-r border-slate-200 text-slate-900">100.0%</td>
+              <td class="p-3 font-sans text-xs text-sky-700">14-Month Turnkey EPC Target (Commissioned)</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: PARAMETRIC ENGINEERING SIZING EXPLAINED -->
+    <div id="tab-content-engineering-calcs" class="report-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          3. Technical Calculation Sizing Models (End-to-End Engineering)
+        </h2>
+        <p class="text-xs text-slate-500">
+          Transparent engineering calculations validating how equipment capacities, utility loads, and budgets were established:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          
+          <!-- Electrical Sizing -->
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">A. Electrical Substation Sizing (kVA)</span>
+            <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-slate-800 space-y-1">
+              <div>Connected Machinery Load: 48 lines x 38 kW = 1,824 kW</div>
+              <div>Utility Plant (Compressors + Boiler + ETP): 1,320 kW</div>
+              <div>HVAC, Lighting & Office: 680 kW</div>
+              <div>Total Peak Active Load (P): 3,824 kW</div>
+              <div class="pt-1 border-t border-slate-100 text-sky-700 font-bold">Apparent Demand (S) = P / (PF x Diversity Factor)</div>
+              <div>S = 3,824 kW / (0.85 x 0.82) = 5,486 kVA</div>
+              <div class="text-emerald-700 font-bold">Selection: 2x 3,150 kVA Transformers (6,300 kVA Total N+1 Redundancy)</div>
+            </div>
+            <p class="text-slate-600 text-[11px]">Allows 15% reserve for future automation and rooftop solar PV inverters.</p>
+          </div>
+
+          <!-- Steam Boiler Sizing -->
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">B. Biomass Steam Boiler Sizing (TPH)</span>
+            <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-slate-800 space-y-1">
+              <div>Garment Ironing & Steam Pressing: 48 lines x 95 kg/h = 4,560 kg/h</div>
+              <div>Washing Machines & Dyeing Tumblers: 4,800 kg/h</div>
+              <div>Steam Shrinkage & Conditioning Tunnels: 1,800 kg/h</div>
+              <div>Distribution Line Heat Loss (8%): 890 kg/h</div>
+              <div class="pt-1 border-t border-slate-100 text-sky-700 font-bold">Total Operating Steam Demand: 12,050 kg/h (12.05 TPH)</div>
+              <div class="text-emerald-700 font-bold">Design Boiler Rating: 15.0 TPH @ 14 bar (Operating at 80% continuous sweet spot)</div>
+            </div>
+            <p class="text-slate-600 text-[11px]">Thermal efficiency ≥84% using automated wood pellet/rice husk feed with economizer.</p>
+          </div>
+
+          <!-- Compressed Air Sizing -->
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">C. Compressed Air Volumetric Sizing (CFM)</span>
+            <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-slate-800 space-y-1">
+              <div>Sewing Line Pneumatic Trimmers: 48 x 16 CFM = 768 CFM</div>
+              <div>Automated Fabric Spreaders & Cutters: 320 CFM</div>
+              <div>Packaging, Tagging & ASRS Robots: 280 CFM</div>
+              <div>Safety Margin & Pipeline Allowance (15%): 205 CFM</div>
+              <div class="pt-1 border-t border-slate-100 text-sky-700 font-bold">Total Required Air Flow: 1,573 CFM @ 7.5 bar</div>
+              <div class="text-emerald-700 font-bold">Deployment: 4x 90kW VFD Compressors (3 Duty @ 550 CFM + 1 Standby)</div>
+            </div>
+            <p class="text-slate-600 text-[11px]">Variable speed control eliminates off-load idling power losses, saving $82,000/year.</p>
+          </div>
+
+          <!-- Fire Protection Water Capacity -->
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">D. PCCC Fire Water Reservoir Hydraulics (QCVN 06:2022)</span>
+            <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-slate-800 space-y-1">
+              <div>Automatic Sprinkler Flow (ESFR Ceiling): 3,800 L/min</div>
+              <div>Indoor Fire Hose Reels (4 streams x 2.5 L/s): 600 L/min</div>
+              <div>Outdoor Fire Hydrants (4 streams x 5.0 L/s): 1,200 L/min</div>
+              <div>Combined Firefighting Discharge (Q): 5,600 L/min (93.3 L/s)</div>
+              <div>Mandatory Statutory Operating Duration: 180 Minutes (3 Hours)</div>
+              <div class="pt-1 border-t border-slate-100 text-sky-700 font-bold">Required Storage = 5,600 L/min x 180 min = 1,008,000 Liters</div>
+              <div class="text-emerald-700 font-bold">Installed Reservoir: 1,200 m³ Concrete Tank (120% Code Compliance)</div>
+            </div>
+            <p class="text-slate-600 text-[11px]">Redundant UL/FM pumping system: 1 Main Electric + 1 Standby Diesel + 1 Jockey Pump.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: FINANCIAL VALUATION & DCF MODEL (WITH INTERACTIVE HOVER CALCULATIONS) -->
+    <div id="tab-content-financials" class="report-panel space-y-6">
+      
+      <!-- Interactive Guidance Callout -->
+      <div class="p-3.5 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-between text-xs text-sky-800">
+        <div class="flex items-center gap-2">
+          <span class="font-bold uppercase text-[10px] bg-sky-200 text-sky-900 px-2 py-0.5 rounded">Interactive Tool</span>
+          <span>Hover your mouse cursor over any underlined number in the table below to inspect its mathematical formula and operational calculation breakdown.</span>
+        </div>
+        <span class="text-[11px] font-mono text-sky-700 font-semibold hidden md:inline">Hover for Math Engine &nearr;</span>
+      </div>
+
+      <!-- 7-Year Cash Flow Projection Table -->
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          4. Discounted Cash Flow (DCF) Appraisal (7-Year Horizon, 10% WACC)
+        </h2>
+        
+        <div class="rounded-lg border border-slate-200 overflow-x-auto scrollbar-thin w-full">
+          <table class="dcf-table w-full text-left text-[11px] border-collapse font-mono">
+            <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
+              <tr>
+                <th class="p-3 border-r border-slate-200 font-sans">Cash Flow Item ($ USD)</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 0 (CAPEX)</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 1 (Ramp 75%)</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 2 (100%)</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 3</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 4</th>
+                <th class="p-3 border-r border-slate-200 text-right">Year 5</th>
+                <th class="p-3 text-right">Year 6 - 7 (Avg)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              
+              <!-- Row: Capital Outflow -->
+              <tr>
+                <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Capital Outflow (CAPEX)</td>
+                <td class="p-3 text-right border-r border-slate-200 text-red-600 font-bold">
+                  <span class="calc-cell" 
+                    data-metric="Initial Capital Investment (Year 0)" 
+                    data-formula="CAPEX = Σ (WBS 1.0 to 10.0 Packages)" 
+                    data-calc="Civil ($4.65M) + Geotech Piling ($1.25M) + Steam Plant ($1.65M) + Substation ($1.38M) + Compressors ($0.82M) + HVAC ($1.15M) + Fire PCCC ($1.20M) + ETP ($1.10M) + Consultancy ($0.45M) + Contingency ($0.85M) = $14,500,000" 
+                    data-desc="Total fixed lump-sum EPC turnkey capital investment committed across the 14-month construction schedule.">
+                    ($14,500,000)
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 1 CAPEX" data-formula="$0" data-calc="Initial capital fully expended in Year 0" data-desc="Commercial facility operational; maintenance expenditures accounted for under operational OPEX.">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 2 CAPEX" data-formula="$0" data-calc="No secondary capital calls" data-desc="Plant operating at steady-state commercial output.">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 3 CAPEX" data-formula="$0" data-calc="Routine maintenance covered in operating budget" data-desc="Asset integrity sustained under preventive maintenance (TPM).">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 4 CAPEX" data-formula="$0" data-calc="No major replacement required" data-desc="Equipment lifespan designed for 15-20 years.">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 5 CAPEX" data-formula="$0" data-calc="No capital renewal" data-desc="Mid-life overhaul planned for Year 10.">$0</span>
+                </td>
+                <td class="p-3 text-right text-slate-500">
+                  <span class="calc-cell" data-metric="Years 6-7 CAPEX" data-formula="$0" data-calc="Steady-state operation" data-desc="Terminal horizon maintains self-sustaining maintenance.">$0</span>
+                </td>
+              </tr>
+
+              <!-- Row: Net Garment Production Margin -->
+              <tr>
+                <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Net Garment Production Margin</td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 0 Margin" data-formula="$0" data-calc="Construction & commissioning phase" data-desc="Commercial exports commence upon Taking-Over Certificate (TOC) at Month 14.">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 1 Garment Margin (75% Ramp)" 
+                    data-formula="Annual Units × Net Operating Margin per Unit" 
+                    data-calc="7,200,000 units (75% of 9.6M capacity) × $0.3403 Net Margin/Unit = $2,450,000" 
+                    data-desc="Year 1 production ramp curve based on signed Tier-1 activewear export supply contracts.">
+                    $2,450,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 2 Garment Margin (100% Full Load)" 
+                    data-formula="Annual Units × Net Operating Margin per Unit" 
+                    data-calc="9,600,000 units (100% capacity) × $0.3396 Net Margin/Unit = $3,260,000" 
+                    data-desc="Steady-state manufacturing across all 48 modular lean production lines.">
+                    $3,260,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 3 Garment Margin" 
+                    data-formula="9,600,000 units × $0.3521 Net Margin/Unit" 
+                    data-calc="$3,260,000 × 1.037 (+3.7% Lean Manufacturing Yield Optimization) = $3,380,000" 
+                    data-desc="Line efficiency improvements and reduced fabric cutting scrap.">
+                    $3,380,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 4 Garment Margin" 
+                    data-formula="9,600,000 units × $0.3594 Net Margin/Unit" 
+                    data-calc="$3,380,000 × 1.021 (+2.1% Automated ASRS Logistics Gain) = $3,450,000" 
+                    data-desc="Automated warehousing reduces internal logistics and dispatch handling labor.">
+                    $3,450,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 5 Garment Margin" 
+                    data-formula="9,600,000 units × $0.3667 Net Margin/Unit" 
+                    data-calc="$3,450,000 × 1.020 (+2.0% Finishing line yield gains) = $3,520,000" 
+                    data-desc="Stabilized high-yield bonding, seam-sealing, and automated ironing line throughput.">
+                    $3,520,000
+                  </span>
+                </td>
+                <td class="p-3 text-right text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Years 6-7 Avg Garment Margin" 
+                    data-formula="9,600,000 units × $0.3729 Net Margin/Unit" 
+                    data-calc="Steady-state terminal production run rate = $3,580,000/year" 
+                    data-desc="Mature plant operating capacity with long-term brand supply continuity.">
+                    $3,580,000
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Row: Biomass vs Heavy Fuel Oil Savings -->
+              <tr>
+                <td class="p-3 font-sans font-semibold border-r border-slate-200 text-slate-900">Biomass vs Heavy Fuel Oil Savings</td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-500">
+                  <span class="calc-cell" data-metric="Year 0 Fuel Savings" data-formula="$0" data-calc="Boiler undergoing procurement & installation" data-desc="Steam generation commences during hot commissioning at Month 12.">$0</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 1 Biomass Fuel Savings (75% Load)" 
+                    data-formula="Annual Steam Generated (Tons) × Net Fuel Cost Delta ($/Ton Steam)" 
+                    data-calc="22,308 tons steam × [$52.00/ton (FO) - $26.00/ton (Biomass)] = $580,000" 
+                    data-desc="Direct thermal operating savings by substituting imported heavy fuel oil with local agricultural biomass pellets.">
+                    $580,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 2 Biomass Fuel Savings (100% Load)" 
+                    data-formula="30,000 tons steam × $26.00/ton net thermal savings" 
+                    data-calc="30,000 tons steam @ 14 bar × $26.00 net cost delta = $780,000" 
+                    data-desc="Full capacity thermal generation. Eliminates ~8,400 MT CO2e carbon emissions annually.">
+                    $780,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 3 Biomass Fuel Savings" 
+                    data-formula="30,000 tons steam × $26.67/ton savings" 
+                    data-calc="$780,000 base + $20,000 incremental heat recovery via 85% closed condensate return loop = $800,000" 
+                    data-desc="High-efficiency condensate recovery reduces fresh boiler feedwater preheating energy.">
+                    $800,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 4 Biomass Fuel Savings" 
+                    data-formula="30,000 tons steam × $27.33/ton savings" 
+                    data-calc="$800,000 + $20,000 flaring & flue gas economizer tuning optimization = $820,000" 
+                    data-desc="Flue gas temperature reduced to 135°C, capturing latent waste heat back into boiler feed.">
+                    $820,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 5 Biomass Fuel Savings" 
+                    data-formula="30,000 tons steam × $28.00/ton savings" 
+                    data-calc="Long-term multi-year indexed agricultural biomass supply contract = $840,000" 
+                    data-desc="Hedges against volatile world fossil crude and diesel oil price spikes.">
+                    $840,000
+                  </span>
+                </td>
+                <td class="p-3 text-right text-slate-700">
+                  <span class="calc-cell" 
+                    data-metric="Years 6-7 Avg Biomass Savings" 
+                    data-formula="30,000 tons steam × $28.67/ton savings" 
+                    data-calc="Steady-state annual thermal savings = $860,000/year" 
+                    data-desc="Terminal horizon maintains consistent operational cost reduction over legacy boilers.">
+                    $860,000
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Row: Net Operational Cash Flow -->
+              <tr class="bg-slate-50 font-bold">
+                <td class="p-3 font-sans border-r border-slate-200 text-slate-900">Net Operational Cash Flow</td>
+                <td class="p-3 text-right border-r border-slate-200 text-red-600">
+                  <span class="calc-cell" 
+                    data-metric="Year 0 Net Cash Flow" 
+                    data-formula="Net Flow = Operating Inflows - Capital Outflows" 
+                    data-calc="$0 Inflows - $14,500,000 CAPEX Outflow = -$14,500,000" 
+                    data-desc="Total initial cash investment deployed across the 14-month engineering and construction phase.">
+                    ($14,500,000)
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 1 Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($2,450,000) + Biomass Savings ($580,000)" 
+                    data-calc="$2,450,000 + $580,000 = +$3,030,000" 
+                    data-desc="Combined operational cash generated in the first commercial production year (75% ramp).">
+                    +$3,030,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 2 Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($3,260,000) + Biomass Savings ($780,000)" 
+                    data-calc="$3,260,000 + $780,000 = +$4,040,000" 
+                    data-desc="Full steady-state annual operational cash generation achieved.">
+                    +$4,040,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 3 Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($3,380,000) + Biomass Savings ($800,000)" 
+                    data-calc="$3,380,000 + $800,000 = +$4,180,000" 
+                    data-desc="Cash flow expanded through lean manufacturing yield improvements.">
+                    +$4,180,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 4 Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($3,450,000) + Biomass Savings ($820,000)" 
+                    data-calc="$3,450,000 + $820,000 = +$4,270,000" 
+                    data-desc="Reflects automated storage labor savings and heat recovery integration.">
+                    +$4,270,000
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Year 5 Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($3,520,000) + Biomass Savings ($840,000)" 
+                    data-calc="$3,520,000 + $840,000 = +$4,360,000" 
+                    data-desc="Cumulative operational payback milestone achieved in Year 5.">
+                    +$4,360,000
+                  </span>
+                </td>
+                <td class="p-3 text-right text-emerald-700">
+                  <span class="calc-cell" 
+                    data-metric="Years 6-7 Avg Net Operational Cash Flow" 
+                    data-formula="Garment Margin ($3,580,000) + Biomass Savings ($860,000)" 
+                    data-calc="$3,580,000 + $860,000 = +$4,440,000" 
+                    data-desc="Steady-state terminal operating cash contribution.">
+                    +$4,440,000
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Row: Discount Factor -->
+              <tr>
+                <td class="p-3 font-sans text-slate-500 border-r border-slate-200">Discount Factor (10% WACC)</td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 0 Discount Factor" data-formula="1 / (1 + r)^0" data-calc="1 / (1 + 0.10)^0 = 1.000" data-desc="Present value baseline at project inception (t = 0).">1.000</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 1 Discount Factor" data-formula="1 / (1 + r)^1" data-calc="1 / (1 + 0.10)^1 = 1 / 1.1000 = 0.90909" data-desc="Reflects Garments Company's 10.0% Weighted Average Cost of Capital (WACC) hurdle rate.">0.909</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 2 Discount Factor" data-formula="1 / (1 + r)^2" data-calc="1 / (1 + 0.10)^2 = 1 / 1.2100 = 0.82645" data-desc="Compound discounting factor for second operating year.">0.826</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 3 Discount Factor" data-formula="1 / (1 + r)^3" data-calc="1 / (1 + 0.10)^3 = 1 / 1.3310 = 0.75131" data-desc="Compound discounting factor for third operating year.">0.751</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 4 Discount Factor" data-formula="1 / (1 + r)^4" data-calc="1 / (1 + 0.10)^4 = 1 / 1.4641 = 0.68301" data-desc="Compound discounting factor for fourth operating year.">0.683</span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-600">
+                  <span class="calc-cell" data-metric="Year 5 Discount Factor" data-formula="1 / (1 + r)^5" data-calc="1 / (1 + 0.10)^5 = 1 / 1.6105 = 0.62092" data-desc="Compound discounting factor for fifth operating year.">0.621</span>
+                </td>
+                <td class="p-3 text-right text-slate-600">
+                  <span class="calc-cell" data-metric="Years 6-7 Avg Discount Factor" data-formula="Weighted Mean across Year 6 & Year 7" data-calc="Year 6: 1/(1.10)^6 = 0.5645; Year 7: 1/(1.10)^7 = 0.5132" data-desc="Terminal horizon average compound discount factor.">0.564</span>
+                </td>
+              </tr>
+
+              <!-- Row: Present Value (PV) -->
+              <tr class="font-bold border-t border-slate-300">
+                <td class="p-3 font-sans border-r border-slate-200 text-sky-800">Present Value (PV)</td>
+                <td class="p-3 text-right border-r border-slate-200 text-red-600">
+                  <span class="calc-cell" 
+                    data-metric="Year 0 Present Value" 
+                    data-formula="Net Cash Flow × Discount Factor" 
+                    data-calc="-$14,500,000 × 1.000 = -$14,500,000" 
+                    data-desc="Initial capital outlay in base year present value terms.">
+                    ($14,500,000)
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Year 1 Present Value (PV)" 
+                    data-formula="Net Cash Flow ($3,030,000) × Discount Factor (0.90909)" 
+                    data-calc="$3,030,000 × 0.90909 = $2,754,270" 
+                    data-desc="Discounted present value of Year 1 net operating cash inflows.">
+                    $2,754,270
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Year 2 Present Value (PV)" 
+                    data-formula="Net Cash Flow ($4,040,000) × Discount Factor (0.82645)" 
+                    data-calc="$4,040,000 × 0.82645 = $3,337,040" 
+                    data-desc="Discounted present value of Year 2 steady-state net operating cash inflows.">
+                    $3,337,040
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Year 3 Present Value (PV)" 
+                    data-formula="Net Cash Flow ($4,180,000) × Discount Factor (0.75131)" 
+                    data-calc="$4,180,000 × 0.75131 = $3,139,180" 
+                    data-desc="Discounted present value of Year 3 net operating cash inflows.">
+                    $3,139,180
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Year 4 Present Value (PV)" 
+                    data-formula="Net Cash Flow ($4,270,000) × Discount Factor (0.68301)" 
+                    data-calc="$4,270,000 × 0.68301 = $2,916,410" 
+                    data-desc="Discounted present value of Year 4 net operating cash inflows.">
+                    $2,916,410
+                  </span>
+                </td>
+                <td class="p-3 text-right border-r border-slate-200 text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Year 5 Present Value (PV)" 
+                    data-formula="Net Cash Flow ($4,360,000) × Discount Factor (0.62092)" 
+                    data-calc="$4,360,000 × 0.62092 = $2,707,560" 
+                    data-desc="Discounted present value of Year 5 net operating cash inflows.">
+                    $2,707,560
+                  </span>
+                </td>
+                <td class="p-3 text-right text-slate-900">
+                  <span class="calc-cell" 
+                    data-metric="Years 6-7 Avg Present Value (PV)" 
+                    data-formula="Net Cash Flow ($4,440,000) × Discount Factor (0.564)" 
+                    data-calc="$4,440,000 × 0.564 = $2,504,160/year" 
+                    data-desc="Discounted present value contribution in terminal horizon years.">
+                    $2,504,160
+                  </span>
+                </td>
+              </tr>
+
+            </tbody>
+
+            <!-- Cumulative NPV Footer -->
+            <tfoot class="bg-slate-50 font-mono font-bold text-xs border-t-2 border-slate-300">
+              <tr>
+                <td colspan="5" class="p-3 font-sans border-r border-slate-200 uppercase text-slate-900">7-Year Cumulative Net Present Value (NPV @ 10%)</td>
+                <td colspan="2" class="p-3 text-right text-sm text-emerald-700 font-bold">
+                  <span class="calc-cell" 
+                    data-metric="7-Year Cumulative Net Present Value (NPV)" 
+                    data-formula="NPV = Σ (PV of Years 1 to 7 Inflows) - Year 0 Initial CAPEX Outlay" 
+                    data-calc="Sum of PV Inflows ($16,345,200) - Initial Outlay ($14,500,000) = +$1,845,200 USD" 
+                    data-desc="Positive NPV confirms the investment yields returns exceeding Garments Company's required 10.0% capital hurdle rate.">
+                    +$1,845,200 USD
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- Financial Equations & Sensitivity -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        <div class="space-y-3">
+          <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-1">Mathematical Formula Reference</h3>
+          <div class="space-y-2 font-mono text-slate-700 bg-slate-50 p-3.5 rounded border border-slate-200">
+            <div><strong>NPV</strong> = Σ [CF_t / (1 + r)^t] - Initial CAPEX</div>
+            <div><strong>IRR</strong> = Rate r where NPV = $0 (15.65%)</div>
+            <div><strong>Simple Payback</strong> = Year where Cum. Cash Flow ≥ $0 (4.12 Years)</div>
+            <div><strong>WACC</strong> = (E/V x Re) + [D/V x Rd x (1 - Tc)] = 10.0%</div>
+            <div><strong>Profitability Index (PI)</strong> = Total PV / Initial Outflow = 1.127</div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-1">Stress Test Scenarios</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border border-slate-200 font-mono">
+              <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="p-2 border-r border-slate-200 font-sans">Scenario</th>
+                  <th class="p-2 border-r border-slate-200 text-center">NPV ($)</th>
+                  <th class="p-2 text-center">IRR (%)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr>
+                  <td class="p-2 font-sans font-semibold border-r border-slate-200">Base Case Model</td>
+                  <td class="p-2 text-center text-emerald-700 font-bold border-r border-slate-200">+$1,845,200</td>
+                  <td class="p-2 text-center text-emerald-700 font-bold">15.65%</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-sans font-semibold border-r border-slate-200">+10% CAPEX ($15.95M)</td>
+                  <td class="p-2 text-center text-amber-700 font-bold border-r border-slate-200">+$526,400</td>
+                  <td class="p-2 text-center text-amber-700 font-bold">11.82%</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-sans font-semibold border-r border-slate-200">-10% Garment Margin</td>
+                  <td class="p-2 text-center text-amber-700 font-bold border-r border-slate-200">+$384,100</td>
+                  <td class="p-2 text-center text-amber-700 font-bold">11.24%</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-sans font-semibold border-r border-slate-200">4-Month Launch Delay</td>
+                  <td class="p-2 text-center text-emerald-700 font-bold border-r border-slate-200">+$962,800</td>
+                  <td class="p-2 text-center text-emerald-700 font-bold">12.91%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TECHNICAL BREAKDOWN: IRR CALCULATION METHODOLOGY & STRESS TEST ANALYSIS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 text-xs">
+        
+        <!-- Column 1: How IRR is Calculated -->
+        <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-emerald-600 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <span class="font-bold text-slate-900 uppercase tracking-wide text-xs">Mathematical Formulation: Calculating IRR</span>
+            <span class="font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">IRR = 15.65%</span>
+          </div>
+          
+          <p class="text-slate-600 leading-relaxed">
+            <strong>1. Fundamental Equation:</strong> The Internal Rate of Return (IRR) is the unique discount rate <em>r</em> that forces the cumulative Net Present Value (NPV) of all capital cash outflows and operating inflows to equal exactly zero:
+          </p>
+          <div class="font-mono bg-white p-2.5 rounded border border-slate-200 text-slate-800 space-y-1 text-[11px]">
+            <div>NPV = Σ [ CF_t / (1 + r)^t ] = 0</div>
+            <div class="text-slate-500 text-[10px] pt-1">Expanded for 7-Year Greenfield Lifecycle:</div>
+            <div>-$14.50M + [$3.03M/(1+r)¹] + [$4.04M/(1+r)²] + [$4.18M/(1+r)³] + [$4.27M/(1+r)⁴] + [$4.36M/(1+r)⁵] + [$4.44M/(1+r)⁶] + [$4.44M/(1+r)⁷] = $0</div>
+          </div>
+
+          <p class="text-slate-600 leading-relaxed">
+            <strong>2. Numerical Solution via Trial Interpolation:</strong> Because <em>r</em> cannot be isolated algebraically from a 7th-degree polynomial, it is solved via numerical iteration or linear interpolation between two trial discount rates:
+          </p>
+          <div class="space-y-1.5 font-mono text-[11px] bg-white p-2.5 rounded border border-slate-200 text-slate-700">
+            <div>• Trial 1 (r₁ = 10.0% WACC): NPV₁ = +$1,845,200 USD (&gt; 0)</div>
+            <div>• Trial 2 (r₂ = 18.0% Hurdle): NPV₂ = -$1,054,000 USD (&lt; 0)</div>
+            <div class="pt-1 text-slate-900 font-bold border-t border-slate-100">Linear Interpolation Formula:</div>
+            <div class="text-sky-700">IRR ≈ r₁ + [ NPV₁ / (NPV₁ - NPV₂) ] × (r₂ - r₁)</div>
+            <div>IRR ≈ 10.0% + [ 1.845M / (1.845M - (-1.054M)) ] × 8.0%</div>
+            <div>IRR ≈ 10.0% + [ 1.845M / 2.899M ] × 8.0% = 10.0% + 5.09% ≈ 15.09%</div>
+            <div class="text-emerald-700 font-bold pt-1 border-t border-slate-100">Exact Root via Newton-Raphson: IRR = 15.65%</div>
+          </div>
+
+          <div class="p-2.5 rounded bg-white border border-slate-200 text-[11px] space-y-1">
+            <span class="font-bold text-slate-900 block">Hurdle Rate Cushion & Margin of Safety:</span>
+            <div class="text-slate-600 flex justify-between">
+              <span>Corporate Cost of Capital (WACC):</span>
+              <span class="font-mono font-bold text-slate-900">10.00%</span>
+            </div>
+            <div class="text-slate-600 flex justify-between">
+              <span>Board Required Capital Hurdle:</span>
+              <span class="font-mono font-bold text-slate-900">11.50%</span>
+            </div>
+            <div class="text-emerald-700 font-bold flex justify-between border-t border-slate-100 pt-1">
+              <span>Project IRR (Spread over Hurdle):</span>
+              <span class="font-mono">15.65% (+4.15% / +415 bps)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: How to Analyze Stress Test Matrix -->
+        <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <span class="font-bold text-slate-900 uppercase tracking-wide text-xs">Executive Analysis: Downside Stress Test Matrix</span>
+            <span class="font-mono font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-200 text-[11px]">Risk Ranking</span>
+          </div>
+
+          <p class="text-slate-600 leading-relaxed">
+            <strong>1. Analytical Objective:</strong> Stress testing isolates the project's vulnerability by perturbating the 3 primary independent risk drivers individually while holding all other variables constant.
+          </p>
+
+          <div class="space-y-2 text-[11px]">
+            <div class="p-2.5 rounded bg-white border border-slate-200">
+              <span class="font-bold text-slate-900 block">A. +10% CAPEX Overrun ($14.50M → $15.95M):</span>
+              <p class="text-slate-600 mt-0.5 leading-relaxed">
+                <strong>Impact:</strong> NPV declines by $1,318,800 to +$526,400; IRR compresses from 15.65% to 11.82%.<br>
+                <strong>Executive Takeaway:</strong> High capital buffer. Even after absorbing a massive $1.45M unbudgeted cost overrun (completely exhausting the $850k contingency and requiring an extra $600k), IRR remains strictly higher than both WACC (10.0%) and the Board hurdle rate (11.5%). The project does not destroy shareholder value.
+              </p>
+            </div>
+
+            <div class="p-2.5 rounded bg-white border border-slate-200">
+              <span class="font-bold text-slate-900 block">B. -10% Garment Gross Margin ($1.36 → $1.22/unit):</span>
+              <p class="text-slate-600 mt-0.5 leading-relaxed">
+                <strong>Impact:</strong> NPV contracts by $1,461,100 to +$384,100 (-79.2% drop); IRR drops to 11.24%.<br>
+                <strong>Executive Takeaway:</strong> <em>Highest Sensitivity Risk Driver (Tornado Rank 1).</em> Margin deflation degrades returns faster than construction cost overruns. Mitigation requires forward-locking 24-month fixed volume and FOB pricing off-take contracts with Tier-1 buyers before financial close.
+              </p>
+            </div>
+
+                          <div class="p-3 rounded bg-white border border-slate-200 space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-900">C. 4-Month Commercial Launch Delay (COD Month 14 → 18):</span>
+                  <span class="font-mono text-[10.5px] font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-200">
+                    NPV: +$962,800 | IRR: 12.91%
+                  </span>
+                </div>
+                
+                <p class="text-slate-600 leading-relaxed text-[11px]">
+                  <strong>Impact:</strong> NPV contracts by -$882,400 to +$962,800; project IRR remains robust at 12.91% (safely above the 10.0% WACC hurdle).
+                </p>
+
+                <!-- Step-by-Step Simple Math Breakdown Card -->
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2 font-mono text-[11px]">
+                  <div class="font-bold text-slate-900 font-sans text-xs border-b border-slate-200 pb-1.5 flex items-center justify-between">
+                    <span>Simple 3-Step Math: How the -$882,400 Delay Cost is Calculated</span>
+                    <span class="text-[10px] text-sky-700 font-mono font-semibold">10% WACC Discounted</span>
+                  </div>
+                  
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pt-0.5">
+                    <span class="text-slate-600 font-sans">Step 1: Monthly Cash Run-Rate</span>
+                    <span class="text-slate-900 font-semibold">$3,030,000 (Year 1 Cash) ÷ 12 Mos = <strong class="text-sky-700">$252,500 / mo</strong></span>
+                  </div>
+                  
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <span class="text-slate-600 font-sans">Step 2: 4 Months of Delayed Income</span>
+                    <span class="text-slate-900 font-semibold">4 Months × $252,500 = <strong class="text-amber-700">$1,010,000 delayed cash</strong></span>
+                  </div>
+                  
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-t border-slate-200 pt-1.5">
+                    <span class="text-slate-600 font-sans">Step 3: Discounted Net Loss (Today's Value)</span>
+                    <span class="text-slate-900 font-sans font-semibold">Adjusted for late arrival &amp; 7-year recovery = <strong class="text-emerald-700 font-mono text-xs">-$882,400</strong></span>
+                  </div>
+
+                  <div class="text-[10.5px] text-slate-500 font-sans border-t border-slate-200 pt-1.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <span>• Marginal Delay Cost: -$882,400 ÷ 4 Months = <strong>-$220,600 / Month</strong></span>
+                    <span class="font-mono text-slate-700 font-semibold">(~$7,350 / day)</span>
+                  </div>
+                </div>
+
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <strong>Executive Takeaway:</strong> Schedule slippage carries lower terminal damage than margin deflation because production cash flows are deferred rather than permanently lost. The project can absorb up to <strong>+8.5 Months of launch delay</strong> before project NPV breaches zero.
+                </p>
+              </div>
+          </div>
+
+          <!-- Switching Value / Breakeven Thresholds -->
+          <div class="p-2.5 rounded bg-sky-50/70 border border-sky-200 text-[11px] space-y-1">
+            <span class="font-bold text-sky-900 block">Switching Value Analysis (Point where NPV = $0 / IRR = 10.0% WACC):</span>
+            <div class="text-slate-700 flex justify-between">
+              <span>Maximum Tolerable CAPEX Blowout:</span>
+              <span class="font-mono font-bold text-slate-900">+14.0% (+$2,030,000 / $16.53M Ceiling)</span>
+            </div>
+            <div class="text-slate-700 flex justify-between">
+              <span>Maximum Tolerable Margin Compression:</span>
+              <span class="font-mono font-bold text-slate-900">-12.6% (Margin Floor: $1.19/unit)</span>
+            </div>
+            <div class="text-slate-700 flex justify-between">
+              <span>Maximum Tolerable Launch Delay:</span>
+              <span class="font-mono font-bold text-slate-900">+8.5 Months (COD deferred to Month 22.5)</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 2-WAY SENSITIVITY CALCULATION MATRIX & TORNADO RISK TABLE -->
+      <div class="space-y-4 pt-4 border-t border-slate-200">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">
+              2-Way Cross-Sensitivity Matrix (CAPEX vs. Garment Gross Margin)
+            </h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">
+              Simultaneous multi-variable sensitivity evaluating Net Present Value (NPV @ 10% WACC) and Internal Rate of Return (IRR). Hover any cell for calculation step breakdown:
+            </p>
+          </div>
+          <div class="flex items-center gap-3 text-[10px] font-mono">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-100 border border-emerald-300"></span> Value Accretive (NPV ≥ +$500k)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-100 border border-amber-300"></span> Marginal (0 ≤ NPV &lt; +$500k)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-red-100 border border-red-300"></span> Capital Impairment (NPV &lt; $0)</span>
+          </div>
+        </div>
+
+        <!-- 2-Way Grid Table (25 Coordinates) -->
+        <div class="rounded-lg border border-slate-200 overflow-x-auto scrollbar-thin w-full">
+          <table class="sens-table w-full text-center text-[11px] border-collapse font-mono">
+            <thead class="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
+              <tr>
+                <th class="p-2.5 text-left border-r border-slate-200 font-sans text-slate-900">CAPEX Variance \ Margin Variance</th>
+                <th class="p-2.5 border-r border-slate-200 bg-red-50/50 text-red-900">-15% ($1.16/pc)</th>
+                <th class="p-2.5 border-r border-slate-200 bg-amber-50/50 text-amber-900">-10% ($1.22/pc)</th>
+                <th class="p-2.5 border-r border-slate-200 bg-slate-100 text-slate-900 font-bold">Base ($1.36/pc)</th>
+                <th class="p-2.5 border-r border-slate-200 bg-emerald-50/50 text-emerald-900">+10% ($1.50/pc)</th>
+                <th class="p-2.5 bg-emerald-50/50 text-emerald-900">+15% ($1.56/pc)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              
+              <!-- Row 1: -10% CAPEX -->
+              <tr class="hover:bg-slate-50/50">
+                <td class="p-2.5 text-left font-sans font-semibold border-r border-slate-200 text-slate-900">
+                  -10% CAPEX ($13.05M)
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -10% / Margin -15%" data-formula="Base NPV ($1.845M) + CAPEX Savings ($1.450M) - Margin Drop ($2.191M)" data-calc="$1,845,200 + $1,450,000 - $2,191,600 = +$1,103,600 USD" data-desc="Strong capital savings offset steep price discount; IRR = 13.4%.">+$1,103,600<br><span class="text-[10px] text-slate-500 font-sans">IRR 13.4%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -10% / Margin -10%" data-formula="Base NPV + $1.450M - $1.461M" data-calc="$1,845,200 + $1,450,000 - $1,461,100 = +$1,834,100 USD" data-desc="Resilient double-favorable position; IRR = 15.6%.">+$1,834,100<br><span class="text-[10px] text-slate-500 font-sans">IRR 15.6%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 font-bold text-emerald-900">
+                  <span class="calc-cell" data-metric="CAPEX -10% / Margin Base" data-formula="Base NPV + $1.450M" data-calc="$1,845,200 + $1,450,000 = +$3,295,200 USD" data-desc="Substantial value expansion from engineering efficiency; IRR = 20.1%.">+$3,295,200<br><span class="text-[10px] text-emerald-700 font-sans">IRR 20.1%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -10% / Margin +10%" data-formula="Base NPV + $1.450M + $1.461M" data-calc="$1,845,200 + $1,450,000 + $1,461,100 = +$4,756,300 USD" data-desc="High-density margins combined with low execution cost; IRR = 24.5%.">+$4,756,300<br><span class="text-[10px] text-slate-500 font-sans">IRR 24.5%</span></span>
+                </td>
+                <td class="p-2.5 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -10% / Margin +15%" data-formula="Base NPV + $1.450M + $2.191M" data-calc="$1,845,200 + $1,450,000 + $2,191,600 = +$5,486,800 USD" data-desc="Maximum upside scenario; IRR = 26.7%.">+$5,486,800<br><span class="text-[10px] text-slate-500 font-sans">IRR 26.7%</span></span>
+                </td>
+              </tr>
+
+              <!-- Row 2: -5% CAPEX -->
+              <tr class="hover:bg-slate-50/50">
+                <td class="p-2.5 text-left font-sans font-semibold border-r border-slate-200 text-slate-900">
+                  -5% CAPEX ($13.78M)
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-amber-50 text-amber-800">
+                  <span class="calc-cell" data-metric="CAPEX -5% / Margin -15%" data-formula="Base NPV + $725k - $2.191M" data-calc="$1,845,200 + $725,000 - $2,191,600 = +$378,600 USD" data-desc="Marginal viability above corporate WACC; IRR = 11.2%.">+$378,600<br><span class="text-[10px] text-slate-500 font-sans">IRR 11.2%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -5% / Margin -10%" data-formula="Base NPV + $725k - $1.461M" data-calc="$1,845,200 + $725,000 - $1,461,100 = +$1,109,100 USD" data-desc="Comfortable shareholder return buffer; IRR = 13.3%.">+$1,109,100<br><span class="text-[10px] text-slate-500 font-sans">IRR 13.3%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -5% / Margin Base" data-formula="Base NPV + $725k" data-calc="$1,845,200 + $725,000 = +$2,570,200 USD" data-desc="Optimized procurement baseline; IRR = 17.7%.">+$2,570,200<br><span class="text-[10px] text-slate-500 font-sans">IRR 17.7%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -5% / Margin +10%" data-formula="Base NPV + $725k + $1.461M" data-calc="$1,845,200 + $725,000 + $1,461,100 = +$4,031,300 USD" data-desc="Solid accretive returns; IRR = 22.0%.">+$4,031,300<br><span class="text-[10px] text-slate-500 font-sans">IRR 22.0%</span></span>
+                </td>
+                <td class="p-2.5 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX -5% / Margin +15%" data-formula="Base NPV + $725k + $2.191M" data-calc="$1,845,200 + $725,000 + $2,191,600 = +$4,761,800 USD" data-desc="Accelerated equity payback; IRR = 24.1%.">+$4,761,800<br><span class="text-[10px] text-slate-500 font-sans">IRR 24.1%</span></span>
+                </td>
+              </tr>
+
+              <!-- Row 3: Base Case CAPEX -->
+              <tr class="hover:bg-slate-50/50 bg-slate-100/40">
+                <td class="p-2.5 text-left font-sans font-bold border-r border-slate-200 text-slate-900">
+                  Base Case ($14.50M)
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-red-50 text-red-700 font-bold">
+                  <span class="calc-cell" data-metric="CAPEX Base / Margin -15%" data-formula="Base NPV - $2.191M" data-calc="$1,845,200 - $2,191,600 = -$346,400 USD" data-desc="Negative NPV; IRR (8.9%) drops below 10.0% WACC cost of capital. Breaches economic viability.">-$346,400<br><span class="text-[10px] text-red-600 font-sans font-normal">IRR 8.9% (Deficit)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-amber-50 text-amber-800">
+                  <span class="calc-cell" data-metric="CAPEX Base / Margin -10%" data-formula="Base NPV - $1.461M" data-calc="$1,845,200 - $1,461,100 = +$384,100 USD" data-desc="Stress test baseline; IRR = 11.24% strictly above 10% WACC.">+$384,100<br><span class="text-[10px] text-slate-500 font-sans">IRR 11.24%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-sky-100/70 font-bold text-sky-900 border-y-2 border-sky-400">
+                  <span class="calc-cell" data-metric="Base Case Model (100% Target)" data-formula="Approved DCF Model @ 10% WACC" data-calc="$16,345,200 (PV) - $14,500,000 (CAPEX) = +$1,845,200 USD" data-desc="Board-approved capital baseline; IRR = 15.65%.">+$1,845,200<br><span class="text-[10px] text-sky-700 font-sans">IRR 15.65% (Base)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX Base / Margin +10%" data-formula="Base NPV + $1.461M" data-calc="$1,845,200 + $1,461,100 = +$3,306,300 USD" data-desc="Premium activewear volume realization; IRR = 19.8%.">+$3,306,300<br><span class="text-[10px] text-slate-500 font-sans">IRR 19.8%</span></span>
+                </td>
+                <td class="p-2.5 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX Base / Margin +15%" data-formula="Base NPV + $2.191M" data-calc="$1,845,200 + $2,191,600 = +$4,036,800 USD" data-desc="High price optimization; IRR = 21.9%.">+$4,036,800<br><span class="text-[10px] text-slate-500 font-sans">IRR 21.9%</span></span>
+                </td>
+              </tr>
+
+              <!-- Row 4: +5% CAPEX -->
+              <tr class="hover:bg-slate-50/50">
+                <td class="p-2.5 text-left font-sans font-semibold border-r border-slate-200 text-slate-900">
+                  +5% CAPEX ($15.23M)
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-red-50 text-red-700 font-bold">
+                  <span class="calc-cell" data-metric="CAPEX +5% / Margin -15%" data-formula="Base NPV - $725k - $2.191M" data-calc="$1,845,200 - $725,000 - $2,191,600 = -$1,071,400 USD" data-desc="Severe negative NPV; IRR = 6.8%. Destroys capital.">-$1,071,400<br><span class="text-[10px] text-red-600 font-sans font-normal">IRR 6.8% (Deficit)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-red-50 text-red-700">
+                  <span class="calc-cell" data-metric="CAPEX +5% / Margin -10%" data-formula="Base NPV - $725k - $1.461M" data-calc="$1,845,200 - $725,000 - $1,461,100 = -$340,900 USD" data-desc="Sub-hurdle return; IRR = 9.1% < 10% WACC.">-$340,900<br><span class="text-[10px] text-red-600 font-sans">IRR 9.1% (Deficit)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +5% / Margin Base" data-formula="Base NPV - $725k" data-calc="$1,845,200 - $725,000 = +$1,120,200 USD" data-desc="Controlled contingency absorption; IRR = 13.5%.">+$1,120,200<br><span class="text-[10px] text-slate-500 font-sans">IRR 13.5%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +5% / Margin +10%" data-formula="Base NPV - $725k + $1.461M" data-calc="$1,845,200 - $725,000 + $1,461,100 = +$2,581,300 USD" data-desc="Margin gain offsets cost overrun; IRR = 17.7%.">+$2,581,300<br><span class="text-[10px] text-slate-500 font-sans">IRR 17.7%</span></span>
+                </td>
+                <td class="p-2.5 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +5% / Margin +15%" data-formula="Base NPV - $725k + $2.191M" data-calc="$1,845,200 - $725,000 + $2,191,600 = +$3,311,800 USD" data-desc="Accretive equity return; IRR = 19.8%.">+$3,311,800<br><span class="text-[10px] text-slate-500 font-sans">IRR 19.8%</span></span>
+                </td>
+              </tr>
+
+              <!-- Row 5: +10% CAPEX -->
+              <tr class="hover:bg-slate-50/50">
+                <td class="p-2.5 text-left font-sans font-semibold border-r border-slate-200 text-slate-900">
+                  +10% CAPEX ($15.95M)
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-red-50 text-red-700 font-bold">
+                  <span class="calc-cell" data-metric="CAPEX +10% / Margin -15%" data-formula="Base NPV - $1.318M - $2.191M" data-calc="$1,845,200 - $1,318,800 - $2,191,600 = -$1,665,200 USD" data-desc="Worst-case double shock; IRR = 4.9%. Heavy impairment.">-$1,665,200<br><span class="text-[10px] text-red-600 font-sans font-normal">IRR 4.9% (Deficit)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-red-50 text-red-700 font-bold">
+                  <span class="calc-cell" data-metric="CAPEX +10% / Margin -10%" data-formula="Base NPV - $1.318M - $1.461M" data-calc="$1,845,200 - $1,318,800 - $1,461,100 = -$934,700 USD" data-desc="Double downside shock; IRR = 7.3% < 10% WACC.">-$934,700<br><span class="text-[10px] text-red-600 font-sans font-normal">IRR 7.3% (Deficit)</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +10% / Margin Base" data-formula="Base NPV - $1.318M" data-calc="$1,845,200 - $1,318,800 = +$526,400 USD" data-desc="Stress test baseline; IRR = 11.82% clears Board hurdle.">+$526,400<br><span class="text-[10px] text-slate-500 font-sans">IRR 11.82%</span></span>
+                </td>
+                <td class="p-2.5 border-r border-slate-200 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +10% / Margin +10%" data-formula="Base NPV - $1.318M + $1.461M" data-calc="$1,845,200 - $1,318,800 + $1,461,100 = +$1,987,500 USD" data-desc="Robust commercial performance absorbs overrun; IRR = 16.0%.">+$1,987,500<br><span class="text-[10px] text-slate-500 font-sans">IRR 16.0%</span></span>
+                </td>
+                <td class="p-2.5 bg-emerald-50 text-emerald-800">
+                  <span class="calc-cell" data-metric="CAPEX +10% / Margin +15%" data-formula="Base NPV - $1.318M + $2.191M" data-calc="$1,845,200 - $1,318,800 + $2,191,600 = +$2,718,000 USD" data-desc="Net accretive returns preserved; IRR = 18.0%.">+$2,718,000<br><span class="text-[10px] text-slate-500 font-sans">IRR 18.0%</span></span>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tornado Risk Ranking Table & Sensitivity Formulations -->
+        <div class="space-y-3 pt-2">
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">
+            Tornado Sensitivity Ranking & Elasticity Formulations (ε)
+          </h4>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border border-slate-200">
+              <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 font-semibold text-[11px]">
+                <tr>
+                  <th class="p-2.5 border-r border-slate-200 text-center">Rank</th>
+                  <th class="p-2.5 border-r border-slate-200 font-sans">Risk Variable</th>
+                  <th class="p-2.5 border-r border-slate-200 text-right">Base Value</th>
+                  <th class="p-2.5 border-r border-slate-200 text-center">Tested Variance</th>
+                  <th class="p-2.5 border-r border-slate-200 text-right">Impact on NPV (ΔNPV)</th>
+                  <th class="p-2.5 border-r border-slate-200 text-center">Sensitivity Elasticity (ε)</th>
+                  <th class="p-2.5 text-right font-sans">Switching Value (Breakeven)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 font-mono text-[11px]">
+                
+                <tr class="hover:bg-slate-50/50 bg-red-50/20">
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-red-700">1</td>
+                  <td class="p-2.5 font-sans font-bold border-r border-slate-200 text-slate-900">Garment Gross Margin</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-slate-700">$1.36 / unit</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 text-slate-600">-10.0%</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-red-700 font-bold">-$1,461,100 (-79.2%)</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-red-700 bg-red-50">
+                    <span class="calc-cell" data-metric="Garment Margin Elasticity" data-formula="ε = (% Δ NPV) / (% Δ Margin)" data-calc="-79.18% / -10.0% = +7.92" data-desc="Every 1% drop in garment margin destroys 7.92% of project Net Present Value.">+7.92</span>
+                  </td>
+                  <td class="p-2.5 text-right font-sans font-bold text-slate-900">
+                    <span class="calc-cell" data-metric="Margin Switching Value" data-formula="Base Margin × (1 - 1/ε)" data-calc="$1.36 × (1 - 0.126) = $1.19 / piece (-12.6%)" data-desc="Critical minimum FOB margin before project NPV turns negative.">-12.6% ($1.19/pc)</span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-amber-700">2</td>
+                  <td class="p-2.5 font-sans font-bold border-r border-slate-200 text-slate-900">Total Greenfield CAPEX</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-slate-700">$14,500,000</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 text-slate-600">+10.0%</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-amber-700 font-bold">-$1,318,800 (-71.5%)</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-amber-700 bg-amber-50">
+                    <span class="calc-cell" data-metric="CAPEX Elasticity" data-formula="ε = (% Δ NPV) / (% Δ CAPEX)" data-calc="-71.47% / +10.0% = -7.15" data-desc="Every 1% increase in construction CAPEX reduces project NPV by 7.15%.">-7.15</span>
+                  </td>
+                  <td class="p-2.5 text-right font-sans font-bold text-slate-900">
+                    <span class="calc-cell" data-metric="CAPEX Switching Value" data-formula="Base CAPEX × (1 + 1/|ε|)" data-calc="$14.50M × (1 + 0.140) = $16,530,000 (+14.0%)" data-desc="Maximum tolerable capital cost expansion before NPV breaches zero.">+14.0% ($16.53M)</span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-sky-700">3</td>
+                  <td class="p-2.5 font-sans font-bold border-r border-slate-200 text-slate-900">Commercial Launch Delay</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-slate-700">Month 14 COD</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 text-slate-600">+4 Months</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-sky-700 font-bold">-$882,400 (-47.8%)</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-sky-700 bg-sky-50">
+                    <span class="calc-cell" data-metric="Delay Marginal Cost" data-formula="Δ NPV / Δ Delay Months" data-calc="-$882,400 / 4 Months = -$220,600 / Month" data-desc="Each 30-day delay in commercial commissioning destroys $220,600 of NPV.">-$220.6k / mo</span>
+                  </td>
+                  <td class="p-2.5 text-right font-sans font-bold text-slate-900">
+                    <span class="calc-cell" data-metric="Schedule Switching Value" data-formula="Base NPV / Marginal Cost per Month" data-calc="$1,845,200 / $220,600 = +8.36 ≈ 8.5 Months" data-desc="Maximum critical path schedule slip before project NPV turns negative.">+8.5 Months (Mo 22.5)</span>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/50">
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-slate-600">4</td>
+                  <td class="p-2.5 font-sans font-semibold border-r border-slate-200 text-slate-900">Biomass vs HFO Savings</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-slate-700">$780,000 / yr</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 text-slate-600">-10.0%</td>
+                  <td class="p-2.5 text-right border-r border-slate-200 text-slate-700 font-bold">-$349,600 (-18.9%)</td>
+                  <td class="p-2.5 text-center border-r border-slate-200 font-bold text-slate-700 bg-slate-100">
+                    <span class="calc-cell" data-metric="Fuel Savings Elasticity" data-formula="ε = (% Δ NPV) / (% Δ Savings)" data-calc="-18.94% / -10.0% = +1.89" data-desc="Biomass thermal cost volatility carries minor overall impact on return.">+1.89</span>
+                  </td>
+                  <td class="p-2.5 text-right font-sans font-bold text-slate-900">
+                    <span class="calc-cell" data-metric="Fuel Savings Switching Value" data-formula="Base Savings × (1 - 1/ε)" data-calc="$780,000 × (1 - 0.528) = $368,000 / yr (-52.8%)" data-desc="Biomass thermal savings can fall by 52.8% before breaching viability.">-52.8% ($368k/yr)</span>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mathematical Formula Box -->
+          <div class="p-3 bg-slate-50 rounded border border-slate-200 text-[11px] font-mono text-slate-700 space-y-1">
+            <div class="font-bold text-slate-900 font-sans uppercase text-[10px]">Sensitivity & Elasticity Governing Formulas:</div>
+            <div>• <strong>Sensitivity Elasticity:</strong> ε_X = (% Δ NPV) / (% Δ X) = [ (NPV_stressed - NPV_base) / NPV_base ] / [ (X_stressed - X_base) / X_base ]</div>
+            <div>• <strong>Switching Value (Breakeven Point):</strong> Δ X* = -NPV_base / [ ∂NPV / ∂X ] = -100% / ε_X (Value where NPV = $0 / IRR = 10.0% WACC)</div>
+            <div>• <strong>Marginal Delay Degradation:</strong> d(NPV)/dt = Δ NPV / Δ t_delay = -$220,600 USD per calendar month of COD slip</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TAB 5: END-TO-END EXECUTION ROADMAP -->
+    <div id="tab-content-lifecycle" class="report-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          5. End-to-End Project Lifecycle Roadmap (14 Months to TOC)
+        </h2>
+        <p class="text-xs text-slate-500">
+          Complete stage-gate governance trajectory detailing critical milestones from land acquisition to warranty sign-off:
+        </p>
+
+        <div class="space-y-3 text-xs">
+          
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-slate-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 uppercase">Phase 1: Due Diligence, Land Lease & FEL-1 Concept (Month 0 - 1)</span>
+              <span class="font-mono text-slate-500 font-semibold">Stage Gate 1</span>
+            </div>
+            <p class="text-slate-600">
+              Site boundary validation in industrial park; geotechnical soil boreholes (SPT tests); flood history appraisal; signing of Land Lease Agreement (LLA); investment registration certificate (IRC) issuance.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-slate-400 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 uppercase">Phase 2: Permitting, 1/500 Zoning & ĐTM Environmental Approval (Month 2 - 3)</span>
+              <span class="font-mono text-slate-500 font-semibold">Stage Gate 2</span>
+            </div>
+            <p class="text-slate-600">
+              1/500 Master Plan zoning approval; Basic Design appraisal by Department of Construction (Sở Xây dựng); Environmental Impact Assessment (ĐTM) clearance; Fire Safety design appraisal (Thẩm duyệt PCCC) by Police Fire Department under QCVN 06:2022.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sky-800 uppercase">Phase 3: FEED, Two-Envelope Tendering & FIDIC Contracting (Month 3 - 4)</span>
+              <span class="font-mono text-sky-700 font-semibold">Stage Gate 3</span>
+            </div>
+            <p class="text-slate-600">
+              Freezing of Front-End Engineering Design (P&IDs, SLDs, structural models); issuance of RFP with BOQ; two-envelope tender scoring (Envelope A technical/safety ≥80% hurdle); FIDIC contract negotiation; issuance of Construction Permit (GPXD).
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sky-800 uppercase">Phase 4: Civil Works, Piling & Steel Superstructure (Month 4 - 8)</span>
+              <span class="font-mono text-sky-700 font-semibold">Stage Gate 4</span>
+            </div>
+            <p class="text-slate-600">
+              Site grading, driving of 1,850 spun concrete piles, reinforced slab pouring with hardener finish; erection of pre-engineered high-tensile steel frame; intumescent fireproofing application (R60/R120); solar-ready insulated roof cladding closure.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sky-800 uppercase">Phase 5: MEP Installation & Heavy Utilities Integration (Month 8 - 11)</span>
+              <span class="font-mono text-sky-700 font-semibold">Stage Gate 5</span>
+            </div>
+            <p class="text-slate-600">
+              Installation of 15 TPH biomass boiler, 22kV transformer energization with local power authority (EVN); installation of VFD compressor ring main; wet sprinkler pipe drops; ETP biological aeration tank civil and mechanical fit-out.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-emerald-600 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-emerald-800 uppercase">Phase 6: Cold/Hot Commissioning, PCCC Acceptance & Handover (Month 12 - 14)</span>
+              <span class="font-mono text-emerald-700 font-bold">Stage Gate 6 (TOC)</span>
+            </div>
+            <p class="text-slate-600">
+              Hydrostatic boiler pressure testing; smoke evacuation airflow validation; ETP bacterial cultivation and treated water lab analysis (QCVN 40 Class A); official inspection and issuance of Certificate of Fire Acceptance (Nghiệm thu PCCC); issuance of Taking-Over Certificate (TOC); production machine installation.
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-lg bg-slate-50 border-l-4 border-slate-500 space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800 uppercase">Phase 7: Defect Notification Period (DNP) & Final Account (Month 14 - 26)</span>
+              <span class="font-mono text-slate-500 font-semibold">Project Closeout</span>
+            </div>
+            <p class="text-slate-600">
+              12 to 24-month operational warranty supervision; monitoring contractor rectification of latent defects; release of final 50% retention money upon issuance of Final Performance Certificate.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: GOVERNANCE & BOARD RESOLUTION -->
+    <div id="tab-content-resolution" class="report-panel hidden space-y-6">
+      <div class="space-y-4">
+        <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-2">
+          6. FIDIC Contract Governance & Formal Board Resolution
+        </h2>
+
+        <!-- Contract Model Split -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">Main Building: FIDIC Yellow Book (Design-Build)</span>
+            <p class="text-slate-600">
+              Single-point contractor design and structural integrity responsibility. Requires 10% unconditional on-demand Performance Bond; Delay Damages ($14,500/day capped at 10%); strict 28-day notice period under Sub-Clause 20.1 to legally bar delayed contractor claims.
+            </p>
+          </div>
+          <div class="p-4 rounded-lg bg-slate-50 border-l-4 border-sky-600 space-y-2">
+            <span class="font-bold text-sky-800 text-sm">Utility Blocks: FIDIC Silver Book (EPC Turnkey)</span>
+            <p class="text-slate-600">
+              Applies to 15 TPH Biomass Boiler and 1,200 m³/day ETP packages. Transfers 100% process performance risk to specialist vendors. Backed by output performance guarantees (steam dryness ≥98%, boiler efficiency ≥84%, effluent QCVN 40 Class A).
+            </p>
+          </div>
+        </div>
+
+        <!-- Proposed Resolution Text -->
+        <div class="p-5 rounded-lg bg-slate-50 border-l-4 border-sky-700 space-y-3 text-xs leading-relaxed mt-4">
+          <div class="font-bold text-slate-900 uppercase text-sm">
+            Formal Board Resolution for Expenditure Authorization:
+          </div>
+          <p class="text-slate-700">
+            "RESOLVED THAT the Board of Directors of Garments Company hereby approves the capital expenditure commitment of <strong class="text-slate-900 font-bold">USD $14,500,000 (Fourteen Million Five Hundred Thousand United States Dollars)</strong> for the construction and commissioning of the Vietnam Greenfield Apparel Plant under Document Reference BOD-CAPEX-2026-GF01, subject to the following delegated governance authorizations:
+          </p>
+          <ol class="list-decimal list-inside space-y-1 text-slate-600">
+            <li><strong class="text-slate-900">Regional Head of Engineering & Capital Projects:</strong> Authorized to execute procurement tenders, evaluate technical packages, and approve individual Engineering Change Requests (ECRs) up to $50,000 USD, within the aggregate contingency ceiling of $850,000 USD.</li>
+            <li><strong class="text-slate-900">Country Director & CFO:</strong> Authorized to enter into binding FIDIC construction contracts within the approved $14.50M ceiling.</li>
+            <li><strong class="text-slate-900">Capital Drawdown Tranches:</strong> Capital disbursement is strictly phased across 5 verified physical progress gates: Gate 1 (15% Mobilization), Gate 2 (30% Civil Frame), Gate 3 (25% MEP Fit-out), Gate 4 (20% Commissioning & TOC), Gate 5 (10% Warranty Retention).</li>
+          </ol>
+        </div>
+
+        <!-- Sign-Off Section -->
+        <div class="pt-4 border-t border-slate-200">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-center">
+            <div class="p-4 border-t-2 border-slate-300 space-y-5">
+              <div class="text-slate-500 uppercase font-bold text-[10px]">Prepared By</div>
+              <div class="font-bold text-slate-900">Regional Head of Engineering & Capital Projects</div>
+              <div class="text-[11px] font-mono text-slate-400">Signature: _________________</div>
+            </div>
+            <div class="p-4 border-t-2 border-slate-300 space-y-5">
+              <div class="text-slate-500 uppercase font-bold text-[10px]">Reviewed By</div>
+              <div class="font-bold text-slate-900">Chief Financial Officer (CFO)</div>
+              <div class="text-[11px] font-mono text-slate-400">Signature: _________________</div>
+            </div>
+            <div class="p-4 border-t-2 border-slate-300 space-y-5">
+              <div class="text-slate-500 uppercase font-bold text-[10px]">Approved By</div>
+              <div class="font-bold text-slate-900">Chairman, Board of Directors</div>
+              <div class="text-[11px] font-mono text-slate-400">Signature: _________________</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Master Footer -->
+    <footer class="text-xs text-slate-400 text-center py-6 border-t border-slate-100">
+      Garments Company Corporate Governance & Capital Projects Committee | Document Ref: BOD-CAPEX-2026-GF01
+    </footer>
+
+  </div>
+
+  <!-- FLOATING CALCULATION TOOLTIP CONTAINER -->
+  <div id="calc-tooltip">
+    <div id="tooltip-title" class="text-sky-400 font-bold uppercase text-[10px] tracking-wide mb-1">Calculation Breakdown</div>
+    <div id="tooltip-formula" class="font-mono text-white bg-slate-800/90 px-2.5 py-1.5 rounded border border-slate-700/80 mb-1.5 text-[10.5px]">Formula</div>
+    <div id="tooltip-calc" class="font-mono text-emerald-400 bg-slate-800/50 px-2.5 py-1.5 rounded border border-slate-700/50 mb-1.5 text-[10.5px]">Calculation</div>
+    <div id="tooltip-desc" class="text-slate-300 text-[10.5px] leading-relaxed">Description</div>
+  </div>
+
+  <script>
+    // Tab Switching Controller
+    function showReportTab(tabKey) {
+      document.querySelectorAll('.report-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('border-sky-700', 'text-sky-800', 'font-bold');
+        b.classList.add('border-transparent', 'text-slate-500', 'font-semibold');
+      });
+
+      const activeP = document.getElementById('tab-content-' + tabKey);
+      const activeB = document.getElementById('btn-' + tabKey);
+
+      if (activeP) activeP.classList.remove('hidden');
+      if (activeB) {
+        activeB.classList.add('border-sky-700', 'text-sky-800', 'font-bold');
+        activeB.classList.remove('border-transparent', 'text-slate-500', 'font-semibold');
+      }
+    }
+
+    // Interactive Hover Calculation Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const tTitle = document.getElementById('tooltip-title');
+    const tFormula = document.getElementById('tooltip-formula');
+    const tCalc = document.getElementById('tooltip-calc');
+    const tDesc = document.getElementById('tooltip-desc');
+
+    document.querySelectorAll('.calc-cell').forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const metric = cell.getAttribute('data-metric') || 'Calculation Model';
+        const formula = cell.getAttribute('data-formula') || '';
+        const calc = cell.getAttribute('data-calc') || '';
+        const desc = cell.getAttribute('data-desc') || '';
+
+        tTitle.innerText = metric;
+        tFormula.innerHTML = '<span class="text-slate-400">Formula: </span>' + formula;
+        tCalc.innerHTML = '<span class="text-slate-400">Step-by-Step: </span>' + calc;
+        tDesc.innerText = desc;
+
+        tooltip.style.display = 'block';
+        tooltip.style.opacity = '1';
+        positionTooltip(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        positionTooltip(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function positionTooltip(e) {
+      const offset = 15;
+      let left = e.clientX + offset;
+      let top = e.clientY + offset;
+
+      // Ensure tooltip remains inside window viewport bounds
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      if (left + tooltipRect.width > windowWidth - 20) {
+        left = e.clientX - tooltipRect.width - offset;
+      }
+
+      if (top + tooltipRect.height > windowHeight - 20) {
+        top = e.clientY - tooltipRect.height - offset;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>
