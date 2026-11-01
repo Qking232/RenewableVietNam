@@ -308,31 +308,31 @@
             </button>
           </div>
 
-          <!-- Parameter Setup 1: Loại Hình Dự Án -->
+          <!-- Parameter Setup 1: Project Archetype -->
           <div class="hidden lg:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Loại:</label>
+            <label id="labelHomeProjectType" class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">TYPE:</label>
             <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer py-0.5">
-              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Đô Thị / Nhà Ở</option>
-              <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp</option>
-              <option value="ENERGY" class="bg-slate-900">3. Năng Lượng</option>
-              <option value="RESORT" class="bg-slate-900">4. Nghỉ Dưỡng</option>
+              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Urban / Residential</option>
+              <option value="INDUSTRIAL" class="bg-slate-900">2. Industrial Real Estate</option>
+              <option value="ENERGY" class="bg-slate-900">3. Renewable Energy</option>
+              <option value="RESORT" class="bg-slate-900">4. Resort &amp; Hospitality</option>
             </select>
           </div>
 
-          <!-- Parameter Setup 2: Mốc Tiếp Quản & Kịch Bản M&A -->
+          <!-- Parameter Setup 2: Entry Milestone & M&A Scenario -->
           <div class="hidden xl:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Mốc:</label>
+            <label id="labelMaEntry" class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">PHASE:</label>
             <select id="maEntrySelector" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[155px] truncate py-0.5">
-              <option value="GREENFIELD" class="bg-slate-900" selected>1. Phát triển từ đầu</option>
-              <option value="POST_POLICY" class="bg-slate-900">2. Sau Chấp thuận CTĐT</option>
-              <option value="POST_1_500" class="bg-slate-900">3. Sau Phê duyệt 1/500</option>
-              <option value="POST_LAND" class="bg-slate-900">4. Sau Giao/Thuê đất</option>
-              <option value="POST_PERMIT" class="bg-slate-900">5. Đã có GPXD / Đang XD</option>
-              <option value="OPERATIONAL" class="bg-slate-900">6. Dự án đang vận hành</option>
+              <option value="GREENFIELD" class="bg-slate-900" selected>1. Greenfield Origination</option>
+              <option value="POST_POLICY" class="bg-slate-900">2. Post In-Principle Approval</option>
+              <option value="POST_1_500" class="bg-slate-900">3. Post 1/500 Master Plan</option>
+              <option value="POST_LAND" class="bg-slate-900">4. Post Land Allocation/Lease</option>
+              <option value="POST_PERMIT" class="bg-slate-900">5. Post Building Permit</option>
+              <option value="OPERATIONAL" class="bg-slate-900">6. Operational Asset</option>
             </select>
           </div>
 
-          <!-- Dedicated Project Initialization Trigger (Transformed from 'Áp Dụng') -->
+          <!-- Dedicated Project Initialization Trigger (Transformed from 'Apply') -->
           <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-md transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Khởi tạo dự án đầu tư mới theo loại hình và mốc tiếp quản đã chọn">
             <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
             <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
@@ -803,36 +803,36 @@
       <!-- Lọc Giai đoạn & Trạng thái (1 Cột trên Mobile hẹp, 2 Cột trên Tablet, Flex trên Desktop) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:flex items-center gap-2 w-full md:w-auto">
         <select id="phaseFilter" class="w-full md:w-72 py-2 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition font-medium truncate">
-          <option value="ALL">Tất cả Danh mục &amp; Giai đoạn</option>
-          <option value="M&A & DD">Khối M&amp;A: Thẩm định chuyên sâu (DD)</option>
-          <option value="Giai đoạn 1: Chuẩn bị Đầu tư">Giai đoạn 1: Chuẩn bị đầu tư</option>
-          <option value="Giai đoạn 2: Quy hoạch Đô thị">Giai đoạn 2: Quy hoạch 1/500</option>
-          <option value="Giai đoạn 3: Đất đai &amp; GPMB">Giai đoạn 3: Đất đai, GPMB</option>
-          <option value="Giai đoạn 4: ĐTM, PCCC &amp; Giấy Phép">Giai đoạn 4: ĐTM &amp; PCCC</option>
-          <option value="Giai đoạn 5: Thiết kế &amp; Cấp GPXD">Giai đoạn 5: Thẩm định FS &amp; GPXD</option>
-          <option value="Giai đoạn 6: Nghiệm thu &amp; Bàn giao">Giai đoạn 6: Nghiệm thu &amp; Bàn giao</option>
+          <option value="ALL">All Categories &amp; Stages</option>
+          <option value="M&A & DD">M&amp;A Module: Comprehensive Due Diligence (DD)</option>
+          <option value="Giai đoạn 1: Chuẩn bị Đầu tư">Stage 1: Project Origination &amp; Approval</option>
+          <option value="Giai đoạn 2: Quy hoạch Đô thị">Stage 2: 1/500 Detailed Master Plan</option>
+          <option value="Giai đoạn 3: Đất đai &amp; GPMB">Stage 3: Land Allocation &amp; Clearance</option>
+          <option value="Giai đoạn 4: ĐTM, PCCC &amp; Giấy Phép">Stage 4: EIA &amp; Fire Safety (PCCC)</option>
+          <option value="Giai đoạn 5: Thiết kế &amp; Cấp GPXD">Stage 5: Detailed Design &amp; Building Permit</option>
+          <option value="Giai đoạn 6: Nghiệm thu &amp; Bàn giao">Stage 6: Handover &amp; COD Commissioning</option>
         </select>
 
         <select id="statusFilter" class="w-full md:w-48 py-2 px-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 transition font-medium truncate">
-          <option value="ALL">Tất cả trạng thái</option>
-          <option value="REMAINING">Còn lại (Chưa hoàn thành)</option>
-          <option value="Đã hoàn thành">Đã hoàn thành</option>
-          <option value="Đang xử lý">Đang xử lý</option>
-          <option value="Chưa bắt đầu">Chưa bắt đầu</option>
-          <option value="Bị nghẽn / Trễ hạn">Bị nghẽn / Trễ hạn</option>
+          <option value="ALL">All Statuses</option>
+          <option value="REMAINING">Pending Approvals (Remaining)</option>
+          <option value="Đã hoàn thành">Completed</option>
+          <option value="Đang xử lý">In Progress</option>
+          <option value="Chưa bắt đầu">Not Started</option>
+          <option value="Bị nghẽn / Trễ hạn">Bottleneck / Delayed</option>
         </select>
       </div>
       
       <!-- Hàng 3 Nút Hành Động Đồng Đều (3 Cột trên Mobile, Flex trên Desktop) -->
       <div class="grid grid-cols-3 sm:flex sm:items-center gap-2 w-full md:w-auto">
-        <button id="btnAddNew" class="justify-center px-2 py-2 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center gap-1 whitespace-nowrap" title="Thêm thủ tục pháp lý mới vào danh mục">
-          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> + Thêm
+        <button id="btnAddNew" class="justify-center px-2 py-2 bg-slate-900 hover:bg-black text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center gap-1 whitespace-nowrap" title="Add new statutory procedure to matrix">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> <span id="textBtnAddNew">+ New Milestone</span>
         </button>
-        <button id="btnDensityToggle" class="justify-center px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1" title="Bật/Tắt chế độ xem thu gọn">
-          <i data-lucide="unfold-vertical" class="w-3.5 h-3.5"></i> <span id="densityToggleText">Thu Gọn</span>
+        <button id="btnDensityToggle" class="justify-center px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1" title="Toggle compact / comfortable density">
+          <i data-lucide="unfold-vertical" class="w-3.5 h-3.5"></i> <span id="densityToggleText">Compact</span>
         </button>
-        <button id="btnToggleAllDrawers" class="justify-center px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1" title="Mở rộng tất cả ngăn kéo">
-          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i> Mở Rộng
+        <button id="btnToggleAllDrawers" class="justify-center px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition whitespace-nowrap flex items-center gap-1" title="Expand or collapse all detail drawers">
+          <i data-lucide="chevrons-up-down" class="w-3.5 h-3.5"></i> <span id="toggleAllDrawersText">Expand All</span>
         </button>
       </div>
     </section>
@@ -869,8 +869,8 @@
     <!-- Thông Báo Không Có Kết Quả (Dùng chung cho cả 2 view) -->
     <div id="noResultsNotice" class="hidden py-14 text-center text-slate-500 bg-white rounded-xl border border-slate-200">
       <i data-lucide="file-question" class="w-10 h-10 mx-auto text-slate-300 mb-2"></i>
-      <p class="font-semibold text-sm text-slate-700">Không tìm thấy thủ tục pháp lý nào phù hợp.</p>
-      <p class="text-xs text-slate-400 mt-1">Vui lòng điều chỉnh lại bộ lọc hoặc từ khóa tìm kiếm.</p>
+      <p class="font-semibold text-sm text-slate-700">No statutory milestones match your criteria.</p>
+      <p class="text-xs text-slate-400 mt-1">Please adjust your filters or search keywords.</p>
     </div>
 
     </div> <!-- /#dashboardRoot -->
@@ -884,7 +884,7 @@
           <span class="p-1.5 bg-slate-100 text-slate-900 rounded-lg">
             <i data-lucide="calendar-check" class="w-4 h-4 text-black"></i>
           </span>
-          <h3 class="font-bold text-sm text-black uppercase tracking-wide">Thiết Lập Tiến Độ &amp; Ngày Thực Hiện</h3>
+          <h3 class="font-bold text-sm text-black uppercase tracking-wide">Schedule Timeline &amp; Date Synchronization</h3>
         </div>
         <button onclick="closeDateSyncModal()" class="text-slate-400 hover:text-black p-1">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -893,33 +893,33 @@
 
       <div class="space-y-4 py-4 text-xs">
         <div>
-          <label class="block font-bold text-black uppercase tracking-wider mb-1">Ngày Bắt Đầu Dự Án:</label>
+          <label class="block font-bold text-black uppercase tracking-wider mb-1">Project Start Date:</label>
           <input type="date" id="syncStartDateInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-black font-bold text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none" />
         </div>
 
         <div>
-          <label class="block font-bold text-black uppercase tracking-wider mb-1">Ngày Hoàn Thành Dự Kiến:</label>
+          <label class="block font-bold text-black uppercase tracking-wider mb-1">Target Completion Date:</label>
           <input type="date" id="syncTargetDateInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-black font-bold text-xs focus:ring-1 focus:ring-slate-900 focus:outline-none" />
         </div>
 
         <div class="hidden bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
           <div class="min-w-0 pr-2">
-            <span class="font-bold text-black block truncate">Tiến Độ Chuẩn Theo Đường Găng</span>
-            <span id="syncSuggestNote" class="text-[11px] text-slate-600 block">Tự động tính theo loại hình &amp; mốc tiếp quản</span>
+            <span class="font-bold text-black block truncate">CPM Critical Path Schedule</span>
+            <span id="syncSuggestNote" class="text-[11px] text-slate-600 block">Auto-calculated per archetype &amp; milestone</span>
           </div>
           <button id="btnAutoSuggestDates" type="button" onclick="autoSuggestTargetDate()" class="whitespace-nowrap shrink-0 px-3.5 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-lg text-xs transition">
-            Tự Động Gợi Ý
+            Auto Calculate
           </button>
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
         <button onclick="closeDateSyncModal()" class="px-3.5 py-1.5 border border-slate-300 text-black font-bold rounded-lg text-xs hover:bg-slate-50 transition">
-          Hủy Bỏ
+          Cancel
         </button>
         <button id="btnConfirmDateSync" type="button" onclick="confirmDateSyncAndApply()" class="whitespace-nowrap px-4 py-2 bg-black hover:bg-slate-800 text-white font-bold rounded-lg text-xs shadow-xs transition flex items-center gap-1.5 shrink-0">
           <i data-lucide="check" class="w-3.5 h-3.5"></i>
-          Áp Dụng
+          Apply
         </button>
       </div>
     </div>
@@ -930,7 +930,7 @@
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 animate-in fade-in duration-200">
       <div class="px-6 py-4 bg-navy-900 text-white flex justify-between items-center sticky top-0 z-10">
         <h3 id="modalTitle" class="font-bold text-sm sm:text-base flex items-center gap-2">
-          <i data-lucide="edit-3" class="w-4 h-4 text-blue-400"></i> Cập Nhật Thủ Tục Pháp Lý
+          <i data-lucide="edit-3" class="w-4 h-4 text-blue-400"></i> Statutory Milestone Configuration
         </h3>
         <button id="modalCloseBtn" class="text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -942,7 +942,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Giai đoạn / Danh mục *</label>
+            <label class="block font-semibold text-slate-700 mb-1">Stage / Category *</label>
             <select id="modalPhase" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="M&A & DD">Khối M&amp;A: Thẩm định chuyên sâu (DD) &amp; Chuyển nhượng dự án</option>
               <option value="Giai đoạn 1: Chuẩn bị Đầu tư">Giai đoạn 1: Chuẩn bị đầu tư &amp; Chủ trương đầu tư</option>
@@ -954,58 +954,58 @@
             </select>
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Mã công việc (Task ID)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Milestone ID</label>
             <input type="text" id="modalCodeInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: MA.01">
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Tên thủ tục pháp lý / Nhiệm vụ *</label>
+          <label class="block font-semibold text-slate-700 mb-1">Milestone Name / Procedure *</label>
           <input type="text" id="modalTitleInput" required class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: Quyết định Chấp thuận chủ trương đầu tư">
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Căn cứ pháp lý &amp; Điều khoản</label>
+          <label class="block font-semibold text-slate-700 mb-1">Statutory Legal Basis &amp; Articles</label>
           <input type="text" id="modalLawInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: Luật Đầu tư 2020 (Đ. 30-33), Nghị định 31/2021/NĐ-CP">
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Cơ quan thẩm quyền giải quyết</label>
+          <label class="block font-semibold text-slate-700 mb-1">Governing Authority</label>
           <input type="text" id="modalAuthorityInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: Sở Kế hoạch và Đầu tư / UBND cấp tỉnh">
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Thời hạn Luật định</label>
+            <label class="block font-semibold text-slate-700 mb-1">Statutory Timeline</label>
             <input type="text" id="modalStatutoryTimeInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: 35 ngày làm việc">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Thời gian thực tế thường diễn ra</label>
+            <label class="block font-semibold text-slate-700 mb-1">Actual Processing Duration</label>
             <input type="text" id="modalActualTimeInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: 60 - 90 ngày (do lấy ý kiến các sở)">
           </div>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Hồ sơ đầu vào cần chuẩn bị (Dossier Inputs)</label>
+          <label class="block font-semibold text-slate-700 mb-1">Required Sub-Checklist Deliverables</label>
           <textarea id="modalInputsInput" rows="2" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Văn bản đề nghị, đề xuất dự án đầu tư, báo cáo tài chính 2 năm gần nhất, bản đồ hiện trạng vị trí..."></textarea>
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Hồ sơ đầu ra pháp lý (Deliverables)</label>
+          <label class="block font-semibold text-slate-700 mb-1">Key Statutory Deliverables</label>
           <textarea id="modalOutputsInput" rows="2" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Quyết định chấp thuận chủ trương đầu tư kèm theo chấp thuận nhà đầu tư..."></textarea>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Người phụ trách (PIC)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Lead / PIC</label>
             <input type="text" id="modalPicInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="VD: Ban Pháp chế">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Hạn chót (Deadline)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Target Deadline</label>
             <input type="date" id="modalDeadlineInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Trạng thái tiến độ</label>
+            <label class="block font-semibold text-slate-700 mb-1">Progress Status</label>
             <select id="modalStatusInput" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="Chưa bắt đầu">Chưa bắt đầu</option>
               <option value="Đang xử lý">Đang xử lý</option>
@@ -1016,13 +1016,13 @@
         </div>
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Điểm nghẽn rủi ro &amp; Lưu ý thực tế (Bottlenecks / Watchouts)</label>
+          <label class="block font-semibold text-slate-700 mb-1">Critical Bottlenecks &amp; Practical Notes</label>
           <textarea id="modalNotesInput" rows="2" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Các vướng mắc thường gặp, rủi ro pháp lý tiềm ẩn..."></textarea>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-200">
-          <button type="button" id="modalCancelBtn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">Hủy bỏ</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition shadow-sm">Lưu Dữ Liệu</button>
+          <button type="button" id="modalCancelBtn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition shadow-sm">Save Changes</button>
         </div>
       </form>
     </div>
@@ -1033,7 +1033,7 @@
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full border border-slate-200 animate-in fade-in duration-200 overflow-hidden">
       <div class="px-5 py-3.5 bg-navy-900 text-white flex justify-between items-center">
         <h3 id="projectModalTitle" class="font-bold text-sm flex items-center gap-2">
-          <i data-lucide="folder-plus" class="w-4 h-4 text-amber-400"></i> Thêm Dự Án Mới
+          <i data-lucide="folder-plus" class="w-4 h-4 text-amber-400"></i> Create New Project
         </h3>
         <button id="projectModalCloseBtn" class="text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -1045,14 +1045,14 @@
         <input type="hidden" id="projectModalEditId" value="">
 
         <div>
-          <label class="block font-semibold text-slate-700 mb-1">Tên dự án đầu tư *</label>
-          <input type="text" id="inputProjectName" required class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs font-medium focus:ring-2 focus:ring-amber-400 outline-none" placeholder="VD: Khu Công Nghiệp Nam Tiền Phong, KĐT Sinh Thái Ven Sông...">
+          <label class="block font-semibold text-slate-700 mb-1">Project Name *</label>
+          <input type="text" id="inputProjectName" required class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs font-medium focus:ring-2 focus:ring-amber-400 outline-none" placeholder="e.g. Nam Tien Phong Industrial Park, Riverfront Eco-Urban Zone...">
         </div>
 
         <div id="projectModalCreateOnlyFields" class="space-y-3.5">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">Loại hình dự án</label>
+              <label class="block font-semibold text-slate-700 mb-1">Project Archetype</label>
               <select id="selectProjectType" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs focus:ring-2 focus:ring-amber-400 outline-none">
                 <option value="Khu Công Nghiệp / CCN">Khu Công Nghiệp / CCN</option>
                 <option value="Khu Đô Thị / Nhà Ở">Khu Đô Thị / Nhà Ở</option>
@@ -1062,23 +1062,23 @@
               </select>
             </div>
             <div>
-              <label class="block font-semibold text-slate-700 mb-1">Địa bàn / Tỉnh thành</label>
-              <input type="text" id="inputProjectLocation" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs focus:ring-2 focus:ring-amber-400 outline-none" placeholder="VD: Bắc Ninh, Quảng Ninh, Bình Dương...">
+              <label class="block font-semibold text-slate-700 mb-1">Location / Province</label>
+              <input type="text" id="inputProjectLocation" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs focus:ring-2 focus:ring-amber-400 outline-none" placeholder="e.g. Bac Ninh, Quang Ninh, Binh Duong...">
             </div>
           </div>
 
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Khởi tạo dữ liệu pháp lý ban đầu</label>
+            <label class="block font-semibold text-slate-700 mb-1">Initial Statutory Baseline</label>
             <select id="selectProjectSeed" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 text-xs focus:ring-2 focus:ring-amber-400 outline-none">
-              <option value="BASELINE">Mẫu chuẩn pháp lý Việt Nam 2026 (36 thủ tục)</option>
-              <option value="CLONE_ACTIVE">Sao chép tiến độ & hồ sơ từ dự án đang chọn</option>
+              <option value="BASELINE">Vietnam Statutory Baseline 2026 (36 milestones)</option>
+              <option value="CLONE_ACTIVE">Clone milestones &amp; progress from active project</option>
             </select>
           </div>
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-200">
-          <button type="button" id="projectModalCancelBtn" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">Hủy bỏ</button>
-          <button type="submit" id="projectModalSubmitBtn" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition shadow-xs">Tạo Dự Án</button>
+          <button type="button" id="projectModalCancelBtn" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">Cancel</button>
+          <button type="submit" id="projectModalSubmitBtn" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg transition shadow-xs">Create Project</button>
         </div>
       </form>
     </div>
@@ -1092,9 +1092,9 @@
 
   <footer class="w-full max-w-full bg-white border-t border-slate-200 py-3.5 text-center text-xs text-slate-500 no-print mt-auto overflow-hidden">
     <div class="w-full max-w-[1720px] mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p>Bảng kiểm tra pháp lý phát triển dự án bất động sản &amp; công nghiệp Việt Nam &copy; 2026. Tự động đồng bộ cục bộ.</p>
+      <p>Vietnam Real Estate &amp; Industrial Investment Legal Governance Cockpit &copy; 2026. Local-first secure synchronization.</p>
       <div class="flex items-center gap-3 text-slate-400">
-        <span class="inline-flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-500"></i> Bảo mật dữ liệu trên trình duyệt cá nhân</span>
+        <span class="inline-flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-500"></i> Client-side encrypted browser storage</span>
       </div>
     </div>
   </footer>
@@ -1814,6 +1814,69 @@
         const thDl = document.getElementById('thColDeadline'); if (thDl) thDl.textContent = "Target Date";
         const thAc = document.getElementById('thColActions'); if (thAc) thAc.textContent = "Actions";
 
+        // Subheader Selectors & Labels
+        const lblType = document.getElementById('labelHomeProjectType'); if (lblType) lblType.textContent = "TYPE:";
+        const lblPhase = document.getElementById('labelMaEntry'); if (lblPhase) lblPhase.textContent = "PHASE:";
+        const homeTypeSel = document.getElementById('homeProjectTypeSelector');
+        if (homeTypeSel) {
+          const v = homeTypeSel.value;
+          homeTypeSel.innerHTML = `
+            <option value="URBAN_TOWN" class="bg-slate-900">1. Urban / Residential</option>
+            <option value="INDUSTRIAL" class="bg-slate-900">2. Industrial Real Estate</option>
+            <option value="ENERGY" class="bg-slate-900">3. Renewable Energy</option>
+            <option value="RESORT" class="bg-slate-900">4. Resort &amp; Hospitality</option>
+          `;
+          homeTypeSel.value = v;
+        }
+        const maEntrySel = document.getElementById('maEntrySelector');
+        if (maEntrySel) {
+          const v = maEntrySel.value;
+          maEntrySel.innerHTML = `
+            <option value="GREENFIELD" class="bg-slate-900">1. Greenfield Origination</option>
+            <option value="POST_POLICY" class="bg-slate-900">2. Post In-Principle Approval</option>
+            <option value="POST_1_500" class="bg-slate-900">3. Post 1/500 Master Plan</option>
+            <option value="POST_LAND" class="bg-slate-900">4. Post Land Allocation/Lease</option>
+            <option value="POST_PERMIT" class="bg-slate-900">5. Post Building Permit</option>
+            <option value="OPERATIONAL" class="bg-slate-900">6. Operational Asset</option>
+          `;
+          maEntrySel.value = v;
+        }
+
+        // Filter Bar & Actions
+        const phaseFltr = document.getElementById('phaseFilter');
+        if (phaseFltr) {
+          const v = phaseFltr.value;
+          phaseFltr.innerHTML = `
+            <option value="ALL">All Categories &amp; Stages</option>
+            <option value="M&A & DD">M&amp;A Module: Comprehensive Due Diligence (DD)</option>
+            <option value="Giai đoạn 1: Chuẩn bị Đầu tư">Stage 1: Project Origination &amp; Approval</option>
+            <option value="Giai đoạn 2: Quy hoạch Đô thị">Stage 2: 1/500 Detailed Master Plan</option>
+            <option value="Giai đoạn 3: Đất đai &amp; GPMB">Stage 3: Land Allocation &amp; Clearance</option>
+            <option value="Giai đoạn 4: ĐTM, PCCC &amp; Giấy Phép">Stage 4: EIA &amp; Fire Safety (PCCC)</option>
+            <option value="Giai đoạn 5: Thiết kế &amp; Cấp GPXD">Stage 5: Detailed Design &amp; Building Permit</option>
+            <option value="Giai đoạn 6: Nghiệm thu &amp; Bàn giao">Stage 6: Handover &amp; COD Commissioning</option>
+          `;
+          phaseFltr.value = v;
+        }
+
+        const statusFltr = document.getElementById('statusFilter');
+        if (statusFltr) {
+          const v = statusFltr.value;
+          statusFltr.innerHTML = `
+            <option value="ALL">All Statuses</option>
+            <option value="REMAINING">Pending Approvals (Remaining)</option>
+            <option value="Đã hoàn thành">Completed</option>
+            <option value="Đang xử lý">In Progress</option>
+            <option value="Chưa bắt đầu">Not Started</option>
+            <option value="Bị nghẽn / Trễ hạn">Bottleneck / Delayed</option>
+          `;
+          statusFltr.value = v;
+        }
+
+        const tAddNew = document.getElementById('textBtnAddNew'); if (tAddNew) tAddNew.textContent = "+ New Milestone";
+        const tDens = document.getElementById('densityToggleText'); if (tDens) tDens.textContent = "Compact";
+        const tDraw = document.getElementById('toggleAllDrawersText'); if (tDraw) tDraw.textContent = "Expand All";
+
       } else {
         document.title = "Hệ Thống Điều Hành Dự Án Đầu Tư & Quản Trị Pháp Lý";
         const brandTitle = document.getElementById('headerBrandTitle');
@@ -1875,7 +1938,72 @@
         const thAu = document.getElementById('thColAuthority'); if (thAu) thAu.textContent = "Cơ Quan Thẩm Quyền & PIC";
         const thDl = document.getElementById('thColDeadline'); if (thDl) thDl.textContent = "Hạn Chót";
         const thAc = document.getElementById('thColActions'); if (thAc) thAc.textContent = "Thao Tác";
+
+        // Subheader Selectors & Labels (VI)
+        const lblType = document.getElementById('labelHomeProjectType'); if (lblType) lblType.textContent = "LOẠI:";
+        const lblPhase = document.getElementById('labelMaEntry'); if (lblPhase) lblPhase.textContent = "MỐC:";
+        const homeTypeSel = document.getElementById('homeProjectTypeSelector');
+        if (homeTypeSel) {
+          const v = homeTypeSel.value;
+          homeTypeSel.innerHTML = `
+            <option value="URBAN_TOWN" class="bg-slate-900">1. Đô Thị / Nhà Ở</option>
+            <option value="INDUSTRIAL" class="bg-slate-900">2. BĐS Công Nghiệp</option>
+            <option value="ENERGY" class="bg-slate-900">3. Năng Lượng</option>
+            <option value="RESORT" class="bg-slate-900">4. Nghỉ Dưỡng</option>
+          `;
+          homeTypeSel.value = v;
+        }
+        const maEntrySel = document.getElementById('maEntrySelector');
+        if (maEntrySel) {
+          const v = maEntrySel.value;
+          maEntrySel.innerHTML = `
+            <option value="GREENFIELD" class="bg-slate-900">1. Phát triển từ đầu</option>
+            <option value="POST_POLICY" class="bg-slate-900">2. Sau Chấp thuận CTĐT</option>
+            <option value="POST_1_500" class="bg-slate-900">3. Sau Phê duyệt 1/500</option>
+            <option value="POST_LAND" class="bg-slate-900">4. Sau Giao/Thuê đất</option>
+            <option value="POST_PERMIT" class="bg-slate-900">5. Đã có GPXD / Đang XD</option>
+            <option value="OPERATIONAL" class="bg-slate-900">6. Dự án đang vận hành</option>
+          `;
+          maEntrySel.value = v;
+        }
+
+        // Filter Bar & Actions (VI)
+        const phaseFltr = document.getElementById('phaseFilter');
+        if (phaseFltr) {
+          const v = phaseFltr.value;
+          phaseFltr.innerHTML = `
+            <option value="ALL">Tất cả Danh mục &amp; Giai đoạn</option>
+            <option value="M&A & DD">Khối M&amp;A: Thẩm định chuyên sâu (DD)</option>
+            <option value="Giai đoạn 1: Chuẩn bị Đầu tư">Giai đoạn 1: Chuẩn bị đầu tư</option>
+            <option value="Giai đoạn 2: Quy hoạch Đô thị">Giai đoạn 2: Quy hoạch 1/500</option>
+            <option value="Giai đoạn 3: Đất đai &amp; GPMB">Giai đoạn 3: Đất đai, GPMB</option>
+            <option value="Giai đoạn 4: ĐTM, PCCC &amp; Giấy Phép">Giai đoạn 4: ĐTM &amp; PCCC</option>
+            <option value="Giai đoạn 5: Thiết kế &amp; Cấp GPXD">Giai đoạn 5: Thẩm định FS &amp; GPXD</option>
+            <option value="Giai đoạn 6: Nghiệm thu &amp; Bàn giao">Giai đoạn 6: Nghiệm thu &amp; Bàn giao</option>
+          `;
+          phaseFltr.value = v;
+        }
+
+        const statusFltr = document.getElementById('statusFilter');
+        if (statusFltr) {
+          const v = statusFltr.value;
+          statusFltr.innerHTML = `
+            <option value="ALL">Tất cả trạng thái</option>
+            <option value="REMAINING">Còn lại (Chưa hoàn thành)</option>
+            <option value="Đã hoàn thành">Đã hoàn thành</option>
+            <option value="Đang xử lý">Đang xử lý</option>
+            <option value="Chưa bắt đầu">Chưa bắt đầu</option>
+            <option value="Bị nghẽn / Trễ hạn">Bị nghẽn / Trễ hạn</option>
+          `;
+          statusFltr.value = v;
+        }
+
+        const tAddNew = document.getElementById('textBtnAddNew'); if (tAddNew) tAddNew.textContent = "+ Thêm";
+        const tDens = document.getElementById('densityToggleText'); if (tDens) tDens.textContent = "Thu Gọn";
+        const tDraw = document.getElementById('toggleAllDrawersText'); if (tDraw) tDraw.textContent = "Mở Rộng";
       }
+
+      if (typeof updateProjectSelectorUI === 'function') updateProjectSelectorUI();
 
       if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
@@ -2212,9 +2340,9 @@
 
         const defaultProj = {
           id: 'proj_' + Date.now(),
-          name: 'Dự Án Mẫu 1 (Tiêu Chuẩn)',
-          projectType: 'Khu Công Nghiệp / CCN',
-          location: 'Toàn quốc',
+          name: (currentLang === 'en' ? 'Benchmark Model Project 1 (Standard)' : 'Dự Án Mẫu 1 (Tiêu Chuẩn)'),
+          projectType: (currentLang === 'en' ? 'Industrial Real Estate' : 'Khu Công Nghiệp / CCN'),
+          location: (currentLang === 'en' ? 'Nationwide' : 'Toàn quốc'),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           scenarioKey: 'GREENFIELD',
@@ -2292,12 +2420,26 @@
       render();
     }
 
+
+    function getLocalizedProjectName(p) {
+      if (!p || !p.name) return '';
+      if (currentLang === 'en') {
+        if (p.name === 'Dự Án Mẫu 1 (Tiêu Chuẩn)' || p.name === 'Dự án Mẫu 1 (Tiêu Chuẩn)' || p.name === 'Dự Án Đầu Tư Tổ Hợp') {
+          return 'Benchmark Model Project 1 (Standard)';
+        }
+        if (p.name.startsWith('Dự Án Mẫu ') || p.name.startsWith('Dự án Mẫu ')) {
+          return p.name.replace(/Dự [áÁ]n Mẫu /i, 'Benchmark Project ');
+        }
+      }
+      return p.name;
+    }
+
     function updateProjectSelectorUI() {
       const sel = document.getElementById('projectSelector');
       if (!sel) return;
       sel.innerHTML = projectsList.map(p => `
         <option value="${escapeHtml(p.id)}" class="bg-slate-900 text-white py-1" ${p.id === currentProjectId ? 'selected' : ''}>
-          ${escapeHtml(p.name)} (${(p.tasks || []).length} việc)
+          ${escapeHtml(getLocalizedProjectName(p))} (${(p.tasks || []).length} ${currentLang === 'en' ? 'tasks' : 'việc'})
         </option>
       `).join('');
     }
@@ -3400,7 +3542,7 @@
       return activeProj && activeProj.scenarioKey ? activeProj.scenarioKey : 'GREENFIELD';
     }
 
-    // Điều phối di chuyển nút Gantt lên cạnh nút Thu gọn bảng phân tích khi Áp Dụng
+    // Điều phối di chuyển nút Gantt lên cạnh nút Thu gọn bảng phân tích khi Apply
     function attachGanttButtonToBreakdown(showInBreakdown) {
       const btn = document.getElementById('btnOpenGantt');
       const targetMa = document.getElementById('maGanttBtnWrapper');
@@ -5095,7 +5237,7 @@
           <span class="p-1 bg-slate-100 text-slate-800 border border-slate-200 rounded-md shadow-2xs">
             <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-slate-700"></i>
           </span>
-          <h2 class="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide">Tiến Độ Dự Án &amp; Biểu Đồ Gantt (CPM)</h2>
+          <h2 class="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-wide">Project Schedule &amp; CPM Gantt</h2>
           <span id="ganttProjectBadge" class="px-2 py-0.5 text-xs rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold">Dự án: Sing Viet City</span>
           <span id="ganttActiveProjectTypeBadge" class="px-2 py-0.5 text-xs rounded-md bg-blue-50 text-blue-700 border border-blue-200 font-semibold">1. Khu Đô Thị / Nhà Ở</span>
         </div>
@@ -5103,29 +5245,29 @@
         <!-- Cụm Phải: Bộ Điều Khiển Tiến Độ & Nút Đóng -->
         <div class="flex items-center gap-2 flex-wrap text-xs">
           <div class="flex items-center gap-1">
-            <label for="ganttStartInput" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Bắt Đầu:</label>
+            <label for="ganttStartInput" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Start:</label>
             <input type="date" id="ganttStartInput" class="bg-white border border-slate-300 rounded-md px-2 py-0.5 text-xs text-slate-800 font-semibold focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs" />
           </div>
           <div class="flex items-center gap-1">
-            <label for="ganttTargetInput" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Mục Tiêu:</label>
+            <label for="ganttTargetInput" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Target:</label>
             <input type="date" id="ganttTargetInput" class="bg-white border border-slate-300 rounded-md px-2 py-0.5 text-xs text-slate-800 font-semibold focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs" />
           </div>
           <div class="flex items-center gap-1">
-            <label for="ganttScenarioSelect" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Kịch Bản:</label>
+            <label for="ganttScenarioSelect" class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Scenario:</label>
             <select id="ganttScenarioSelect" class="bg-white border border-slate-300 rounded-md px-1.5 py-0.5 text-xs text-slate-800 font-bold focus:outline-none focus:ring-1 focus:ring-slate-400 shadow-2xs">
-              <option value="STATUTORY">Lý Thuyết (Theo luật định)</option>
-              <option value="REALISTIC" selected>Tối Ưu (Thực tế triển khai)</option>
-              <option value="FAST_TRACK">Song Song (Triển khai cuốn chiếu)</option>
+              <option value="STATUTORY">Statutory (Prescribed durations)</option>
+              <option value="REALISTIC" selected>Optimized (Realistic deployment)</option>
+              <option value="FAST_TRACK">Fast-Track (Concurrent rollout)</option>
             </select>
           </div>
           <label class="inline-flex items-center gap-1 cursor-pointer text-xs text-rose-700 font-semibold bg-rose-50 border border-rose-200 rounded-md px-2 py-0.5 shadow-2xs hover:bg-rose-100 transition">
             <input type="checkbox" id="ganttToggleCriticalOnly" class="w-3.5 h-3.5 rounded text-rose-600 bg-white border-slate-300 focus:ring-rose-500 cursor-pointer" />
-            Đường Găng
+            Critical Path
           </label>
           <button id="btnRecalculateGantt" class="py-1 px-2.5 bg-slate-900 hover:bg-black text-white font-bold text-xs rounded-md transition shadow-xs flex items-center gap-1">
-            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Tính Lại
+            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Recalculate
           </button>
-          <button id="btnCloseGantt" onclick="closeGanttModal()" class="p-1 text-slate-400 hover:text-slate-800 rounded-md hover:bg-slate-100 transition ml-1" title="Đóng cửa sổ (Esc)">
+          <button id="btnCloseGantt" onclick="closeGanttModal()" class="p-1 text-slate-400 hover:text-slate-800 rounded-md hover:bg-slate-100 transition ml-1" title="Close window (Esc)">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
         </div>
@@ -5136,7 +5278,7 @@
         <!-- Cụm Trái: Nhãn nhận diện phân tích -->
         <div class="hidden md:flex items-center gap-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0">
           <i data-lucide="activity" class="w-3.5 h-3.5 text-slate-400"></i>
-          <span>Phân Tích Tiến Độ Đường Găng</span>
+          <span>Critical Path Method (CPM) Analysis</span>
         </div>
 
         <!-- Cụm Phải: Cụm chỉ số tổng thời gian & CPM thu gọn dồn sang phải -->
