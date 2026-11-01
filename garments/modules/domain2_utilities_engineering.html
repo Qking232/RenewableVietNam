@@ -228,73 +228,32 @@
         </div>
       </div>
 
-            <!-- INTERACTIVE 2.5D ISOMETRIC 3D PLANT MAP VIEWPORT -->
-      <div id="map-container" class="relative w-full overflow-hidden bg-slate-100 rounded-lg border border-slate-300 shadow-inner" style="height: clamp(400px, 62vh, 620px); cursor: grab;">
-        <!-- Floating HUD Control Bar -->
-        <div class="absolute top-4 right-4 z-20 flex flex-col gap-1.5 bg-white/95 border border-slate-300 shadow-md backdrop-blur-sm p-1.5 rounded-lg shadow-xl backdrop-blur-sm select-none">
-          <button id="btn-zoom-in" type="button" title="Zoom In (+)" class="w-8 h-8 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 hover:text-white font-bold text-base transition-colors cursor-pointer">+</button>
-          <button id="btn-zoom-out" type="button" title="Zoom Out (-)" class="w-8 h-8 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 hover:text-white font-bold text-base transition-colors cursor-pointer">-</button>
-          <button id="btn-zoom-reset" type="button" title="Reset View (100% Fit)" class="w-8 h-8 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 hover:text-white font-mono text-xs transition-colors font-bold cursor-pointer">Fit</button>
-          <button id="btn-toggle-fs" type="button" title="Toggle Fullscreen" class="w-8 h-8 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 hover:text-white text-xs transition-colors cursor-pointer">FS</button>
-        </div>
-
-        <!-- Floating Instructions Badge -->
-        <div class="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-md bg-white/90 border border-slate-300 text-[11px] font-mono text-slate-600 shadow-sm pointer-events-none flex items-center gap-2 shadow-md">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span class="hidden sm:inline">Hold &amp; Drag to Pan | Scroll to Zoom | Double-Click to Center</span><span class="sm:hidden">Touch to Pan | Pinch or +/- to Zoom</span>
-        </div>
-
-        <!-- Current Zoom Indicator Badge -->
-        <div id="zoom-level-badge" class="absolute bottom-3 right-3 z-20 px-2.5 py-1 rounded-md bg-slate-900/85 border border-slate-700/80 text-[10.5px] font-mono text-sky-400 font-bold pointer-events-none shadow-md">
-          100%
-        </div>
-
-        <!-- SLIDE-OVER ZONE SPECIFICATION DRAWER -->
-        <div id="zone-spec-drawer" class="absolute top-0 right-0 h-full w-full sm:w-[390px] md:w-[440px] bg-white/95 backdrop-blur-md border-l border-slate-300 shadow-2xl z-30 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col pointer-events-auto select-text">
-          <!-- Drawer Header -->
-          <div class="p-4 border-b border-slate-200 bg-slate-50/90 flex items-start justify-between gap-3 shrink-0">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <span id="drawer-zone-badge" class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-200">
-                  Zone Spec
-                </span>
-                <span id="drawer-zone-capacity" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold">
-                  Capacity
-                </span>
-              </div>
-              <h3 id="drawer-zone-title" class="text-sm font-bold text-slate-900 leading-snug">
-                Zone Title
-              </h3>
+            <!-- SPLIT-VIEW GRID: 2.5D ISOMETRIC MAP (LEFT) + PERMANENT ZONE SPECIFICATION PANEL (RIGHT) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        <!-- LEFT: 2.5D Isometric 3D Plant Map Viewport -->
+        <div class="lg:col-span-7 xl:col-span-8 flex flex-col">
+          <div id="map-container" class="relative w-full overflow-hidden bg-slate-100 rounded-lg border border-slate-300 shadow-inner h-[520px] sm:h-[580px] lg:h-[640px]" style="cursor: grab;">
+            <!-- Floating HUD Control Bar -->
+            <div class="absolute top-3 right-3 z-20 flex flex-col gap-1.5 bg-white/95 border border-slate-300 shadow-md backdrop-blur-sm p-1.5 rounded-lg select-none">
+              <button id="btn-zoom-in" type="button" title="Zoom In (+)" class="w-7 h-7 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 font-bold text-sm transition-colors cursor-pointer">+</button>
+              <button id="btn-zoom-out" type="button" title="Zoom Out (-)" class="w-7 h-7 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 font-bold text-sm transition-colors cursor-pointer">-</button>
+              <button id="btn-zoom-reset" type="button" title="Reset View (100% Fit)" class="w-7 h-7 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 font-mono text-[10px] transition-colors font-bold cursor-pointer">Fit</button>
+              <button id="btn-toggle-fs" type="button" title="Toggle Fullscreen" class="w-7 h-7 flex items-center justify-center rounded bg-slate-100 hover:bg-sky-600 text-slate-700 hover:text-white border border-slate-200 text-[10px] transition-colors cursor-pointer">FS</button>
             </div>
-            <button id="btn-close-drawer" type="button" title="Close Panel (Esc)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-base transition-colors cursor-pointer shrink-0">
-              ✕
-            </button>
-          </div>
 
-          <!-- Drawer Body (Scrollable) -->
-          <div id="drawer-zone-body" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs overscroll-contain">
-            <!-- Dynamic Content Injected Here -->
-          </div>
-
-          <!-- Drawer Footer -->
-          <div class="p-3 border-t border-slate-200 bg-slate-50/95 flex items-center justify-between gap-2 text-xs shrink-0">
-            <div class="flex items-center gap-1.5">
-              <button id="btn-prev-zone" type="button" class="px-2.5 py-1.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-semibold text-slate-700 transition-colors flex items-center gap-1 cursor-pointer">
-                <span>◀</span> Prev
-              </button>
-              <button id="btn-next-zone" type="button" class="px-2.5 py-1.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-semibold text-slate-700 transition-colors flex items-center gap-1 cursor-pointer">
-                Next <span>▶</span>
-              </button>
+            <!-- Floating Instructions Badge -->
+            <div class="absolute bottom-3 left-3 z-20 px-3 py-1.5 rounded-md bg-white/90 border border-slate-300 text-[11px] font-mono text-slate-600 shadow-sm pointer-events-none flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span class="hidden sm:inline">Hold &amp; Drag to Pan | Scroll to Zoom | Double-Click to Center</span>
+              <span class="sm:hidden">Touch to Pan | Pinch to Zoom</span>
             </div>
-            <button id="btn-jump-tab" type="button" class="px-3 py-1.5 rounded bg-sky-700 hover:bg-sky-800 text-white font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
-              <span>View Engineering Tab</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
 
+            <!-- Current Zoom Indicator Badge -->
+            <div id="zoom-level-badge" class="absolute bottom-3 right-3 z-20 px-2.5 py-1 rounded-md bg-slate-900/85 border border-slate-700/80 text-[10.5px] font-mono text-sky-400 font-bold pointer-events-none shadow-md">
+              100%
+            </div>
 
-        <!-- Calibrated Isometric SVG Canvas -->
+            <!-- Calibrated Isometric SVG Canvas -->
         <svg id="iso-map-svg" viewBox="0 0 1200 650" class="w-full h-full select-none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="isoGrid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -2475,6 +2434,55 @@
     
   </g>
 </svg>
+          </div>
+        </div>
+
+        <!-- RIGHT: Permanent Docked Zone Specification Panel -->
+        <div class="lg:col-span-5 xl:col-span-4 flex flex-col">
+          <!-- SLIDE-OVER ZONE SPECIFICATION DRAWER -->
+        <div id="zone-spec-drawer" class="w-full h-[520px] sm:h-[580px] lg:h-[640px] bg-white rounded-lg border border-slate-300 shadow-sm flex flex-col select-text">
+          <!-- Drawer Header -->
+          <div class="p-4 border-b border-slate-200 bg-slate-50/90 flex items-start justify-between gap-3 shrink-0">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span id="drawer-zone-badge" class="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-200">
+                  Zone Spec
+                </span>
+                <span id="drawer-zone-capacity" class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold">
+                  Capacity
+                </span>
+              </div>
+              <h3 id="drawer-zone-title" class="text-sm font-bold text-slate-900 leading-snug">
+                Zone Title
+              </h3>
+            </div>
+            <button id="btn-close-drawer" type="button" title="Reset View (Zone 1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-base transition-colors cursor-pointer shrink-0">
+              ✕
+            </button>
+          </div>
+
+          <!-- Drawer Body (Scrollable) -->
+          <div id="drawer-zone-body" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs overscroll-contain">
+            <!-- Dynamic Content Injected Here -->
+          </div>
+
+          <!-- Drawer Footer -->
+          <div class="p-3 border-t border-slate-200 bg-slate-50/95 flex items-center justify-between gap-2 text-xs shrink-0">
+            <div class="flex items-center gap-1.5">
+              <button id="btn-prev-zone" type="button" class="px-2.5 py-1.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-semibold text-slate-700 transition-colors flex items-center gap-1 cursor-pointer">
+                <span>◀</span> Prev
+              </button>
+              <button id="btn-next-zone" type="button" class="px-2.5 py-1.5 rounded border border-slate-200 bg-white hover:bg-slate-100 font-semibold text-slate-700 transition-colors flex items-center gap-1 cursor-pointer">
+                Next <span>▶</span>
+              </button>
+            </div>
+            <button id="btn-jump-tab" type="button" class="px-3 py-1.5 rounded bg-sky-700 hover:bg-sky-800 text-white font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm">
+              <span>View Engineering Tab</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-[11px] pt-1 font-mono text-slate-600">
@@ -5276,7 +5284,7 @@
       }
     };
 
-    let activeZoneKey = "1";
+    let activeZoneKey = "7";
 
     function renderZoneSidebar(key) {
       const spec = ZONE_SPECS[key];
@@ -5365,23 +5373,11 @@
     }
 
     function openZoneSidebar(key) {
-      const drawer = document.getElementById("zone-spec-drawer");
-      if (!drawer) return;
       renderZoneSidebar(key);
-      drawer.classList.remove("translate-x-full");
-      drawer.classList.add("translate-x-0");
     }
 
     function closeZoneSidebar() {
-      const drawer = document.getElementById("zone-spec-drawer");
-      if (!drawer) return;
-      drawer.classList.remove("translate-x-0");
-      drawer.classList.add("translate-x-full");
-      document.querySelectorAll('.map-pin').forEach(p => {
-        p.classList.remove('is-active');
-        const circle = p.querySelector('circle');
-        if (circle) circle.setAttribute('stroke-width', '2');
-      });
+      renderZoneSidebar("1");
     }
 
     // Step to Next/Prev Zone
@@ -5451,15 +5447,7 @@
         });
       }
 
-      // Close on outside map click
-      const mapContainer = document.getElementById("map-container");
-      if (mapContainer) {
-        mapContainer.addEventListener("click", (e) => {
-          if (!e.target.closest("#zone-spec-drawer") && !e.target.closest(".map-pin") && !e.target.closest("button")) {
-            closeZoneSidebar();
-          }
-        });
-      }
+      // Map click-to-close removed for permanent docked display
 
       // Close on Escape key
       document.addEventListener("keydown", (e) => {
@@ -5486,6 +5474,8 @@
           }
         });
       });
+      // Initialize default active zone on page load
+      renderZoneSidebar(activeZoneKey);
     })();
 </script>
 </body>
