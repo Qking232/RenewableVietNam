@@ -1,7 +1,7 @@
 /**
  * Executive Portal Module Manifest - Rev_Final
  * Target: Garments Company Regional Engineering & Capital Projects Portal
- * Architecture: Executive 6-Segment Simultaneous Visibility Grid
+ * Architecture: Executive 6-Module Portfolio Grid
  */
 window.PORTAL_MODULES = [
   {
@@ -25,41 +25,31 @@ window.PORTAL_MODULES = [
     file: "modules/domain1_pccc_permitting.html"
   },
   {
-    id: "domain2_utilities",
+    id: "domain2_engineering_esg",
     tag: "DOMAIN 2",
-    shortTitle: "Plant & Utilities",
-    category: "Core Engineering",
-    title: "Domain 2: Plant Engineering & Utilities",
-    description: "35,000 m² 2.5D Isometric Plant Map, 15 TPH Biomass Steam, 1,573 CFM VFD Compressed Air, 35 ACH Celdek HVAC, and 1,200 m³/d ZLD ETP.",
-    badge: "Engineering",
+    shortTitle: "Plant & ESG Tech",
+    category: "Core Engineering & ESG",
+    title: "Domain 2: Plant Engineering, Clean Utilities & ESG Infrastructure",
+    description: "35,000 m² 2.5D Plant Map, 15 TPH Biomass Steam, 1,573 CFM VFD Air, 2.80 MWp Solar + 1.2 MWh BESS, 180 km/h PEB Typhoon, AWS Water & LEED Platinum (84 Pts).",
+    badge: "Engineering & ESG",
     file: "modules/domain2_utilities_engineering.html"
   },
   {
-    id: "domain3_esg",
+    id: "domain3_capex",
     tag: "DOMAIN 3",
-    shortTitle: "ESG & Clean Tech",
-    category: "ESG & Clean Technology",
-    title: "Domain 3: ESG, Clean Technology & Environmental Stewardship",
-    description: "2.80 MWp Rooftop Solar PV, -10,838 tCO₂e/yr Net Carbon Abatement, LEED v4 BD+C Platinum (84 Pts), and Higg FEM 4.0 Standards.",
-    badge: "ESG & Clean Tech",
-    file: "modules/domain3_esg_leed_solar.html"
-  },
-  {
-    id: "domain4_capex",
-    tag: "DOMAIN 4",
     shortTitle: "Cost & Contracts",
     category: "Commercial & Controls",
-    title: "Domain 4: Project Cost & Contracts",
+    title: "Domain 3: Project Cost & Contracts",
     description: "$14.50M BAC Breakdown, EVM S-Curve Progress Verification, 7-Year Operating DCF Valuation ($1.85M NPV, 15.65% IRR), and FIDIC Risk Allocation.",
     badge: "Cost & Contracts",
     file: "modules/domain4_capex_calsheet.html"
   },
   {
-    id: "domain5_handover",
-    tag: "DOMAIN 5",
+    id: "domain4_handover",
+    tag: "DOMAIN 4",
     shortTitle: "T&C Handover",
     category: "Operational Readiness",
-    title: "Domain 5: Testing, Commissioning & Handover",
+    title: "Domain 4: Testing, Commissioning & Handover",
     description: "Integrated T&C Protocols (ASHRAE 0-2019), Decree 06/2021 Statutory Hoan Cong, 9.8s Blackout ATS Transfer, FIDIC Clause 10.1 TOC, and $725k DLP Bond.",
     badge: "T&C Handover",
     file: "modules/domain5_commissioning_handover.html"
