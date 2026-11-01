@@ -1,7 +1,7 @@
 /**
  * Executive Portal Module Manifest - Rev_Final
  * Target: Garments Company Regional Engineering & Capital Projects Portal
- * Architecture: Executive 6-Module Portfolio Grid
+ * Architecture: Executive 7-Module Portfolio Grid
  */
 window.PORTAL_MODULES = [
   {
@@ -63,5 +63,15 @@ window.PORTAL_MODULES = [
     description: "Executive Capital Authorization Dossier: Technical Sizing, Financial Sensitivity Stress Testing, and Formal Board Resolution.",
     badge: "Board Report",
     file: "modules/bod_capex_charter_report.html"
+  },
+  {
+    id: "invest_engine",
+    tag: "INVEST PORTAL",
+    shortTitle: "Invest Engine",
+    category: "National Investment & M&A",
+    title: "Vietnam Investment Legal Management & M&A Engine",
+    description: "Vietnam Clean Energy & Industrial Project Investment Gateway: Statutory Legal Triad, M&A Deal Flow, Industrial Park Zoning, EV Infrastructure & PDP8 Capacity Quotas.",
+    badge: "Invest Engine",
+    file: "https://invest.renewablevietnam.com/"
   }
 ];
