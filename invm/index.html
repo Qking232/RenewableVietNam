@@ -844,14 +844,14 @@
         <table class="w-full min-w-[960px] text-left border-collapse text-xs">
           <thead class="bg-slate-100 border-b-2 border-slate-300">
             <tr class="text-slate-800 font-bold uppercase tracking-wider text-[11px]">
-              <th scope="col" class="py-2.5 px-2 w-20 text-center border-r border-slate-200">Mã TT</th>
-              <th scope="col" class="py-2.5 px-2 text-center w-36 min-w-[125px] border-r border-slate-200">Trạng Thái</th>
-              <th scope="col" class="py-2.5 px-3 min-w-[240px] border-r border-slate-200">Thủ Tục</th>
-              <th scope="col" class="py-2.5 px-2.5 min-w-[120px] border-r border-slate-200">Thời Gian</th>
-              <th scope="col" class="py-2.5 px-2 w-32 min-w-[115px] text-center border-r border-slate-200">Hồ Sơ Đầu Vào</th>
-              <th scope="col" class="py-2.5 px-3 min-w-[200px] border-r border-slate-200">Kết Quả &amp; Cơ Quan Phê Duyệt</th>
-              <th scope="col" class="py-2.5 px-2.5 w-24 border-r border-slate-200">Phụ Trách</th>
-              <th scope="col" class="py-2.5 px-2 text-center w-14 no-print">Thao Tác</th>
+              <th scope="col" id="thColId" class="py-2.5 px-2 w-20 text-center border-r border-slate-200">Task ID</th>
+              <th scope="col" id="thColStatus" class="py-2.5 px-2 text-center w-36 min-w-[125px] border-r border-slate-200">Status</th>
+              <th scope="col" id="thColTitle" class="py-2.5 px-3 min-w-[240px] border-r border-slate-200">Milestone Name</th>
+              <th scope="col" id="thColTimeline" class="py-2.5 px-2.5 min-w-[120px] border-r border-slate-200">Timeline</th>
+              <th scope="col" id="thColSubInputs" class="py-2.5 px-2 w-32 min-w-[115px] text-center border-r border-slate-200">Sub-Checklist</th>
+              <th scope="col" id="thColOutputs" class="py-2.5 px-3 min-w-[200px] border-r border-slate-200">Key Deliverables &amp; Authority</th>
+              <th scope="col" id="thColPic" class="py-2.5 px-2.5 w-24 border-r border-slate-200">Lead / PIC</th>
+              <th scope="col" id="thColActions" class="py-2.5 px-2 text-center w-14 no-print">Actions</th>
             </tr>
           </thead>
           <tbody id="checklistTableBody" class="divide-y divide-slate-200 text-slate-800">
@@ -1107,6 +1107,143 @@
     // =========================================================================
     const I18N_LOCALE_KEY = 'INVEST_ENGINE_LOCALE';
     let currentLang = localStorage.getItem(I18N_LOCALE_KEY) || 'en';
+
+    
+    const I18N_DELIVERABLES_EN = {
+      "MA.01": "Executed NDA and MOU/Term Sheet signed by legal representatives; Active VDR room access.",
+      "MA.02": "Comprehensive Due Diligence Red Flag Report & Transaction Structuring Advisory (Share Deal vs Asset Deal).",
+      "MA.03": "Definitive SPA/APA executed; Bank Escrow Account Agreement; Signed Conditions Precedent (CPs) Protocol.",
+      "MA.04": "Formal Decision approving full or partial project transfer issued by Provincial PPC (or Prime Minister).",
+      "MA.05": "Tax Assessment Notice & State Treasury Tax Payment Receipt; Formal Tax Clearance Certificate.",
+      "MA.06": "Amended Investment Registration Certificate (IRC) recording new investor entity and schedule.",
+      "MA.07": "Amended Enterprise Registration Certificate (ERC); Formal Comprehensive Project Closing Protocol.",
+      "G1.01": "Formal Decision on In-Principle Investment Approval (Chấp Thuận Chủ Trương Đầu Tư).",
+      "G1.02": "Decision approving Land Auction Results or Decision approving Land-Using Bidding Results.",
+      "G1.03": "Original Investment Registration Certificate (IRC) with national project identification code.",
+      "G1.04": "Enterprise Registration Certificate (ERC), Project Tax ID, and Corporate Legal Seal.",
+      "G1.05": "Written Certification of Investment Deposit / Bank Escrow Guarantee (Ký Quỹ Dự Án).",
+      "G2.01": "Planning Information Document / Urban Zoning Certificate confirming land use parameters & building envelopes.",
+      "G2.02": "Formal Decision approving 1/500 Detailed Master Planning Task (Nhiệm Vụ Quy Hoạch 1/500).",
+      "G2.03": "Public Notice Minutes & Summary Report on Community Consultation endorsed by Commune PPC.",
+      "G2.04": "Decision approving 1/500 Detailed Master Plan and Certified Stamped Planning Drawings.",
+      "G2.05": "Highway Connection Approval, Power Supply Agreement, and Water Supply & Drainage Agreements.",
+      "G3.01": "Decision approving Compensation, Support and Resettlement Plan per Decree 151/2025/ND-CP.",
+      "G3.02": "Minutes of Compensation Disbursements & 100% Clean Site Handover Protocol.",
+      "G3.03": "Provincial People's Committee Decision on Land Allocation / Land Lease / Purpose Conversion.",
+      "G3.04": "Physical Boundary Handover Protocol with Cadastral Marker Sizing & Land Lease Agreement.",
+      "G3.05": "Tax Authority Certification of 100% Full Land Use Fee & Rental Settlement (No Debt).",
+      "G3.06": "Land Use Right Certificate (LURC - Sổ Hồng / Sổ Đỏ) issued in the name of the Project Company.",
+      "G4.01": "Decision approving EIA Appraisal Results or Formal Statutory Environmental License (GPMT).",
+      "G4.02": "Fire Safety (PCCC) Design Appraisal Certificate and Certified Fire Protection Drawings.",
+      "G4.03": "Aviation Obstacle Height Clearance Certification issued by General Staff - Ministry of Defense.",
+      "G4.04": "Water Resource Exploitation Permit & Industrial Wastewater Discharge License.",
+      "G5.01": "Detailed Technical Construction Drawings (TKBVTC) and Structural Engineering Calculations.",
+      "G5.02": "Independent Third-Party Verification Report on Structural Safety and Foundation Stability.",
+      "G5.03": "Specialized Construction Authority Verification Notice (Decree 15/2021/ND-CP).",
+      "G5.04": "Formal Statutory Building Permit (GPXD Móng / Thân) issued by Department of Construction.",
+      "G5.05": "Commencement Notice & Site Mobilization Protocol submitted to Ward PPC & Construction Inspectorate.",
+      "G6.01": "Written Inspection Record & Statutory Fire Safety Acceptance Certificate (Nghiệm Thu PCCC).",
+      "G6.02": "Trial Run Monitoring Report & Environmental Protection Acceptance Inspection Record.",
+      "G6.03": "State Authority Construction Acceptance Protocol under Decree 06/2021/ND-CP.",
+      "G6.04": "Technical Infrastructure Interconnection Protocols, Grid Energization & Commercial Operation (COD).",
+      "G6.05": "Amended LURC Registering On-Land As-Built Industrial Factory Assets (Hoàn Công)."
+    };
+
+    const I18N_AUTHORITIES_EN = {
+      "MA.01": "Seller & Buyer Legal Representatives",
+      "MA.02": "Independent Legal, Financial & Technical Counsels; Tax Department & Land Registration Office",
+      "MA.03": "Board of Directors / Shareholder Assemblies; Notary Public; Commercial Escrow Bank",
+      "MA.04": "Tier 1: Provincial PPC (Dept. of Construction appraisal) / Prime Minister; Industrial Zone Authority",
+      "MA.05": "Tier 1: Provincial Tax Department; Regional Corporate Tax Office",
+      "MA.06": "Tier 1: Department of Finance / DPI; Industrial Zone Authority (BQL KCN)",
+      "MA.07": "Tier 1: Business Registration Office (BRO) - Department of Finance / DPI",
+      "G1.01": "Tier 1: National Assembly / Prime Minister / Provincial PPC (DPI Lead); Tier 2: Commune PPC",
+      "G1.02": "Tier 1: Provincial PPC; Department of Finance / DPI (Bidding Lead); Land Development Center",
+      "G1.03": "Tier 1: Department of Finance / DPI; Industrial Zone Management Board (BQL KCN)",
+      "G1.04": "Tier 1: Business Registration Office (BRO) - Department of Finance / DPI",
+      "G1.05": "Tier 1: Department of Finance / DPI coordinating with Commercial Bank",
+      "G2.01": "Tier 1: Department of Construction (DOC); Tier 2: Commune / Ward PPC",
+      "G2.02": "Tier 1: Provincial PPC (Dept. of Construction Lead); Industrial Zone Management Board",
+      "G2.03": "Tier 1: Dept. of Construction Direction; Tier 2: Commune / Ward PPC & Fatherland Front",
+      "G2.04": "Tier 1: Provincial PPC (Dept. of Construction Lead); Industrial Zone Management Board",
+      "G2.05": "Tier 1: Dept. of Construction, Road Administration of Vietnam, Power Company (EVN), Water Utility",
+      "G3.01": "Tier 1: Provincial PPC; Land Fund Development Center; Tier 2: Commune PPC",
+      "G3.02": "Tier 1: Provincial PPC; Compensation Council; Tier 2: Commune PPC",
+      "G3.03": "Tier 1: Provincial PPC (DONRE Lead); Industrial Zone Authority; Tier 2: Commune PPC",
+      "G3.04": "Tier 1: DONRE; Land Registration Office (LRO); Tier 2: Commune PPC",
+      "G3.05": "Tier 1: Provincial Land Valuation Appraisal Council; DONRE; Provincial PPC; Tax Department",
+      "G3.06": "Tier 1: Provincial PPC / DONRE; Regional Land Registration Office (LRO)",
+      "G4.01": "Tier 1: MONRE (Group I projects) or Provincial PPC (DONRE); Industrial Zone Authority",
+      "G4.02": "Tier 1: Fire & Rescue Police Department (C07) or Provincial Fire Police (PC07)",
+      "G4.03": "Central Authority: Operations Department - General Staff (Ministry of National Defense)",
+      "G4.04": "Tier 1: MONRE or Provincial DONRE; Industrial Zone Management Board",
+      "G5.01": "Project Investor coordinating with Certified Engineering & Architecture Design Consultant",
+      "G5.02": "Tier 1: Specialized Construction Body under Ministry of Construction (MOC) / Dept. of Construction",
+      "G5.03": "Project Investor (formal approval based on Certified Independent Verification Report)",
+      "G5.04": "Tier 1: Provincial Department of Construction (DOC) / Industrial Zone Management Board",
+      "G5.05": "Tier 1: Department of Construction; Tier 2: Commune / Ward PPC & Construction Inspectorate",
+      "G6.01": "Tier 1: Fire & Rescue Police Department (C07) or Provincial Fire Police (PC07)",
+      "G6.02": "Tier 1: State Inspection Council / Department of Construction",
+      "G6.03": "Tier 1: Ministry of Natural Resources & Environment (MONRE) or Provincial DONRE",
+      "G6.04": "Project Investor, General Contractor & Surveying Consultant; Regional Power & Water Utilities",
+      "G6.05": "Tier 1: Regional Land Registration Office (LRO) under Provincial DONRE"
+    };
+
+    const I18N_PIC_EN = {
+      "Ban Đầu tư & Pháp chế M&A": "M&A & Investment Legal Division",
+      "Tư vấn Pháp lý & Tài chính": "Independent Legal & Financial Counsel",
+      "Ban Pháp chế & Tư vấn Pháp lý": "Legal Counsel & Corporate Affairs",
+      "Ban Đầu tư & Phát triển Dự án": "Investment & Project Development Division",
+      "Ban Đầu tư & Phát triển": "Investment & Project Development Division",
+      "Ban Tài chính Kế toán": "Finance & Accounting Division",
+      "Ban Tài chính Dự án": "Project Finance Division",
+      "Ban Tài chính & Ban Pháp chế": "Finance & Legal Compliance Division",
+      "Ban Pháp chế Dự án": "Project Legal Affairs Division",
+      "Ban Pháp chế & Ban Quản lý Dự án": "Legal & Project Management Division",
+      "Ban Pháp chế": "Legal Compliance Division",
+      "Ban Pháp chế Doanh nghiệp": "Corporate Legal Division",
+      "Ban Pháp chế Đất đai": "Land Legal & Permitting Division",
+      "Ban Pháp chế Bất động sản": "Real Estate Legal Division",
+      "Ban Đấu thầu & Mua sắm": "Bidding & Procurement Division",
+      "Ban Thiết kế & Quy hoạch": "Urban Planning & Architecture Division",
+      "Ban GPMB & Cộng đồng": "Site Clearance & Public Affairs",
+      "Ban Giải phóng Mặt bằng": "Site Clearance Division",
+      "Ban Quản lý Kỹ thuật & Hạ tầng": "Engineering & Infrastructure Division",
+      "Ban Quản lý Dự án & Khảo sát": "PMU & Land Survey Division",
+      "Ban Kỹ thuật & Môi trường": "Engineering & Environmental Division",
+      "Ban Cơ điện (MEP) & PCCC": "MEP & Fire Protection Engineering",
+      "Ban Quản lý Thiết kế": "Design Management Division",
+      "Ban Quản lý Dự án & Kỹ thuật": "PMU & Technical Division",
+      "Ban Kỹ thuật & Ban Chi phí (QS)": "Engineering & Quantity Surveying (QS)",
+      "Ban Pháp chế & Ban QLDA": "Legal & Project Management Unit",
+      "Ban Quản lý Dự án & Giám đốc Điều hành DA": "Project Management Unit & Project Director",
+      "Ban Cơ điện (MEP) & Ban QLDA": "MEP Engineering & Project Management Unit",
+      "Giám đốc Dự án & Ban Quản lý Chất lượng": "Project Director & QA/QC Division",
+      "Ban Môi trường & Ban Vận hành (O&M)": "Environmental & Operations Management (O&M)",
+      "Ban Kỹ thuật & Ban Trắc địa": "Technical & Geodetic Survey Division",
+      "Ban Quản lý Dự án (PMU)": "Project Management Unit (PMU)"
+    };
+
+    function getLocalizedDeliverable(task) {
+      if (currentLang === 'en' && I18N_DELIVERABLES_EN[task.id]) {
+        return I18N_DELIVERABLES_EN[task.id];
+      }
+      return task.outputs || 'Pending statutory output document';
+    }
+
+    function getLocalizedAuthority(task) {
+      if (currentLang === 'en' && I18N_AUTHORITIES_EN[task.id]) {
+        return I18N_AUTHORITIES_EN[task.id];
+      }
+      return task.authority || '—';
+    }
+
+    function getLocalizedPic(task) {
+      if (currentLang === 'en' && I18N_PIC_EN[task.pic]) {
+        return I18N_PIC_EN[task.pic];
+      }
+      return task.pic || (currentLang === 'en' ? 'Unassigned' : 'Chưa gán');
+    }
 
     const I18N_TASK_TITLES_EN = {
       "MA.01": "Execute Non-Disclosure Agreement (NDA) & Term Sheet / Memorandum of Understanding (MOU)",
@@ -2066,15 +2203,15 @@
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-slate-800 shadow-xs"></span>
-                  <span class="font-extrabold text-xs uppercase tracking-wider text-slate-900">${currentPhaseTracker === 'M&A & DD' ? 'KHỐI M&A: THẨM ĐỊNH CHUYÊN SÂU & GIAO DỊCH DỰ ÁN (DD)' : escapeHtml(currentPhaseTracker)}</span>
+                  <span class="font-extrabold text-xs uppercase tracking-wider text-slate-900">${currentPhaseTracker === 'M&A & DD' ? (currentLang === 'en' ? 'M&A MODULE: DUE DILIGENCE &amp; TRANSACTION CLOSING' : 'KHỐI M&A: THẨM ĐỊNH CHUYÊN SÂU &amp; GIAO DỊCH DỰ ÁN (DD)') : escapeHtml(getLocalizedPhaseName(currentPhaseTracker))}</span>
                   <span class="text-[10.5px] font-semibold text-slate-600 bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-2xs">
-                    ${phaseTasks.length} thủ tục
+                    ${phaseTasks.length} ${currentLang === 'en' ? 'Milestones' : 'thủ tục'}
                   </span>
                 </div>
                 <div class="text-[11px] text-slate-500 font-medium flex items-center gap-2">
-                  <span>${currentPhaseTracker === 'M&A & DD' ? 'Tiến độ thẩm định & giao dịch:' : 'Tiến độ giai đoạn:'}</span>
+                  <span>${currentPhaseTracker === 'M&A & DD' ? (currentLang === 'en' ? 'Due Diligence Progress:' : 'Tiến độ thẩm định & giao dịch:') : (currentLang === 'en' ? 'Stage Progress:' : 'Tiến độ giai đoạn:')}</span>
                   <span class="font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">
-                    ${phaseDone}/${phaseTasks.length} hoàn tất (${phasePct}%)
+                    ${phaseDone}/${phaseTasks.length} ${currentLang === 'en' ? 'Completed' : 'hoàn tất'} (${phasePct}%)
                   </span>
                 </div>
               </div>
@@ -2091,15 +2228,15 @@
                 <div class="flex items-center gap-2">
                   <span class="w-2.5 h-2.5 rounded-full bg-blue-400"></span>
                   <span class="font-extrabold text-xs uppercase tracking-wider text-white">
-                    ${currentPhaseTracker === 'M&A & DD' ? 'KHỐI M&A: THẨM ĐỊNH CHUYÊN SÂU & GIAO DỊCH' : escapeHtml(currentPhaseTracker)}
+                    ${currentPhaseTracker === 'M&A & DD' ? (currentLang === 'en' ? 'M&A MODULE: DUE DILIGENCE &amp; CLOSING' : 'KHỐI M&A: THẨM ĐỊNH CHUYÊN SÂU &amp; GIAO DỊCH') : escapeHtml(getLocalizedPhaseName(currentPhaseTracker))}
                   </span>
                 </div>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-                  ${phaseTasks.length} việc
+                  ${phaseTasks.length} ${currentLang === 'en' ? 'Tasks' : 'việc'}
                 </span>
               </div>
               <div class="flex items-center justify-between text-[11px] text-slate-400">
-                <span>Tiến độ hoàn tất:</span>
+                <span>${currentLang === 'en' ? 'Progress:' : 'Tiến độ hoàn tất:'}</span>
                 <span class="font-bold text-white">${phaseDone}/${phaseTasks.length} (${phasePct}%)</span>
               </div>
               <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -2127,11 +2264,11 @@
         // Nhãn phân loại hành động M&A trên từng dòng (nếu có)
         let maActionTagCompact = '';
         if (task.maActionType === 'NO_REDO') {
-          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs whitespace-nowrap" title="Kế thừa nguyên trạng từ Chủ đầu tư cũ"><i data-lucide="package-check" class="w-2.5 h-2.5"></i> Kế thừa</span>`;
+          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs whitespace-nowrap" title="Kế thừa nguyên trạng từ Chủ đầu tư cũ"><i data-lucide="package-check" class="w-2.5 h-2.5"></i>${currentLang === "en" ? "Intact" : "Kế thừa"}</span>`;
         } else if (task.maActionType === 'ADJUST') {
-          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-amber-50 text-amber-900 border border-amber-200 shadow-2xs whitespace-nowrap" title="Cần điều chỉnh sang tên Nhà đầu tư mới"><i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i> Đổi tên</span>`;
+          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-amber-50 text-amber-900 border border-amber-200 shadow-2xs whitespace-nowrap" title="Cần điều chỉnh sang tên Nhà đầu tư mới"><i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>${currentLang === "en" ? "Adjust Entity" : "Đổi tên"}</span>`;
         } else if (task.maActionType === 'CONTINUE') {
-          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs whitespace-nowrap" title="Triển khai tiếp tục"><i data-lucide="play" class="w-2.5 h-2.5"></i> Làm tiếp</span>`;
+          maActionTagCompact = `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-blue-50 text-blue-800 border border-blue-200 shadow-2xs whitespace-nowrap" title="Triển khai tiếp tục"><i data-lucide="play" class="w-2.5 h-2.5"></i>${currentLang === "en" ? "Next Steps" : "Làm tiếp"}</span>`;
         }
 
         const cellPadding = isCompactView ? 'py-2' : 'py-3';
@@ -2157,10 +2294,10 @@
                 class="task-checkbox w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0" 
                 title="Đánh dấu hoàn thành toàn bộ thủ tục" />
               <select data-id="${task.id}" class="task-status-select flex-1 text-[10.5px] font-bold py-1 px-1 rounded-lg border shadow-2xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 transition ${getStatusSelectClass(task.status)}">
-                <option value="Chưa bắt đầu" ${task.status === 'Chưa bắt đầu' ? 'selected' : ''}>Chưa bắt đầu</option>
-                <option value="Đang xử lý" ${task.status === 'Đang xử lý' ? 'selected' : ''}>Đang xử lý</option>
-                <option value="Bị nghẽn / Trễ hạn" ${task.status === 'Bị nghẽn / Trễ hạn' ? 'selected' : ''}>Bị nghẽn / Trễ</option>
-                <option value="Đã hoàn thành" ${task.status === 'Đã hoàn thành' ? 'selected' : ''}>Đã hoàn thành</option>
+                <option value="Chưa bắt đầu" ${task.status === 'Chưa bắt đầu' ? 'selected' : ''}>${currentLang === 'en' ? 'Not Started' : 'Chưa bắt đầu'}</option>
+                <option value="Đang xử lý" ${task.status === 'Đang xử lý' ? 'selected' : ''}>${currentLang === 'en' ? 'In Progress' : 'Đang xử lý'}</option>
+                <option value="Bị nghẽn / Trễ hạn" ${task.status === 'Bị nghẽn / Trễ hạn' ? 'selected' : ''}>${currentLang === 'en' ? 'Bottleneck' : 'Bị nghẽn / Trễ'}</option>
+                <option value="Đã hoàn thành" ${task.status === 'Đã hoàn thành' ? 'selected' : ''}>${currentLang === 'en' ? 'Completed' : 'Đã hoàn thành'}</option>
               </select>
             </div>
           </td>
@@ -2180,15 +2317,15 @@
           <td class="${cellPadding} px-2.5 align-middle border-r border-slate-200">
             <div class="flex flex-col gap-1 min-w-[130px]">
               <div class="inline-flex items-center gap-1 text-[10.5px] text-slate-600 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/80">
-                <span class="text-slate-400 font-medium text-[9.5px] uppercase">Luật:</span>
+                <span class="text-slate-400 font-medium text-[9.5px] uppercase">${currentLang === "en" ? "Law:" : "Luật:"}</span>
                 <span class="font-mono text-[10px] font-semibold text-slate-700 truncate max-w-[105px]" title="${escapeHtml(task.statutoryTime || '—')}">${escapeHtml(task.statutoryTime || '—')}</span>
               </div>
               <div class="inline-flex items-center gap-1 text-[10.5px] text-amber-900 bg-amber-50/90 px-1.5 py-0.5 rounded border border-amber-200/80">
-                <span class="text-amber-600 font-bold text-[9.5px] uppercase">Thực:</span>
+                <span class="text-amber-600 font-bold text-[9.5px] uppercase">${currentLang === "en" ? "Actual:" : "Thực:"}</span>
                 <span class="font-mono text-[10px] font-bold text-amber-800 truncate max-w-[105px]" title="${escapeHtml(task.actualTime || '—')}">${escapeHtml(task.actualTime || '—')}</span>
               </div>
               ${task.finishDateFormatted ? `<div class="inline-flex items-center gap-1 text-[10px] text-black bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 font-bold mt-0.5">
-                <span class="text-slate-600 text-[9px] uppercase font-bold">Lịch:</span>
+                <span class="text-slate-600 text-[9px] uppercase font-bold">${currentLang === "en" ? "Sched:" : "Lịch:"}</span>
                 <span class="font-mono text-black">${task.startDateFormatted || '...'} &rarr; ${task.finishDateFormatted}</span>
               </div>` : ''}
             </div>
@@ -2203,21 +2340,21 @@
           <td class="${cellPadding} px-3 align-middle border-r border-slate-200">
             <div class="space-y-1.5 min-w-[190px]">
               <!-- Kết quả đầu ra (Deliverable) với dải viền xanh lá ở trên -->
-              <div class="text-[11px] font-semibold text-slate-800 leading-snug border-l-2 border-emerald-500 pl-2 py-0.5 bg-emerald-50/40 rounded-r transition-all cursor-pointer toggle-drawer-btn" data-id="${task.id}" title="${escapeHtml(task.outputs || '')} (Bấm xem đầy đủ)">
-                ${escapeHtml(task.outputs || 'Chưa cập nhật kết quả pháp lý')}
+              <div class="text-[11px] font-semibold text-slate-800 leading-snug border-l-2 border-emerald-500 pl-2 py-0.5 bg-emerald-50/40 rounded-r transition-all cursor-pointer toggle-drawer-btn" data-id="${task.id}" title="${escapeHtml(getLocalizedDeliverable(task))} (Click to view full)">
+                ${escapeHtml(getLocalizedDeliverable(task))}
               </div>
               <!-- Cơ quan thẩm quyền liên quan ở dưới -->
               <div class="flex items-center gap-1.5 text-[10.5px] text-slate-600 pl-2">
                 <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
-                <span class="font-medium truncate max-w-[210px]" title="${escapeHtml(task.authority || '—')}">${escapeHtml(task.authority || '—')}</span>
+                <span class="font-medium truncate max-w-[210px]" title="${escapeHtml(getLocalizedAuthority(task))}">${escapeHtml(getLocalizedAuthority(task))}</span>
               </div>
             </div>
           </td>
 
           <!-- Cột 7: PIC & Deadline -->
           <td class="${cellPadding} px-2.5 align-middle whitespace-nowrap border-r border-slate-200">
-            <div class="text-[11px] font-bold text-slate-800 truncate max-w-[115px]" title="${escapeHtml(task.pic || 'Chưa gán')}">
-              ${escapeHtml(task.pic || 'Chưa gán')}
+            <div class="text-[11px] font-bold text-slate-800 truncate max-w-[115px]" title="${escapeHtml(getLocalizedPic(task))}">
+              ${escapeHtml(getLocalizedPic(task))}
             </div>
             <div class="text-[10px] font-mono text-slate-500 mt-0.5 flex items-center gap-1">
               <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> ${escapeHtml(formatVnDate(task.deadline))}
@@ -2271,20 +2408,20 @@
                     <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                       <div class="flex items-center gap-2">
                         <span class="p-1 rounded bg-blue-50 text-blue-600 border border-blue-200"><i data-lucide="folder-check" class="w-3.5 h-3.5"></i></span>
-                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wide">Hồ Sơ Thành Phần (Sub-Checklist)</h4>
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wide">${currentLang === "en" ? "Required Sub-Checklist Deliverables" : "Hồ Sơ Thành Phần (Sub-Checklist)"}</h4>
                       </div>
                       <span class="font-bold font-mono text-[10.5px] px-2 py-0.5 rounded-full ${subPct === 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
-                        ${doneSubs}/${totalSubs} hoàn thành (${subPct}%)
+                        ${doneSubs}/${totalSubs} ${currentLang === "en" ? "Completed" : "hoàn thành"} (${subPct}%)
                       </span>
                     </div>
-                    <p class="text-[11px] text-slate-500 mb-2">Đánh dấu trực tiếp từng đầu mục hồ sơ khi đã thu thập đủ:</p>
+                    <p class="text-[11px] text-slate-500 mb-2">${currentLang === "en" ? "Track collected statutory sub-items:" : "Đánh dấu trực tiếp từng đầu mục hồ sơ khi đã thu thập đủ:"}</p>
                     <div class="space-y-0.5 max-h-60 overflow-y-auto pr-1">
-                      ${drawerChecklistHtml || '<div class="text-slate-400 italic py-2 text-center">Chưa có danh sách hồ sơ con.</div>'}
+                      ${drawerChecklistHtml || '<div class="text-slate-400 italic py-2 text-center">${currentLang === "en" ? "No sub-items registered." : "Chưa có danh sách hồ sơ con."}</div>'}
                     </div>
                   </div>
                   <div class="mt-3 pt-2 border-t border-slate-100 text-[10.5px] text-slate-400 flex items-center justify-between">
-                    <span>Tích chọn để tự động cập nhật tiến độ</span>
-                    <button data-id="${task.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold hover:underline">Chỉnh sửa hồ sơ</button>
+                    <span>${currentLang === "en" ? "Check items to update progress automatically" : "Tích chọn để tự động cập nhật tiến độ"}</span>
+                    <button data-id="${task.id}" class="edit-btn text-blue-600 hover:text-blue-800 font-semibold hover:underline">${currentLang === "en" ? "Edit Milestone" : "Chỉnh sửa hồ sơ"}</button>
                   </div>
                 </div>
 
@@ -2293,24 +2430,24 @@
                   <div>
                     <div class="flex items-center gap-1.5 text-slate-900 font-bold text-xs uppercase tracking-wide pb-1.5 border-b border-slate-100 mb-2">
                       <i data-lucide="scale" class="w-3.5 h-3.5 text-blue-600"></i>
-                      <span>Pháp Lý &amp; Thẩm Quyền Giải Quyết</span>
+                      <span>${currentLang === "en" ? "Statutory Basis &amp; Authority Jurisdiction" : "Pháp Lý &amp; Thẩm Quyền Giải Quyết"}</span>
                     </div>
                     <div class="space-y-2 text-[11.5px]">
                       <div>
-                        <span class="font-semibold text-slate-500 block text-[10.5px]">CĂN CỨ PHÁP LUẬT:</span>
+                        <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "STATUTORY BASIS:" : "CĂN CỨ PHÁP LUẬT:"}</span>
                         <span class="text-blue-900 font-medium leading-relaxed">${escapeHtml(task.law || '—')}</span>
                       </div>
                       <div>
-                        <span class="font-semibold text-slate-500 block text-[10.5px]">CƠ QUAN THẨM QUYỀN:</span>
-                        <span class="text-slate-800 font-medium">${escapeHtml(task.authority || '—')}</span>
+                        <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "GOVERNING AUTHORITY:" : "CƠ QUAN THẨM QUYỀN:"}</span>
+                        <span class="text-slate-800 font-medium">${escapeHtml(getLocalizedAuthority(task))}</span>
                       </div>
                       <div class="grid grid-cols-2 gap-2 pt-1">
                         <div>
-                          <span class="font-semibold text-slate-500 block text-[10.5px]">THỜI HẠN LUẬT:</span>
+                          <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "STATUTORY TIMELINE:" : "THỜI HẠN LUẬT:"}</span>
                           <span class="font-mono text-slate-700 font-semibold">${escapeHtml(task.statutoryTime || '—')}</span>
                         </div>
                         <div>
-                          <span class="font-semibold text-slate-500 block text-[10.5px]">THỰC TẾ XỬ LÝ:</span>
+                          <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "ACTUAL DURATION:" : "THỰC TẾ XỬ LÝ:"}</span>
                           <span class="font-mono text-amber-800 font-semibold">${escapeHtml(task.actualTime || '—')}</span>
                         </div>
                       </div>
@@ -2318,9 +2455,9 @@
                   </div>
 
                   <div class="pt-2 border-t border-slate-100">
-                    <span class="font-semibold text-slate-500 block text-[10.5px] uppercase tracking-wider mb-1">KẾT QUẢ ĐẦU RA BÀN GIAO (DELIVERABLE):</span>
+                    <span class="font-semibold text-slate-500 block text-[10.5px] uppercase tracking-wider mb-1">${currentLang === "en" ? "KEY STATUTORY DELIVERABLE (OUTPUT):" : "KẾT QUẢ ĐẦU RA BÀN GIAO (DELIVERABLE):"}</span>
                     <div class="text-[11.5px] text-emerald-950 font-medium leading-relaxed bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200">
-                      ${escapeHtml(task.outputs || 'Chưa cập nhật văn bản đầu ra.')}
+                      ${escapeHtml(getLocalizedDeliverable(task))}
                     </div>
                   </div>
                 </div>
@@ -2369,7 +2506,7 @@
                 </label>
               `).join('');
             } else {
-              subListHtml = '<div class="text-slate-400 italic text-xs py-1">Chưa có danh sách hồ sơ con.</div>';
+              subListHtml = '<div class="text-slate-400 italic text-xs py-1">${currentLang === "en" ? "No sub-items registered." : "Chưa có danh sách hồ sơ con."}</div>';
             }
 
             mDrawerHtml = `
@@ -2440,7 +2577,7 @@
               </div>
               <div class="flex items-center gap-1.5 text-[11px] text-slate-600 pl-1">
                 <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
-                <span class="font-medium">${escapeHtml(task.authority || '—')}</span>
+                <span class="font-medium">${escapeHtml(getLocalizedAuthority(task))}</span>
               </div>
             </div>
 
