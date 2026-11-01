@@ -1877,6 +1877,13 @@
         const tDens = document.getElementById('densityToggleText'); if (tDens) tDens.textContent = "Compact";
         const tDraw = document.getElementById('toggleAllDrawersText'); if (tDraw) tDraw.textContent = "Expand All";
 
+        // Gantt Ribbon & Header (EN)
+        const lblGanttDur = document.getElementById('lblGanttTotalDuration'); if (lblGanttDur) lblGanttDur.textContent = "Total Duration:";
+        const lblGanttFin = document.getElementById('lblGanttFinishDate'); if (lblGanttFin) lblGanttFin.textContent = "Estimated Completion:";
+        const lblGanttVar = document.getElementById('lblGanttVariance'); if (lblGanttVar) lblGanttVar.textContent = "Schedule Variance:";
+        const lblGanttCrit = document.getElementById('lblGanttCritical'); if (lblGanttCrit) lblGanttCrit.textContent = "Critical Path (CPM):";
+        const badgeCritDesc = document.getElementById('badgeGanttCriticalDesc'); if (badgeCritDesc) badgeCritDesc.textContent = "Determines Schedule";
+
       } else {
         document.title = "Hệ Thống Điều Hành Dự Án Đầu Tư & Quản Trị Pháp Lý";
         const brandTitle = document.getElementById('headerBrandTitle');
@@ -2001,9 +2008,23 @@
         const tAddNew = document.getElementById('textBtnAddNew'); if (tAddNew) tAddNew.textContent = "+ Thêm";
         const tDens = document.getElementById('densityToggleText'); if (tDens) tDens.textContent = "Thu Gọn";
         const tDraw = document.getElementById('toggleAllDrawersText'); if (tDraw) tDraw.textContent = "Mở Rộng";
+
+        // Gantt Ribbon & Header (VI)
+        const lblGanttDur = document.getElementById('lblGanttTotalDuration'); if (lblGanttDur) lblGanttDur.textContent = "Tổng thời gian:";
+        const lblGanttFin = document.getElementById('lblGanttFinishDate'); if (lblGanttFin) lblGanttFin.textContent = "Hoàn thành dự kiến:";
+        const lblGanttVar = document.getElementById('lblGanttVariance'); if (lblGanttVar) lblGanttVar.textContent = "Chênh lệch:";
+        const lblGanttCrit = document.getElementById('lblGanttCritical'); if (lblGanttCrit) lblGanttCrit.textContent = "Đường găng (CPM):";
+        const badgeCritDesc = document.getElementById('badgeGanttCriticalDesc'); if (badgeCritDesc) badgeCritDesc.textContent = "Quyết định tiến độ";
       }
 
       if (typeof updateProjectSelectorUI === 'function') updateProjectSelectorUI();
+
+            if (typeof renderGanttView === 'function') {
+        const gm = document.getElementById('ganttModal');
+        if (gm && !gm.classList.contains('hidden')) {
+          renderGanttView();
+        }
+      }
 
       if (window.lucide && typeof lucide.createIcons === 'function') {
         lucide.createIcons();
@@ -4366,17 +4387,24 @@
       const modal = document.getElementById('ganttModal');
       if (!modal) return;
       const pBadge = document.getElementById('ganttProjectBadge');
-      const activeProj = (Array.isArray(projectsList) ? projectsList.find(p => p.id === currentProjectId) : null) || { name: 'Dự án hiện hành' };
-      const projName = activeProj.name || 'Dự án hiện hành';
+      const activeProj = (Array.isArray(projectsList) ? projectsList.find(p => p.id === currentProjectId) : null) || { name: 'Benchmark Model Project 1 (Standard)' };
+      const projName = (typeof getLocalizedProjectName === 'function') ? getLocalizedProjectName(activeProj) : (activeProj.name || 'Benchmark Model Project 1 (Standard)');
       if (pBadge) pBadge.textContent = `${currentLang === 'en' ? 'Project' : 'Dự án'}: ${projName} (${taskList.length} ${currentLang === 'en' ? 'milestones' : 'thủ tục'})`;
       const typeBadge = document.getElementById('ganttActiveProjectTypeBadge');
       if (typeBadge) {
-        const typeLabels = {
+        const typeLabelsEn = {
+          URBAN_TOWN: '1. Urban / Residential',
+          INDUSTRIAL: '2. Industrial Real Estate',
+          ENERGY: '3. Renewable Energy',
+          RESORT: '4. Resort & Hospitality'
+        };
+        const typeLabelsVi = {
           URBAN_TOWN: '1. Khu Đô Thị / Nhà Ở',
           INDUSTRIAL: '2. BĐS Công Nghiệp (KCN)',
           ENERGY: '3. Năng Lượng Tái Tạo',
           RESORT: '4. Du Lịch Nghỉ Dưỡng'
         };
+        const typeLabels = currentLang === 'en' ? typeLabelsEn : typeLabelsVi;
         typeBadge.textContent = typeLabels[currentProjectType] || currentProjectType;
       }
       modal.classList.remove('hidden');
@@ -4404,7 +4432,7 @@
         saveTasks();
         renderGanttView();
         renderTable();
-        showToast(isChecked ? `Đã hoàn thành: ${taskId} -> Tiến độ tự động tịnh tiến` : `Mở lại thủ tục: ${taskId}`);
+        showToast(isChecked ? (currentLang === 'en' ? `Completed: ${taskId} -> Schedule auto-shifted forward` : `Đã hoàn thành: ${taskId} -> Tiến độ tự động tịnh tiến`) : (currentLang === 'en' ? `Reopened milestone: ${taskId}` : `Mở lại thủ tục: ${taskId}`));
       }
     }
 
@@ -4468,7 +4496,7 @@
       
       if (noteEl) {
         const months = (daysToAdd / 30.4).toFixed(1);
-        noteEl.textContent = `Ước tính: ${months} tháng (${daysToAdd} ngày) theo tiến độ đường găng`;
+        noteEl.textContent = currentLang === 'en' ? `Estimated: ${months} months (${daysToAdd} days) per critical path schedule` : `Ước tính: ${months} tháng (${daysToAdd} ngày) theo tiến độ đường găng`;
       }
     };
 
@@ -4506,7 +4534,7 @@
       if (typeof renderProgressTracker === 'function') renderProgressTracker();
       if (typeof renderGanttView === 'function') renderGanttView();
       if (window.lucide) window.lucide.createIcons();
-      showToast('Đã đồng bộ tiến độ và cập nhật ngày hoàn thành cho các thủ tục pháp lý!');
+      showToast(currentLang === 'en' ? 'Synchronized schedule and updated completion dates for statutory milestones!' : 'Đã đồng bộ tiến độ và cập nhật ngày hoàn thành cho các thủ tục pháp lý!');
     };
 
     function initDateSyncEvents() {
@@ -4622,7 +4650,7 @@
           triggerRecalcFeedback();
           setTimeout(() => {
             if (icon) icon.classList.remove('animate-spin');
-            showToast('Đã tính toán lại toàn bộ đường găng và ngày cán đích dự án!');
+            showToast(currentLang === 'en' ? 'Recalculated full critical path and projected completion date!' : 'Đã tính toán lại toàn bộ đường găng và ngày cán đích dự án!');
           }, 350);
         });
       }
@@ -4746,14 +4774,14 @@
       const statRiskIndexEl = document.getElementById('ganttStatRiskIndex');
       const statRiskGradeEl = document.getElementById('ganttStatRiskGrade');
 
-      if (statDurationEl) statDurationEl.textContent = `${totalMonths} tháng`;
-      if (statDaysEl) statDaysEl.textContent = `(${maxOffsetDays} ngày)`;
+      if (statDurationEl) statDurationEl.textContent = `${totalMonths} ${currentLang === 'en' ? 'months' : 'tháng'}`;
+      if (statDaysEl) statDaysEl.textContent = `(${maxOffsetDays} ${currentLang === 'en' ? 'days' : 'ngày'})`;
 
       const formatDateVn = (d) => {
         const pad = (n) => String(n).padStart(2, '0');
         return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
       };
-      if (statFinishEl) statFinishEl.textContent = maxOffsetDays === 0 ? 'Dự án đã hoàn thành' : formatDateVn(projectedFinishDate);
+      if (statFinishEl) statFinishEl.textContent = maxOffsetDays === 0 ? (currentLang === 'en' ? 'Project Completed 100%' : 'Dự án đã hoàn thành') : formatDateVn(projectedFinishDate);
 
       // Variance calculation with UNIFORM text-xs font size
       const diffDays = Math.round((projectedFinishEpoch - targetEpoch) / 86400000);
@@ -4762,22 +4790,22 @@
       if (statVarianceEl) {
         if (maxOffsetDays === 0) {
           statVarianceEl.className = 'text-xs font-bold font-mono text-emerald-600';
-          statVarianceEl.textContent = 'Đã hoàn tất 100%';
+          statVarianceEl.textContent = currentLang === 'en' ? '100% Completed' : 'Đã hoàn tất 100%';
         } else if (Math.abs(diffDays) <= 15) {
           statVarianceEl.className = 'text-xs font-bold font-mono text-emerald-600';
-          statVarianceEl.textContent = 'Đúng mục tiêu (+/- 15 ngày)';
+          statVarianceEl.textContent = currentLang === 'en' ? 'On Schedule (+/- 15 days)' : 'Đúng mục tiêu (+/- 15 ngày)';
         } else if (diffDays > 15) {
           statVarianceEl.className = 'text-xs font-bold font-mono text-rose-600';
-          statVarianceEl.textContent = `Trễ ${diffMonths} tháng (${diffDays} ngày)`;
+          statVarianceEl.textContent = currentLang === 'en' ? `Delayed by ${diffMonths} mos (${diffDays} days)` : `Trễ ${diffMonths} tháng (${diffDays} ngày)`;
         } else {
           statVarianceEl.className = 'text-xs font-bold font-mono text-emerald-600';
-          statVarianceEl.textContent = `Sớm ${Math.abs(diffMonths)} tháng (${Math.abs(diffDays)} ngày)`;
+          statVarianceEl.textContent = currentLang === 'en' ? `Ahead by ${Math.abs(diffMonths)} mos (${Math.abs(diffDays)} days)` : `Sớm ${Math.abs(diffMonths)} tháng (${Math.abs(diffDays)} ngày)`;
         }
       }
 
       const criticalTasks = Object.values(schedule).filter(s => s.isCritical && !s.isBypassed);
       if (statCriticalCountEl) {
-        statCriticalCountEl.textContent = `${criticalTasks.length} thủ tục`;
+        statCriticalCountEl.textContent = `${criticalTasks.length} ${currentLang === 'en' ? 'milestones' : 'thủ tục'}`;
       }
 
       // 1. Render Time Header & Synchronized Grid Scale (Light Theme - Pixel Perfect)
@@ -4786,7 +4814,7 @@
 
       let timeAxisHtml = `
         <div class="grid items-stretch border-b-2 border-slate-300 bg-slate-100 py-1.5 sticky top-0 z-30 shadow-xs" style="grid-template-columns: 440px 1fr;">
-          <div class="text-xs font-black text-slate-700 pl-3 pr-3 uppercase flex items-center border-r-2 border-slate-300">Thủ Tục Pháp Lý &amp; Tiến Độ</div>
+          <div class="text-xs font-black text-slate-700 pl-3 pr-3 uppercase flex items-center border-r-2 border-slate-300">${currentLang === 'en' ? 'Statutory Milestone &amp; Schedule' : 'Thủ Tục Pháp Lý &amp; Tiến Độ'}</div>
           <div class="relative h-8 flex items-center pr-2">
             <div class="absolute inset-0 flex border-l border-r border-t border-b border-slate-300 rounded-t bg-slate-200/90 overflow-hidden">
       `;
@@ -4835,11 +4863,11 @@
 
         if (phaseTasks.length === 0) return;
 
-        const groupLabel = phaseName === 'M&A & DD' ? 'KHỐI M&A & THẨM ĐỊNH PHÁP LÝ (DD)' : phaseName;
+        const groupLabel = phaseName === 'M&A & DD' ? (currentLang === 'en' ? 'M&A MODULE: COMPREHENSIVE DUE DILIGENCE (DD)' : 'KHỐI M&A & THẨM ĐỊNH PHÁP LÝ (DD)') : (currentLang === 'en' ? getLocalizedPhaseName(phaseName) : phaseName);
         rowsHtml += `
           <div class="mt-3 mb-1 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 flex items-center justify-between text-xs font-bold text-slate-800 shadow-2xs">
-            <span>${groupLabel} (${phaseTasks.length} thủ tục)</span>
-            <span class="text-xs text-slate-500 font-normal">Thời lượng: ~ ${Math.max(...phaseTasks.map(t => t.durationDays))} ngày</span>
+            <span>${groupLabel} (${phaseTasks.length} ${currentLang === 'en' ? 'milestones' : 'thủ tục'})</span>
+            <span class="text-xs text-slate-500 font-normal">${currentLang === 'en' ? 'Duration:' : 'Thời lượng:'} ~ ${Math.max(...phaseTasks.map(t => t.durationDays))} ${currentLang === 'en' ? 'days' : 'ngày'}</span>
           </div>
         `;
 
@@ -4858,33 +4886,34 @@
           }
 
           let riskPill = '';
+          const riskLabel = currentLang === 'en' ? 'Risk:' : 'Rủi ro:';
           if (item.riskPct >= 70) {
-            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">Rủi ro: ${item.riskPct}%</span>`;
+            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">${riskLabel} ${item.riskPct}%</span>`;
           } else if (item.riskPct >= 45) {
-            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">Rủi ro: ${item.riskPct}%</span>`;
+            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">${riskLabel} ${item.riskPct}%</span>`;
           } else {
-            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">Rủi ro: ${item.riskPct}%</span>`;
+            riskPill = `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">${riskLabel} ${item.riskPct}%</span>`;
           }
 
-          const criticalBadge = item.isCritical ? '<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">ĐƯỜNG GĂNG (CPM)</span>' : '';
+          const criticalBadge = item.isCritical ? `<span class="px-1.5 py-0.2 rounded text-[9.5px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">${currentLang === 'en' ? 'CRITICAL PATH (CPM)' : 'ĐƯỜNG GĂNG (CPM)'}</span>` : '';
 
           let dateDetailHtml = '';
           if (item.isBypassed) {
-            dateDetailHtml = `<span class="text-emerald-700 font-mono font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 text-[11px]">Đã xong: ${formatDateVn(item.startDate)} (0 ngày)</span>`;
+            dateDetailHtml = `<span class="text-emerald-700 font-mono font-bold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 text-[11px]">${currentLang === 'en' ? 'Completed:' : 'Đã xong:'} ${formatDateVn(item.startDate)} (0 ${currentLang === 'en' ? 'days' : 'ngày'})</span>`;
           } else {
             dateDetailHtml = `<span class="text-slate-700 font-mono font-bold bg-slate-100 px-1 py-0.2 rounded border border-slate-200 text-[11px]">${formatDateVn(item.startDate)} &rarr; ${formatDateVn(item.endDate)}</span>
-              <span class="text-slate-500 font-medium text-[11px]">${item.durationDays} ngày</span>`;
+              <span class="text-slate-500 font-medium text-[11px]">${item.durationDays} ${currentLang === 'en' ? 'days' : 'ngày'}</span>`;
           }
 
           rowsHtml += `
             <div class="gantt-row group grid items-stretch hover:bg-blue-50/30 border-b border-slate-300 text-xs transition-all duration-150 min-h-[56px] ${item.isBypassed ? 'opacity-70 bg-slate-50/30' : ''}" style="grid-template-columns: 440px 1fr;">
               <!-- Cột Trái: Checkbox, Text Wrap Đầy Đủ, Ngày Bắt Đầu & Kết Thúc, % Rủi Ro (Ngăn cách đường đứng rõ nét) -->
               <div class="py-2.5 pl-3 pr-3 flex items-start gap-2 border-r-2 border-slate-300 bg-white group-hover:bg-blue-50/20">
-                <input type="checkbox" data-id="${item.task.id}" class="gantt-item-checkbox w-4 h-4 rounded text-emerald-600 bg-white border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0 mt-0.5" ${item.isBypassed ? 'checked' : ''} title="Đánh dấu hoàn thành -> Tự động tịnh tiến lịch trình phía sau" />
+                <input type="checkbox" data-id="${item.task.id}" class="gantt-item-checkbox w-4 h-4 rounded text-emerald-600 bg-white border-slate-300 focus:ring-emerald-500 cursor-pointer shrink-0 mt-0.5" ${item.isBypassed ? 'checked' : ''} title="${currentLang === 'en' ? 'Mark completed -> Auto forward-shift schedule' : 'Đánh dấu hoàn thành -> Tự động tịnh tiến lịch trình phía sau'}" />
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <span class="font-mono text-xs font-bold text-slate-900 shrink-0">${item.task.id}</span>
-                    <span class="whitespace-normal break-words text-slate-900 text-xs font-semibold leading-snug ${item.isBypassed ? 'line-through text-slate-400' : ''}">${item.task.title}</span>
+                    <span class="whitespace-normal break-words text-slate-900 text-xs font-semibold leading-snug ${item.isBypassed ? 'line-through text-slate-400' : ''}">${escapeHtml(getLocalizedTaskTitle(item.task))}</span>
                   </div>
                   <div class="flex items-center gap-1.5 flex-wrap text-[9.5px] text-slate-500 mt-1">
                     ${dateDetailHtml}
@@ -4901,12 +4930,12 @@
                 <div class="gantt-bar absolute h-5 rounded-md px-1.5 min-w-[22px] flex items-center justify-center text-[10px] font-extrabold border transition-all duration-200 cursor-pointer shadow-xs hover:shadow-md hover:scale-[1.03] hover:ring-2 hover:ring-slate-900/60 z-10 ${barColor}"
                      style="left: ${leftPct}%; width: ${widthPct}%;"
                      data-id="${escapeHtml(item.task.id)}"
-                     data-title="${escapeHtml(item.task.title)}"
+                     data-title="${escapeHtml(getLocalizedTaskTitle(item.task))}"
                      data-start="${formatDateVn(item.startDate)}"
                      data-end="${formatDateVn(item.endDate)}"
                      data-days="${item.durationDays}"
                      data-nominal="${item.nominalDurationDays}"
-                     data-authority="${escapeHtml(item.task.authority || '—')}"
+                     data-authority="${escapeHtml(getLocalizedAuthority(item.task))}"
                      data-critical="${item.isCritical}"
                      data-bypassed="${item.isBypassed}"
                      data-risk="${item.riskPct}">
@@ -4936,29 +4965,30 @@
             const isDone = bar.getAttribute('data-bypassed') === 'true';
             const risk = bar.getAttribute('data-risk');
 
+            const statusBadgeText = isDone ? (currentLang === 'en' ? 'COMPLETED' : 'HOÀN TẤT') : isCrit ? (currentLang === 'en' ? 'CRITICAL PATH (CPM)' : 'ĐƯỜNG GĂNG (CPM)') : (currentLang === 'en' ? 'STANDARD' : 'TIÊU CHUẨN');
             tooltip.innerHTML = `
               <div class="flex items-center justify-between pb-1.5 border-b border-slate-700/80 gap-2">
                 <span class="font-mono text-xs font-bold text-indigo-400">${id}</span>
                 <span class="text-[9.5px] px-1.5 py-0.2 rounded font-bold ${isDone ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : isCrit ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-blue-950 text-blue-300 border border-blue-800'}">
-                  ${isDone ? 'HOÀN TẤT' : isCrit ? 'ĐƯỜNG GĂNG (CPM)' : 'TIÊU CHUẨN'}
+                  ${statusBadgeText}
                 </span>
               </div>
               <div class="font-semibold text-slate-100 text-[11px] leading-snug">${title}</div>
               <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800 text-[10px]">
                 <div>
-                  <span class="text-slate-400 block">Bắt đầu:</span>
+                  <span class="text-slate-400 block">${currentLang === 'en' ? 'Start:' : 'Bắt đầu:'}</span>
                   <strong class="text-slate-200 font-mono">${start}</strong>
                 </div>
                 <div>
-                  <span class="text-slate-400 block">Kết thúc:</span>
+                  <span class="text-slate-400 block">${currentLang === 'en' ? 'Finish:' : 'Kết thúc:'}</span>
                   <strong class="text-slate-200 font-mono">${end}</strong>
                 </div>
               </div>
               <div class="flex items-center justify-between pt-1 border-t border-slate-800 text-[9.5px] text-slate-400">
-                <span>Thời lượng: <strong class="text-white">${days}d</strong> (Chuẩn: ${nominal}d)</span>
-                <span>Rủi ro: <strong class="text-amber-400">${risk}%</strong></span>
+                <span>${currentLang === 'en' ? 'Duration:' : 'Thời lượng:'} <strong class="text-white">${days}d</strong> (${currentLang === 'en' ? 'Nominal:' : 'Chuẩn:'} ${nominal}d)</span>
+                <span>${currentLang === 'en' ? 'Risk:' : 'Rủi ro:'} <strong class="text-amber-400">${risk}%</strong></span>
               </div>
-              <div class="text-[9.5px] text-slate-400 truncate">Cơ quan: ${auth}</div>
+              <div class="text-[9.5px] text-slate-400 truncate">${currentLang === 'en' ? 'Authority:' : 'Cơ quan:'} ${auth}</div>
             `;
             tooltip.classList.remove('hidden');
           });
@@ -5283,33 +5313,33 @@
 
         <!-- Cụm Phải: Cụm chỉ số tổng thời gian & CPM thu gọn dồn sang phải -->
         <div class="flex items-center justify-end gap-2 sm:gap-3 ml-auto shrink-0 text-xs">
-          <!-- 1. Tổng thời gian -->
+          <!-- 1. Total Duration -->
           <div class="flex items-center gap-1 shrink-0">
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Tổng thời gian:</span>
-            <span id="ganttStatDuration" class="font-bold text-slate-900 text-xs font-mono">0 tháng</span>
-            <span id="ganttStatDays" class="text-[10px] text-slate-500 font-mono">(0 ngày)</span>
+            <span id="lblGanttTotalDuration" class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Total Duration:</span>
+            <span id="ganttStatDuration" class="font-bold text-slate-900 text-xs font-mono">0 months</span>
+            <span id="ganttStatDays" class="text-[10px] text-slate-500 font-mono">(0 days)</span>
           </div>
           <div class="h-3 w-px bg-slate-300 shrink-0"></div>
 
-          <!-- 2. Hoàn thành dự kiến -->
+          <!-- 2. Estimated Completion -->
           <div class="flex items-center gap-1 shrink-0">
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Hoàn thành dự kiến:</span>
+            <span id="lblGanttFinishDate" class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Estimated Completion:</span>
             <span id="ganttStatFinishDate" class="font-bold text-blue-600 text-xs font-mono">--/--/----</span>
           </div>
           <div class="h-3 w-px bg-slate-300 shrink-0"></div>
 
-          <!-- 3. Chênh lệch -->
+          <!-- 3. Schedule Variance -->
           <div class="flex items-center gap-1 shrink-0">
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Chênh lệch:</span>
-            <span id="ganttStatVariance" class="font-bold text-emerald-600 text-xs font-mono">Đúng hạn</span>
+            <span id="lblGanttVariance" class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Schedule Variance:</span>
+            <span id="ganttStatVariance" class="font-bold text-emerald-600 text-xs font-mono">On Schedule</span>
           </div>
           <div class="h-3 w-px bg-slate-300 shrink-0"></div>
 
-          <!-- 4. Đường găng (CPM) -->
+          <!-- 4. Critical Path (CPM) -->
           <div class="flex items-center gap-1 shrink-0">
-            <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Đường găng (CPM):</span>
-            <span id="ganttStatCriticalCount" class="font-bold text-rose-600 text-xs font-mono">11 thủ tục</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-semibold">Quyết định tiến độ</span>
+            <span id="lblGanttCritical" class="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Critical Path (CPM):</span>
+            <span id="ganttStatCriticalCount" class="font-bold text-rose-600 text-xs font-mono">11 milestones</span>
+            <span id="badgeGanttCriticalDesc" class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-semibold">Determines Schedule</span>
           </div>
         </div>
       </div>
