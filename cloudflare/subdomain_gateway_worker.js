@@ -7,6 +7,7 @@
  * - ev.renewablevietnam.com     -> /evcharging/
  * - legal.renewablevietnam.com  -> /hub/
  * - invest.renewablevietnam.com -> /invm/
+ * - project.renewablevietnam.com -> /garments/
  * 
  * Capabilities:
  * - Preserves subdomain in the browser address bar (URL masking & path replacement)
@@ -22,7 +23,8 @@ const HOST_PATH_MAP = {
   'ind.renewablevietnam.com': '/green',
   'ev.renewablevietnam.com': '/evcharging',
   'legal.renewablevietnam.com': '/hub',
-  'invest.renewablevietnam.com': '/invm'
+  'invest.renewablevietnam.com': '/invm',
+  'project.renewablevietnam.com': '/garments'
 };
 
 const SHARED_PREFIXES = ['/assets/', '/data/', '/vendor/', '/_includes/', '/_layouts/'];

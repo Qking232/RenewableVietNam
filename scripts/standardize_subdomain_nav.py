@@ -26,6 +26,8 @@ def get_nav_markup(active_page):
             {pill("Legal Framework", "https://legal.renewablevietnam.com/", active_page == "legal")}
             {dot}
             {pill("Investment M&A", "https://invest.renewablevietnam.com/", active_page == "invest", "text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20", "hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-darkCard")}
+            {dot}
+            {pill("Project Delivery", "https://project.renewablevietnam.com/", active_page == "project", "text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-400/10 border border-purple-500/20", "hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-darkCard")}
           </nav>"""
 
     mobile_nav = f"""<nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
@@ -35,6 +37,7 @@ def get_nav_markup(active_page):
         {mobile_pill("EV Tech", "https://ev.renewablevietnam.com/", active_page == "ev")}
         {mobile_pill("Legal Framework", "https://legal.renewablevietnam.com/", active_page == "legal")}
         {mobile_pill("Investment M&A", "https://invest.renewablevietnam.com/", active_page == "invest", "text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20", "text-inkMuted dark:text-textDarkMuted hover:text-blue-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder")}
+        {mobile_pill("Project Delivery", "https://project.renewablevietnam.com/", active_page == "project", "text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-400/10 border border-purple-500/20", "text-inkMuted dark:text-textDarkMuted hover:text-purple-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder")}
       </nav>"""
 
     return desktop_nav, mobile_nav
