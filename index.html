@@ -1,8 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('rvn_theme_v2');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
     <!-- RenewableVietNam Brand Favicon & Touch Icons -->
     <link rel="icon" href="./assets/images/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="./assets/images/favicon.ico" sizes="any">
@@ -525,18 +537,18 @@
         document.documentElement.classList.add('dark');
         sunIcon?.classList.remove('hidden');
         moonIcon?.classList.add('hidden');
-        localStorage.setItem('theme', 'dark');
+        localStorage.setItem('rvn_theme_v2', 'dark');
       } else {
         document.documentElement.classList.remove('dark');
         sunIcon?.classList.add('hidden');
         moonIcon?.classList.remove('hidden');
-        localStorage.setItem('theme', 'light');
+        localStorage.setItem('rvn_theme_v2', 'light');
       }
     }
 
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    applyTheme(savedTheme ? savedTheme === 'dark' : prefersDark);
+    const savedTheme = localStorage.getItem('rvn_theme_v2');
+    // Enforce Light Theme as Default: activate dark theme only if explicitly saved as 'dark'
+    applyTheme(savedTheme === 'dark');
 
     themeBtn?.addEventListener('click', () => {
       const isDark = document.documentElement.classList.contains('dark');
