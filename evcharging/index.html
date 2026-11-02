@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <script>
     if (window.location.hostname === 'renewablevietnam.com') {
@@ -170,14 +170,17 @@
     }
   </style>
 
-  <script>
-    const savedTheme = localStorage.getItem('rvn-theme');
-    if (savedTheme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-      if (!savedTheme) localStorage.setItem('rvn-theme', 'dark');
-    }
+    <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('rvn_theme_v2');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
   </script>
 
   <script type="application/ld+json">
@@ -585,7 +588,7 @@
       themeBtn.addEventListener("click", () => {
         document.documentElement.classList.toggle("dark");
         const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("rvn-theme", isDark ? "dark" : "light");
+        localStorage.setItem("rvn_theme_v2", isDark ? "dark" : "light");
         updateIcons();
       });
     }
