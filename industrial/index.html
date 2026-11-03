@@ -1078,6 +1078,40 @@
   <!-- DATASET & REACTIVE ENGINES JAVASCRIPT                                -->
   <!-- ==================================================================== -->
   <script>
+    // Dedicated Independent Theme Controller (Immediate Execution)
+    (function initThemeController() {
+      const themeBtn = document.getElementById("themeToggleBtn");
+      const sunIcon = document.getElementById("sunIcon");
+      const moonIcon = document.getElementById("moonIcon");
+
+      function updateIcons() {
+        const isDark = document.documentElement.classList.contains("dark");
+        if (sunIcon && moonIcon) {
+          if (isDark) {
+            sunIcon.classList.remove("hidden");
+            moonIcon.classList.add("hidden");
+          } else {
+            sunIcon.classList.add("hidden");
+            moonIcon.classList.remove("hidden");
+          }
+        }
+      }
+      updateIcons();
+
+      if (themeBtn) {
+        themeBtn.addEventListener("click", () => {
+          document.documentElement.classList.toggle("dark");
+          const isDark = document.documentElement.classList.contains("dark");
+          localStorage.setItem("rvn_theme_v2", isDark ? "dark" : "light");
+          updateIcons();
+        });
+      }
+    })();
+
+    function initIndustrialCharts() {
+      // Safe no-op definition preventing ReferenceError
+    }
+
     const FALLBACK_HUBS = [
       {
         id: "deep-c-hp",
@@ -2447,27 +2481,6 @@
       });
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeHubModal();
-      });
-
-      const themeToggleBtn = document.getElementById('themeToggleBtn');
-      const sunIcon = document.getElementById('sunIcon');
-      const moonIcon = document.getElementById('moonIcon');
-
-      function updateIcons(isDark) {
-        if (isDark) {
-          sunIcon.classList.remove('hidden');
-          moonIcon.classList.add('hidden');
-        } else {
-          sunIcon.classList.add('hidden');
-          moonIcon.classList.remove('hidden');
-        }
-      }
-      updateIcons(document.documentElement.classList.contains('dark'));
-
-      themeToggleBtn.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        localStorage.setItem('rvn_theme_v2', isDark ? 'dark' : 'light');
-        updateIcons(isDark);
       });
 
       });
