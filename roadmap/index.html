@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
+  
+  <title>Engineering Roadmap & Platform Telemetry | Renewable Viet Nam</title>
+  <meta name="description" content="Institutional engineering execution roadmap, quantitative milestone burndown, and infrastructure telemetry radar across all 5 edge gateways of Renewable Viet Nam." />
+  <meta name="keywords" content="Vietnam renewable energy roadmap, DPPA calculator, substation headroom, PDP8 infrastructure, execution burndown" />
+  <link rel="canonical" href="https://renewablevietnam.com/roadmap/" />
+
+  <!-- Performance Hints -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
+
+  <!-- Tailwind CSS Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            alabaster: '#F8FAFC',
+            surfaceLight: '#FFFFFF',
+            borderSlate: '#E2E8F0',
+            inkPrimary: '#0F172A',
+            inkMuted: '#475569',
+            obsidian: '#070A12',
+            darkSurface: '#0D1322',
+            darkCard: '#131B2E',
+            darkBorder: 'rgba(59, 130, 246, 0.16)',
+            textDarkPrimary: '#F1F5F9',
+            textDarkMuted: '#94A3B8',
+          }
+        }
+      }
+    }
+  </script>
+
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('rvn_theme_v2');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- DPPA Calculator Client Script -->
+  <script src="/assets/js/dppa-calculator.js"></script>
+</head>
+
+<body class="min-h-screen text-inkPrimary dark:text-textDarkPrimary antialiased bg-alabaster dark:bg-obsidian font-sans selection:bg-teal-500 selection:text-white dark:selection:bg-teal-400 dark:selection:text-obsidian transition-colors duration-500 flex flex-col justify-between">
+
+  <!-- ==================================================================== -->
+  <!-- TOP EXECUTIVE NAVIGATION BAR                                        -->
+  <!-- ==================================================================== -->
+  <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between py-2.5 sm:py-3">
+      <div class="flex items-center gap-6">
+        <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
+          <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
+          <div class="flex flex-col">
+            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-800 dark:text-slate-200 font-semibold leading-tight">
+              RENEWABLE VIETNAM
+            </span>
+            <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+              Platform Engineering Radar
+            </span>
+          </div>
+        </a>
+
+        <!-- Desktop Quick Jump Navigation -->
+        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cockpit</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Legal &amp; M&amp;A</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Project Delivery</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <span class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800">Roadmap</span>
+        </nav>
+      </div>
+
+      <!-- Controls & Theme -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span>5 Edge Gateways Live</span>
+        </div>
+
+        <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
+          <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================================================================== -->
+  <!-- MAIN ROADMAP & EXECUTION BURNDOWN TELEMETRY COCKPIT                  -->
+  <!-- ==================================================================== -->
+  <main class="relative z-10 flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-5 space-y-6">
+
+    <!-- HERO HEADER -->
+    <section class="space-y-1.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
+            <span class="font-mono text-[11px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">
+              Master Development Radar &middot; Execution Burndown Matrix
+            </span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary">
+            Platform Engineering Roadmap &amp; Telemetry
+          </h1>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light max-w-4xl pt-0.5">
+            Quantitative milestone tracking, data completeness verification, and live infrastructure telemetry across all 5 edge gateways of Renewable Viet Nam.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 font-mono text-[11px]">
+          <span class="text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800/40 flex items-center gap-1.5 shadow-sm font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Sprint 1 Active &middot; Phase 1 Verified</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- MACRO PLATFORM METRIC STRIP -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Clean Baseload</span>
+          <div class="text-lg font-bold font-mono text-inkPrimary dark:text-textDarkPrimary">80,612 <span class="text-xs text-teal-600 dark:text-teal-400">MW</span></div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">53.6% PDP8 Active</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">2030 Mandate</span>
+          <div class="text-lg font-bold font-mono text-sky-600 dark:text-sky-400">150,489 <span class="text-xs">MW</span></div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">Decision 500/QĐ-TTg</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Tracked Plants</span>
+          <div class="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">960 <span class="text-xs">Assets</span></div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">63 Provinces Geocoded</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Industrial Parks</span>
+          <div class="text-lg font-bold font-mono text-amber-600 dark:text-amber-400">446 <span class="text-xs">IPs</span></div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">Decree 35/2022 EIP</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">EV Chargers</span>
+          <div class="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">22,055 <span class="text-xs">Points</span></div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">CPO Station Network</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-white dark:bg-darkCard border border-borderSlate dark:border-darkBorder shadow-sm space-y-0.5">
+          <span class="font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted">Required Capex</span>
+          <div class="text-lg font-bold font-mono text-violet-600 dark:text-violet-400">$134.7B</div>
+          <p class="text-[9px] text-inkMuted dark:text-textDarkMuted">Gen + Supergrid</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4-PHASE MASTER EXECUTION BURNDOWN MATRIX -->
+    <section class="p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-borderSlate dark:border-darkBorder">
+        <div>
+          <h2 class="text-base font-bold text-inkPrimary dark:text-textDarkPrimary">
+            4-Phase Institutional Execution Matrix
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted">
+            Sprint progression and milestone verification criteria.
+          </p>
+        </div>
+        <span class="px-2.5 py-1 rounded text-[10px] font-mono bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/50 font-bold">
+          Phase 1 Complete &middot; Phase 2 In Progress
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <!-- Phase 1 Card -->
+        <div class="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/30 space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase text-emerald-600 dark:text-emerald-400">Phase 1 &middot; Core Registry</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">100% COMPLETE</span>
+            </div>
+            <h3 class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">Data Completeness &amp; Substation Topology</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted leading-relaxed">
+              Geocoded 960 utility generation assets, 446 industrial parks, 22,055 EV charging points, and 500kV/220kV substation headroom schemas.
+            </p>
+          </div>
+          <div class="space-y-1 text-[11px] font-mono pt-2 border-t border-emerald-500/20">
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Assets Geocoded:</span> <strong class="text-emerald-600 dark:text-emerald-400">960 / 960 (100%)</strong></div>
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Substation Schema:</span> <strong class="text-emerald-600 dark:text-emerald-400">Verified SQL</strong></div>
+          </div>
+        </div>
+
+        <!-- Phase 2 Card -->
+        <div class="p-4 rounded-xl bg-teal-500/5 border border-teal-500/30 space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase text-teal-600 dark:text-teal-400">Phase 2 &middot; Decision Engines</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-500/20 text-teal-700 dark:text-teal-300">ACTIVE DEV</span>
+            </div>
+            <h3 class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">DPPA Wheeling &amp; Solar/BESS Calculators</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted leading-relaxed">
+              Deploying Decree 80 DPPA Wheeling Tariff simulation engines, factory rooftop solar ROI estimators, and industrial power load archetypes.
+            </p>
+          </div>
+          <div class="space-y-1 text-[11px] font-mono pt-2 border-t border-teal-500/20">
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>DPPA Engine:</span> <strong class="text-teal-600 dark:text-teal-400">Engine Deployed</strong></div>
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Solar Sizing:</span> <strong class="text-amber-500">In Verification</strong></div>
+          </div>
+        </div>
+
+        <!-- Phase 3 Card -->
+        <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate dark:border-darkBorder space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase text-slate-400">Phase 3 &middot; Deal Room</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">SPRINT 3</span>
+            </div>
+            <h3 class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">Deal Room &amp; Due Diligence Automation</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted leading-relaxed">
+              Automated statutory due diligence checklists (IRC, ERC, EIA, PCCC, Grid tie-in), Decision 262 provincial quota monitor, and M&amp;A pipeline room.
+            </p>
+          </div>
+          <div class="space-y-1 text-[11px] font-mono pt-2 border-t border-borderSlate dark:border-darkBorder">
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Due Diligence:</span> <span>Checklist Spec</span></div>
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>M&amp;A Room:</span> <span>Scheduled</span></div>
+          </div>
+        </div>
+
+        <!-- Phase 4 Card -->
+        <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate dark:border-darkBorder space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-mono font-bold uppercase text-slate-400">Phase 4 &middot; Real-Time API</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">SPRINT 4</span>
+            </div>
+            <h3 class="font-bold text-sm text-inkPrimary dark:text-textDarkPrimary">Real-time Telemetry &amp; Gazette Sync</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted leading-relaxed">
+              Automated MOIT/EVN regulatory gazette sync, NSMO merit-order telemetry integration, and enterprise REST API endpoints.
+            </p>
+          </div>
+          <div class="space-y-1 text-[11px] font-mono pt-2 border-t border-borderSlate dark:border-darkBorder">
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Dispatch Sync:</span> <span>Architecture</span></div>
+            <div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Public API:</span> <span>Specification</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE DPPA WHEELING SIMULATOR -->
+    <section class="p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-borderSlate dark:border-darkBorder">
+        <div>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold">Live Decision Tool</span>
+          <h2 class="text-base font-bold text-inkPrimary dark:text-textDarkPrimary">Decree 80/2024/NĐ-CP DPPA Wheeling Tariff Calculator</h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted">Model delivered clean electricity costs under Case 1 (Private Line) vs. Case 2 (National Grid Wheeling).</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Input Form -->
+        <div class="lg:col-span-5 p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate dark:border-darkBorder space-y-3 font-mono text-xs">
+          <div class="space-y-1">
+            <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Bilateral Mechanism</label>
+            <select id="calcMechanism" onchange="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs cursor-pointer">
+              <option value="CASE_2">Case 2: National Grid Wheeling (EVN CfD)</option>
+              <option value="CASE_1">Case 1: Direct Private Line (Đường Dây Riêng)</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Annual Contract Volume (GWh/year)</label>
+            <input type="number" id="calcVolumeGWh" value="35" min="1" max="1000" oninput="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs" />
+          </div>
+
+          <div id="case2Inputs" class="space-y-3">
+            <div class="space-y-1">
+              <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Agreed Bilateral Strike Price (VND/kWh)</label>
+              <input type="number" id="calcStrikePrice" value="1550" min="500" max="3500" oninput="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs" />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Interconnection Voltage Tier</label>
+              <select id="calcVoltageTier" onchange="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs cursor-pointer">
+                <option value="voltage_22_to_110kv">22kV to 110kV (Standard Industrial Zone)</option>
+                <option value="voltage_above_110kv">> 110kV (Direct Substation Pooling)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="case1Inputs" class="space-y-3 hidden">
+            <div class="space-y-1">
+              <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Dedicated Line Length (km)</label>
+              <input type="number" id="calcDistanceKm" value="6" min="0.5" max="50" oninput="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs" />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">Generator PPA Base Price (USD/kWh)</label>
+              <input type="number" id="calcBasePpaUsd" value="0.065" step="0.005" min="0.03" max="0.15" oninput="runDppaCalculation()" class="w-full p-2 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Output Results Card -->
+        <div class="lg:col-span-7 p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate dark:border-darkBorder flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate dark:border-darkBorder">
+              <span class="text-xs font-mono font-bold uppercase text-slate-400">Simulation Output</span>
+              <span id="outputStatutoryRef" class="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-semibold">Decree 80/2024/NĐ-CP</span>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div class="p-3 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder">
+                <span class="text-[10px] font-mono text-slate-400 block">Delivered Tariff</span>
+                <strong id="outDeliveredTariff" class="text-base font-mono text-teal-600 dark:text-teal-400">1,949 VND</strong>
+                <span id="outDeliveredUsd" class="text-[10px] font-mono text-slate-400 block">$0.0767 / kWh</span>
+              </div>
+
+              <div class="p-3 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder">
+                <span class="text-[10px] font-mono text-slate-400 block">Baseline EVN Rate</span>
+                <strong id="outBaselineTariff" class="text-base font-mono text-inkPrimary dark:text-textDarkPrimary">1,840 VND</strong>
+                <span class="text-[10px] font-mono text-slate-400 block">Industrial Avg</span>
+              </div>
+
+              <div class="p-3 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder">
+                <span class="text-[10px] font-mono text-slate-400 block">Annual Carbon Avoided</span>
+                <strong id="outCarbonAvoided" class="text-base font-mono text-emerald-600 dark:text-emerald-400">25,274 tCO2</strong>
+                <span class="text-[9px] font-mono text-slate-400 block">Grid Offset Factor</span>
+              </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div id="breakdownContainer" class="p-3 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-xs space-y-1.5">
+              <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                <span>Strike Price:</span>
+                <span id="outStrikePrice" class="font-bold text-inkPrimary dark:text-textDarkPrimary">1,550 VND/kWh</span>
+              </div>
+              <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                <span>EVN Transmission Fee:</span>
+                <span id="outTransFee" class="font-bold text-inkPrimary dark:text-textDarkPrimary">79.4 VND/kWh</span>
+              </div>
+              <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                <span>EVN Distribution Fee:</span>
+                <span id="outDistFee" class="font-bold text-inkPrimary dark:text-textDarkPrimary">240.0 VND/kWh</span>
+              </div>
+              <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                <span>Dispatch &amp; Ancillary Buffer:</span>
+                <span id="outDispatchFee" class="font-bold text-inkPrimary dark:text-textDarkPrimary">80.0 VND/kWh</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-2 border-t border-borderSlate dark:border-darkBorder">
+            <span>Verified against MOIT/ERAV statutory fee schedules.</span>
+            <a href="https://legal.renewablevietnam.com/" class="text-teal-600 dark:text-teal-400 hover:underline">Review Legal Decrees &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE INFRASTRUCTURE HEALTH TELEMETRY -->
+    <section class="p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3">
+      <div class="flex items-center justify-between pb-2 border-b border-borderSlate dark:border-darkBorder">
+        <div>
+          <h2 class="text-base font-bold text-inkPrimary dark:text-textDarkPrimary">Edge Infrastructure Health Matrix</h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted">Operational status across Cloudflare Edge, GitHub static origins, and Supabase database.</p>
+        </div>
+        <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">ALL SYSTEMS OPERATIONAL</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full font-mono text-xs text-left border-collapse">
+          <thead>
+            <tr class="border-b border-borderSlate dark:border-darkBorder text-[10px] text-slate-400 uppercase tracking-wider">
+              <th class="py-2 px-3">Gateway Endpoint</th>
+              <th class="py-2 px-3">Origin Route</th>
+              <th class="py-2 px-3">Edge Proxy</th>
+              <th class="py-2 px-3">Status</th>
+              <th class="py-2 px-3">Cache Protocol</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-borderSlate/60 dark:divide-darkBorder/60">
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/</td>
+              <td class="py-2 px-3 text-slate-400">Cloudflare Zone eed02</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">Edge SWR + IndexedDB</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">energy.renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/energy/</td>
+              <td class="py-2 px-3 text-slate-400">subdomain_gateway_worker</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">Edge SWR + Gzip Cache</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">industrial.renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/industrial/</td>
+              <td class="py-2 px-3 text-slate-400">subdomain_gateway_worker</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">Edge SWR + IndexedDB</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">ev.renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/evcharging/</td>
+              <td class="py-2 px-3 text-slate-400">subdomain_gateway_worker</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">22k Point Spatial Cache</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">legal.renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/invm/</td>
+              <td class="py-2 px-3 text-slate-400">subdomain_gateway_worker</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">Edge SWR</td>
+            </tr>
+            <tr>
+              <td class="py-2 px-3 font-semibold text-inkPrimary dark:text-textDarkPrimary">project.renewablevietnam.com</td>
+              <td class="py-2 px-3 text-slate-400">/project/</td>
+              <td class="py-2 px-3 text-slate-400">subdomain_gateway_worker</td>
+              <td class="py-2 px-3"><span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-600 font-bold">HTTP 200</span></td>
+              <td class="py-2 px-3 text-slate-400">Edge SWR</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================================================================== -->
+  <!-- FOOTER & LEGAL STATUTORY DISCLAIMER                                  -->
+  <!-- ==================================================================== -->
+  <footer class="mt-8 border-t border-borderSlate dark:border-darkBorder bg-white/50 dark:bg-darkSurface/50 py-5 text-center text-[11px] font-mono text-slate-500 dark:text-slate-400">
+    <div class="max-w-[1920px] mx-auto px-4 space-y-1">
+      <div>&copy; 2026 Renewable Viet Nam &middot; Institutional Energy Transition &amp; Industrial Infrastructure Platform.</div>
+      <div class="text-[10px] text-slate-400">Data synthesized from Ministry of Industry and Trade (MOIT), EVN NPT, Decision 500/QĐ-TTg, and Decree 80/2024/NĐ-CP.</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // Theme Toggle Controller
+    (function initTheme() {
+      var btn = document.getElementById('themeToggleBtn');
+      var sunIcon = document.getElementById('sunIcon');
+      var moonIcon = document.getElementById('moonIcon');
+
+      function updateIcons(isDark) {
+        if (!sunIcon || !moonIcon) return;
+        if (isDark) {
+          sunIcon.classList.remove('hidden');
+          moonIcon.classList.add('hidden');
+        } else {
+          sunIcon.classList.add('hidden');
+          moonIcon.classList.remove('hidden');
+        }
+      }
+
+      var currentDark = document.documentElement.classList.contains('dark');
+      updateIcons(currentDark);
+
+      if (btn) {
+        btn.addEventListener('click', function() {
+          var isDark = document.documentElement.classList.toggle('dark');
+          localStorage.setItem('rvn_theme_v2', isDark ? 'dark' : 'light');
+          updateIcons(isDark);
+        });
+      }
+    })();
+
+    // DPPA Calculator Interactive Controller
+    function runDppaCalculation() {
+      if (!window.DPPACalculator) return;
+
+      var mechanism = document.getElementById('calcMechanism').value;
+      var volumeGWh = parseFloat(document.getElementById('calcVolumeGWh').value) || 35;
+      
+      var case1Inputs = document.getElementById('case1Inputs');
+      var case2Inputs = document.getElementById('case2Inputs');
+
+      if (mechanism === 'CASE_1') {
+        case1Inputs.classList.remove('hidden');
+        case2Inputs.classList.add('hidden');
+
+        var distanceKm = parseFloat(document.getElementById('calcDistanceKm').value) || 6;
+        var basePpaUsd = parseFloat(document.getElementById('calcBasePpaUsd').value) || 0.065;
+
+        var res = DPPACalculator.calculateCase1DirectPrivate({
+          plantCapacityMW: volumeGWh / (8760 * 0.18 / 1000),
+          annualGenerationGWh: volumeGWh,
+          lineDistanceKm: distanceKm,
+          voltageKV: 110,
+          generatorBasePpaUSD: basePpaUsd
+        });
+
+        document.getElementById('outputStatutoryRef').innerText = res.statutoryReference;
+        document.getElementById('outDeliveredTariff').innerText = res.deliveredPowerPriceVNDPerKWh.toLocaleString() + ' VND';
+        document.getElementById('outDeliveredUsd').innerText = '$' + res.deliveredPowerPriceUSDPerKWh + ' / kWh';
+        document.getElementById('outBaselineTariff').innerText = res.baselineEvnRateVNDPerKWh.toLocaleString() + ' VND';
+        document.getElementById('outCarbonAvoided').innerText = res.annualCarbonAvoidedTonsCO2.toLocaleString() + ' tCO2';
+
+        document.getElementById('breakdownContainer').innerHTML = 
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Line Capex Total:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">$' + res.totalLineCapexUSD.toLocaleString() + '</span></div>' +
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Levelized Dedicated Line Fee:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">' + res.levelizedLineCostVNDPerKWh + ' VND/kWh</span></div>' +
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Annual Cost Savings vs EVN:</span><span class="font-bold text-emerald-600 dark:text-emerald-400">' + res.annualCostSavingsVND.toLocaleString() + ' VND ($' + res.annualCostSavingsUSD.toLocaleString() + ')</span></div>';
+
+      } else {
+        case1Inputs.classList.add('hidden');
+        case2Inputs.classList.remove('hidden');
+
+        var strikePrice = parseFloat(document.getElementById('calcStrikePrice').value) || 1550;
+        var tier = document.getElementById('calcVoltageTier').value;
+
+        var res = DPPACalculator.calculateCase2NationalGrid({
+          annualContractGWh: volumeGWh,
+          strikePriceVNDPerKWh: strikePrice,
+          voltageTier: tier
+        });
+
+        document.getElementById('outputStatutoryRef').innerText = res.statutoryReference;
+        document.getElementById('outDeliveredTariff').innerText = res.allInCleanTariffVNDPerKWh.toLocaleString() + ' VND';
+        document.getElementById('outDeliveredUsd').innerText = '$' + res.allInCleanTariffUSDPerKWh + ' / kWh';
+        document.getElementById('outBaselineTariff').innerText = res.benchmarkEvnAvgTariffVND.toLocaleString() + ' VND';
+        document.getElementById('outCarbonAvoided').innerText = res.annualCarbonAvoidedTonsCO2.toLocaleString() + ' tCO2';
+
+        document.getElementById('breakdownContainer').innerHTML = 
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Agreed Strike Price:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">' + res.strikePriceVNDPerKWh.toLocaleString() + ' VND/kWh</span></div>' +
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>EVN Transmission Fee:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">' + res.wheelingCostBreakdownVND.transmissionFee + ' VND/kWh</span></div>' +
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>EVN Distribution Fee:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">' + res.wheelingCostBreakdownVND.distributionFee + ' VND/kWh</span></div>' +
+          '<div class="flex justify-between text-slate-500 dark:text-slate-400"><span>Dispatch &amp; Ancillary Buffer:</span><span class="font-bold text-inkPrimary dark:text-textDarkPrimary">' + (res.wheelingCostBreakdownVND.dispatchAncillaryFee + res.imbalanceBufferVND) + ' VND/kWh</span></div>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', runDppaCalculation);
+  </script>
+</body>
+</html>
