@@ -2,6 +2,18 @@
 <!-- Vietnam Investment Project Legal Management & M&A Engine Rev 0.26 - Permanent English Default Localization (i18n-sync) - legal.renewablevietnam.com -->
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('rvn_theme_v2');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <link rel="canonical" href="https://legal.renewablevietnam.com/">
@@ -270,7 +282,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-100 selection:text-blue-900 w-full max-w-full min-w-0">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col font-sans antialiased selection:bg-teal-500 selection:text-white transition-colors duration-200 w-full max-w-full min-w-0">
 
     <!-- Top Universal Inter-Domain Gateway Header -->
   <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
@@ -308,6 +320,15 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
           <span>4 Edge Gateways Live</span>
         </div>
+
+        <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
+          <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
       </div>
     </div>
     <!-- Mobile Quick Navigation Ribbon -->
@@ -320,110 +341,105 @@
     </div>
   </header>
 
-  <!-- Header Banner (Slimline Executive Navbar) -->
-    <!-- Unified Slimline Executive Navbar (Single Compact Cockpit Header) -->
-  <header class="w-full max-w-full bg-slate-900 text-white border-b border-slate-800 static xl:sticky xl:top-0 z-30 shadow-md backdrop-blur-md bg-opacity-95 no-print">
-    <div class="w-full max-w-[1720px] mx-auto px-3 sm:px-4 lg:px-5 py-1.5">
-      <div class="flex items-center justify-between gap-2 flex-wrap">
-        
-        <!-- Left: Brand Title with Home Anchor Link -->
-        <a href="https://legal.renewablevietnam.com/" onclick="switchViewMode('dashboard')" class="flex items-center gap-2 shrink-0 hover:text-blue-300 transition cursor-pointer group" title="Quay về Trang chủ Bảng điều hành legal.renewablevietnam.com">
-          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden shrink-0 shadow-sm border border-slate-700/80 group-hover:border-blue-500 transition-colors flex items-center justify-center bg-slate-800">
-            <img src="./assets/images/logo.svg" onerror="this.onerror=null; this.src='https://renewablevietnam.com/assets/images/logo.svg';" alt="Renewable Viet Nam Logo" width="32" height="32" class="w-full h-full object-contain" />
-          </div>
-          <span id="headerBrandTitle" class="text-xs sm:text-[13px] font-bold tracking-tight text-white uppercase whitespace-normal sm:whitespace-nowrap leading-tight">
-            VIETNAM INVESTMENT LEGAL MANAGEMENT &amp; M&A ENGINE
-          </span>
-        </a>
-
-        <!-- Right Group: Project Selector & Dedicated Creation Row -->
-        <div class="flex items-center gap-1.5 flex-wrap shrink-0">
-
-          <!-- Active Project Selector (Right-Aligned) -->
-          <div class="flex items-center gap-0.5 bg-slate-800/90 border border-slate-700 rounded-lg px-1.5 py-0.5 shrink-0">
-            <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-slate-300 shrink-0"></i>
-            <select id="projectSelector" class="bg-transparent text-white text-[11px] font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[140px] sm:max-w-[180px] truncate" title="Chọn dự án đang làm việc">
-              <!-- Rendered by JS -->
-            </select>
-            <button id="btnNewProject" onclick="openNewProjectWithScenario()" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition cursor-pointer" title="Tạo dự án mới">
+    <!-- Executive Workbench Action Toolbar -->
+  <div class="w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-[57px] md:top-[61px] z-40 transition-colors shadow-2xs no-print">
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 py-2 flex items-center justify-between gap-2.5 flex-wrap">
+      
+      <!-- Left Group: Active Project Selector with Action Badges -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-lg px-2 py-1 shadow-2xs">
+          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0"></i>
+          <span class="text-[10px] font-mono uppercase font-bold text-slate-400 dark:text-slate-500 hidden sm:inline">Project:</span>
+          <select id="projectSelector" class="bg-transparent text-slate-900 dark:text-slate-100 text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[150px] sm:max-w-[210px] truncate" title="Active investment project portfolio">
+            <!-- Rendered by JS -->
+          </select>
+          <div class="flex items-center border-l border-slate-200 dark:border-slate-700 pl-1 ml-0.5 gap-0.5">
+            <button id="btnNewProject" onclick="openNewProjectWithScenario()" class="p-1 text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-300 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Create new project">
               <i data-lucide="plus" class="w-3 h-3"></i>
             </button>
-            <button id="btnRenameProject" class="p-1 text-slate-300 hover:text-white hover:bg-slate-700 rounded transition cursor-pointer" title="Đổi tên dự án">
+            <button id="btnRenameProject" class="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Rename project">
               <i data-lucide="edit-2" class="w-3 h-3"></i>
             </button>
-            <button id="btnDeleteProject" class="p-1 text-slate-300 hover:text-rose-400 hover:bg-slate-700 rounded transition cursor-pointer" title="Xóa dự án">
+            <button id="btnDeleteProject" class="p-1 text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Delete project">
               <i data-lucide="trash-2" class="w-3 h-3"></i>
             </button>
           </div>
-
-          <!-- Parameter Setup 1: Project Archetype -->
-          <div class="hidden lg:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label id="labelHomeProjectType" class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">TYPE:</label>
-            <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer py-0.5">
-              <option value="URBAN_TOWN" class="bg-slate-900" selected>1. Urban / Residential</option>
-              <option value="INDUSTRIAL" class="bg-slate-900">2. Industrial Real Estate</option>
-              <option value="ENERGY" class="bg-slate-900">3. Renewable Energy</option>
-              <option value="RESORT" class="bg-slate-900">4. Resort &amp; Hospitality</option>
-            </select>
-          </div>
-
-          <!-- Parameter Setup 2: Entry Milestone & M&A Scenario -->
-          <div class="hidden xl:flex items-center gap-1 text-[11px] bg-slate-800/80 px-1.5 py-0.5 rounded-lg border border-slate-700 shrink-0">
-            <label id="labelMaEntry" class="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">PHASE:</label>
-            <select id="maEntrySelector" class="bg-transparent text-[11px] font-semibold text-white focus:outline-none cursor-pointer max-w-[130px] sm:max-w-[155px] truncate py-0.5">
-              <option value="GREENFIELD" class="bg-slate-900" selected>1. Greenfield Origination</option>
-              <option value="POST_POLICY" class="bg-slate-900">2. Post In-Principle Approval</option>
-              <option value="POST_1_500" class="bg-slate-900">3. Post 1/500 Master Plan</option>
-              <option value="POST_LAND" class="bg-slate-900">4. Post Land Allocation/Lease</option>
-              <option value="POST_PERMIT" class="bg-slate-900">5. Post Building Permit</option>
-              <option value="OPERATIONAL" class="bg-slate-900">6. Operational Asset</option>
-            </select>
-          </div>
-
-          <!-- Dedicated Project Initialization Trigger (Transformed from 'Apply') -->
-          <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] rounded-md transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Khởi tạo dự án đầu tư mới theo loại hình và mốc tiếp quản đã chọn">
-            <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
-            <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
-          </button>
-
-          <!-- Mode Controls: Dashboard (In-Place) vs Hồ Sơ & CPM (New Tab) -->
-          <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 shrink-0 shadow-inner">
-            <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2 sm:px-2.5 py-1 rounded-md text-[11px] font-bold transition flex items-center gap-1 bg-blue-600 text-white shadow-xs cursor-pointer" title="Bảng điều hành tổng quan dự án đầu tư">
-              <i data-lucide="layout-dashboard" class="w-3 h-3"></i>
-              <span id="textBtnDashboard" class="whitespace-nowrap">Dashboard</span>
-            </button>
-            <a href="./?view=legal" target="_blank" rel="noopener noreferrer" id="btnViewLegalEngine" class="px-2 sm:px-2.5 py-1 rounded-md text-[11px] font-bold transition flex items-center gap-1 text-slate-300 hover:text-white hover:bg-slate-700/60 cursor-pointer" title="Mở Hồ Sơ Pháp Lý & CPM trong tab mới">
-              <i data-lucide="list-checks" class="w-3 h-3 text-blue-400"></i>
-              <span id="textBtnLegalEngine" class="whitespace-nowrap">Legal Dossier &amp; CPM</span>
-              <i data-lucide="external-link" class="w-2.5 h-2.5 text-slate-400 ml-0.5"></i>
-            </a>
-          </div>
-
-          <!-- Fast-Action Tool Links -->
-          <button onclick="openGanttModal()" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="Mở biểu đồ CPM Gantt toàn màn hình">
-            <i data-lucide="calendar-range" class="w-3 h-3 text-blue-400"></i>
-            <span class="whitespace-nowrap hidden sm:inline">Gantt</span>
-          </button>
-          <a href="./quyhoach/" id="navLinkQuyHoach" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-[11px] rounded-lg transition shadow-xs flex items-center gap-1 shrink-0 cursor-pointer" title="National Urban Planning & Industrial Zoning Gateway">
-            <i data-lucide="map" class="w-3 h-3 text-emerald-400"></i>
-            <span id="navTextQuyHoach" class="whitespace-nowrap hidden sm:inline">Planning</span>
-          </a>
-
-          <!-- Language Selector (EN Default | VI) - ECC i18n-sync -->
-          <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700 shrink-0 shadow-inner">
-            <button id="btnLangEN" onclick="setLanguage('en')" class="px-2 py-0.5 rounded text-[10.5px] font-bold transition cursor-pointer bg-blue-600 text-white shadow-xs" title="Switch to English (Default)">EN</button>
-            <button id="btnLangVI" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded text-[10.5px] font-bold transition cursor-pointer text-slate-300 hover:text-white" title="Chuyển sang Tiếng Việt">VI</button>
-          </div>
-          <!-- Hidden Metadata Anchors for JS Compatibility -->
-          <span id="heroProjectId" class="hidden"></span>
-          <span id="heroProjectBadge" class="hidden"></span>
-          <span id="heroProjectTitle" class="hidden"></span>
-          <span id="heroProjectDesc" class="hidden"></span>
         </div>
 
+        <!-- Archetype Selector -->
+        <div class="hidden lg:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+          <label id="labelHomeProjectType" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">TYPE:</label>
+          <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer py-0.5">
+            <option value="URBAN_TOWN" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Urban / Residential</option>
+            <option value="INDUSTRIAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Industrial Real Estate</option>
+            <option value="ENERGY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Renewable Energy</option>
+            <option value="RESORT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Resort &amp; Hospitality</option>
+          </select>
+        </div>
+
+        <!-- Milestone Selector -->
+        <div class="hidden xl:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+          <label id="labelMaEntry" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">PHASE:</label>
+          <select id="maEntrySelector" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[145px] sm:max-w-[165px] truncate py-0.5">
+            <option value="GREENFIELD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Greenfield Origination</option>
+            <option value="POST_POLICY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Post In-Principle Approval</option>
+            <option value="POST_1_500" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Post 1/500 Master Plan</option>
+            <option value="POST_LAND" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Post Land Allocation/Lease</option>
+            <option value="POST_PERMIT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">5. Post Building Permit</option>
+            <option value="OPERATIONAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">6. Operational Asset</option>
+          </select>
+        </div>
+
+        <!-- Primary CTA: Create Project -->
+        <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Initialize project by archetype and takeover milestone">
+          <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+          <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
+        </button>
       </div>
+
+      <!-- Right Group: Views, Modals & Localization -->
+      <div class="flex items-center gap-2 flex-wrap shrink-0">
+        <!-- Segmented Mode Control: Dashboard vs Dossier -->
+        <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+          <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2.5 py-1 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs cursor-pointer" title="Executive investment dashboard">
+            <i data-lucide="layout-dashboard" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
+            <span id="textBtnDashboard" class="whitespace-nowrap">Dashboard</span>
+          </button>
+          <a href="./?view=legal" target="_blank" rel="noopener noreferrer" id="btnViewLegalEngine" class="px-2.5 py-1 rounded-md text-xs font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" title="Open Legal Dossier & CPM matrix">
+            <i data-lucide="list-checks" class="w-3 h-3 text-blue-500"></i>
+            <span id="textBtnLegalEngine" class="whitespace-nowrap">Legal Dossier &amp; CPM</span>
+            <i data-lucide="external-link" class="w-2.5 h-2.5 text-slate-400 ml-0.5"></i>
+          </a>
+        </div>
+
+        <!-- Gantt Modal Trigger -->
+        <button onclick="openGanttModal()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="Open fullscreen CPM Gantt schedule">
+          <i data-lucide="calendar-range" class="w-3 h-3 text-blue-500"></i>
+          <span class="whitespace-nowrap hidden sm:inline">Gantt</span>
+        </button>
+
+        <!-- Planning Gateway Link -->
+        <a href="./quyhoach/" id="navLinkQuyHoach" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="National Urban Planning & Industrial Zoning Gateway">
+          <i data-lucide="map" class="w-3 h-3 text-emerald-500"></i>
+          <span id="navTextQuyHoach" class="whitespace-nowrap hidden sm:inline">Planning</span>
+        </a>
+
+        <!-- Language Selector (EN | VI) -->
+        <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0 font-mono text-[11px]">
+          <button id="btnLangEN" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs" title="Switch to English (Default)">EN</button>
+          <button id="btnLangVI" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Chuyển sang Tiếng Việt">VI</button>
+        </div>
+
+        <!-- Preserved Hidden Anchors for JS Compatibility -->
+        <span id="headerBrandTitle" class="hidden">VIETNAM INVESTMENT LEGAL MANAGEMENT &amp; M&A ENGINE</span>
+        <span id="heroProjectId" class="hidden"></span>
+        <span id="heroProjectBadge" class="hidden"></span>
+        <span id="heroProjectTitle" class="hidden"></span>
+        <span id="heroProjectDesc" class="hidden"></span>
+      </div>
+
     </div>
-  </header>
+  </div>
 
   <main class="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8 py-3.5 sm:py-6 space-y-4 sm:space-y-5 flex-1 min-w-0">
 
@@ -5523,5 +5539,37 @@
     document.addEventListener('DOMContentLoaded', () => {
       setLanguage(currentLang);
     });</script>
+<script>
+  (function() {
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    function updateIcons() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        sunIcon?.classList.remove('hidden');
+        moonIcon?.classList.add('hidden');
+      } else {
+        sunIcon?.classList.add('hidden');
+        moonIcon?.classList.remove('hidden');
+      }
+    }
+
+    updateIcons();
+
+    themeBtn?.addEventListener('click', function() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('rvn_theme_v2', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('rvn_theme_v2', 'dark');
+      }
+      updateIcons();
+    });
+  })();
+</script>
 </body>
 </html>
