@@ -44,7 +44,7 @@
   <!-- Performance & Fonts -->
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="/assets/js/chart.umd.min.js"></script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
   <script>
@@ -2233,7 +2233,7 @@
         btnCarbon.className = 'px-2 py-0.5 rounded bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-medium shadow-xs';
       }
 
-      initCharts();
+      safeInitCharts();
     }
 
     document.getElementById('btnTrajectoryCapacity')?.addEventListener('click', () => setTrajectoryMode('capacity'));
@@ -2272,6 +2272,22 @@
     sliderCapacity?.addEventListener('input', updateSimulator);
     sliderFactor?.addEventListener('input', updateSimulator);
 
+    // Fail-safe Chart Initialization with Auto-Polling
+    function safeInitCharts(attempts = 0) {
+      if (typeof Chart === 'undefined') {
+        if (attempts < 30) {
+          setTimeout(() => safeInitCharts(attempts + 1), 100);
+        }
+        return;
+      }
+      try {
+        initCharts();
+      } catch (err) {
+        console.warn('Retrying chart render...', err);
+        if (attempts < 10) setTimeout(() => safeInitCharts(attempts + 1), 200);
+      }
+    }
+
     // Theme Switcher Logic
     function applyTheme(isDark) {
       if (isDark) {
@@ -2285,7 +2301,7 @@
         moonIcon?.classList.remove('hidden');
         localStorage.setItem('rvn_theme_v2', 'light');
       }
-      initCharts();
+      safeInitCharts();
     }
 
     const savedTheme = localStorage.getItem('rvn_theme_v2');
@@ -2297,8 +2313,15 @@
     });
 
     window.addEventListener('resize', () => {
-      initCharts();
+      safeInitCharts();
     });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => safeInitCharts());
+    } else {
+      safeInitCharts();
+    }
+    window.addEventListener('load', () => safeInitCharts());
 
     updateSimulator();
       // Live Cloud Telemetry & GZIP Diagnostics

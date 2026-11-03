@@ -1419,7 +1419,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
         
         <!-- Left: Sovereign Vector Map (lg:col-span-8) -->
-        <div class="lg:col-span-8 relative h-[560px] sm:h-[620px] rounded-2xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-sm bg-slate-950 flex flex-col">
+        <div class="lg:col-span-7 xl:col-span-6 relative h-[560px] sm:h-[600px] rounded-2xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-sm bg-slate-950 flex flex-col">
           <div id="mainEnergyFlowMap" class="w-full h-full z-10"></div>
 
           <!-- Top Right Layer Filter Pills & Analytical Modes -->
@@ -1467,7 +1467,7 @@
         </div>
 
         <!-- Right: Node Telemetry & Substation Inspection Dossier (lg:col-span-4) -->
-        <div id="nodeInspectionContainer" class="lg:col-span-4 h-[560px] sm:h-[620px] flex flex-col rounded-2xl border border-borderSlate dark:border-darkBorder bg-white dark:bg-darkSurface shadow-sm overflow-hidden">
+        <div id="nodeInspectionContainer" class="lg:col-span-5 xl:col-span-6 h-[560px] sm:h-[600px] flex flex-col rounded-2xl border border-borderSlate dark:border-darkBorder bg-white dark:bg-darkSurface shadow-sm overflow-hidden">
           <!-- Dynamic Dossier Header -->
           <div class="p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
@@ -3226,11 +3226,11 @@
       if (!mainFlowMapInstance) {
         // Pure Vector Map: Zero Raster Tiles, Zero Watermarks, Instant Load
         mainFlowMapInstance = L.map('mainEnergyFlowMap', {
-          center: [15.5, 109.0],
-          zoom: 5.8,
+          center: [16.2, 107.0],
+          zoom: 6.0,
           zoomControl: true,
           attributionControl: false,
-          maxBounds: [[4.0, 98.0], [26.0, 120.0]]
+          maxBounds: [[5.0, 98.0], [25.0, 118.0]]
         });
 
         // Set dark/light container ocean background
@@ -3282,11 +3282,11 @@
         });
 
         document.getElementById('mapToggleResetViewBtn')?.addEventListener('click', function() {
-          mainFlowMapInstance.fitBounds([[7.5, 102.0], [23.5, 116.5]], { padding: [15, 15] });
+          mainFlowMapInstance.fitBounds([[8.3, 102.0], [23.4, 110.0]], { padding: [10, 10] });
         });
 
-        // Frame all of Vietnam including Hoàng Sa & Trường Sa
-        mainFlowMapInstance.fitBounds([[7.5, 102.0], [23.5, 116.5]], { padding: [15, 15] });
+        // Frame Vietnam mainland transmission corridors tightly
+        mainFlowMapInstance.fitBounds([[8.3, 102.0], [23.4, 110.0]], { padding: [10, 10] });
 
         // Trigger territory render
         renderVietnamTerritoryVectors();
