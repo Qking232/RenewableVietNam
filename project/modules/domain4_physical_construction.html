@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- RenewableVietNam Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Domain 4: Physical Construction &amp; Site Execution | Garments Company</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 420px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .spec-table th, .spec-table td {
+      vertical-align: middle;
+      padding: 0.5rem 0.6rem !important;
+      white-space: normal !important;
+      word-break: normal;
+    }
+    .spec-table td.font-mono {
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+            Domain 4: Physical Construction &amp; Site Execution
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            Civil Substructure, 180 km/h PEB Steel Superstructure, MEP Infrastructure, QA/QC Gates &amp; Zero-Harm HSE
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CRITICAL MILESTONE GATE</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-blue-700 mt-0.5 leading-tight">Enclosure Dry-In &amp; MEP Energization</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1 font-mono text-xs">
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-white">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">BUILT FOOTPRINT</div>
+          <div class="text-base font-bold text-slate-900 mt-0.5">35,000 m²</div>
+          <div class="text-[10px] text-slate-500">FF50 / FL35 Laser Screed</div>
+        </div>
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-white">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">STRUCTURAL INTEGRITY</div>
+          <div class="text-base font-bold text-emerald-600 mt-0.5">180 km/h</div>
+          <div class="text-[10px] text-slate-500">Q355B Steel | QCVN 02:2022</div>
+        </div>
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-white">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">QUALITY COMPLIANCE</div>
+          <div class="text-base font-bold text-blue-600 mt-0.5">100% ITP</div>
+          <div class="text-[10px] text-slate-500">3-Tier Gates | 0 Open NCRs</div>
+        </div>
+        <div class="p-2.5 rounded-lg border border-slate-200 bg-white">
+          <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold">SAFETY BENCHMARK</div>
+          <div class="text-base font-bold text-sky-700 mt-0.5">1,250,000 hrs</div>
+          <div class="text-[10px] text-slate-500">Zero LTI | 100% PTW Audit</div>
+        </div>
+      </div>
+
+      <!-- COMPACT PILL NAVIGATION (6 TABS) -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 font-mono text-xs border-t border-slate-100">
+        <button id="btn-tab-civil" onclick="switchTab('civil')" class="tab-btn px-3 py-1.5 rounded-md font-semibold text-white bg-slate-900 transition-colors shrink-0">
+          1. Civil &amp; Substructure
+        </button>
+        <button id="btn-tab-superstructure" onclick="switchTab('superstructure')" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0">
+          2. PEB &amp; Envelope
+        </button>
+        <button id="btn-tab-mep" onclick="switchTab('mep')" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0">
+          3. MEP Infrastructure
+        </button>
+        <button id="btn-tab-qaqc" onclick="switchTab('qaqc')" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0">
+          4. QA/QC &amp; ITP Gates
+        </button>
+        <button id="btn-tab-hse" onclick="switchTab('hse')" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0">
+          5. HSE Zero-Harm
+        </button>
+        <button id="btn-tab-schedule" onclick="switchTab('schedule')" class="tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0">
+          6. Schedule &amp; S-Curve
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB 1: CIVIL & SUBSTRUCTURE -->
+    <section id="tab-content-civil" class="tab-content space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Substructure, Deep Piling &amp; Earthworks Engineering</h2>
+            <p class="text-xs text-slate-500">Foundation engineering per TCVN 10304:2014, ASTM D1143 Static Load, and ASTM E1155 Floor Flatness</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            Substructure: 100% Complete
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="spec-table text-xs text-slate-700 border border-slate-100">
+            <thead class="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase border-b border-slate-200">
+              <tr>
+                <th class="text-left font-semibold">Substructure Component</th>
+                <th class="text-left font-semibold">Technical Standard</th>
+                <th class="text-left font-semibold">Engineering Specification</th>
+                <th class="text-center font-semibold">Quantity / Scope</th>
+                <th class="text-left font-semibold">Verification Protocol</th>
+                <th class="text-center font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="font-bold text-slate-900">Spun Pre-stressed Concrete Piles (PHC)</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 7888:2014</td>
+                <td>PHC D400 &amp; D500 Grade A concrete (f'c &ge; 80 MPa), pile length 18m - 24m driven into bearing stratum.</td>
+                <td class="text-center font-mono font-semibold text-slate-800">1,480 piles</td>
+                <td class="text-slate-600">Static pile load test (1% total piles, 200% design capacity) + High-strain dynamic PDA testing (5%).</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono bg-emerald-100 text-emerald-800 font-semibold">Passed (0 Defect)</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Earthworks &amp; Bulk Grading</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 4447:2012</td>
+                <td>Cut/fill site balancing, 300mm layers compacted with 25-ton vibrating roller. Field density tests every 200 m².</td>
+                <td class="text-center font-mono font-semibold text-slate-800">42,500 m³</td>
+                <td class="text-slate-600">Sand cone density test per ASTM D1556, achieving minimum degree of compaction K &ge; 0.95.</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono bg-emerald-100 text-emerald-800 font-semibold">K &ge; 0.96 Verified</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Heavy Machine Raft &amp; Grade Beams</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 5574:2018</td>
+                <td>Reinforced concrete grade beams (600x1200mm) and isolated machine plinths (M300 / B22.5 concrete, CB400-V rebar).</td>
+                <td class="text-center font-mono font-semibold text-slate-800">4,200 m³</td>
+                <td class="text-slate-600">Pre-pour rebar inspection, cover block verification (50mm), slump check (120&plusmn;20mm), 28-day core test.</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono bg-emerald-100 text-emerald-800 font-semibold">100% Certified</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Slab-on-Grade (Laser Screed)</td>
+                <td class="font-mono text-slate-500 text-[11px]">ASTM E1155 / ACI 302.1R</td>
+                <td>200mm thick heavy-duty slab, steel-fiber reinforcement (30 kg/m³), monolithic dry-shake hardener (5 kg/m²).</td>
+                <td class="text-center font-mono font-semibold text-slate-800">35,000 m²</td>
+                <td class="text-slate-600">Dipstick Floor Profiler testing within 72h: Overall Flatness FF &ge; 50, Overall Levelness FL &ge; 35.</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono bg-emerald-100 text-emerald-800 font-semibold">FF52 / FL38 Achieved</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Site Stormwater &amp; Subsoil Drainage</td>
+                <td class="font-mono text-slate-500 text-[11px]">QCVN 07-2:2016/BXD</td>
+                <td>Precast reinforced concrete box culverts (1.2m x 1.2m) linked to perimeter retention basin with oil/grit interceptors.</td>
+                <td class="text-center font-mono font-semibold text-slate-800">1,850 linear m</td>
+                <td class="text-slate-600">Hydraulic slope laser inspection (min 0.2% gradient), joint air pressure leak testing.</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] font-mono bg-emerald-100 text-emerald-800 font-semibold">Commissioned</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PEB SUPERSTRUCTURE & ENVELOPE -->
+    <section id="tab-content-superstructure" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Pre-Engineered Building (PEB) &amp; Building Envelope</h2>
+            <p class="text-xs text-slate-500">180 km/h Typhoon load structural design, AWS D1.1 structural welding, and QCVN 06:2022 fire-safe claddings</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            Superstructure: 100% Erected
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">1. STRUCTURAL STEEL FABRICATION</div>
+            <div class="text-xs font-bold text-slate-900">Q355B Built-Up H-Beams &amp; Columns</div>
+            <p class="text-[11px] text-slate-600 leading-snug">
+              Total steel tonnage: 1,850 tons. Fabricated at ISO 9001 plant with CNC cutting, submerged arc welding (SAW), shot-blasting to SA 2.5, and 3-coat epoxy paint system (DFT &ge; 150 &mu;m).
+            </p>
+            <div class="text-[10px] font-mono text-blue-700 font-semibold">Welding NDT: 100% VT + 20% Ultrasonic UT</div>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">2. TYPHOON WIND DEFENSE (180 KM/H)</div>
+            <div class="text-xs font-bold text-slate-900">QCVN 02:2022/BXD Typhoon Design</div>
+            <p class="text-[11px] text-slate-600 leading-snug">
+              Designed for coastal Region III wind pressure ($W_0 = 125	ext{ daN/m²}$, basic wind speed 40 m/s with 1.35 gust factor = 50 m/s / 180 km/h). Reinforced portal knees, wind trusses, and sag rods.
+            </p>
+            <div class="text-[10px] font-mono text-emerald-700 font-semibold">Calculated Deflection: H/185 (Within H/150 Limit)</div>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="text-[10px] font-mono font-bold text-slate-400 uppercase">3. HIGH-PERFORMANCE ROOF ENVELOPE</div>
+            <div class="text-xs font-bold text-slate-900">Standing Seam 360&deg; Double Lock</div>
+            <p class="text-[11px] text-slate-600 leading-snug">
+              0.55mm BMT Zincalume AZ150 concealed clip system (no exposed fasteners). 75mm glasswool insulation (32 kg/m³) with reinforced aluminum foil facing (U-value &le; 0.45 W/m²K).
+            </p>
+            <div class="text-[10px] font-mono text-purple-700 font-semibold">100% Water Penetration Tested (ASTM E1646)</div>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-3 space-y-2">
+          <h3 class="text-xs font-bold text-slate-800">Wall Cladding, Precast Tilt-Up Panels &amp; Fire Compartmentation</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="p-2.5 rounded border border-slate-200 bg-white">
+              <span class="font-bold text-slate-900">Perimeter Concrete Dado Wall:</span>
+              <span class="text-slate-600"> 2.4m high reinforced concrete tilt-up panels around building base for forklift impact protection, pest-proofing, and water ingress prevention during monsoons.</span>
+            </div>
+            <div class="p-2.5 rounded border border-slate-200 bg-white">
+              <span class="font-bold text-slate-900">Fire-Rated Dividing Firewall:</span>
+              <span class="text-slate-600"> 200mm Autoclaved Aerated Concrete (AAC) panel walls providing EI 180 fire resistance rating separating Production Hall A from Raw Material Warehouse per QCVN 06:2022.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: MEP INFRASTRUCTURE -->
+    <section id="tab-content-mep" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Mechanical, Electrical, Plumbing (MEP) &amp; Process Utilities Rough-In</h2>
+            <p class="text-xs text-slate-500">IEEE, ASME B31.1, SMACNA, NFPA 13, and Vietnam National Grid Code technical specifications</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            Rough-In: 96% Complete
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900">Electrical MV/LV Power Distribution</span>
+              <span class="font-mono text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Energized</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>22kV underground incoming cable feed from EVN industrial substation (Cu/XLPE/PVC/DSTA/PVC 3x240mm²).</li>
+              <li>Substation with 2 x 2,500 kVA 22/0.4kV cast-resin dry-type transformers (IP31 enclosure).</li>
+              <li>Main Distribution Board (MDB) equipped with motorized ACB 4,000A, Form 4b internal segregation.</li>
+              <li>Sandwich-type copper busway trunking (4,000A, IP65) feeding production busduct tap-off units.</li>
+              <li>Backup emergency generator: 1,500 kVA Perkins engine with Automatic Transfer Switch (ATS transfer &lt; 9.8s).</li>
+            </ul>
+          </div>
+
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900">High-Pressure Biomass Steam &amp; Condensate</span>
+              <span class="font-mono text-[10px] text-blue-700 font-semibold bg-blue-50 px-1.5 py-0.5 rounded">Hydrotested</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>15 TPH Biomass boiler supply lines: ASTM A106 Grade B Schedule 40 seamless carbon steel pipe.</li>
+              <li>Piping design to ASME B31.1 Power Piping code with 100% radiographed butt-welded joints.</li>
+              <li>Hydrostatic pressure tested at 1.5x design pressure (18.0 bar for 12.0 bar operating steam).</li>
+              <li>100mm non-combustible pre-formed rockwool insulation (100 kg/m³) with 0.5mm embossed aluminum jacketing.</li>
+              <li>Closed-loop pressurized condensate recovery returning 88% treated feedwater to boiler deaerator.</li>
+            </ul>
+          </div>
+
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900">Industrial Compressed Air (Ring Main)</span>
+              <span class="font-mono text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded">Pressure Held</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>Complete perimeter overhead ring main: extruded marine-grade anodized aluminum piping (DN100).</li>
+              <li>1,573 CFM total capacity via 3 x 75 kW Variable Frequency Drive (VFD) rotary screw oil-free air compressors.</li>
+              <li>ISO 8573-1 Class 1:4:1 compressed air quality (desiccant air dryer, particulate filter to 0.01 &mu;m).</li>
+              <li>Pneumatic pressure drop across 35,000 m² floor verified &le; 0.2 bar at peak sewing machine load.</li>
+            </ul>
+          </div>
+
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs text-slate-900">Fire Protection (PCCC) &amp; Smoke Evacuation</span>
+              <span class="font-mono text-[10px] text-rose-700 font-semibold bg-rose-50 px-1.5 py-0.5 rounded">Pre-Commissioned</span>
+            </div>
+            <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
+              <li>Automatic wet-pipe sprinkler system per NFPA 13 and TCVN 7336:2021 with 2,400 sprinkler heads.</li>
+              <li>High-bay raw material warehouse protected by ESFR K-25.2 pendant quick-response heads.</li>
+              <li>Dedicated fire pump station: 1 Electric (150 HP) + 1 Diesel standby (150 HP) + 1 Jockey pump (UL/FM listed).</li>
+              <li>Dedicated 650 m³ underground reinforced concrete fire water storage reservoir.</li>
+              <li>Automated roof smoke louvers connected to central fire alarm panel with manual override.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: QA/QC & ITP GATES -->
+    <section id="tab-content-qaqc" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Inspection &amp; Test Plans (ITP), QA/QC Governance &amp; Material Traceability</h2>
+            <p class="text-xs text-slate-500">3-Tier Verification Gate System per ISO 9001:2015 and Vietnam Decree 06/2021/ND-CP Quality Management</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            100% Passed (0 Open NCR)
+          </span>
+        </div>
+
+        <!-- 3-TIER FLOW DIAGRAM -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs font-mono">
+          <div class="p-3 rounded border border-slate-200 bg-slate-50 space-y-1">
+            <div class="text-[9.5px] font-bold text-slate-400 uppercase">TIER 1: CONTRACTOR QC</div>
+            <div class="font-bold text-slate-900 text-xs">Self-Inspection &amp; Internal Sign-Off</div>
+            <p class="text-[11px] text-slate-600 font-sans">General Contractor QC engineers conduct 100% dimensional, rebar, torque, and formwork checks prior to formal submission.</p>
+          </div>
+          <div class="p-3 rounded border border-blue-200 bg-blue-50/50 space-y-1">
+            <div class="text-[9.5px] font-bold text-blue-500 uppercase">TIER 2: SUPERVISION CONSULTANT</div>
+            <div class="font-bold text-blue-900 text-xs">Formal RFI Joint Verification Gate</div>
+            <p class="text-[11px] text-slate-600 font-sans">Licensed Third-Party Supervision Engineers inspect works within 24h of RFI issuance. Concrete pouring strictly prohibited without sign-off.</p>
+          </div>
+          <div class="p-3 rounded border border-emerald-200 bg-emerald-50/50 space-y-1">
+            <div class="text-[9.5px] font-bold text-emerald-600 uppercase">TIER 3: OWNER PM AUDIT</div>
+            <div class="font-bold text-emerald-900 text-xs">Owner Technical Surveillance &amp; Sign-Off</div>
+            <p class="text-[11px] text-slate-600 font-sans">Owner Engineering Lead audits high-risk milestones, independent lab testing results, and verifies NCR closure evidence.</p>
+          </div>
+        </div>
+
+        <!-- QUALITY METRICS TABLE -->
+        <div class="overflow-x-auto">
+          <table class="spec-table text-xs text-slate-700 border border-slate-100">
+            <thead class="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase border-b border-slate-200">
+              <tr>
+                <th class="text-left font-semibold">Quality Inspection Activity</th>
+                <th class="text-left font-semibold">Test Standard</th>
+                <th class="text-left font-semibold">Sampling Frequency</th>
+                <th class="text-center font-semibold">Total Inspected</th>
+                <th class="text-center font-semibold">Pass Rate</th>
+                <th class="text-left font-semibold">Audit Documentation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="font-bold text-slate-900">Ready-Mix Concrete Compressive Strength</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 3118:1993</td>
+                <td>1 set of 3 cylinders per 20 m³ (tested at 7 and 28 days).</td>
+                <td class="text-center font-mono font-semibold text-slate-800">420 sets</td>
+                <td class="text-center font-mono text-emerald-700 font-bold">100.0%</td>
+                <td class="text-slate-600">LAS-XD Certified Independent Laboratory Test Certificates</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Structural Steel Weld Ultrasonic Testing (UT)</td>
+                <td class="font-mono text-slate-500 text-[11px]">AWS D1.1 / ISO 17640</td>
+                <td>100% visual (VT) + 20% random ultrasonic testing of full-penetration butt welds.</td>
+                <td class="text-center font-mono font-semibold text-slate-800">1,250 weld joints</td>
+                <td class="text-center font-mono text-emerald-700 font-bold">99.2% (100% post-repair)</td>
+                <td class="text-slate-600">ASNT Level II Certified NDT Inspection Reports</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">High-Strength Bolt Torque Calibration</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 5575 / ASTM F3125</td>
+                <td>Calibrated torque wrench testing of 10% bolts per connection (Grade 8.8/10.9).</td>
+                <td class="text-center font-mono font-semibold text-slate-800">8,600 bolts</td>
+                <td class="text-center font-mono text-emerald-700 font-bold">100.0%</td>
+                <td class="text-slate-600">Torque Wrench Calibration Log &amp; Connection Inspection Records</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Rebar Tensile &amp; Yield Strength Testing</td>
+                <td class="font-mono text-slate-500 text-[11px]">TCVN 1651:2018</td>
+                <td>1 test sample per 20 tons per steel heat number (CB400-V, CB500-V).</td>
+                <td class="text-center font-mono font-semibold text-slate-800">68 batch tests</td>
+                <td class="text-center font-mono text-emerald-700 font-bold">100.0%</td>
+                <td class="text-slate-600">Hoa Phat / Pomina Mill Test Certificates (MTC) &amp; Lab Tensile Tests</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900">Requests for Inspection (RFI) Register</td>
+                <td class="font-mono text-slate-500 text-[11px]">Site Quality Manual</td>
+                <td>Mandatory prior to covering or pouring any permanent works.</td>
+                <td class="text-center font-mono font-semibold text-slate-800">842 RFIs</td>
+                <td class="text-center font-mono text-emerald-700 font-bold">100.0% Approved</td>
+                <td class="text-slate-600">Digital RFI Register co-signed by Supervision Consultant &amp; Owner</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: HSE ZERO-HARM PROTOCOL -->
+    <section id="tab-content-hse" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Health, Safety &amp; Environment (HSE) Zero-Harm Site Protocol</h2>
+            <p class="text-xs text-slate-500">ISO 45001 Occupational Health &amp; Safety, OSHA Standards, and Decree 44/2016/ND-CP Construction Safety</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            1,250,000 Safe Hours (LTI = 0)
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-1">
+            <div class="text-[9.5px] font-mono font-bold text-slate-400 uppercase">PERMIT TO WORK (PTW)</div>
+            <div class="text-xs font-bold text-slate-900">100% Mandatory Gated</div>
+            <p class="text-[11px] text-slate-600 leading-snug">Daily authorized permits required for: Hot Work, Working at Heights (&gt; 2.0m), Confined Spaces, Heavy Lifting, and Lockout/Tagout (LOTO).</p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-1">
+            <div class="text-[9.5px] font-mono font-bold text-slate-400 uppercase">WORKING AT HEIGHTS</div>
+            <div class="text-xs font-bold text-slate-900">100% Tie-Off Rule</div>
+            <p class="text-[11px] text-slate-600 leading-snug">Double-lanyard safety harness with shock absorbers attached to certified static lifelines. BS 1139 scaffolding with green tag inspection.</p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-1">
+            <div class="text-[9.5px] font-mono font-bold text-slate-400 uppercase">CRANE &amp; LIFTING SAFETY</div>
+            <div class="text-xs font-bold text-slate-900">Engineered Lift Plans</div>
+            <p class="text-[11px] text-slate-600 leading-snug">150T mobile crane operations require signed lift calculations, outrigger ground mat verification ($q_a \ge 180	ext{ kPa}$), and 100% exclusion barricading.</p>
+          </div>
+          <div class="p-3 rounded-lg border border-slate-200 bg-white space-y-1">
+            <div class="text-[9.5px] font-mono font-bold text-slate-400 uppercase">ENVIRONMENT &amp; DUST</div>
+            <div class="text-xs font-bold text-slate-900">EPA &amp; LEED Compliant</div>
+            <p class="text-[11px] text-slate-600 leading-snug">Automated tire wash station at main gate, daily water spraying for dust control, silt traps in perimeter drainage, and hazardous waste containment.</p>
+          </div>
+        </div>
+
+        <!-- SAFETY PERFORMANCE CARD -->
+        <div class="p-3 rounded-lg border border-emerald-200 bg-emerald-50/40 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <div class="space-y-0.5">
+            <div class="font-bold text-emerald-900">Institutional Safety Record: Zero Lost Time Injuries (LTI = 0)</div>
+            <div class="text-slate-600 text-[11px]">Cumulative 1,250,000 safe contractor man-hours logged without a lost-time event. 100% site induction attendance (2,450 workers trained).</div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 font-mono text-[11px]">
+            <span class="px-2 py-1 rounded bg-white border border-emerald-200 text-emerald-800 font-bold">Near-Misses Logged: 18 (100% Corrected)</span>
+            <span class="px-2 py-1 rounded bg-white border border-emerald-200 text-emerald-800 font-bold">First-Aid Cases: 4 (Minor)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: SCHEDULE & S-CURVE -->
+    <section id="tab-content-schedule" class="tab-content hidden space-y-4">
+      <div class="bg-white rounded-lg border border-slate-200 p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Physical Construction Work Breakdown Structure (WBS) &amp; S-Curve</h2>
+            <p class="text-xs text-slate-500">Critical path milestone tracking, planned vs. actual progress variance, and civil-to-MEP interfaces</p>
+          </div>
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+            Schedule: On Track (+4 Days Float)
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="spec-table text-xs text-slate-700 border border-slate-100">
+            <thead class="bg-slate-50 text-slate-500 font-mono text-[10px] uppercase border-b border-slate-200">
+              <tr>
+                <th class="text-left font-semibold">WBS Work Package</th>
+                <th class="text-left font-semibold">Key Milestones &amp; Deliverables</th>
+                <th class="text-center font-semibold">Weight</th>
+                <th class="text-center font-semibold">Planned %</th>
+                <th class="text-center font-semibold">Actual %</th>
+                <th class="text-center font-semibold">Variance</th>
+                <th class="text-center font-semibold">Critical Path</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-xs">
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">1. Site Preparation &amp; Piling</td>
+                <td class="font-sans text-slate-600">Earthworks, 1,480 PHC piles driven, pile cap casting</td>
+                <td class="text-center font-semibold text-slate-700">14.0%</td>
+                <td class="text-center text-slate-600">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">0.0%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-slate-100 text-slate-700 font-bold">Completed</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">2. Substructure &amp; Grade Slabs</td>
+                <td class="font-sans text-slate-600">Raft foundations, laser-screed grade slab (35,000 m²)</td>
+                <td class="text-center font-semibold text-slate-700">18.0%</td>
+                <td class="text-center text-slate-600">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">0.0%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-slate-100 text-slate-700 font-bold">Completed</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">3. PEB Steel Superstructure</td>
+                <td class="font-sans text-slate-600">1,850T primary steel framing, 180 km/h wind bracing</td>
+                <td class="text-center font-semibold text-slate-700">22.0%</td>
+                <td class="text-center text-slate-600">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">0.0%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-slate-100 text-slate-700 font-bold">Completed</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">4. Roof &amp; Wall Envelope (Dry-In)</td>
+                <td class="font-sans text-slate-600">Standing seam roof, tilt-up concrete panels, skylights</td>
+                <td class="text-center font-semibold text-slate-700">16.0%</td>
+                <td class="text-center text-slate-600">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">100.0%</td>
+                <td class="text-center text-emerald-600 font-bold">0.0%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-slate-100 text-slate-700 font-bold">Completed</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">5. MEP Infrastructure &amp; Piping</td>
+                <td class="font-sans text-slate-600">22kV substation, 15 TPH steam, aluminum air, PCCC heads</td>
+                <td class="text-center font-semibold text-slate-700">20.0%</td>
+                <td class="text-center text-slate-600">95.0%</td>
+                <td class="text-center text-emerald-600 font-bold">96.5%</td>
+                <td class="text-center text-emerald-600 font-bold">+1.5%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-rose-100 text-rose-800 font-bold">CRITICAL (CPM)</span></td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-900 font-sans">6. Finishes, Architectural &amp; External</td>
+                <td class="font-sans text-slate-600">Cleanroom partitions, epoxy flooring, internal roads</td>
+                <td class="text-center font-semibold text-slate-700">10.0%</td>
+                <td class="text-center text-slate-600">88.0%</td>
+                <td class="text-center text-emerald-600 font-bold">89.0%</td>
+                <td class="text-center text-emerald-600 font-bold">+1.0%</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded text-[9.5px] bg-blue-100 text-blue-800 font-bold">In Progress</span></td>
+              </tr>
+              <tr class="bg-slate-50 font-bold text-slate-900">
+                <td colspan="2" class="font-sans text-right pr-4">Cumulative Physical Construction S-Curve Total:</td>
+                <td class="text-center font-mono">100.0%</td>
+                <td class="text-center font-mono text-slate-700">97.8%</td>
+                <td class="text-center font-mono text-emerald-700">98.2%</td>
+                <td class="text-center font-mono text-emerald-700">+0.4% Ahead</td>
+                <td class="text-center font-mono text-emerald-700">Ready for T&amp;C</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- FLOATING TOOLTIP FOR INTERACTIVE CALCULATIONS -->
+  <div id="calc-tooltip"></div>
+
+  <script>
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3 py-1.5 rounded-md font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0';
+      });
+
+      const selectedContent = document.getElementById('tab-content-' + tabKey);
+      if (selectedContent) selectedContent.classList.remove('hidden');
+
+      const activeBtn = document.getElementById('btn-tab-' + tabKey);
+      if (activeBtn) {
+        activeBtn.className = 'tab-btn px-3 py-1.5 rounded-md font-semibold text-white bg-slate-900 transition-colors shrink-0';
+      }
+    }
+  </script>
+</body>
+</html>

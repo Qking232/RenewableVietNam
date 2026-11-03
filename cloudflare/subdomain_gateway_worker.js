@@ -1,30 +1,27 @@
 /**
- * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy
+ * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Migration Director
  * 
  * Maps subdomains to origin application directories on renewablevietnam.com:
- * - wind.renewablevietnam.com   -> /projectenergy/
- * - ind.renewablevietnam.com    -> /green/
- * - ev.renewablevietnam.com     -> /evcharging/
- * - legal.renewablevietnam.com  -> /hub/
- * - invest.renewablevietnam.com -> /invm/
- * - project.renewablevietnam.com -> /garments/
+ * - energy.renewablevietnam.com     -> /projectenergy/
+ * - wind.renewablevietnam.com       -> /projectenergy/ (legacy alias)
+ * - industrial.renewablevietnam.com -> /industrial/
+ * - ev.renewablevietnam.com         -> /evcharging/
+ * - legal.renewablevietnam.com      -> /hub/
+ * - invest.renewablevietnam.com     -> /invm/
+ * - project.renewablevietnam.com    -> /garments/
  * 
- * Capabilities:
- * - Preserves subdomain in the browser address bar (URL masking & path replacement)
- * - Transparent passthrough for global shared assets (/assets/*, /data/*, /vendor/*)
- * - Normalizes subpaths and directory trailing slashes
- * - Preserves full query strings
- * - Rewrites Host headers to renewablevietnam.com for GitHub Pages origin resolution
+ * Edge Redirections:
+ * - ind.renewablevietnam.com        -> 301 Permanent Redirect to https://industrial.renewablevietnam.com
  */
 
 const HOST_PATH_MAP = {
   'energy.renewablevietnam.com': '/projectenergy',
   'wind.renewablevietnam.com': '/projectenergy',
-  'ind.renewablevietnam.com': '/green',
+  'industrial.renewablevietnam.com': '/industrial',
   'ev.renewablevietnam.com': '/evcharging',
   'legal.renewablevietnam.com': '/hub',
   'invest.renewablevietnam.com': '/invm',
-  'project.renewablevietnam.com': '/garments'
+  'project.renewablevietnam.com': '/project'
 };
 
 const SHARED_PREFIXES = ['/assets/', '/data/', '/vendor/', '/_includes/', '/_layouts/'];
@@ -34,6 +31,12 @@ export default {
     const url = new URL(request.url);
     const originHost = 'renewablevietnam.com';
     const hostname = url.hostname.toLowerCase();
+
+    // Edge HTTP 301 Permanent Redirect: ind. -> industrial.
+    if (hostname === 'ind.renewablevietnam.com') {
+      const destination = `https://industrial.renewablevietnam.com${url.pathname}${url.search}`;
+      return Response.redirect(destination, 301);
+    }
 
     const targetSubfolder = HOST_PATH_MAP[hostname];
 
@@ -46,6 +49,13 @@ export default {
     }
 
     let pathname = url.pathname;
+
+    // Edge HTTP 301 Permanent Redirect: /green -> /industrial
+    if (pathname.startsWith('/green')) {
+      const remainingPath = pathname.replace(/^\/green/, '') || '/';
+      return Response.redirect(`https://industrial.renewablevietnam.com${remainingPath}${url.search}`, 301);
+    }
+
 
     // Check if request is for shared static assets at origin root
     const isSharedAsset = SHARED_PREFIXES.some(prefix => pathname.startsWith(prefix));
