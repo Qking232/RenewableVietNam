@@ -406,7 +406,58 @@
     <!-- INTERACTIVE RENEWABLE INDUSTRIAL HUB SCREENER & DIRECTORY           -->
     <!-- ==================================================================== -->
     
-    <section id="powerSizer" class="p-5 sm:p-7 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
+    
+    <!-- ==================================================================== -->
+    <!-- WORKSTATION ARCHITECTURAL MODE SWITCHER & ACTIVE FILTER HUD          -->
+    <!-- ==================================================================== -->
+    <div class="sticky top-16 z-30 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md p-2.5 rounded-2xl border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <!-- 3-Segmented Mode Switcher -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto">
+        <button id="modeBtnDirectory" type="button" onclick="switchWorkstationMode('directory')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+          <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          <span>Eco-Parks &amp; GIS Directory</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold" id="badgeDirectoryCount">168</span>
+        </button>
+
+        <button id="modeBtnTelemetry" type="button" onclick="switchWorkstationMode('telemetry')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span>Grid &amp; Siting Telemetry</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono font-bold">10 Charts</span>
+        </button>
+
+        <button id="modeBtnSizer" type="button" onclick="switchWorkstationMode('sizer')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+          <span>Industrial Power Sizer</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-mono font-bold">Calc</span>
+        </button>
+      </div>
+
+      <!-- Active Cross-Filter Floating HUD (Sticky) -->
+      <div id="activeCrossFilterHUD" class="hidden items-center justify-between sm:justify-start gap-2.5 text-xs font-mono px-3 py-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-800 dark:text-teal-200 shadow-sm animate-fadeIn">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+          <span class="font-medium text-[11px] text-teal-600 dark:text-teal-400 uppercase tracking-wider">Filtered:</span>
+          <span id="activeFilterLabel" class="font-bold text-slate-900 dark:text-white">Region: South</span>
+          <span id="activeFilterCount" class="font-semibold text-teal-600 dark:text-teal-400">(42)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="switchWorkstationMode('directory', true)" class="px-2 py-0.5 rounded bg-teal-600 text-white text-[11px] font-semibold hover:bg-teal-700 transition cursor-pointer">
+            View in Table &rarr;
+          </button>
+          <button type="button" onclick="clearAllIndustrialFilters()" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-darkBorder text-slate-700 dark:text-slate-300 text-[11px] font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition cursor-pointer">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section id="powerSizer" class="hidden p-5 sm:p-7 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
       <!-- 1. Header with Institutional Badges -->
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-borderSlate dark:border-darkBorder pb-5">
         <div class="space-y-1.5">
@@ -769,190 +820,206 @@
     </section>
 
     
-    <!-- INTERACTIVE REGIONAL INDUSTRIAL FOOTPRINT & SOLAR POTENTIAL CHARTS -->
-    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-3">
+    <!-- ==================================================================== -->
+    <!-- INTERACTIVE 10-CHART MASTER TELEMETRY & GRID SITING COCKPIT          -->
+    <!-- ==================================================================== -->
+    <section id="telemetrySection" class="hidden p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
+      <!-- Section Master Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-4">
         <div>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></span>
             <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400">
-              National Grid Intertie &amp; Eco-Industrial Telemetry Suite &middot; 10 Active Visualizations
+              National Grid Intertie &amp; Eco-Industrial Telemetry &middot; 10 Master Visuals
             </span>
           </div>
-          <h2 class="text-sm sm:text-base font-bold text-inkPrimary dark:text-textDarkPrimary mt-0.5">
+          <h2 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary mt-1">
             Eco-Industrial Footprint, Substation Headroom &amp; DPPA Siting Intelligence
           </h2>
-          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
-            Cross-referenced analytics uniting 168 eco-industrial parks with the National Transmission Grid (1,915 substations and 2,877 circuits). Click any element to filter the directory table.
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5 max-w-3xl">
+            Correlated analytics uniting 168 eco-industrial parks with the National Transmission Grid (1,915 substations and 2,877 circuits). Click any bar or slice to cross-filter the directory table.
           </p>
         </div>
-        <div class="flex items-center gap-2 font-mono text-[10px] shrink-0 self-start sm:self-auto">
+        <div class="flex items-center gap-2 font-mono text-[10px] shrink-0 self-start lg:self-auto">
           <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 font-semibold">
-            10-Chart Master Suite
+            10-Visual Architecture
           </span>
           <span class="text-slate-400 hidden sm:inline">168 IPs &middot; 1,915 Subs &middot; 2,877 Lines</span>
         </div>
       </div>
 
-      <!-- TIER 1: REGIONAL FOOTPRINT, VOLTAGE & DPPA STATUTORY (CHARTS 01 - 03) -->
-      <div class="space-y-1.5">
-        <div class="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-          <span>Tier 1 &middot; Core Siting, Land Footprint &amp; Regulatory Status</span>
+      <!-- 3-LENS SUB-TAB SWITCHER -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-3">
+        <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs overflow-x-auto">
+          <button id="telemetryLensBtnAll" type="button" onclick="switchTelemetryLens('all')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+            All 10 Visuals
+          </button>
+          <button id="telemetryLensBtnGrid" type="button" onclick="switchTelemetryLens('grid')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 1: Grid &amp; Substations (3)
+          </button>
+          <button id="telemetryLensBtnDppa" type="button" onclick="switchTelemetryLens('dppa')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 2: Renewable &amp; DPPA (4)
+          </button>
+          <button id="telemetryLensBtnRegional" type="button" onclick="switchTelemetryLens('regional')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 3: Hubs &amp; Demographics (3)
+          </button>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-          <!-- Chart 01: Regional Footprint & Solar Potential (6 cols) -->
-          <div class="lg:col-span-6 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">01 &middot; Regional Footprint &amp; Solar Potential</span>
-              <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter Region</span>
-            </div>
-            <div class="relative h-52">
-              <canvas id="indRegionalSolarChart"></canvas>
-            </div>
-          </div>
 
-          <!-- Chart 02: Substation Voltage Class (3 cols) -->
-          <div class="lg:col-span-3 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
-                <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">02 &middot; Substation Voltage</span>
-                <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
-              </div>
-              <div class="relative h-44 flex items-center justify-center">
-                <canvas id="indSubstationDoughnutChart"></canvas>
-              </div>
-            </div>
-            <div class="pt-1.5 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[9px] text-slate-400">
-              <span>220kV / 110kV</span>
-              <span>168 Connected Hubs</span>
-            </div>
-          </div>
-
-          <!-- Chart 03: Decree 80 DPPA Readiness (3 cols) -->
-          <div class="lg:col-span-3 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
-                <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">03 &middot; DPPA Readiness</span>
-                <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
-              </div>
-              <div class="relative h-44 flex items-center justify-center">
-                <canvas id="indDppaTiersChart"></canvas>
-              </div>
-            </div>
-            <div class="pt-1.5 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[9px] text-slate-400">
-              <span>Decree 80 Scope</span>
-              <span>168 Parks</span>
-            </div>
-          </div>
+        <div class="text-[11px] font-mono text-inkMuted dark:text-textDarkMuted hidden md:block">
+          Click any chart element to cross-filter the directory table.
         </div>
       </div>
 
-      <!-- TIER 2: NATIONAL GRID INTERTIE HEADROOM & CORRIDOR DENSITY (CHARTS 04 - 06) -->
-      <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-        <div class="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-          <span>Tier 2 &middot; National Power Grid Intertie Capacity &amp; Clean Energy Penetration</span>
+      <!-- ================================================================== -->
+      <!-- LENS 1: NATIONAL GRID INTERTIE, VOLTAGE & HEADROOM (3 CHARTS)     -->
+      <!-- ================================================================== -->
+      <div id="telemetryLensGroupGrid" class="space-y-3.5">
+        <div class="p-3 rounded-xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span><strong>National Grid Intertie Telemetry</strong>: EVN 220kV/500kV intertie corridors ensure grid hosting stability across 1,915 monitored substations and 2,877 circuits.</span>
+          </div>
+          <span class="font-mono text-[10px] text-blue-600 dark:text-blue-400 font-bold shrink-0">1,915 Substations &middot; 2,877 Circuits</span>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-          <!-- Chart 04: Regional Grid Transformer Capacity & Headroom (5 cols) -->
-          <div class="lg:col-span-5 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">04 &middot; Grid Transformer Capacity (MVA)</span>
-              <span class="text-blue-600 dark:text-blue-400">1,915 Substations</span>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          <!-- Visual 02: Substation Voltage Interties -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 02 &middot; Voltage Interties</span>
+              <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
             </div>
-            <div class="relative h-52">
+            <div class="relative h-44 w-full">
+              <canvas id="indSubstationDoughnutChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Visual 04: Substation Hosting Capacity Headroom & MVA Density -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 04 &middot; Substation Headroom</span>
+              <span class="text-[9px] font-mono text-slate-400">48.2k MVA Monitored</span>
+            </div>
+            <div class="relative h-52 w-full">
               <canvas id="indGridHostingCapacityChart"></canvas>
             </div>
           </div>
 
-          <!-- Chart 05: Clean Energy Penetration Histogram (4 cols) -->
-          <div class="lg:col-span-4 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">05 &middot; Clean Energy Share (%)</span>
-              <span class="text-emerald-600 dark:text-emerald-400">168 Parks Bucketed</span>
+          <!-- Visual 06: Transmission Corridor Proximity & Density -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 06 &middot; 500kV/220kV Proximity</span>
+              <span class="text-[9px] font-mono text-slate-400">Corridor Buffer</span>
             </div>
-            <div class="relative h-52">
+            <div class="relative h-44 w-full">
+              <canvas id="indTransmissionDensityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- LENS 2: RENEWABLE, DPPA DECREE 80 & NET-ZERO TRAJECTORY (4 CHARTS) -->
+      <!-- ================================================================== -->
+      <div id="telemetryLensGroupDppa" class="space-y-3.5 pt-2">
+        <div class="p-3 rounded-xl bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+            <span><strong>DPPA Statutory Readiness Synthesis</strong>: Decree 80/2024/ND-CP unlocks 5.66 GWp rooftop potential across 104k hectares; 64% of Tier-1 hubs are ready for bilateral wheeling.</span>
+          </div>
+          <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 font-bold shrink-0">5.66 GWp Solar &middot; 168 Hubs</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <!-- Visual 01: Regional Footprint & Solar Potential -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 01 &middot; Regional Footprint</span>
+              <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+            </div>
+            <div class="relative h-52 w-full">
+              <canvas id="indRegionalSolarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Visual 03: DPPA Statutory Readiness Tiers -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 03 &middot; DPPA Decree 80 Tiers</span>
+              <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+            </div>
+            <div class="relative h-52 w-full">
+              <canvas id="indDppaTiersChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Visual 08: 5-Axis Archetype Profile Radar -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 08 &middot; Archetype Radar</span>
+              <span class="text-[9px] font-mono text-slate-400">5 Dimensions</span>
+            </div>
+            <div class="relative h-56 w-full">
+              <canvas id="indArchetypeDemandRadarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Visual 10: 2025-2050 Net-Zero Trajectory -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 10 &middot; Net-Zero Path</span>
+              <span class="text-[9px] font-mono text-slate-400">2025-2050</span>
+            </div>
+            <div class="relative h-52 w-full">
+              <canvas id="indNetZeroTrajectoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- LENS 3: PROVINCIAL CLUSTERS & FLAGSHIP RANKINGS (3 CHARTS)        -->
+      <!-- ================================================================== -->
+      <div id="telemetryLensGroupRegional" class="space-y-3.5 pt-2">
+        <div class="p-3 rounded-xl bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+            <span><strong>Industrial Cluster Demographics</strong>: Binh Duong, Dong Nai, Bac Ninh, and Hai Phong anchor 71% of high-density eco-manufacturing clusters nationwide.</span>
+          </div>
+          <span class="font-mono text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0">Top Flagship Hubs</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          <!-- Visual 05: Clean Energy Target Share Distribution -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 05 &middot; Clean Share Mix</span>
+              <span class="text-[9px] font-mono text-slate-400">5 Tiers</span>
+            </div>
+            <div class="relative h-52 w-full">
               <canvas id="indCleanShareHistogramChart"></canvas>
             </div>
           </div>
 
-          <!-- Chart 06: Transmission Grid Density & Circuit Corridors (3 cols) -->
-          <div class="lg:col-span-3 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
-                <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">06 &middot; Transmission Circuits</span>
-                <span class="text-rose-600 dark:text-rose-400">2,877 Lines</span>
-              </div>
-              <div class="relative h-44 flex items-center justify-center">
-                <canvas id="indTransmissionDensityChart"></canvas>
-              </div>
+          <!-- Visual 07: Top 8 Flagship Eco-Hubs -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 07 &middot; Top 8 Flagships</span>
+              <span class="text-[9px] font-mono text-slate-400">Hosting Potential</span>
             </div>
-            <div class="pt-1.5 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[9px] text-slate-400">
-              <span>65,566 km Circuits</span>
-              <span>500kV &middot; 220kV &middot; 110kV</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TIER 3: TOP FLAGSHIP HUBS & POWER ARCHETYPE DEMAND PROFILES (CHARTS 07 - 08) -->
-      <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-        <div class="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-          <span>Tier 3 &middot; Top Flagship Industrial Hubs &amp; Power Demand Archetypes</span>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-          <!-- Chart 07: Top 10 Flagship Eco-Industrial Hubs (7 cols) -->
-          <div class="lg:col-span-7 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">07 &middot; Top 10 Flagship Eco-Hubs (Area vs Clean MWp)</span>
-              <span class="text-amber-600 dark:text-amber-400">DEEP C, VSIP, Yên Phong</span>
-            </div>
-            <div class="relative h-56">
+            <div class="relative h-56 w-full">
               <canvas id="indTopFlagshipHubsChart"></canvas>
             </div>
           </div>
 
-          <!-- Chart 08: Power Archetype Demand & Reliability Profile (5 cols) -->
-          <div class="lg:col-span-5 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">08 &middot; Power Archetype Sizing Vector</span>
-              <span class="text-indigo-600 dark:text-indigo-400">Fab, DC, Electronics, Steel</span>
+          <!-- Visual 09: Provincial Concentration -->
+          <div class="p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+              <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 09 &middot; Province Density</span>
+              <span class="text-[9px] font-mono text-slate-400">Top 10 Provinces</span>
             </div>
-            <div class="relative h-56 flex items-center justify-center">
-              <canvas id="indArchetypeDemandRadarChart"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TIER 4: PROVINCIAL CONCENTRATION & 2026-2030 NET-ZERO ROADMAP (CHARTS 09 - 10) -->
-      <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-        <div class="text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-          <span>Tier 4 &middot; Provincial Park Concentration &amp; 2026&ndash;2030 DPPA Wheeling Trajectory</span>
-        </div>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
-          <!-- Chart 09: Top 10 Manufacturing Provinces Park Density (6 cols) -->
-          <div class="lg:col-span-6 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">09 &middot; Provincial Eco-Park Concentration</span>
-              <span class="text-purple-600 dark:text-purple-400">Click &rarr; Filter Province</span>
-            </div>
-            <div class="relative h-52">
+            <div class="relative h-52 w-full">
               <canvas id="indProvinceDensityBarChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Chart 10: 2026-2030 Industrial Clean Power Wheeling Trajectory (6 cols) -->
-          <div class="lg:col-span-6 p-3.5 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">10 &middot; 2026&ndash;2030 Industrial Clean Power Trajectory</span>
-              <span class="text-cyan-600 dark:text-cyan-400">Decree 80 Wheeling + RTS</span>
-            </div>
-            <div class="relative h-52">
-              <canvas id="indNetZeroTrajectoryChart"></canvas>
             </div>
           </div>
         </div>
@@ -1245,7 +1312,166 @@
     let industrialProvinceChartInstance = null;
     let industrialTrajectoryChartInstance = null;
 
-    function initIndustrialCharts(attempts = 0) {
+    
+    // =========================================================================
+    // WORKSTATION ARCHITECTURE & TELEMETRY LENS CONTROLLERS
+    // =========================================================================
+    let activeWorkstationMode = 'directory';
+    let chartsInitialized = false;
+
+    function switchWorkstationMode(mode, scrollToTable = false) {
+      activeWorkstationMode = mode;
+      if (history.replaceState) {
+        history.replaceState(null, null, '#' + mode);
+      } else {
+        window.location.hash = mode;
+      }
+
+      const btnDir = document.getElementById('modeBtnDirectory');
+      const btnTel = document.getElementById('modeBtnTelemetry');
+      const btnSiz = document.getElementById('modeBtnSizer');
+
+      const secDir = document.getElementById('hubs');
+      const secTel = document.getElementById('telemetrySection');
+      const secSiz = document.getElementById('powerSizer');
+
+      const activeClasses = 'workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer';
+      const inactiveClasses = 'workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      if (btnDir) btnDir.className = mode === 'directory' ? activeClasses : inactiveClasses;
+      if (btnTel) btnTel.className = mode === 'telemetry' ? activeClasses : inactiveClasses;
+      if (btnSiz) btnSiz.className = mode === 'sizer' ? activeClasses : inactiveClasses;
+
+      if (secDir) secDir.classList.toggle('hidden', mode !== 'directory');
+      if (secTel) secTel.classList.toggle('hidden', mode !== 'telemetry');
+      if (secSiz) secSiz.classList.toggle('hidden', mode !== 'sizer');
+
+      if (mode === 'telemetry') {
+        if (!chartsInitialized) {
+          initIndustrialCharts();
+          chartsInitialized = true;
+        } else {
+          resizeIndustrialCharts();
+        }
+      }
+
+      if (scrollToTable && secDir) {
+        const tableAnchor = document.getElementById('hubsTableBody') || secDir;
+        tableAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function resizeIndustrialCharts() {
+      setTimeout(() => {
+        const instances = [
+          industrialRegionalChartInstance,
+          industrialSubstationChartInstance,
+          industrialDppaChartInstance,
+          industrialGridHostingChartInstance,
+          industrialCleanShareChartInstance,
+          industrialTransmissionChartInstance,
+          industrialTopHubsChartInstance,
+          industrialRadarChartInstance,
+          industrialProvinceChartInstance,
+          industrialTrajectoryChartInstance
+        ];
+        instances.forEach(chart => {
+          if (chart) {
+            chart.resize();
+            chart.update();
+          }
+        });
+      }, 50);
+    }
+
+    function switchTelemetryLens(lens) {
+      const gGrid = document.getElementById('telemetryLensGroupGrid');
+      const gDppa = document.getElementById('telemetryLensGroupDppa');
+      const gRegional = document.getElementById('telemetryLensGroupRegional');
+
+      const btnAll = document.getElementById('telemetryLensBtnAll');
+      const btnGrid = document.getElementById('telemetryLensBtnGrid');
+      const btnDppa = document.getElementById('telemetryLensBtnDppa');
+      const btnRegional = document.getElementById('telemetryLensBtnRegional');
+
+      const activeBtnClass = 'telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer';
+      const inactiveBtnClass = 'telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      [btnAll, btnGrid, btnDppa, btnRegional].forEach(b => { if (b) b.className = inactiveBtnClass; });
+
+      if (lens === 'all') {
+        if (btnAll) btnAll.className = activeBtnClass;
+        if (gGrid) gGrid.classList.remove('hidden');
+        if (gDppa) gDppa.classList.remove('hidden');
+        if (gRegional) gRegional.classList.remove('hidden');
+      } else if (lens === 'grid') {
+        if (btnGrid) btnGrid.className = activeBtnClass;
+        if (gGrid) gGrid.classList.remove('hidden');
+        if (gDppa) gDppa.classList.add('hidden');
+        if (gRegional) gRegional.classList.add('hidden');
+      } else if (lens === 'dppa') {
+        if (btnDppa) btnDppa.className = activeBtnClass;
+        if (gGrid) gGrid.classList.add('hidden');
+        if (gDppa) gDppa.classList.remove('hidden');
+        if (gRegional) gRegional.classList.add('hidden');
+      } else if (lens === 'regional') {
+        if (btnRegional) btnRegional.className = activeBtnClass;
+        if (gGrid) gGrid.classList.add('hidden');
+        if (gDppa) gDppa.classList.add('hidden');
+        if (gRegional) gRegional.classList.remove('hidden');
+      }
+      resizeIndustrialCharts();
+    }
+
+    function updateActiveFilterHUD(filteredCount) {
+      const hud = document.getElementById('activeCrossFilterHUD');
+      const labelEl = document.getElementById('activeFilterLabel');
+      const countEl = document.getElementById('activeFilterCount');
+      if (!hud || !labelEl || !countEl) return;
+
+      const filters = [];
+      if (currentFilter.region && currentFilter.region !== 'all') filters.push('Region: ' + currentFilter.region);
+      if (currentFilter.province && currentFilter.province !== 'all') filters.push('Province: ' + currentFilter.province);
+      if (currentFilter.dppa && currentFilter.dppa !== 'all') filters.push('DPPA: ' + currentFilter.dppa.toUpperCase());
+      if (currentFilter.substation && currentFilter.substation !== 'all') filters.push('Sub: ≥' + currentFilter.substation + 'kV');
+      if (currentFilter.search && currentFilter.search.trim() !== '') filters.push('"' + currentFilter.search.trim() + '"');
+
+      if (filters.length > 0) {
+        labelEl.textContent = filters.join(' · ');
+        countEl.textContent = '(' + filteredCount + ')';
+        hud.classList.remove('hidden');
+        hud.classList.add('flex');
+      } else {
+        hud.classList.add('hidden');
+        hud.classList.remove('flex');
+      }
+    }
+
+    function clearAllIndustrialFilters() {
+      currentFilter = {
+        search: "",
+        region: "all",
+        province: "all",
+        dppa: "all",
+        substation: "all",
+        sortKey: "name",
+        sortAsc: true
+      };
+      const searchInput = document.getElementById('hubSearchInput');
+      if (searchInput) searchInput.value = '';
+      const provSelect = document.getElementById('filterProvinceSelect');
+      if (provSelect) provSelect.value = 'all';
+
+      document.querySelectorAll('.filter-pill-region').forEach(b => {
+        const r = b.getAttribute('data-region') || 'all';
+        b.className = r === 'all' ? 'filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer'
+                                  : 'filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer';
+      });
+      currentPage = 1;
+      renderTable();
+    }
+
+function initIndustrialCharts(attempts = 0) {
       if (typeof Chart === 'undefined') {
         if (attempts < 30) {
           setTimeout(() => initIndustrialCharts(attempts + 1), 100);
@@ -2345,6 +2571,7 @@
 
       const elHeroBadge = document.getElementById('heroBadgeTotalParks');
       if (elHeroBadge) elHeroBadge.textContent = `${totalParks} PARKS`;
+      const elModeBadge = document.getElementById('badgeDirectoryCount'); if (elModeBadge) elModeBadge.textContent = totalParks;
     }
 
     let GRID_SUBSTATIONS = [];
@@ -2404,7 +2631,7 @@
       populateProvinceDropdown();
       renderTable();
       updateCalculator();
-      initIndustrialCharts();
+      if (activeWorkstationMode === "telemetry") { initIndustrialCharts(); chartsInitialized = true; }
     }
 
     function renderTable() {
@@ -2460,6 +2687,7 @@
       });
 
       countEl.textContent = filtered.length;
+      updateActiveFilterHUD(filtered.length);
       tbody.innerHTML = "";
 
       if (filtered.length === 0) {
@@ -2986,6 +3214,13 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      const initHash = window.location.hash.replace('#', '');
+      if (initHash === 'telemetry' || initHash === 'sizer') {
+        switchWorkstationMode(initHash);
+      } else {
+        switchWorkstationMode('directory');
+      }
+
       selectPowerArchetype("fab");
       loadNationalIndustrialHubs();
       // initEcoParkMap(); purged
