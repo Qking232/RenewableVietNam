@@ -1,0 +1,1049 @@
+<svg height="506.0" viewBox="0 0 780.0 506.0" width="780.0" xmlns="http://www.w3.org/2000/svg">
+    <style><![CDATA[/* ----------------------------------------------------------------------- */
+/* File: tautologies.css ------------------------------------------------- */
+.sld-out .sld-arrow-in {visibility: hidden}
+.sld-in .sld-arrow-out {visibility: hidden}
+.sld-closed .sld-sw-open {visibility: hidden}
+.sld-open .sld-sw-closed {visibility: hidden}
+.sld-hidden-node {visibility: hidden}
+.sld-top-feeder .sld-label {dominant-baseline: auto}
+.sld-bottom-feeder .sld-label {dominant-baseline: hanging}
+.sld-active-power .sld-label {dominant-baseline: mathematical}
+.sld-reactive-power .sld-label {dominant-baseline: mathematical}
+.sld-current .sld-label {dominant-baseline: mathematical}
+.sld-current-value .sld-label {dominant-baseline: mathematical}
+.sld-permanent-limit-percentage .sld-label {dominant-baseline: mathematical}
+/* ----------------------------------------------------------------------- */
+/* File: topologicalBaseVoltages.css ------------------------------------- */
+.sld-disconnected {--sld-vl-color: #808080}
+.sld-vl300to500.sld-bus-0 {--sld-vl-color: #FF0000}
+.sld-vl300to500.sld-bus-1 {--sld-vl-color: #7F6C00}
+.sld-vl300to500.sld-bus-2 {--sld-vl-color: #F6B2FF}
+.sld-vl300to500.sld-bus-3 {--sld-vl-color: #996700}
+.sld-vl300to500.sld-bus-4 {--sld-vl-color: #FF85EB}
+.sld-vl300to500.sld-bus-5 {--sld-vl-color: #B25B00}
+.sld-vl300to500.sld-bus-6 {--sld-vl-color: #FF59B5}
+.sld-vl300to500.sld-bus-7 {--sld-vl-color: #CC4400}
+.sld-vl300to500.sld-bus-8 {--sld-vl-color: #FF2C67}
+.sld-vl300to500.sld-bus-9 {--sld-vl-color: #E52600}
+.sld-vl180to300.sld-bus-0 {--sld-vl-color: #218B21}
+.sld-vl180to300.sld-bus-1 {--sld-vl-color: #0D4940}
+.sld-vl180to300.sld-bus-2 {--sld-vl-color: #DFDAB9}
+.sld-vl180to300.sld-bus-3 {--sld-vl-color: #105640}
+.sld-vl180to300.sld-bus-4 {--sld-vl-color: #C2CB92}
+.sld-vl180to300.sld-bus-5 {--sld-vl-color: #14643C}
+.sld-vl180to300.sld-bus-6 {--sld-vl-color: #95B66B}
+.sld-vl180to300.sld-bus-7 {--sld-vl-color: #187036}
+.sld-vl180to300.sld-bus-8 {--sld-vl-color: #5FA046}
+.sld-vl180to300.sld-bus-9 {--sld-vl-color: #1C7E2D}
+.sld-vl120to180.sld-bus-0 {--sld-vl-color: #00AFAE}
+.sld-vl120to180.sld-bus-1 {--sld-vl-color: #000D58}
+.sld-vl120to180.sld-bus-2 {--sld-vl-color: #B8E7B2}
+.sld-vl120to180.sld-bus-3 {--sld-vl-color: #002169}
+.sld-vl120to180.sld-bus-4 {--sld-vl-color: #85D993}
+.sld-vl120to180.sld-bus-5 {--sld-vl-color: #003C7B}
+.sld-vl120to180.sld-bus-6 {--sld-vl-color: #59CB8B}
+.sld-vl120to180.sld-bus-7 {--sld-vl-color: #005C8C}
+.sld-vl120to180.sld-bus-8 {--sld-vl-color: #2CBD94}
+.sld-vl120to180.sld-bus-9 {--sld-vl-color: #00839E}
+.sld-vl70to120.sld-bus-0 {--sld-vl-color: #CC5500}
+.sld-vl70to120.sld-bus-1 {--sld-vl-color: #4A6600}
+.sld-vl70to120.sld-bus-2 {--sld-vl-color: #EFB2DD}
+.sld-vl70to120.sld-bus-3 {--sld-vl-color: #6E7A00}
+.sld-vl70to120.sld-bus-4 {--sld-vl-color: #E685AE}
+.sld-vl70to120.sld-bus-5 {--sld-vl-color: #8E8400}
+.sld-vl70to120.sld-bus-6 {--sld-vl-color: #DD596B}
+.sld-vl70to120.sld-bus-7 {--sld-vl-color: #A37B00}
+.sld-vl70to120.sld-bus-8 {--sld-vl-color: #D4432C}
+.sld-vl70to120.sld-bus-9 {--sld-vl-color: #B76B00}
+.sld-vl50to70.sld-bus-0 {--sld-vl-color: #A020EF}
+.sld-vl50to70.sld-bus-1 {--sld-vl-color: #7F0848}
+.sld-vl50to70.sld-bus-2 {--sld-vl-color: #B7DBFE}
+.sld-vl50to70.sld-bus-3 {--sld-vl-color: #960C6D}
+.sld-vl50to70.sld-bus-4 {--sld-vl-color: #8DA6FE}
+.sld-vl50to70.sld-bus-5 {--sld-vl-color: #AD109A}
+.sld-vl50to70.sld-bus-6 {--sld-vl-color: #6F66FB}
+.sld-vl50to70.sld-bus-7 {--sld-vl-color: #BC14C4}
+.sld-vl50to70.sld-bus-8 {--sld-vl-color: #7F42F6}
+.sld-vl50to70.sld-bus-9 {--sld-vl-color: #B11AD9}
+.sld-vl30to50.sld-bus-0 {--sld-vl-color: #FF8290}
+.sld-vl30to50.sld-bus-1 {--sld-vl-color: #7F6F41}
+.sld-vl30to50.sld-bus-2 {--sld-vl-color: #F6D9FF}
+.sld-vl30to50.sld-bus-3 {--sld-vl-color: #99784E}
+.sld-vl30to50.sld-bus-4 {--sld-vl-color: #FFC3FB}
+.sld-vl30to50.sld-bus-5 {--sld-vl-color: #B27D5B}
+.sld-vl30to50.sld-bus-6 {--sld-vl-color: #FFADE3}
+.sld-vl30to50.sld-bus-7 {--sld-vl-color: #CC7E68}
+.sld-vl30to50.sld-bus-8 {--sld-vl-color: #FF97BF}
+.sld-vl30to50.sld-bus-9 {--sld-vl-color: #E57B75}
+.sld-vl0to30.sld-bus-0 {--sld-vl-color: #AAAE27}
+.sld-vl0to30.sld-bus-1 {--sld-vl-color: #195B0F}
+.sld-vl0to30.sld-bus-2 {--sld-vl-color: #EABABE}
+.sld-vl0to30.sld-bus-3 {--sld-vl-color: #2D6C13}
+.sld-vl0to30.sld-bus-4 {--sld-vl-color: #DDA193}
+.sld-vl0to30.sld-bus-5 {--sld-vl-color: #477D17}
+.sld-vl0to30.sld-bus-6 {--sld-vl-color: #CE9A6E}
+.sld-vl0to30.sld-bus-7 {--sld-vl-color: #648D1C}
+.sld-vl0to30.sld-bus-8 {--sld-vl-color: #BEA04A}
+.sld-vl0to30.sld-bus-9 {--sld-vl-color: #869D22}
+/* ----------------------------------------------------------------------- */
+/* File : highlightLineStates.css ---------------------------------------- */
+.sld-wire.sld-feeder-disconnected {stroke: black}
+.sld-wire.sld-feeder-connected-disconnected {stroke-dasharray: 3,3}
+.sld-wire.sld-feeder-disconnected-connected {stroke: black; stroke-dasharray: 3,3}
+.sld-busbar-section.sld-bus-disconnected {stroke-dasharray: 3,3}
+/* ----------------------------------------------------------------------- */
+/* File : components.css ------------------------------------------------- */
+/* Stroke black */
+.sld-disconnector {stroke-width: 3; stroke: black; fill: none}
+/* Stroke blue */
+.sld-breaker {stroke-width: 2; stroke: blue; fill:white}
+.sld-load-break-switch {stroke: blue; fill: white}
+/* Stroke --sld-vl-color with fallback black */
+.sld-bus-connection {fill: var(--sld-vl-color, black)}
+.sld-cell-shape-flat .sld-bus-connection {visibility: hidden}
+.sld-busbar-section {stroke: var(--sld-vl-color, black); stroke-width: 3; fill: none}
+/* Stroke --sld-vl-color with fallback red */
+.sld-wire {stroke: var(--sld-vl-color, #c80000); fill: none}
+.sld-wire.sld-boundary-line {stroke-width: 2px}
+.sld-wire.sld-tie-line {stroke-width: 2px}
+/* Stroke --sld-vl-color with fallback blue */
+.sld-load {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-battery {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-generator {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-two-wt {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-three-wt {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-winding {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-capacitor {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-inductor {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-pst {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-pst-arrow {stroke: black; fill: none}
+.sld-svc {stroke: var(--sld-vl-color, blue); fill: none}
+.sld-vsc {stroke: var(--sld-vl-color, blue); font-size: 7.43px; fill: none}
+.sld-lcc {stroke: var(--sld-vl-color, blue); font-size: 7.43px; fill: none}
+.sld-ground {stroke: var(--sld-vl-color, blue); fill: none}
+/* Stroke none & fill: --sld-vl-color */
+.sld-node-infos {stroke: none; fill: var(--sld-vl-color, black)}
+/* Stroke none & fill: black */
+.sld-node {stroke: none; fill: black}
+.sld-flash {stroke: none; fill: black}
+.sld-lock {stroke: none; fill: black}
+.sld-unknown {stroke: none; fill: black}
+/* Fonts */
+.sld-label {stroke: none; fill: black; font: 8px serif}
+.sld-bus-legend-info {font: 10px serif}
+.sld-graph-label {font: 12px serif}
+/* Specific */
+.sld-grid {stroke: #003700; stroke-dasharray: 1,10}
+.sld-feeder-info.sld-active-power {fill:black}
+.sld-feeder-info.sld-reactive-power {fill:blue}
+.sld-feeder-info.sld-current {fill:purple}
+.sld-frame {fill: var(--sld-background-color, transparent)}
+/* Stroke maroon for fictitious switch */
+.sld-breaker.sld-fictitious {stroke: maroon}
+.sld-disconnector.sld-fictitious {stroke: maroon}
+.sld-load-break-switch.sld-fictitious {stroke: maroon}
+.sld-busbar-section.sld-fictitious {stroke: var(--sld-vl-color, #c80000); stroke-width: 1}
+/* ground disconnector specific */
+.sld-ground-disconnection-attach {stroke: var(--sld-vl-color, #c80000); fill: none}
+.sld-open .sld-ground-disconnection-ground {stroke: black; fill: none}
+.sld-closed .sld-ground-disconnection-ground {stroke: var(--sld-vl-color, #c80000); fill: none}
+.sld-ground-disconnection .sld-sw-open {stroke: black; fill: none}
+.sld-ground-disconnection .sld-sw-closed {stroke: black; fill: none}
+]]></style>
+    <rect class="sld-frame" height="100%" width="100%"/>
+    <g>
+        <g class="sld-voltage-level" id="idS_95_EA_95_NAM_95_500_95_VL500">
+            <g class="sld-busbar-section sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_BBS1" transform="translate(52.5,253.0)">
+                <line x1="0" x2="325.0" y1="0" y2="0"/>
+                <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_NW_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-5.0">S_EA_NAM_500_VL500_BBS1</text>
+            </g>
+            <g class="sld-busbar-section sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_BBS2" transform="translate(402.5,253.0)">
+                <line x1="0" x2="325.0" y1="0" y2="0"/>
+                <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_NW_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-5.0">S_EA_NAM_500_VL500_BBS2</text>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_0">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_fork">
+                    <polyline points="65.0,186.0,65.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE">
+                    <polyline points="65.0,169.0,65.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC">
+                    <polyline points="65.0,223.0,65.0,206.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC">
+                    <polyline points="65.0,253.0,65.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE">
+                    <polyline points="65.0,142.0,65.0,88.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_ARROW_95_ACTIVE" transform="translate(60.0,103.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_ARROW_95_REACTIVE" transform="translate(60.0,123.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_fork" transform="translate(61.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC" transform="translate(55.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC" transform="translate(61.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532A_95_MC" transform="translate(61.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE" transform="translate(61.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-two-wt sld-top-feeder" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE" transform="translate(60.0,72.5)">
+                    <circle class="sld-disconnected sld-winding" cx="5" cy="10" r="5"/>
+                    <circle class="sld-vl180to300 sld-bus-0 sld-winding" cx="5" cy="5" r="5"/>
+                    <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-3.5">S_EA_NAM_500_T500220_532_1</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_1">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_1">
+                    <polyline points="65.0,169.0,90.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_532B_95_MC">
+                    <polyline points="90.0,169.0,230.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_532B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_2">
+                    <polyline points="250.0,169.0,390.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_fork">
+                    <polyline points="390.0,169.0,415.0,169.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_1_95_ONE_95_fork" transform="translate(61.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_1" transform="translate(86.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_532B_95_MC" transform="translate(230.0,159.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_1_46_2" transform="translate(386.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_fork" transform="translate(411.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_2">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC">
+                    <polyline points="415.0,169.0,415.0,186.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE">
+                    <polyline points="415.0,169.0,415.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC">
+                    <polyline points="415.0,206.0,415.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC">
+                    <polyline points="415.0,223.0,415.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE">
+                    <polyline points="415.0,142.0,415.0,88.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_ARROW_95_ACTIVE" transform="translate(410.0,103.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_ARROW_95_REACTIVE" transform="translate(410.0,123.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_fork" transform="translate(411.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC" transform="translate(405.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC" transform="translate(411.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_532C_95_MC" transform="translate(411.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE" transform="translate(411.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-two-wt sld-top-feeder" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE" transform="translate(410.0,72.5)">
+                    <circle class="sld-disconnected sld-winding" cx="5" cy="10" r="5"/>
+                    <circle class="sld-vl180to300 sld-bus-0 sld-winding" cx="5" cy="5" r="5"/>
+                    <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_T500220_95_532_95_2_95_ONE_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-3.5">S_EA_NAM_500_T500220_532_2</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_3">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_fork">
+                    <polyline points="165.0,186.0,165.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461">
+                    <polyline points="165.0,169.0,165.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC">
+                    <polyline points="165.0,223.0,165.0,206.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC">
+                    <polyline points="165.0,253.0,165.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461">
+                    <polyline points="165.0,142.0,165.0,86.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_ARROW_95_ACTIVE" transform="translate(160.0,101.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_ARROW_95_REACTIVE" transform="translate(160.0,121.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_fork" transform="translate(161.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC" transform="translate(155.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC" transform="translate(161.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4A_95_MC" transform="translate(161.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461" transform="translate(161.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-generator sld-top-feeder sld-disconnected" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461" transform="translate(159.0,74.0)">
+                    <circle cx="6" cy="6" r="6"/>
+                    <path d="M6,6 A 6 40 0 0 0 2,6"/>
+                    <path d="M6,6 A 6 40 0 0 0 10,6"/>
+                    <text class="sld-label" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-5.0">GEN_DG_EA_NAM_CUM_1_U1_0461</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_4">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_1">
+                    <polyline points="165.0,169.0,190.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4B_95_MC">
+                    <polyline points="190.0,169.0,330.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_2">
+                    <polyline points="350.0,169.0,490.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_fork">
+                    <polyline points="490.0,169.0,515.0,169.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_1_95_U1_95_0461_95_fork" transform="translate(161.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_1" transform="translate(186.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D4B_95_MC" transform="translate(330.0,159.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_4_46_2" transform="translate(486.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_fork" transform="translate(511.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_5">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC">
+                    <polyline points="515.0,169.0,515.0,186.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462">
+                    <polyline points="515.0,169.0,515.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC">
+                    <polyline points="515.0,206.0,515.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC">
+                    <polyline points="515.0,223.0,515.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462">
+                    <polyline points="515.0,142.0,515.0,86.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_ARROW_95_ACTIVE" transform="translate(510.0,101.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_ARROW_95_REACTIVE" transform="translate(510.0,121.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_fork" transform="translate(511.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC" transform="translate(505.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC" transform="translate(511.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D4C_95_MC" transform="translate(511.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462" transform="translate(511.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-generator sld-top-feeder sld-disconnected" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462" transform="translate(509.0,74.0)">
+                    <circle cx="6" cy="6" r="6"/>
+                    <path d="M6,6 A 6 40 0 0 0 2,6"/>
+                    <path d="M6,6 A 6 40 0 0 0 10,6"/>
+                    <text class="sld-label" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_2_95_U1_95_0462_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-5.0">GEN_DG_EA_NAM_CUM_2_U1_0462</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_6">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_fork">
+                    <polyline points="215.0,320.0,215.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463">
+                    <polyline points="215.0,337.0,215.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC">
+                    <polyline points="215.0,283.0,215.0,300.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC">
+                    <polyline points="215.0,253.0,215.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463">
+                    <polyline points="215.0,364.0,215.0,420.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_ARROW_95_REACTIVE" transform="translate(210.0,395.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_ARROW_95_ACTIVE" transform="translate(210.0,375.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_fork" transform="translate(211.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC" transform="translate(205.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC" transform="translate(211.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5A_95_MC" transform="translate(211.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463" transform="translate(211.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-generator sld-bottom-feeder sld-disconnected" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463" transform="translate(209.0,420.0)">
+                    <circle cx="6" cy="6" r="6"/>
+                    <path d="M6,6 A 6 40 0 0 0 2,6"/>
+                    <path d="M6,6 A 6 40 0 0 0 10,6"/>
+                    <text class="sld-label" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="17.0">GEN_DG_EA_NAM_CUM_3_U1_0463</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_7">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_1">
+                    <polyline points="215.0,337.0,240.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5B_95_MC">
+                    <polyline points="240.0,337.0,380.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_2">
+                    <polyline points="400.0,337.0,540.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_fork">
+                    <polyline points="540.0,337.0,565.0,337.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_3_95_U1_95_0463_95_fork" transform="translate(211.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_1" transform="translate(236.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D5B_95_MC" transform="translate(380.0,327.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_7_46_2" transform="translate(536.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_fork" transform="translate(561.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_8">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC">
+                    <polyline points="565.0,337.0,565.0,320.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464">
+                    <polyline points="565.0,337.0,565.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC">
+                    <polyline points="565.0,300.0,565.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC">
+                    <polyline points="565.0,283.0,565.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464">
+                    <polyline points="565.0,364.0,565.0,420.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_ARROW_95_REACTIVE" transform="translate(560.0,395.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_ARROW_95_ACTIVE" transform="translate(560.0,375.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_fork" transform="translate(561.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC" transform="translate(555.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC" transform="translate(561.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D5C_95_MC" transform="translate(561.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464" transform="translate(561.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-generator sld-bottom-feeder sld-disconnected" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464" transform="translate(559.0,420.0)">
+                    <circle cx="6" cy="6" r="6"/>
+                    <path d="M6,6 A 6 40 0 0 0 2,6"/>
+                    <path d="M6,6 A 6 40 0 0 0 10,6"/>
+                    <text class="sld-label" id="idGEN_95_DG_95_EA_95_NAM_95_CUM_95_4_95_U1_95_0464_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="17.0">GEN_DG_EA_NAM_CUM_4_U1_0464</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_9">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_fork">
+                    <polyline points="365.0,186.0,365.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465">
+                    <polyline points="365.0,169.0,365.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC">
+                    <polyline points="365.0,223.0,365.0,206.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC">
+                    <polyline points="365.0,253.0,365.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465">
+                    <polyline points="365.0,142.0,365.0,86.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idGEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_ARROW_95_ACTIVE" transform="translate(360.0,101.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idGEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_ARROW_95_REACTIVE" transform="translate(360.0,121.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_fork" transform="translate(361.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC" transform="translate(355.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC" transform="translate(361.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_A_95_MC" transform="translate(361.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465" transform="translate(361.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-generator sld-top-feeder sld-disconnected" id="idGEN_95_DG_95_EA_95_NAM_95_U1_95_0465" transform="translate(359.0,74.0)">
+                    <circle cx="6" cy="6" r="6"/>
+                    <path d="M6,6 A 6 40 0 0 0 2,6"/>
+                    <path d="M6,6 A 6 40 0 0 0 10,6"/>
+                    <text class="sld-label" id="idGEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-5.0">GEN_DG_EA_NAM_U1_0465</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_10">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_1">
+                    <polyline points="365.0,169.0,390.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_B_95_MC">
+                    <polyline points="390.0,169.0,530.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_2">
+                    <polyline points="550.0,169.0,690.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_fork">
+                    <polyline points="690.0,169.0,715.0,169.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_GEN_95_DG_95_EA_95_NAM_95_U1_95_0465_95_fork" transform="translate(361.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_1" transform="translate(386.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_B_95_MC" transform="translate(530.0,159.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_10_46_2" transform="translate(686.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_fork" transform="translate(711.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_11">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC">
+                    <polyline points="715.0,169.0,715.0,186.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41_">
+                    <polyline points="715.0,169.0,715.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC">
+                    <polyline points="715.0,206.0,715.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC">
+                    <polyline points="715.0,223.0,715.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41_">
+                    <polyline points="715.0,142.0,715.0,84.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_ARROW_95_ACTIVE" transform="translate(710.0,99.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_ARROW_95_REACTIVE" transform="translate(710.0,119.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_fork" transform="translate(711.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC" transform="translate(705.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC" transform="translate(711.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_gom_32_qua_32_C_95_MC" transform="translate(711.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41_" transform="translate(711.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-inductor sld-top-feeder sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41_" transform="translate(707.5,75.5)">
+                    <path d="M5,5 A 5 20 0 0 0 0,5"/>
+                    <path d="M10,5 A 5 20 0 0 0 5,5"/>
+                    <path d="M15,5 A 5 20 0 0 0 10,5"/>
+                    <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_SH_95_571_32__40_KH501_47_K501_47_KT501_41__95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-6.5">S_EA_NAM_500_SH_571 (KH501/K501/KT501)</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_12">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_fork">
+                    <polyline points="315.0,320.0,315.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501">
+                    <polyline points="315.0,337.0,315.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC">
+                    <polyline points="315.0,283.0,315.0,300.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC">
+                    <polyline points="315.0,253.0,315.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501">
+                    <polyline points="315.0,364.0,315.0,422.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_ARROW_95_REACTIVE" transform="translate(310.0,397.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_ARROW_95_ACTIVE" transform="translate(310.0,377.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_fork" transform="translate(311.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC" transform="translate(305.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC" transform="translate(311.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501A_95_MC" transform="translate(311.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501" transform="translate(311.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-inductor sld-bottom-feeder sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501" transform="translate(307.5,421.5)">
+                    <path d="M5,5 A 5 20 0 0 0 0,5"/>
+                    <path d="M10,5 A 5 20 0 0 0 5,5"/>
+                    <path d="M15,5 A 5 20 0 0 0 10,5"/>
+                    <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="15.5">S_EA_NAM_500_SH_KH501/K501</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_13">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_1">
+                    <polyline points="315.0,337.0,340.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501B_95_MC">
+                    <polyline points="340.0,337.0,480.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_2">
+                    <polyline points="500.0,337.0,640.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_fork">
+                    <polyline points="640.0,337.0,665.0,337.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_KH501_47_K501_95_fork" transform="translate(311.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_1" transform="translate(336.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501B_95_MC" transform="translate(480.0,327.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_13_46_2" transform="translate(636.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_fork" transform="translate(661.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_14">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC">
+                    <polyline points="665.0,337.0,665.0,320.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501">
+                    <polyline points="665.0,337.0,665.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC">
+                    <polyline points="665.0,300.0,665.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC">
+                    <polyline points="665.0,283.0,665.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501">
+                    <polyline points="665.0,364.0,665.0,422.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_ARROW_95_REACTIVE" transform="translate(660.0,397.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idS_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_ARROW_95_ACTIVE" transform="translate(660.0,377.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_fork" transform="translate(661.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC" transform="translate(655.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC" transform="translate(661.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_KH501_47_K501C_95_MC" transform="translate(661.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501" transform="translate(661.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-inductor sld-bottom-feeder sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501" transform="translate(657.5,421.5)">
+                    <path d="M5,5 A 5 20 0 0 0 0,5"/>
+                    <path d="M10,5 A 5 20 0 0 0 5,5"/>
+                    <path d="M15,5 A 5 20 0 0 0 10,5"/>
+                    <text class="sld-label" id="idS_95_EA_95_NAM_95_500_95_SH_95_K501_47_KH501_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="15.5">S_EA_NAM_500_SH_K501/KH501</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_15">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_fork">
+                    <polyline points="265.0,186.0,265.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE">
+                    <polyline points="265.0,169.0,265.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC">
+                    <polyline points="265.0,223.0,265.0,206.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC">
+                    <polyline points="265.0,253.0,265.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_L500_95_177_95_1_95_ONE">
+                    <polyline points="265.0,142.0,265.0,80.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idL500_95_177_95_1_95_ONE_95_ARROW_95_ACTIVE" transform="translate(260.0,95.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idL500_95_177_95_1_95_ONE_95_ARROW_95_REACTIVE" transform="translate(260.0,115.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_fork" transform="translate(261.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC" transform="translate(255.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC" transform="translate(261.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8A_95_MC" transform="translate(261.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE" transform="translate(261.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-top-feeder" id="idL500_95_177_95_1_95_ONE" transform="translate(265.0,80.0)">
+                    <text class="sld-label" id="idL500_95_177_95_1_95_ONE_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-11.0">L500_177_1</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_16">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_1">
+                    <polyline points="265.0,169.0,290.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8B_95_MC">
+                    <polyline points="290.0,169.0,430.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_2">
+                    <polyline points="450.0,169.0,590.0,169.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_fork">
+                    <polyline points="590.0,169.0,615.0,169.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_1_95_ONE_95_fork" transform="translate(261.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_1" transform="translate(286.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D8B_95_MC" transform="translate(430.0,159.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_16_46_2" transform="translate(586.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_fork" transform="translate(611.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-top" id="idEXTERN_32_17">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC">
+                    <polyline points="615.0,169.0,615.0,186.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE">
+                    <polyline points="615.0,169.0,615.0,142.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC">
+                    <polyline points="615.0,206.0,615.0,223.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC">
+                    <polyline points="615.0,223.0,615.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_L500_95_177_95_2_95_ONE">
+                    <polyline points="615.0,142.0,615.0,80.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idL500_95_177_95_2_95_ONE_95_ARROW_95_ACTIVE" transform="translate(610.0,95.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idL500_95_177_95_2_95_ONE_95_ARROW_95_REACTIVE" transform="translate(610.0,115.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE_95_fork" transform="translate(611.0,165.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC" transform="translate(605.0,186.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC" transform="translate(611.0,219.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_D8C_95_MC" transform="translate(611.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_177_95_2_95_ONE" transform="translate(611.0,138.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-top-feeder" id="idL500_95_177_95_2_95_ONE" transform="translate(615.0,80.0)">
+                    <text class="sld-label" id="idL500_95_177_95_2_95_ONE_95_N_95_LABEL" transform="rotate(-15,0,0)" x="-5.0" y="-11.0">L500_177_2</text>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_18">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_fork">
+                    <polyline points="115.0,320.0,115.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE">
+                    <polyline points="115.0,337.0,115.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC">
+                    <polyline points="115.0,283.0,115.0,300.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC">
+                    <polyline points="115.0,253.0,115.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_L500_95_593_95_1_95_571_47_572_95_ONE">
+                    <polyline points="115.0,364.0,115.0,426.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idL500_95_593_95_1_95_571_47_572_95_ONE_95_ARROW_95_REACTIVE" transform="translate(110.0,401.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idL500_95_593_95_1_95_571_47_572_95_ONE_95_ARROW_95_ACTIVE" transform="translate(110.0,381.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_fork" transform="translate(111.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC" transform="translate(105.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC" transform="translate(111.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572A_95_MC" transform="translate(111.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE" transform="translate(111.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bottom-feeder" id="idL500_95_593_95_1_95_571_47_572_95_ONE" transform="translate(115.0,426.0)">
+                    <text class="sld-label" id="idL500_95_593_95_1_95_571_47_572_95_ONE_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="11.0">L500_593_1_571/572</text>
+                </g>
+            </g>
+            <g class="sld-shunt-cell" id="idSHUNT_32_19">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_1">
+                    <polyline points="115.0,337.0,140.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_1_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572B_95_MC">
+                    <polyline points="140.0,337.0,280.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572B_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_2">
+                    <polyline points="300.0,337.0,440.0,337.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_2_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_fork">
+                    <polyline points="440.0,337.0,465.0,337.0"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_1_95_571_47_572_95_ONE_95_fork" transform="translate(111.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_1" transform="translate(136.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_571_47_572B_95_MC" transform="translate(280.0,327.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15" transform="rotate(90.0,10.0,10.0)"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15" transform="rotate(90.0,10.0,10.0)"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_Shunt_32_19_46_2" transform="translate(436.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_fork" transform="translate(461.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+            </g>
+            <g class="sld-extern-cell sld-cell-direction-bottom" id="idEXTERN_32_20">
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_fork_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC">
+                    <polyline points="465.0,337.0,465.0,320.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_fork_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE">
+                    <polyline points="465.0,337.0,465.0,364.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC">
+                    <polyline points="465.0,300.0,465.0,283.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC">
+                    <polyline points="465.0,283.0,465.0,253.0"/>
+                </g>
+                <g class="sld-wire sld-disconnected" id="_95_S_95_EA_95_NAM_95_500_95_VL500_95_INTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_L500_95_593_95_2_95_571_47_572_95_ONE">
+                    <polyline points="465.0,364.0,465.0,426.0"/>
+                </g>
+                <g class="sld-feeder-info sld-in sld-reactive-power" id="idL500_95_593_95_2_95_571_47_572_95_ONE_95_ARROW_95_REACTIVE" transform="translate(460.0,401.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-feeder-info sld-in sld-active-power" id="idL500_95_593_95_2_95_571_47_572_95_ONE_95_ARROW_95_ACTIVE" transform="translate(460.0,381.0)">
+                    <polygon class="sld-arrow-out" points="5,0 10,10 0,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <polygon class="sld-arrow-in" points="0,0 10,0 5,10" transform="rotate(180.0,5.0,5.0)"/>
+                    <text class="sld-label" x="15.0" y="5.0">—</text>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE_95_fork" transform="translate(461.0,333.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-breaker sld-closed sld-disconnected" id="idS_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC" transform="translate(455.0,300.0)">
+                    <path class="sld-sw-closed" d="M1,1 V19 H19 V1z M10,5 V15"/>
+                    <path class="sld-sw-open" d="M1,1 V19 H19 V1z M5,10 H15"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_BUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC_45_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC" transform="translate(461.0,279.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bus-connection sld-fictitious sld-disconnected" id="idBUSCO_95_S_95_EA_95_NAM_95_500_95_VL500_95_BBS2_95_S_95_EA_95_NAM_95_500_95_VL500_95_571_47_572C_95_MC" transform="translate(461.0,249.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-node sld-hidden-node sld-fictitious sld-disconnected" id="idINTERNAL_95_S_95_EA_95_NAM_95_500_95_VL500_95_L500_95_593_95_2_95_571_47_572_95_ONE" transform="translate(461.0,360.0)">
+                    <circle cx="4" cy="4" r="4"/>
+                </g>
+                <g class="sld-bottom-feeder" id="idL500_95_593_95_2_95_571_47_572_95_ONE" transform="translate(465.0,426.0)">
+                    <text class="sld-label" id="idL500_95_593_95_2_95_571_47_572_95_ONE_95_S_95_LABEL" transform="rotate(15,0,0)" x="-5.0" y="11.0">L500_593_2_571/572</text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
