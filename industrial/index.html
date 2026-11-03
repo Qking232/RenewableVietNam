@@ -88,7 +88,7 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="/assets/js/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js'"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -1104,12 +1104,250 @@
           const isDark = document.documentElement.classList.contains("dark");
           localStorage.setItem("rvn_theme_v2", isDark ? "dark" : "light");
           updateIcons();
+          if (typeof initIndustrialCharts === "function") initIndustrialCharts();
         });
       }
     })();
 
-    function initIndustrialCharts() {
-      // Safe no-op definition preventing ReferenceError
+    let industrialRegionalChartInstance = null;
+    let industrialSubstationChartInstance = null;
+    let industrialDppaChartInstance = null;
+
+    function initIndustrialCharts(attempts = 0) {
+      if (typeof Chart === 'undefined') {
+        if (attempts < 30) {
+          setTimeout(() => initIndustrialCharts(attempts + 1), 100);
+        }
+        return;
+      }
+      if (!HUBS || !HUBS.length) return;
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+      const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
+      const tooltipText = isDark ? '#E2E8F0' : '#1E293B';
+      const tooltipBorder = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+      // 1. Regional Footprint & Solar Potential Combo Bar Chart
+      const ctxRegion = document.getElementById('indRegionalSolarChart')?.getContext('2d');
+      if (ctxRegion) {
+        if (industrialRegionalChartInstance) industrialRegionalChartInstance.destroy();
+
+        const regionKeys = ['North', 'Central', 'South'];
+        const regionLabels = ['North (Bắc)', 'Central (Trung)', 'South (Nam)'];
+        const landArea = [0, 0, 0];
+        const solarPotential = [0, 0, 0];
+        const hubCounts = [0, 0, 0];
+
+        HUBS.forEach(h => {
+          const idx = regionKeys.indexOf(h.region);
+          if (idx !== -1) {
+            landArea[idx] += (h.totalAreaHa || h.total_area_ha || 0);
+            solarPotential[idx] += (h.rooftopPotentialMWp || h.rooftop_potential_mwp || 0);
+            hubCounts[idx] += 1;
+          }
+        });
+
+        industrialRegionalChartInstance = new Chart(ctxRegion, {
+          type: 'bar',
+          data: {
+            labels: regionLabels,
+            datasets: [
+              {
+                label: 'Land Footprint (ha)',
+                data: landArea,
+                backgroundColor: isDark ? 'rgba(13, 148, 136, 0.85)' : 'rgba(13, 148, 136, 0.75)',
+                borderColor: '#0D9488',
+                borderWidth: 1,
+                borderRadius: 4,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Solar Potential (MWp)',
+                data: solarPotential.map(v => Math.round(v)),
+                backgroundColor: isDark ? 'rgba(245, 158, 11, 0.85)' : 'rgba(245, 158, 11, 0.75)',
+                borderColor: '#F59E0B',
+                borderWidth: 1,
+                borderRadius: 4,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const index = elements[0].index;
+                const clickedRegion = regionKeys[index];
+                currentFilter.region = currentFilter.region === clickedRegion ? 'all' : clickedRegion;
+                currentPage = 1;
+                document.querySelectorAll('.filter-pill-region').forEach((b) => {
+                  const r = b.getAttribute('data-region') || 'all';
+                  if (r === currentFilter.region) {
+                    b.className = 'filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors';
+                  } else {
+                    b.className = 'filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors';
+                  }
+                });
+                renderTable();
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 10 }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                padding: 8,
+                callbacks: {
+                  afterBody: (items) => {
+                    const idx = items[0].dataIndex;
+                    return `Eco-Parks: ${hubCounts[idx]} hubs`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { size: 9, family: 'monospace' }, callback: v => `${(v/1000).toFixed(0)}k ha` }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                grid: { display: false },
+                ticks: { color: '#F59E0B', font: { size: 9, family: 'monospace' }, callback: v => `${v} MWp` }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Substation Voltage Doughnut Chart
+      const ctxSub = document.getElementById('indSubstationDoughnutChart')?.getContext('2d');
+      if (ctxSub) {
+        if (industrialSubstationChartInstance) industrialSubstationChartInstance.destroy();
+
+        let kv500 = 0, kv220 = 0, kv110 = 0;
+        HUBS.forEach(h => {
+          const kv = h.substationKv || h.substation_kv || 110;
+          if (kv >= 500) kv500++;
+          else if (kv >= 220) kv220++;
+          else kv110++;
+        });
+
+        industrialSubstationChartInstance = new Chart(ctxSub, {
+          type: 'doughnut',
+          data: {
+            labels: ['110kV Grid', '220kV Intertie', '500kV Backbone'],
+            datasets: [{
+              data: [kv110, kv220, kv500],
+              backgroundColor: ['#0D9488', '#F59E0B', '#E11D48'],
+              borderWidth: isDark ? 2 : 1,
+              borderColor: isDark ? '#1E293B' : '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const index = elements[0].index;
+                const filterVal = index === 0 ? '110' : (index === 1 ? '220' : 'all');
+                currentFilter.substation = currentFilter.substation === filterVal ? 'all' : filterVal;
+                currentPage = 1;
+                const subSelect = document.getElementById('filterSubstationSelect');
+                if (subSelect) subSelect.value = currentFilter.substation;
+                renderTable();
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 8, padding: 6 }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                padding: 8
+              }
+            }
+          }
+        });
+      }
+
+      // 3. Decree 80 DPPA Readiness Doughnut Chart
+      const ctxDppa = document.getElementById('indDppaTiersChart')?.getContext('2d');
+      if (ctxDppa) {
+        if (industrialDppaChartInstance) industrialDppaChartInstance.destroy();
+
+        let readyCount = 0, cat2Count = 0, devCount = 0;
+        HUBS.forEach(h => {
+          const cls = h.dppaClass || h.dppa_class || 'moderate';
+          if (cls === 'ready') readyCount++;
+          else if (cls === 'cat2') cat2Count++;
+          else devCount++;
+        });
+
+        industrialDppaChartInstance = new Chart(ctxDppa, {
+          type: 'doughnut',
+          data: {
+            labels: ['Ready (Tier 1)', 'Grid Wheeling (Cat 2)', 'Development'],
+            datasets: [{
+              data: [readyCount, cat2Count, devCount],
+              backgroundColor: ['#10B981', '#38BDF8', '#64748B'],
+              borderWidth: isDark ? 2 : 1,
+              borderColor: isDark ? '#1E293B' : '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const index = elements[0].index;
+                const dppaVals = ['ready', 'cat2', 'developing'];
+                const targetVal = dppaVals[index];
+                currentFilter.dppa = currentFilter.dppa === targetVal ? 'all' : targetVal;
+                currentPage = 1;
+                const dppaSelect = document.getElementById('filterDppaSelect');
+                if (dppaSelect) dppaSelect.value = currentFilter.dppa;
+                renderTable();
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 8, padding: 6 }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                padding: 8
+              }
+            }
+          }
+        });
+      }
     }
 
     const FALLBACK_HUBS = [
@@ -2481,6 +2719,10 @@
       });
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeHubModal();
+      });
+
+      window.addEventListener("resize", () => {
+        if (typeof initIndustrialCharts === "function") initIndustrialCharts();
       });
 
       });
