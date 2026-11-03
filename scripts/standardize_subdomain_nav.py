@@ -1,91 +1,124 @@
 import os
 import re
+import shutil
 
 BASE_DIR = r"G:\My Drive\7. AI\RenewableVietNam"
 
-def get_nav_markup(active_page):
-    def pill(name, url, is_active, active_class="text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20", inactive_class="hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard"):
-        cls = active_class if is_active else inactive_class
-        return f'<a href="{url}" class="px-2.5 py-1 rounded-md {cls} transition-colors">{name}</a>'
-
-    def mobile_pill(name, url, is_active, active_class="text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20", inactive_class="text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder"):
-        cls = active_class if is_active else inactive_class
-        return f'<a href="{url}" class="px-2.5 py-1.5 rounded-lg {cls} shrink-0">{name}</a>'
+def get_nav(active_key):
+    def pill(name, url, is_active):
+        if is_active:
+            cls = "px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-medium bg-slate-100 dark:bg-slate-800 transition-colors"
+        else:
+            cls = "px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        return f'<a href="{url}" class="{cls}">{name}</a>'
 
     dot = '<span class="text-slate-300 dark:text-slate-700">&middot;</span>'
 
-    desktop_nav = f"""<nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
-            {pill("Master Dashboard", "https://renewablevietnam.com/", active_page == "home")}
-            {dot}
-            {pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
-            {dot}
-            {pill("Green Industrial", "https://industrial.renewablevietnam.com/", active_page == "ind")}
-            {dot}
-            {pill("EV Tech", "https://ev.renewablevietnam.com/", active_page == "ev")}
-            {dot}
-            {pill("Legal Framework", "https://legal.renewablevietnam.com/", active_page == "legal")}
-            {dot}
-            {pill("Investment M&A", "https://invest.renewablevietnam.com/", active_page == "invest", "text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20", "hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-darkCard")}
-            {dot}
-            {pill("Project Delivery", "https://project.renewablevietnam.com/", active_page == "project", "text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-400/10 border border-purple-500/20", "hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-darkCard")}
-          </nav>"""
+    desktop = f"""<nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          {pill("Cockpit", "https://renewablevietnam.com/", active_key == "home")}
+          {dot}
+          {pill("Energy", "https://energy.renewablevietnam.com/", active_key == "energy")}
+          {dot}
+          {pill("Industrial", "https://industrial.renewablevietnam.com/", active_key == "industrial")}
+          {dot}
+          {pill("EV Tech", "https://ev.renewablevietnam.com/", active_key == "ev")}
+          {dot}
+          {pill("Legal &amp; Investment M&amp;A", "https://invest.renewablevietnam.com/", active_key == "invest")}
+          {dot}
+          {pill("Project Delivery", "https://project.renewablevietnam.com/", active_key == "project")}
+        </nav>"""
+    return desktop
 
-    mobile_nav = f"""<nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
-        {mobile_pill("Dashboard", "https://renewablevietnam.com/", active_page == "home")}
-        {mobile_pill("PDP8 Energy", "https://energy.renewablevietnam.com/", active_page == "wind")}
-        {mobile_pill("Green Industrial", "https://industrial.renewablevietnam.com/", active_page == "ind")}
-        {mobile_pill("EV Tech", "https://ev.renewablevietnam.com/", active_page == "ev")}
-        {mobile_pill("Legal Framework", "https://legal.renewablevietnam.com/", active_page == "legal")}
-        {mobile_pill("Investment M&A", "https://invest.renewablevietnam.com/", active_page == "invest", "text-blue-600 dark:text-blue-400 font-semibold bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20", "text-inkMuted dark:text-textDarkMuted hover:text-blue-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder")}
-        {mobile_pill("Project Delivery", "https://project.renewablevietnam.com/", active_page == "project", "text-purple-600 dark:text-purple-400 font-semibold bg-purple-500/10 dark:bg-purple-400/10 border border-purple-500/20", "text-inkMuted dark:text-textDarkMuted hover:text-purple-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder")}
-      </nav>"""
+def get_mobile(active_key):
+    def mpill(name, url, is_active):
+        if is_active:
+            cls = "px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0"
+        else:
+            cls = "px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0"
+        return f'<a href="{url}" class="{cls}">{name}</a>'
 
-    return desktop_nav, mobile_nav
+    mobile = f"""<!-- Mobile Quick Navigation Ribbon -->
+    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden px-4 pb-2 pt-1 border-t border-slate-100 dark:border-slate-800 font-mono text-[10px]">
+      {mpill("Cockpit", "https://renewablevietnam.com/", active_key == "home")}
+      {mpill("Energy", "https://energy.renewablevietnam.com/", active_key == "energy")}
+      {mpill("Industrial", "https://industrial.renewablevietnam.com/", active_key == "industrial")}
+      {mpill("EV Tech", "https://ev.renewablevietnam.com/", active_key == "ev")}
+      {mpill("Legal &amp; M&amp;A", "https://invest.renewablevietnam.com/", active_key == "invest")}
+      {mpill("Project Delivery", "https://project.renewablevietnam.com/", active_key == "project")}
+    </div>"""
+    return mobile
 
 PAGES = [
     {
+        "file": os.path.join(BASE_DIR, "projectenergy", "index.html"),
+        "key": "energy",
+        "rev": os.path.join(BASE_DIR, "projectenergy", "index_Rev.012.html")
+    },
+    {
+        "file": os.path.join(BASE_DIR, "industrial", "index.html"),
+        "key": "industrial",
+        "rev": os.path.join(BASE_DIR, "industrial", "index_Rev.007.html")
+    },
+    {
         "file": os.path.join(BASE_DIR, "evcharging", "index.html"),
-        "key": "ev"
+        "key": "ev",
+        "rev": os.path.join(BASE_DIR, "evcharging", "index_Rev.008.html")
     },
     {
         "file": os.path.join(BASE_DIR, "evcharging", "ev", "index.html"),
-        "key": "ev"
+        "key": "ev",
+        "rev": os.path.join(BASE_DIR, "evcharging", "ev", "index_Rev.005.html")
     },
     {
-        "file": os.path.join(BASE_DIR, "projectenergy", "index.html"),
-        "key": "wind"
+        "file": os.path.join(BASE_DIR, "invm", "index.html"),
+        "key": "invest",
+        "rev": os.path.join(BASE_DIR, "invm", "index_Rev.032.html")
     },
     {
-        "file": os.path.join(BASE_DIR, "green", "index.html"),
-        "key": "ind"
+        "file": os.path.join(BASE_DIR, "project", "index.html"),
+        "key": "project",
+        "rev": os.path.join(BASE_DIR, "project", "index_Rev.006.html")
     },
     {
         "file": os.path.join(BASE_DIR, "livewire", "index.html"),
-        "key": "livewire"
+        "key": "livewire",
+        "rev": os.path.join(BASE_DIR, "livewire", "index_Rev.005.html")
     }
 ]
 
 desktop_pattern = re.compile(r'<nav class="hidden md:flex items-center gap-1 font-mono text-\[11px\].*?</nav>', re.DOTALL)
-mobile_pattern = re.compile(r'<nav class="flex md:hidden items-center gap-1\.5 overflow-x-auto no-scrollbar.*?</nav>', re.DOTALL)
+mobile_pattern = re.compile(r'<!-- Mobile Quick Navigation Ribbon -->\s*<div class="flex items-center gap-1\.5 overflow-x-auto no-scrollbar md:hidden.*?</div>', re.DOTALL)
+badge_pattern = re.compile(r'<span>\d+ Edge Gateways Live</span>')
 
 for p in PAGES:
     fpath = p["file"]
     key = p["key"]
-    desktop_nav, mobile_nav = get_nav_markup(key)
+    rev_path = p["rev"]
+
+    if not os.path.exists(fpath):
+        print(f"Skipping {fpath}: file not found")
+        continue
 
     with open(fpath, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Brand link update
-    content = re.sub(r'<a href="/" class="flex items-center gap-2\.5 sm:gap-3 group shrink-0"', r'<a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0"', content)
+    # Save sequential revision first
+    with open(rev_path, "w", encoding="utf-8") as rf:
+        rf.write(content)
+    print(f"Preserved revision: {rev_path}")
 
-    # Remove calculator links from footer
-    content = re.sub(r'<a href="/calculator/".*?</a>', '', content)
+    # Generate updated markups
+    desktop_nav = get_nav(key)
+    mobile_nav = get_mobile(key)
 
     new_content = desktop_pattern.sub(desktop_nav, content)
     new_content = mobile_pattern.sub(mobile_nav, new_content)
+    new_content = badge_pattern.sub('<span>5 Edge Gateways Live</span>', new_content)
 
     with open(fpath, "w", encoding="utf-8") as f:
         f.write(new_content)
 
-    print(f"Successfully standardized navigation in {fpath} (Active: {key})")
+    print(f"Standardized navigation in {fpath} (Active: {key})")
+
+if __name__ == "__main__":
+    print("All portals standardized to 5-gateway network successfully.")
