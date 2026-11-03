@@ -143,6 +143,40 @@
       transform: scale(1.18);
       z-index: 1000 !important;
     }
+  
+    /* Institutional Investment Brief Print Optimization */
+    @media print {
+      header, footer, #flowCockpitSection, #pdp8SectorTableSection, nav, button {
+        display: none !important;
+      }
+      #facilityModalOverlay, #substationModalOverlay {
+        position: static !important;
+        display: block !important;
+        background: none !important;
+        padding: 0 !important;
+      }
+      .modal-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        max-width: 100% !important;
+      }
+    }
+
+    /* Kinetic Pulse for Headroom & Radial Grid Tracer */
+    .intertie-radial-line {
+      stroke-dasharray: 6, 6;
+      animation: dashFlow 1.2s linear infinite;
+    }
+    .headroom-pulse-green {
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    }
+    .headroom-pulse-amber {
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+    }
+    .headroom-pulse-rose {
+      box-shadow: 0 0 10px rgba(244, 63, 94, 0.6);
+    }
+
   </style>
 
     <script>
@@ -207,58 +241,59 @@
   <!-- ==================================================================== -->
   <!-- TOP EXECUTIVE NAVIGATION BAR                                        -->
   <!-- ==================================================================== -->
-  <header class="sticky top-0 z-40 w-full bg-alabaster/95 dark:bg-obsidian/95 backdrop-blur-md border-b border-borderSlate dark:border-darkBorder px-3 sm:px-6 lg:px-8 transition-colors shadow-sm">
-    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col gap-2 py-2.5 sm:py-3.5">
-      <!-- Top Row: Brand, Desktop Nav, and Header CTAs -->
-      <div class="flex items-center justify-between w-full">
-        <div class="flex items-center gap-6">
-          <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 sm:gap-3 group shrink-0" aria-label="Renewable Vietnam — home">
-            <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="34" height="34" class="w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-lg shrink-0 shadow-sm" />
-            <span class="text-[11px] sm:text-xs font-mono uppercase tracking-[0.14em] sm:tracking-[0.24em] text-inkPrimary dark:text-textDarkPrimary font-semibold">
-              RENEWABLE INFRASTRUCTURE
+    <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between py-2.5 sm:py-3">
+      <div class="flex items-center gap-6">
+        <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
+          <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
+          <div class="flex flex-col">
+            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-800 dark:text-slate-200 font-semibold leading-tight">
+              RENEWABLE VIETNAM
             </span>
-          </a>
+            <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+              Energy Infrastructure
+            </span>
+          </div>
+        </a>
 
-          <!-- Quick Inter-Domain Jump Navigation (Desktop) -->
-          <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] tracking-wider text-inkMuted dark:text-textDarkMuted">
-            <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Master Dashboard</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 transition-colors">Energy</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Industrial</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">EV Tech</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Legal</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Project Delivery</a>
-
-          </nav>
-        </div>
-
-        <!-- Right Controls -->
-        <div class="flex items-center gap-1.5 sm:gap-2">
-
-          <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8.5 h-8.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm hover:border-slate-400 dark:hover:border-slate-500 text-inkMuted dark:text-textDarkMuted transition-all cursor-pointer">
-            <svg id="sunIcon" class="hidden w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-            </svg>
-            <svg id="moonIcon" class="w-4 h-4 text-slate-700 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-            </svg>
-          </button>
-        </div>
+        <!-- Desktop Quick Jump Navigation -->
+        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cockpit</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-medium bg-slate-100 dark:bg-slate-800 transition-colors">Energy</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
+          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+          <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Legal</a>
+        </nav>
       </div>
 
-      <!-- Mobile Touch Navigation Carousel (Visible ONLY on mobile < 768px) -->
-      <nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
-        <a href="https://renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Dashboard</a>
-        <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shrink-0">Energy</a>
-        <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Industrial</a>
-        <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">EV Tech</a>
-        <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-blue-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Legal</a>
-        <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-purple-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Project Delivery</a>
-      </nav>
+      <!-- Controls & Theme -->
+      <div class="flex items-center gap-2">
+        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span>4 Edge Gateways Live</span>
+        </div>
+
+        <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
+          <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Quick Navigation Ribbon -->
+    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden px-4 pb-2 pt-1 border-t border-slate-100 dark:border-slate-800 font-mono text-[10px]">
+      <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Cockpit</a>
+      <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0">Energy</a>
+      <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Industrial</a>
+      <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">EV Tech</a>
+      <a href="https://legal.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Legal</a>
     </div>
   </header>
 
@@ -951,16 +986,19 @@
       <div class="relative w-full h-[460px] sm:h-[520px] rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-inner bg-slate-950">
         <div id="mainEnergyFlowMap" class="w-full h-full z-10"></div>
 
-        <!-- Top Right Layer Filter Pills -->
-        <div class="absolute top-3 right-3 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px]">
-          <button id="mapToggleFlow500Btn" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold transition-all cursor-pointer">
+        <!-- Top Right Layer Filter Pills & Analytical Modes -->
+        <div class="absolute top-3 right-3 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px]">
+          <button id="mapToggleFlow500Btn" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold transition-all cursor-pointer" title="500kV Supergrid Backbone Flow">
             500kV Spine Flow
           </button>
-          <button id="mapToggleGrid220Btn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-amber-600 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer">
+          <button id="mapToggleGrid220Btn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-amber-600 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="220kV Regional Grid Corridors">
             220kV Grid
           </button>
-          <button id="mapToggleAssetsBtn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-teal-600 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer">
+          <button id="mapToggleAssetsBtn" class="px-2.5 py-1 rounded-lg bg-teal-600 text-white font-semibold border border-teal-500/20 transition-all cursor-pointer" title="960 Operating Clean Energy Generation Plants">
             Clean Plants (960)
+          </button>
+          <button id="mapToggleHeadroomBtn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="Substation Transformer Headroom Audit">
+            Grid Headroom
           </button>
           <button id="mapToggleResetViewBtn" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-darkCard hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" title="Reset Vietnam View">
             Reset ⟲
@@ -1282,6 +1320,10 @@
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-borderSlate dark:border-darkBorder">
+                <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-slate-100 dark:bg-darkSurface hover:bg-slate-200 dark:hover:bg-slate-800 text-inkPrimary dark:text-textDarkPrimary font-mono text-xs font-semibold flex items-center gap-1.5 border border-borderSlate dark:border-darkBorder transition-colors cursor-pointer" title="Export Institutional Investment Brief">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+          <span>Investment Brief</span>
+        </button>
         <a id="modalGmapsLink" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors">
           <span>Satellite Locator</span>
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1338,6 +1380,10 @@
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-borderSlate dark:border-darkBorder">
+                <button onclick="window.print()" class="px-3.5 py-1.5 rounded-lg bg-slate-100 dark:bg-darkSurface hover:bg-slate-200 dark:hover:bg-slate-800 text-inkPrimary dark:text-textDarkPrimary font-mono text-xs font-semibold flex items-center gap-1.5 border border-borderSlate dark:border-darkBorder transition-colors cursor-pointer" title="Export Substation Interconnection Brief">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+          <span>Substation Audit</span>
+        </button>
         <a id="substationModalGmapsLink" href="#" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors">
           <span>Satellite Inspection</span>
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1883,6 +1929,10 @@
               <button onclick="locatePdp8ProjectOnMap('${p.name.split(' ')[0]}', '${p.province}')" class="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-semibold cursor-pointer">
                 <span>Locate on Map &rarr;</span>
               </button>
+              <button onclick="event.stopPropagation(); traceAssetInterconnection(${globalIdx});" class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer" title="Trace Intertie to Nearest Substation">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                <span>Grid Intertie</span>
+              </button>
             </div>
           </div>
         `;
@@ -2059,6 +2109,82 @@
 
     
     
+    
+    // ========================================================================
+    // INSTITUTIONAL HEADROOM & INTERCONNECTION AUDIT LOGIC (PHASE 1)
+    // ========================================================================
+    let mainHeadroomLayer = null;
+    let mainRadialIntertieLayer = null;
+    let showHeadroom = false;
+
+    function findNearestSubstation(lat, lon, minKv = 110) {
+      if (!lat || !lon || !Array.isArray(ALL_GRID_SUBSTATIONS)) return null;
+      let nearest = null;
+      let minDistance = Infinity;
+
+      ALL_GRID_SUBSTATIONS.forEach(s => {
+        if (s.lat === null || s.lng === null) return;
+        if (minKv && s.max_v < minKv) return;
+
+        // Euclidean approximate distance in km
+        const dLat = (s.lat - lat) * 111.32;
+        const dLng = (s.lng - lon) * 111.32 * Math.cos(lat * (Math.PI / 180));
+        const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+
+        if (dist < minDistance) {
+          minDistance = dist;
+          nearest = { ...s, distance_km: Math.round(dist * 10) / 10 };
+        }
+      });
+
+      return nearest;
+    }
+
+    function traceAssetInterconnection(assetIdx) {
+      const p = ALL_PROJECTS[assetIdx];
+      if (!p || !p.lat || !p.lon || !mainFlowMapInstance) return;
+
+      const lat = parseFloat(p.lat);
+      const lon = parseFloat(p.lon);
+      const nearestSub = findNearestSubstation(lat, lon, 220) || findNearestSubstation(lat, lon, 110);
+      if (!nearestSub) return;
+
+      if (!mainRadialIntertieLayer) {
+        mainRadialIntertieLayer = L.layerGroup().addTo(mainFlowMapInstance);
+      } else {
+        mainRadialIntertieLayer.clearLayers();
+      }
+
+      // Draw animated dashed radial line from asset to substation
+      const line = L.polyline([[lat, lon], [nearestSub.lat, nearestSub.lng]], {
+        color: '#10B981',
+        weight: 2.8,
+        opacity: 0.95,
+        className: 'intertie-radial-line'
+      });
+
+      line.bindPopup(`
+        <div class="font-mono text-xs space-y-1 p-1">
+          <div class="font-bold text-emerald-600 dark:text-emerald-400">Interconnection Feasibility Corridor</div>
+          <div><strong>Generation Asset:</strong> ${p.name} (${p.capacity_mw || p.capacity})</div>
+          <div><strong>Nearest Substation:</strong> ${nearestSub.name} (${nearestSub.max_v}kV TBA)</div>
+          <div><strong>Radial Distance:</strong> ${nearestSub.distance_km} km</div>
+          <div><strong>Substation Headroom:</strong> ${nearestSub.total_tx_mva} MVA Capacity</div>
+        </div>
+      `).openPopup();
+
+      line.addTo(mainRadialIntertieLayer);
+
+      // Fly map to encompass both asset and substation
+      mainFlowMapInstance.fitBounds([[lat, lon], [nearestSub.lat, nearestSub.lng]], {
+        padding: [60, 60],
+        maxZoom: 11
+      });
+
+      document.getElementById('flowCockpitSection')?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+
     // ========================================================================
     // INTEGRATED GIS POWER FLOW & TRANSMISSION CARTOGRAPHY (MAIN DASHBOARD)
     // ========================================================================
@@ -2108,6 +2234,22 @@
         mainFlow500Layer = L.layerGroup().addTo(mainFlowMapInstance);
         mainGrid220Layer = L.layerGroup();
         mainAssetsLayer = L.layerGroup().addTo(mainFlowMapInstance);
+
+        mainHeadroomLayer = L.layerGroup();
+
+        document.getElementById('mapToggleHeadroomBtn')?.addEventListener('click', function() {
+          showHeadroom = !showHeadroom;
+          if (showHeadroom) {
+            mainFlowMapInstance.addLayer(mainHeadroomLayer);
+            renderSubstationHeadroomMarkers();
+            this.classList.add('bg-emerald-600', 'text-white', 'font-semibold');
+            this.classList.remove('bg-white', 'dark:bg-darkCard', 'text-inkMuted', 'dark:text-textDarkMuted');
+          } else {
+            mainFlowMapInstance.removeLayer(mainHeadroomLayer);
+            this.classList.remove('bg-emerald-600', 'text-white', 'font-semibold');
+            this.classList.add('bg-white', 'dark:bg-darkCard', 'text-inkMuted', 'dark:text-textDarkMuted');
+          }
+        });
 
         // Bind filter toggles
         document.getElementById('mapToggleFlow500Btn')?.addEventListener('click', function() {
@@ -2167,7 +2309,57 @@
       renderMainFlowVectors();
     }
 
+    
+    function renderSubstationHeadroomMarkers() {
+      if (!mainFlowMapInstance || !mainHeadroomLayer || !Array.isArray(ALL_GRID_SUBSTATIONS)) return;
+      mainHeadroomLayer.clearLayers();
+
+      ALL_GRID_SUBSTATIONS.forEach(s => {
+        if (s.lat === null || s.lng === null || s.max_v < 110) return;
+
+        const txMva = parseFloat(s.total_tx_mva) || 0;
+        const genMw = parseFloat(s.total_gen_mw) || 0;
+        const headroomPct = txMva > 0 ? Math.round(((txMva - genMw) / txMva) * 100) : 0;
+
+        let statusColor = '#10B981'; // Available (>40%)
+        let statusText = 'Available (>40%)';
+        if (headroomPct <= 10 || (txMva > 0 && genMw >= txMva)) {
+          statusColor = '#F43F5E'; // Overburdened / Bottleneck
+          statusText = 'Congested (<10%)';
+        } else if (headroomPct < 40) {
+          statusColor = '#F59E0B'; // Moderate headroom
+          statusText = 'Moderate (10-40%)';
+        }
+
+        const marker = L.circleMarker([s.lat, s.lng], {
+          radius: s.max_v >= 500 ? 7.5 : (s.max_v >= 220 ? 5.5 : 4.0),
+          fillColor: statusColor,
+          color: '#FFFFFF',
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.85
+        });
+
+        marker.bindPopup(`
+          <div class="font-mono text-xs space-y-1 p-1">
+            <div class="font-bold text-inkPrimary dark:text-textDarkPrimary">${s.name} (${s.max_v}kV TBA)</div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full" style="background-color: ${statusColor}"></span>
+              <span class="font-semibold" style="color: ${statusColor}">${statusText}</span>
+            </div>
+            <div><strong>Installed Transformers:</strong> ${s.tx_count} units (${txMva.toLocaleString()} MVA)</div>
+            <div><strong>Connected Generation:</strong> ${s.gen_count} units (${genMw.toLocaleString()} MW)</div>
+            <div><strong>Estimated Headroom:</strong> ${headroomPct}%</div>
+            <div><strong>Province:</strong> ${s.place || 'Vietnam'}</div>
+          </div>
+        `);
+
+        marker.addTo(mainHeadroomLayer);
+      });
+    }
+
     function renderMainFlowVectors() {
+      if (showHeadroom) renderSubstationHeadroomMarkers();
       if (!mainFlowMapInstance || !mainFlow500Layer) return;
       mainFlow500Layer.clearLayers();
       if (mainGrid220Layer) mainGrid220Layer.clearLayers();
