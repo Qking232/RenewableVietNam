@@ -196,9 +196,9 @@
   }
 }
   </script>
-  <!-- Leaflet GIS Cartography Engine for National Transmission Grid -->
-  <link rel="stylesheet" href="vendor/leaflet/leaflet.css" />
-  <script src="vendor/leaflet/leaflet.js"></script>
+  <!-- Leaflet GIS Cartography Engine (Official CDN & Root Fallback) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 </head>
 
@@ -1457,8 +1457,9 @@
             ALL_PROJECTS = normalizeProjects(raw);
             initDirectory();
           initEnergyCharts();
-            initMainFlowMap();
-            return;
+          initMainFlowMap();
+          renderMainFlowVectors();
+          return;
           }
         }
         const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
@@ -1468,6 +1469,7 @@
           initDirectory();
           initEnergyCharts();
           initMainFlowMap();
+          renderMainFlowVectors();
           return;
         }
       } catch (e) {
@@ -2070,7 +2072,12 @@
 
     function initMainFlowMap() {
       const mapEl = document.getElementById('mainEnergyFlowMap');
-      if (!mapEl || typeof L === 'undefined') return;
+      if (!mapEl) return;
+      if (typeof L === 'undefined') {
+        console.warn('Leaflet engine loading delayed, retrying in 250ms...');
+        setTimeout(initMainFlowMap, 250);
+        return;
+      }
 
       if (!mainFlowMapInstance) {
         mainFlowMapInstance = L.map('mainEnergyFlowMap', {
@@ -2085,7 +2092,18 @@
           ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
           : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
-        L.tileLayer(tileUrl, { maxZoom: 18 }).addTo(mainFlowMapInstance);
+        const baseTileLayer = L.tileLayer(tileUrl, {
+          maxZoom: 18,
+          subdomains: 'abcd',
+          attribution: '&copy; CartoDB &copy; OpenStreetMap'
+        });
+
+        baseTileLayer.on('tileerror', function() {
+          console.warn('CartoDB tile warning, activating OpenStreetMap fallback');
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(mainFlowMapInstance);
+        });
+
+        baseTileLayer.addTo(mainFlowMapInstance);
 
         mainFlow500Layer = L.layerGroup().addTo(mainFlowMapInstance);
         mainGrid220Layer = L.layerGroup();
@@ -2132,9 +2150,19 @@
         });
 
         document.getElementById('mapToggleResetViewBtn')?.addEventListener('click', function() {
-          mainFlowMapInstance.setView([16.2, 107.5], 6);
+          mainFlowMapInstance.fitBounds([[8.4, 102.1], [23.4, 109.5]], { padding: [15, 15] });
         });
+
+        // Set initial bounds to entire Vietnam
+        mainFlowMapInstance.fitBounds([[8.4, 102.1], [23.4, 109.5]], { padding: [15, 15] });
       }
+
+      // Multi-stage size invalidation ensuring zero black container tiles
+      [80, 200, 500, 1000].forEach(delay => {
+        setTimeout(() => {
+          if (mainFlowMapInstance) mainFlowMapInstance.invalidateSize();
+        }, delay);
+      });
 
       renderMainFlowVectors();
     }
@@ -2273,6 +2301,8 @@
 
         renderGridSubstationsTable();
         renderGridLinesTable();
+        renderMainFlowVectors();
+        if (mainFlowMapInstance) mainFlowMapInstance.invalidateSize();
         if (activeTab === 'grid') {
           setTimeout(initGridMap, 100);
         }
@@ -2939,9 +2969,20 @@
       }
     }
 
-      // Initial Data Loading
+      // Initial Data Loading & Multi-Stage Cartography Trigger
       loadProjectsData();
       loadPdp8Data();
+      loadGridData();
+      setTimeout(initMainFlowMap, 150);
+      setTimeout(initEnergyCharts, 250);
+    });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (typeof initEnergyCharts === 'function') initEnergyCharts();
+        if (typeof initMainFlowMap === 'function') initMainFlowMap();
+        if (mainFlowMapInstance) mainFlowMapInstance.invalidateSize();
+      }, 300);
     });
   </script>
 </body>
