@@ -1,12 +1,13 @@
 /**
  * ===========================================================================
  * Renewable Vietnam — Centralized Cloud Supabase Client & Telemetry Suite
- * Rev 2.0 (IndexedDB Engine + Native GZIP Streaming Decompression)
+ * Rev 2.1 (IndexedDB Engine + Native GZIP Streaming Decompression + Mutation Gateway)
  * ===========================================================================
  * Institutional-grade data ingestion featuring:
  *  - Zero-dependency Asynchronous IndexedDB Storage (bypasses 5MB localStorage limit)
  *  - Transparent Streaming GZIP Decompression via native DecompressionStream
- *  - Cache-First & Stale-While-Revalidate (SWR) for sub-5ms repeat visit loads
+ *  - Cache-First & Stale-While-Revalidate (SWR) with global event broadcasting
+ *  - Unified REST mutations (upsert, delete) with declarative headers
  *  - Microsecond latency telemetry & connection health diagnostics
  * ===========================================================================
  */
@@ -212,9 +213,9 @@
     key: SUPABASE_KEY,
 
     /**
-     * Query a PostgREST table with structured options
+     * Query a PostgREST table with structured options and automated retry
      */
-    query: function (table, options) {
+    query: async function (table, options) {
       options = options || {};
       var params = [];
 
@@ -239,29 +240,85 @@
         headers['Range-Unit'] = 'items';
       }
 
-      var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-      var timeoutId = controller ? setTimeout(function () { controller.abort(); }, options.timeout || DEFAULT_TIMEOUT_MS) : null;
-      var startTime = Date.now();
+      var maxAttempts = options.retry ? 2 : 1;
+      var lastErr = null;
 
-      return fetch(requestUrl, {
-        method: 'GET',
-        headers: headers,
-        signal: controller ? controller.signal : undefined
-      }).then(function (res) {
-        if (timeoutId) clearTimeout(timeoutId);
-        clientState.latencyMs = Date.now() - startTime;
-        if (!res.ok) {
-          throw new Error('Supabase query failed (' + res.status + '): ' + res.statusText);
+      for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+        var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        var timeoutId = controller ? setTimeout(function () { controller.abort(); }, options.timeout || DEFAULT_TIMEOUT_MS) : null;
+        var startTime = Date.now();
+
+        try {
+          var res = await fetch(requestUrl, {
+            method: 'GET',
+            headers: headers,
+            signal: controller ? controller.signal : undefined
+          });
+          if (timeoutId) clearTimeout(timeoutId);
+          clientState.latencyMs = Date.now() - startTime;
+          if (!res.ok) {
+            throw new Error('Supabase query failed (' + res.status + '): ' + res.statusText);
+          }
+          clientState.connected = true;
+          clientState.lastSource = 'supabase';
+          return await res.json();
+        } catch (err) {
+          if (timeoutId) clearTimeout(timeoutId);
+          lastErr = err;
+          clientState.connected = false;
+          clientState.errors.push({ time: Date.now(), message: err.message });
+          if (attempt < maxAttempts) {
+            await new Promise(function (r) { setTimeout(r, 400); });
+          }
         }
-        clientState.connected = true;
-        clientState.lastSource = 'supabase';
-        return res.json();
-      }).catch(function (err) {
-        if (timeoutId) clearTimeout(timeoutId);
-        clientState.connected = false;
-        clientState.errors.push({ time: Date.now(), message: err.message });
-        throw err;
+      }
+      throw lastErr;
+    },
+
+    /**
+     * Upsert single or batch records into PostgREST table
+     */
+    upsert: async function (table, payload, options) {
+      options = options || {};
+      var requestUrl = SUPABASE_URL + '/rest/v1/' + table;
+      var customHeaders = {
+        'Prefer': options.prefer || 'resolution=merge-duplicates,return=representation'
+      };
+      if (options.headers) {
+        for (var k in options.headers) customHeaders[k] = options.headers[k];
+      }
+      var headers = getHeaders(customHeaders);
+      var body = JSON.stringify(payload);
+
+      var res = await fetch(requestUrl, {
+        method: 'POST',
+        headers: headers,
+        body: body
       });
+      if (!res.ok) {
+        throw new Error('Supabase upsert failed (' + res.status + '): ' + res.statusText);
+      }
+      clientState.connected = true;
+      return await res.json();
+    },
+
+    /**
+     * Delete records matching equality predicate
+     */
+    delete: async function (table, filterCol, filterVal, options) {
+      options = options || {};
+      var requestUrl = SUPABASE_URL + '/rest/v1/' + table + '?' + encodeURIComponent(filterCol) + '=eq.' + encodeURIComponent(filterVal);
+      var headers = getHeaders(options.headers);
+
+      var res = await fetch(requestUrl, {
+        method: 'DELETE',
+        headers: headers
+      });
+      if (!res.ok) {
+        throw new Error('Supabase delete failed (' + res.status + '): ' + res.statusText);
+      }
+      clientState.connected = true;
+      return true;
     },
 
     /**
@@ -285,6 +342,11 @@
                 RV_Supabase.query(table, options).then(function (fresh) {
                   if (Array.isArray(fresh) && fresh.length > 0) {
                     setCache(cacheKey, fresh, ttl);
+                    if (typeof window !== 'undefined' && window.dispatchEvent) {
+                      window.dispatchEvent(new CustomEvent('rvn:data:refreshed', {
+                        detail: { table: table, cacheKey: cacheKey, count: fresh.length, timestamp: Date.now() }
+                      }));
+                    }
                   }
                 }).catch(function () {});
               }, 100);

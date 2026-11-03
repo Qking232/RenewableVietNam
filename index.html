@@ -45,6 +45,8 @@
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
+  <script src="/assets/js/supabase-client.js"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -201,6 +203,11 @@
         <div class="text-right">
           <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Industrial Footprint</span>
           <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">104.4K ha</strong>
+        </div>
+        <div class="w-px h-7 bg-slate-200 dark:bg-slate-700"></div>
+        <div class="text-right">
+          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Cloud Telemetry</span>
+          <strong id="telemetryStatusBadge" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Syncing...</strong>
         </div>
       </div>
     </section>
@@ -2294,6 +2301,33 @@
     });
 
     updateSimulator();
+      // Live Cloud Telemetry & GZIP Diagnostics
+    async function initTelemetryDiagnostics() {
+      if (!window.RV_Supabase) return;
+      const badge = document.getElementById('telemetryStatusBadge');
+      try {
+        await window.RV_Supabase.getWithFallback('hub_topics', '/data/pdp8_targets.json', { limit: 1 , {
+          cacheKey: 'apex_pdp8_summary',
+          ttl: 30 * 60 * 1000,
+          swr: true
+        });
+        const tel = window.RV_Supabase.getTelemetry();
+        if (badge) {
+          const srcLabel = tel.lastSource === 'supabase' ? 'Cloud Live' : (tel.lastSource === 'indexeddb' ? 'IndexedDB' : 'GZIP Stream');
+          const pingStr = tel.latencyMs ? ` (${tel.latencyMs}ms)` : '';
+          badge.textContent = `${srcLabel}${pingStr}`;
+          badge.className = 'text-[11px] font-semibold text-emerald-600 dark:text-emerald-400';
+          badge.title = `Source: ${tel.lastSource} | Native GZIP: ${tel.supportsGzipStream ? 'Active' : 'N/A'}`;
+        }
+      } catch (e) {
+        if (badge) {
+          badge.textContent = 'GZIP Fallback';
+          badge.className = 'text-[11px] font-semibold text-slate-600 dark:text-slate-400';
+        }
+      }
+    }
+
+    initTelemetryDiagnostics();
   </script>
 </body>
 </html>

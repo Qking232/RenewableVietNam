@@ -37,6 +37,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
+  <script src="/assets/js/supabase-client.js"></script>
   <!-- Google Fonts Inter Vietnamese subset -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2201,17 +2203,29 @@
 
       async fetchCloudProjects() {
         try {
-          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?category=eq.${RV_SUPABASE_CONFIG.category}&order=updated_at.desc`;
-          const res = await fetch(url, {
-            headers: {
-              'apikey': RV_SUPABASE_CONFIG.key,
-              'Content-Type': 'application/json'
-            }
-          });
-          if (!res.ok) throw new Error(`Supabase query failed: ${res.status}`);
-          const data = await res.json();
+          let data = null;
+          if (window.RV_Supabase) {
+            data = await window.RV_Supabase.getWithFallback(RV_SUPABASE_CONFIG.table, null, {
+              eq: { category: RV_SUPABASE_CONFIG.category },
+              order: 'updated_at.desc',
+              cacheKey: 'invm_ma_projects',
+              ttl: 15 * 60 * 1000,
+              swr: true,
+              retry: true
+            });
+          } else {
+            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?category=eq.${RV_SUPABASE_CONFIG.category}&order=updated_at.desc`;
+            const res = await fetch(url, {
+              headers: {
+                'apikey': RV_SUPABASE_CONFIG.key,
+                'Content-Type': 'application/json'
+              }
+            });
+            if (!res.ok) throw new Error(`Supabase query failed: ${res.status}`);
+            data = await res.json();
+          }
           const projects = [];
-          for (const row of data) {
+          for (const row of (data || [])) {
             try {
               if (row.code) {
                 const parsed = typeof row.code === 'string' ? JSON.parse(row.code) : row.code;
@@ -2244,17 +2258,21 @@
             revision: '1.0',
             updated_at: proj.updatedAt || new Date().toISOString()
           };
-          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'apikey': RV_SUPABASE_CONFIG.key,
-              'Content-Type': 'application/json',
-              'Prefer': 'resolution=merge-duplicates,return=representation'
-            },
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok) throw new Error(`Supabase upsert failed: ${res.status}`);
+          if (window.RV_Supabase && window.RV_Supabase.upsert) {
+            await window.RV_Supabase.upsert(RV_SUPABASE_CONFIG.table, payload);
+          } else {
+            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}`;
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'apikey': RV_SUPABASE_CONFIG.key,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates,return=representation'
+              },
+              body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error(`Supabase upsert failed: ${res.status}`);
+          }
           return true;
         } catch (err) {
           console.warn('Lỗi upsert dự án lên Supabase:', err);
@@ -2266,13 +2284,17 @@
         if (!projId) return;
         try {
           const rowId = 'ma_proj_' + String(projId).replace(/^ma_proj_/, '');
-          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(rowId)}`;
-          await fetch(url, {
-            method: 'DELETE',
-            headers: {
-              'apikey': RV_SUPABASE_CONFIG.key
-            }
-          });
+          if (window.RV_Supabase && window.RV_Supabase.delete) {
+            await window.RV_Supabase.delete(RV_SUPABASE_CONFIG.table, 'id', rowId);
+          } else {
+            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(rowId)}`;
+            await fetch(url, {
+              method: 'DELETE',
+              headers: {
+                'apikey': RV_SUPABASE_CONFIG.key
+              }
+            });
+          }
         } catch (err) {
           console.warn('Lỗi xóa dự án trên Supabase:', err);
         }
