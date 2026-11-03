@@ -6,7 +6,6 @@
  * - wind.renewablevietnam.com       -> /projectenergy/ (legacy alias)
  * - industrial.renewablevietnam.com -> /industrial/
  * - ev.renewablevietnam.com         -> /evcharging/
- * - legal.renewablevietnam.com      -> /hub/
  * - invest.renewablevietnam.com     -> /invm/
  * - project.renewablevietnam.com    -> /garments/
  * 
@@ -19,7 +18,6 @@ const HOST_PATH_MAP = {
   'wind.renewablevietnam.com': '/projectenergy',
   'industrial.renewablevietnam.com': '/industrial',
   'ev.renewablevietnam.com': '/evcharging',
-  'legal.renewablevietnam.com': '/hub',
   'invest.renewablevietnam.com': '/invm',
   'project.renewablevietnam.com': '/project'
 };
