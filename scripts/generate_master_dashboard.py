@@ -94,7 +94,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">PDP8 Energy</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://ind.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Green Industrial</a>
+            <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">Green Industrial</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
             <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-darkCard transition-colors">EV Tech</a>
             <span class="text-slate-300 dark:text-slate-700">&middot;</span>
@@ -119,7 +119,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
       <nav class="flex md:hidden items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 pb-0.5 font-mono text-[11px] tracking-wider whitespace-nowrap w-full -mx-3 px-3 sm:mx-0 sm:px-0">
         <a href="https://renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-teal-600 dark:text-teal-400 font-semibold bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 shrink-0">Dashboard</a>
         <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">PDP8 Energy</a>
-        <a href="https://ind.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Green Industrial</a>
+        <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-teal-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Green Industrial</a>
         <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-amber-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">EV Tech</a>
         <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1.5 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-blue-500 bg-white/60 dark:bg-darkSurface/60 border border-borderSlate dark:border-darkBorder shrink-0">Investment M&A</a>
       </nav>
@@ -168,7 +168,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
         </a>
 
         <!-- Pillar 2: Green Industrial (ind) -->
-        <a href="https://ind.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-teal-500/50 hover:shadow-md transition-all group">
+        <a href="https://industrial.renewablevietnam.com/" class="p-4 rounded-xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-teal-500/50 hover:shadow-md transition-all group">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] tracking-wider uppercase text-teal-600 dark:text-teal-400 font-semibold">Industrial Siting</span>
             <span class="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"></span>
@@ -279,12 +279,12 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           </div>
         </div>
 
-        <!-- Card 2: ind.renewablevietnam.com -->
+        <!-- Card 2: industrial.renewablevietnam.com -->
         <div class="p-5 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col justify-between hover:border-teal-500/60 transition-all group">
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20">
-                ind.renewablevietnam.com
+                industrial.renewablevietnam.com
               </span>
               <span class="inline-flex items-center gap-1 font-mono text-[10px] text-slate-500">
                 <span class="w-2 h-2 rounded-full bg-teal-500"></span> Live
@@ -326,7 +326,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
           </div>
 
           <div class="pt-5">
-            <a href="https://ind.renewablevietnam.com/" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold shadow-sm transition-all">
+            <a href="https://industrial.renewablevietnam.com/" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold shadow-sm transition-all">
               <span>Launch Industrial Siting</span>
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -471,7 +471,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
             <strong class="text-inkPrimary dark:text-textDarkPrimary font-semibold">DPPA Wheeling Corridors</strong>
           </div>
           <p class="leading-relaxed">
-            Direct Power Purchase Agreements under Decree 80 connect clean generation facilities tracked on <a href="https://energy.renewablevietnam.com/" class="text-emerald-500 font-medium hover:underline">energy.renewablevietnam.com</a> to multinational manufacturing off-takers sited in hubs cataloged on <a href="https://ind.renewablevietnam.com/" class="text-teal-500 font-medium hover:underline">ind.renewablevietnam.com</a>.
+            Direct Power Purchase Agreements under Decree 80 connect clean generation facilities tracked on <a href="https://energy.renewablevietnam.com/" class="text-emerald-500 font-medium hover:underline">energy.renewablevietnam.com</a> to multinational manufacturing off-takers sited in hubs cataloged on <a href="https://industrial.renewablevietnam.com/" class="text-teal-500 font-medium hover:underline">industrial.renewablevietnam.com</a>.
           </p>
         </div>
 
@@ -499,7 +499,7 @@ DASHBOARD_HTML = """<!DOCTYPE html>
 
       <div class="flex flex-wrap items-center justify-center gap-4 font-mono text-[11px]">
         <a href="https://energy.renewablevietnam.com/" class="hover:text-emerald-500 transition-colors">Clean Generation</a>
-        <a href="https://ind.renewablevietnam.com/" class="hover:text-teal-500 transition-colors">Industrial Hubs</a>
+        <a href="https://industrial.renewablevietnam.com/" class="hover:text-teal-500 transition-colors">Industrial Hubs</a>
         <a href="https://ev.renewablevietnam.com/" class="hover:text-amber-500 transition-colors">EV Mobility</a>
         <a href="https://invest.renewablevietnam.com/" class="hover:text-blue-500 transition-colors">Investment M&amp;A</a>
       </div>

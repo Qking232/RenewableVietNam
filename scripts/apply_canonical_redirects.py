@@ -6,12 +6,12 @@ BASE_DIR = r"G:\My Drive\7. AI\RenewableVietNam"
 TARGETS = [
     {
         "file": os.path.join(BASE_DIR, "projectenergy", "index.html"),
-        "subdomain": "wind.renewablevietnam.com",
+        "subdomain": "windustrial.renewablevietnam.com",
         "subpath": "/projectenergy"
     },
     {
         "file": os.path.join(BASE_DIR, "green", "index.html"),
-        "subdomain": "ind.renewablevietnam.com",
+        "subdomain": "industrial.renewablevietnam.com",
         "subpath": "/green"
     },
     {
