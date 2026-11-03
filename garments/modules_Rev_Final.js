@@ -1,7 +1,7 @@
 /**
  * Executive Portal Module Manifest - Rev_Final
  * Target: Garments Company Regional Engineering & Capital Projects Portal
- * Architecture: Executive 6-Module Portfolio Grid
+ * Architecture: Executive 7-Module Portfolio Grid
  */
 window.PORTAL_MODULES = [
   {
@@ -45,11 +45,21 @@ window.PORTAL_MODULES = [
     file: "modules/domain4_capex_calsheet.html"
   },
   {
-    id: "domain4_handover",
+    id: "domain4_construction",
     tag: "DOMAIN 4",
+    shortTitle: "Physical Construction",
+    category: "Civil, PEB & MEP Execution",
+    title: "Domain 4: Physical Construction & Site Execution",
+    description: "Deep Piling Substructure, 180 km/h Typhoon PEB Steel Superstructure, Building Envelope, MEP Rough-in, 3-Tier ITP QA/QC Gates, and Zero-Harm HSE Protocol.",
+    badge: "Construction",
+    file: "modules/domain4_physical_construction.html"
+  },
+  {
+    id: "domain5_handover",
+    tag: "DOMAIN 5",
     shortTitle: "T&C Handover",
     category: "Operational Readiness",
-    title: "Domain 4: Testing, Commissioning & Handover",
+    title: "Domain 5: Testing, Commissioning & Handover",
     description: "Integrated T&C Protocols (ASHRAE 0-2019), Decree 06/2021 Statutory Hoan Cong, 9.8s Blackout ATS Transfer, FIDIC Clause 10.1 TOC, and $725k DLP Bond.",
     badge: "T&C Handover",
     file: "modules/domain5_commissioning_handover.html"
