@@ -2850,12 +2850,32 @@
 
       let html = "";
       pdp8Dataset.priority_projects.forEach(p => {
-        const isConstruction = p.status.includes("Construction") || p.status.includes("Testing");
+        const isConstruction = p.status && (p.status.includes("Construction") || p.status.includes("Testing"));
         const badgeColor = isConstruction ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-slate-600/10 text-slate-700 dark:text-slate-300 border-amber-500/20";
         const pLon = p.lon || p.lng;
         const gmapsUrl = (p.lat && pLon)
           ? `https://www.google.com/maps/search/?api=1&query=${p.lat},${pLon}`
           : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.name || '') + ' ' + (p.province || p.location || 'Vietnam'))}`;
+
+        const firstWord = (p.name || '').split(' ')[0] || '';
+        const safeName = (p.name || '').replace(/'/g, "\\'");
+        const safeProv = (p.province || '').replace(/'/g, "\\'");
+
+        // Safe match with ALL_PROJECTS if available
+        let matchedAssetIdx = -1;
+        if (Array.isArray(ALL_PROJECTS)) {
+          matchedAssetIdx = ALL_PROJECTS.findIndex(proj => 
+            (proj.name && p.name && (proj.name.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(proj.name.toLowerCase()))) ||
+            (proj.name && firstWord.length > 2 && proj.name.toLowerCase().includes(firstWord.toLowerCase()))
+          );
+        }
+
+        const intertieBtn = (matchedAssetIdx !== -1)
+          ? `<button onclick="event.stopPropagation(); traceAssetInterconnection(${matchedAssetIdx});" class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer" title="Trace Intertie to Nearest Substation">
+               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+               <span>Grid Intertie</span>
+             </button>`
+          : '';
 
         html += `
           <div class="p-3.5 rounded-xl bg-slate-50/80 dark:bg-darkCard/80 border border-borderSlate dark:border-darkBorder hover:border-teal-500/50 dark:hover:border-teal-400/40 transition-all flex flex-col justify-between space-y-2.5">
@@ -2881,7 +2901,7 @@
             <div class="space-y-1 font-mono text-[10px]">
               <div class="flex justify-between text-inkMuted dark:text-textDarkMuted">
                 <span>Progress: <b class="text-teal-600 dark:text-teal-400">${p.progress_pct}%</b></span>
-                <span>${p.capacity_mw.toLocaleString()} MW &middot; ${p.province}</span>
+                <span>${(p.capacity_mw || 0).toLocaleString()} MW &middot; ${p.province}</span>
               </div>
               <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-darkSurface overflow-hidden">
                 <div class="h-full bg-teal-500 rounded-full transition-all duration-500" style="width: ${p.progress_pct}%"></div>
@@ -2890,13 +2910,12 @@
 
             <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px]">
               <span class="text-slate-400 truncate max-w-[200px]">${p.investor}</span>
-              <button onclick="locatePdp8ProjectOnMap('${p.name.split(' ')[0]}', '${p.province}')" class="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-semibold cursor-pointer">
-                <span>Locate on Map &rarr;</span>
-              </button>
-              <button onclick="event.stopPropagation(); traceAssetInterconnection(${globalIdx});" class="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer" title="Trace Intertie to Nearest Substation">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                <span>Grid Intertie</span>
-              </button>
+              <div class="flex items-center gap-2">
+                <button onclick="locatePdp8ProjectOnMap('${safeName}', '${safeProv}')" class="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-semibold cursor-pointer">
+                  <span>Locate on Map &rarr;</span>
+                </button>
+                ${intertieBtn}
+              </div>
             </div>
           </div>
         `;
@@ -2906,20 +2925,27 @@
     }
 
     // 15. Locate Priority Project on Satellite Map
-    function locatePdp8ProjectOnMap(keyword, province) {
-      // Find asset by keyword or province
-      const match = ALL_PROJECTS.find(p => 
-        (p.name && p.name.toLowerCase().includes(keyword.toLowerCase())) ||
-        (p.location && p.location.toLowerCase().includes(province.toLowerCase()))
-      );
+    function locatePdp8ProjectOnMap(name, province) {
+      const cleanName = (name || '').toLowerCase();
+      const cleanProv = (province || '').toLowerCase();
+      const firstWord = cleanName.split(' ')[0] || '';
+
+      const match = ALL_PROJECTS.find(p => {
+        const pName = (p.name || '').toLowerCase();
+        const pLoc = (p.location || p.province || '').toLowerCase();
+        return (cleanName && pName.includes(cleanName)) ||
+               (cleanName && pName && cleanName.includes(pName)) ||
+               (firstWord.length > 2 && pName.includes(firstWord)) ||
+               (cleanProv && pLoc && pLoc.includes(cleanProv));
+      });
 
       if (match) {
-        const globalIdx = ALL_PROJECTS.indexOf(match);
-        selectAssetFromMap(globalIdx);
+        const matchIdx = ALL_PROJECTS.indexOf(match);
+        selectAssetFromMap(matchIdx);
       } else {
-        searchQuery = keyword;
+        searchQuery = name;
         const sInput = document.getElementById("projectSearchInput");
-        if (sInput) sInput.value = keyword;
+        if (sInput) sInput.value = name;
         switchDossierTab('assets');
         applyFilters();
       }
