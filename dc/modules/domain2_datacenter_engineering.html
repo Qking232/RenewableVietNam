@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Domain 2: Engineering &amp; Critical Infrastructure | Hyperscale Data Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 440px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    /* Interactive SVG Map Zones */
+    .map-zone {
+      cursor: pointer;
+      transition: fill 0.2s ease, stroke 0.2s ease, filter 0.2s ease;
+    }
+    .map-zone:hover {
+      filter: brightness(1.12);
+      stroke-width: 2.5px !important;
+    }
+
+    /* Drawer Animation */
+    #zone-drawer {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #zone-drawer.closed {
+      transform: translateX(105%);
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .gov-table th, .gov-table td {
+      vertical-align: middle;
+      padding: 0.5rem 0.6rem !important;
+      white-space: normal !important;
+      word-break: normal;
+    }
+    .gov-table td.font-mono {
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+            Domain 2: Data Center Engineering, Critical Power &amp; Thermal Infrastructure
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            40,000 m² Campus Architecture: Dual 110kV GIS Substation, 2N Static UPS + LiFePO4 BESS, N+2 DLC Cooling, and 10 x 3,000 kVA Generators
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">ANNUALIZED DESIGN PUE</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-0.5 leading-tight">&le; 1.28</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CRITICAL IT LOAD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">45,000 kW</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">FACILITY TOTAL LOAD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">57,600 kW</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">RACK DENSITY</div>
+          <div class="text-sm font-bold font-mono text-sky-700 mt-0.5">Up to 80 kW / Rack</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CHILLER CAPACITY</div>
+          <div class="text-sm font-bold font-mono text-indigo-700 mt-0.5">6 x 2,500 RT (N+2)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">GENSET POWER</div>
+          <div class="text-sm font-bold font-mono text-amber-700 mt-0.5">10 x 3,000 kVA (N+1)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TOTAL CAMPUS GFA</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">40,000 m²</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- 1. INTERACTIVE 2.5D CAMPUS SPATIAL ARCHITECTURE -->
+    <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3 relative overflow-hidden">
+      <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            1. Interactive 2.5D Campus Spatial Architecture &amp; System Layout
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Click any functional zone on the campus blueprint to inspect detailed MEP equipment schedules, physical protections, and capacities.
+          </p>
+        </div>
+        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold border border-sky-200">
+          INTERACTIVE SVG BLUEPRINT
+        </span>
+      </div>
+
+      <!-- SVG CAMPUS BLUEPRINT -->
+      <div class="w-full bg-slate-900 rounded-lg p-2 overflow-x-auto relative">
+        <svg viewBox="0 0 1000 520" class="w-full min-w-[750px] select-none font-sans" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background Grid Pattern -->
+          <defs>
+            <pattern id="campus-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1e293b" stroke-width="0.8"/>
+            </pattern>
+          </defs>
+          <rect width="1000" height="520" fill="#0f172a" />
+          <rect width="1000" height="520" fill="url(#campus-grid)" />
+
+          <!-- Perimeter Boundary Fence & K12 Crash Barrier -->
+          <rect x="20" y="20" width="960" height="480" rx="8" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="6,4"/>
+          <text x="35" y="42" fill="#64748b" font-size="11" font-family="monospace" font-weight="bold">K12/M50 CRASH-RATED PERIMETER &bull; 24/7 CCTV &amp; FIBER INTRUSION DETECTION</text>
+
+          <!-- ZONE 1: MAIN DATA HALL BUILDING (4 HALLS) -->
+          <g class="map-zone" onclick="showZoneDetails('zone1')">
+            <rect x="250" y="70" width="480" height="260" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8"/>
+            <text x="270" y="98" fill="#e0f2fe" font-size="13" font-weight="bold">WHITE SPACE DATA HALLS (1–4) &bull; 45 MW IT LOAD</text>
+            <text x="270" y="116" fill="#7dd3fc" font-size="10.5" font-family="monospace">4,200 Racks &bull; Direct Liquid Cooling (DLC) + Hot Aisle Containment</text>
+            
+            <!-- Hall 1 -->
+            <rect x="270" y="130" width="210" height="85" rx="4" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
+            <text x="282" y="152" fill="#bae6fd" font-size="11" font-weight="bold">DATA HALL 1 (11.25 MW)</text>
+            <text x="282" y="170" fill="#94a3b8" font-size="9.5">1,050 Racks &bull; 10-15 kW/rack air</text>
+            <text x="282" y="186" fill="#38bdf8" font-size="9.5">VESDA + Clean Agent FK-5-1-12</text>
+
+            <!-- Hall 2 -->
+            <rect x="500" y="130" width="210" height="85" rx="4" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
+            <text x="512" y="152" fill="#bae6fd" font-size="11" font-weight="bold">DATA HALL 2 (11.25 MW)</text>
+            <text x="512" y="170" fill="#94a3b8" font-size="9.5">1,050 Racks &bull; Dual A+B Busways</text>
+            <text x="512" y="186" fill="#38bdf8" font-size="9.5">Double-Interlock Pre-Action</text>
+
+            <!-- Hall 3 (High Density AI DLC) -->
+            <rect x="270" y="230" width="210" height="85" rx="4" fill="#0c4a6e" stroke="#0ea5e9" stroke-width="1.2"/>
+            <text x="282" y="252" fill="#f0f9ff" font-size="11" font-weight="bold">DATA HALL 3 &bull; AI GPU CLUSTERS</text>
+            <text x="282" y="270" fill="#bae6fd" font-size="9.5">40–80 kW/rack &bull; Liquid to Chip (DLC)</text>
+            <text x="282" y="286" fill="#38bdf8" font-size="9.5">Dedicated In-Row CDUs &bull; 32°C Supply</text>
+
+            <!-- Hall 4 -->
+            <rect x="500" y="230" width="210" height="85" rx="4" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
+            <text x="512" y="252" fill="#bae6fd" font-size="11" font-weight="bold">DATA HALL 4 (11.25 MW)</text>
+            <text x="512" y="270" fill="#94a3b8" font-size="9.5">1,050 Racks &bull; Hybrid Air/Liquid</text>
+            <text x="512" y="286" fill="#38bdf8" font-size="9.5">Concurrent Maintainability</text>
+          </g>
+
+          <!-- ZONE 2: 110kV/22kV DUAL GIS SUBSTATION YARD -->
+          <g class="map-zone" onclick="showZoneDetails('zone2')">
+            <rect x="40" y="70" width="190" height="180" rx="6" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.6"/>
+            <text x="52" y="96" fill="#e0e7ff" font-size="11.5" font-weight="bold">110kV GIS SUBSTATION</text>
+            <text x="52" y="114" fill="#c7d2fe" font-size="9.5" font-family="monospace">Dual Independent Feeds</text>
+            <rect x="52" y="125" width="165" height="45" rx="3" fill="#312e81" stroke="#6366f1" stroke-width="1"/>
+            <text x="60" y="144" fill="#ffffff" font-size="9.5" font-weight="bold">2 x 40 MVA Transformers</text>
+            <text x="60" y="158" fill="#a5b4fc" font-size="8.5">110kV / 22kV On-site GIS</text>
+            <text x="52" y="190" fill="#94a3b8" font-size="9">Underground Diverse Trenches</text>
+            <text x="52" y="206" fill="#818cf8" font-size="9" font-family="monospace">Firm Capacity: 60 MVA</text>
+          </g>
+
+          <!-- ZONE 3: 2N STATIC UPS GALLERIES & LiFePO4 BATTERY ROOMS -->
+          <g class="map-zone" onclick="showZoneDetails('zone3')">
+            <rect x="40" y="270" width="190" height="150" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="1.6"/>
+            <text x="52" y="296" fill="#f0fdf4" font-size="11.5" font-weight="bold">2N STATIC UPS ROOMS</text>
+            <text x="52" y="314" fill="#bbf7d0" font-size="9.5" font-family="monospace">LiFePO4 Battery Galleries</text>
+            <rect x="52" y="325" width="165" height="42" rx="3" fill="#166534" stroke="#22c55e" stroke-width="1"/>
+            <text x="60" y="342" fill="#ffffff" font-size="9.5" font-weight="bold">System A &amp; System B 2N</text>
+            <text x="60" y="356" fill="#86efac" font-size="8.5">10-Min Ride-Through @ 45MW</text>
+            <text x="52" y="386" fill="#dcfce7" font-size="9">Deflagration &amp; Thermal Runaway Safe</text>
+            <text x="52" y="402" fill="#4ade80" font-size="9" font-family="monospace">Tier III Concurrency</text>
+          </g>
+
+          <!-- ZONE 4: CENTRAL CHILLER PLANT & COOLING TOWERS -->
+          <g class="map-zone" onclick="showZoneDetails('zone4')">
+            <rect x="750" y="70" width="210" height="190" rx="6" fill="#083344" stroke="#22d3ee" stroke-width="1.6"/>
+            <text x="765" y="96" fill="#ecfeff" font-size="11.5" font-weight="bold">CHILLER &amp; COOLING YARD</text>
+            <text x="765" y="114" fill="#a5f3fc" font-size="9.5" font-family="monospace">6 x 2,500 RT Chillers (N+2)</text>
+            <rect x="765" y="125" width="180" height="45" rx="3" fill="#164e63" stroke="#06b6d4" stroke-width="1"/>
+            <text x="775" y="144" fill="#ffffff" font-size="9.5" font-weight="bold">Magnetic Oil-Free Centrifugals</text>
+            <text x="775" y="158" fill="#67e8f9" font-size="8.5">COP &ge; 6.8 &bull; Waterside Free Cooling</text>
+            <text x="765" y="190" fill="#94a3b8" font-size="9">Closed-Circuit Cooling Towers (N+2)</text>
+            <text x="765" y="206" fill="#22d3ee" font-size="9" font-family="monospace">Thermal Flywheel: 15-Min Buffer</text>
+          </g>
+
+          <!-- ZONE 5: EMERGENCY GENERATOR FARM & FUEL STORAGE -->
+          <g class="map-zone" onclick="showZoneDetails('zone5')">
+            <rect x="750" y="280" width="210" height="140" rx="6" fill="#451a03" stroke="#f59e0b" stroke-width="1.6"/>
+            <text x="765" y="306" fill="#fef3c7" font-size="11.5" font-weight="bold">STANDBY GENERATOR FARM</text>
+            <text x="765" y="324" fill="#fde68a" font-size="9.5" font-family="monospace">10 x 3,000 kVA N+1 Gensets</text>
+            <rect x="765" y="335" width="180" height="38" rx="3" fill="#78350f" stroke="#d97706" stroke-width="1"/>
+            <text x="775" y="352" fill="#ffffff" font-size="9.5" font-weight="bold">150,000L Underground Fuel</text>
+            <text x="775" y="364" fill="#fcd34d" font-size="8.5">Double-Wall Tanks &bull; 48-Hour Run</text>
+            <text x="765" y="392" fill="#f59e0b" font-size="9" font-family="monospace">Blackout Transfer &lt; 10s</text>
+          </g>
+
+          <!-- ZONE 6 & 7: MEET-ME-ROOMS & SECURITY SOC -->
+          <g class="map-zone" onclick="showZoneDetails('zone6')">
+            <rect x="250" y="350" width="230" height="120" rx="6" fill="#311042" stroke="#c084fc" stroke-width="1.6"/>
+            <text x="265" y="376" fill="#faf5ff" font-size="11.5" font-weight="bold">CARRIER-NEUTRAL MMR-1 &amp; 2</text>
+            <text x="265" y="394" fill="#e9d5ff" font-size="9.5" font-family="monospace">Dual Diverse Fiber Entries</text>
+            <text x="265" y="416" fill="#d8b4fe" font-size="9">Subsea Landing Interconnects</text>
+            <text x="265" y="432" fill="#c084fc" font-size="9" font-family="monospace">APG &bull; SJC2 &bull; ADC &bull; AAE-1 Ready</text>
+          </g>
+
+          <g class="map-zone" onclick="showZoneDetails('zone7')">
+            <rect x="500" y="350" width="230" height="120" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="1.6"/>
+            <text x="515" y="376" fill="#f8fafc" font-size="11.5" font-weight="bold">CENTRAL SOC &amp; MANTRAP</text>
+            <text x="515" y="394" fill="#cbd5e1" font-size="9.5" font-family="monospace">5-Tier Physical Security</text>
+            <text x="515" y="416" fill="#94a3b8" font-size="9">Biometric Iris/Face Interlocks</text>
+            <text x="515" y="432" fill="#38bdf8" font-size="9" font-family="monospace">24/7/365 Dedicated NOC / SOC</text>
+          </g>
+
+          <!-- ROOFTOP SOLAR PV LABEL -->
+          <rect x="340" y="482" width="300" height="26" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+          <text x="355" y="499" fill="#a7f3d0" font-size="10" font-family="monospace" font-weight="bold">ROOFTOP SOLAR PV CANOPY &bull; 1.20 MWp DC &bull; LEED PLATINUM</text>
+        </svg>
+      </div>
+
+      <!-- INTERACTIVE ZONE DETAILS DRAWER -->
+      <div id="zone-drawer" class="closed absolute top-0 right-0 w-full sm:w-96 h-full bg-white border-l border-slate-300 shadow-xl z-50 p-4 flex flex-col justify-between overflow-y-auto">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div id="drawer-tag" class="text-[10px] font-mono font-bold uppercase text-sky-700">ZONE SPECIFICATION</div>
+            <button type="button" onclick="closeZoneDrawer()" class="text-slate-400 hover:text-slate-700 text-lg font-bold leading-none">&times;</button>
+          </div>
+          <h3 id="drawer-title" class="text-sm font-bold text-slate-900 leading-snug">Zone Title</h3>
+          <p id="drawer-desc" class="text-xs text-slate-600 leading-relaxed">Zone description text.</p>
+          <div class="border-t border-slate-100 pt-2 space-y-1.5" id="drawer-specs">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+        <button type="button" onclick="closeZoneDrawer()" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded text-xs transition-colors mt-4">
+          Close Inspector
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. ELECTRICAL POWER SYSTEM ARCHITECTURE & 2N REDUNDANCY -->
+    <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+      <div class="border-b border-slate-100 pb-2">
+        <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+          2. Mission-Critical Electrical Single Line Architecture (Dual 110kV &rarr; 2N Static UPS)
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Concurrently maintainable fault-tolerant topology compliant with ANSI/TIA-942 Rated 3 and Uptime Institute Tier III standards.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="gov-table text-xs text-slate-700">
+          <thead>
+            <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+              <th class="text-left w-28">Power Level</th>
+              <th class="text-left w-52">Subsystem Equipment</th>
+              <th class="text-left">Redundancy Topology</th>
+              <th class="text-right w-36">Technical Metric</th>
+              <th class="text-center w-28">Standard</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-mono text-indigo-700 font-bold">110kV Grid</td>
+              <td>2 x 40 MVA GIS Incomers</td>
+              <td>Dual independent transmission circuits from separate 220kV bulk substations</td>
+              <td class="text-right font-mono font-bold text-slate-800">60 MVA Firm</td>
+              <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">Tier III</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-mono text-indigo-700 font-bold">22kV Bus</td>
+              <td>Metal-Clad Vacuum Switchgear</td>
+              <td>Main-Tie-Main (MTM) bus configuration with automatic bus transfer (ABT)</td>
+              <td class="text-right font-mono font-bold text-slate-800">31.5 kA / 3s</td>
+              <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">IEC 62271</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-mono text-amber-700 font-bold">Standby Gensets</td>
+              <td>10 x 3,000 kVA Diesel Engines</td>
+              <td>N+1 redundancy (9 units carry full 57.6 MW facility load, 1 unit hot standby)</td>
+              <td class="text-right font-mono font-bold text-amber-700">&lt; 10s Sync</td>
+              <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">ISO 8528-1</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-mono text-emerald-700 font-bold">Static UPS</td>
+              <td>Double-Conversion VFI-SS-111</td>
+              <td>2N dual isolated system (Path A + Path B) with LiFePO4 battery energy storage</td>
+              <td class="text-right font-mono font-bold text-emerald-700">97.2% Eff.</td>
+              <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">IEC 62040</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-mono text-sky-700 font-bold">Busway Feeds</td>
+              <td>Dual Overhead Track Busway</td>
+              <td>A+B feeds direct to server cabinet dual power supply units (PSU) with tap-off meters</td>
+              <td class="text-right font-mono font-bold text-sky-700">800A 400V</td>
+              <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">NFPA 70</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. THERMAL MANAGEMENT & DIRECT LIQUID COOLING (DLC) -->
+    <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+      <div class="border-b border-slate-100 pb-2">
+        <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+          3. Thermal Management, Chiller Plant &amp; Direct Liquid Cooling (DLC)
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Hybrid high-efficiency cooling combining oil-free magnetic chillers with direct-to-chip liquid cooling loops for high-density AI clusters.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+          <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-cyan-800">
+            Magnetic-Bearing Chillers (N+2)
+          </div>
+          <p class="text-slate-600 leading-relaxed text-[11px]">
+            6 units of 2,500 RT water-cooled centrifugal chillers equipped with frictionless magnetic bearings. Part-load efficiency NPLV &le; 0.34 kW/RT (COP &ge; 10.3). Fast-restart capability restores 80% cooling capacity within 90 seconds of power resumption.
+          </p>
+          <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+            Total Plant: 15,000 RT (N+2 Redundant)
+          </div>
+        </div>
+
+        <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+          <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
+            Direct-to-Chip Liquid Cooling (DLC)
+          </div>
+          <p class="text-slate-600 leading-relaxed text-[11px]">
+            Dedicated In-Row Coolant Distribution Units (CDUs) circulating treated deionized water-glycol fluid directly to CPU and GPU micro-channel cold plates. Capable of rejecting 85% of heat from 80 kW/rack AI clusters directly into liquid loops with supply water at 32°C.
+          </p>
+          <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+            Secondary Loop: 
+            <span class="calc-cell"
+                  data-name="Direct Liquid Cooling Flow Rate Formula"
+                  data-formula="Q = \frac{P_{rack}}{\rho \cdot C_p \cdot \Delta T} = \frac{80\ kW}{1000 \cdot 4.184 \cdot (42 - 32)} = 1.91\ L/s\ per\ rack"
+                  data-desc="At 80 kW rack density and 10°C temperature differential across cold plates, liquid flow rate equals 1.91 litres/sec per rack."
+                  data-val="1.91 L/s per Rack">1.91 L/s per Rack</span>
+          </div>
+        </div>
+
+        <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+          <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-emerald-800">
+            Waterside Free Cooling Economizer
+          </div>
+          <p class="text-slate-600 leading-relaxed text-[11px]">
+            Plate heat exchangers installed parallel to chillers bypass mechanical compressors whenever ambient wet bulb drops &le; 22°C. Enables over 1,800 equivalent full-load hours of free or partial-economizer cooling annually in southern Vietnam winter/monsoon conditions.
+          </p>
+          <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+            Energy Saving: 2,400,000 kWh / Year
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. PUE CALCULATION & SENSITIVITY TABLE -->
+    <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+      <div class="border-b border-slate-100 pb-2">
+        <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+          4. Annual Power Usage Effectiveness (PUE) Mathematical Decomposition
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Decomposition of the 57,600 kW total campus load at 100% IT design capacity (45,000 kW critical load).
+        </p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="gov-table text-xs text-slate-700">
+          <thead>
+            <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+              <th class="text-left">Energy Component</th>
+              <th class="text-right w-36">Design Load (kW)</th>
+              <th class="text-right w-32">PUE Overhead</th>
+              <th class="text-left w-64">Engineering Abatement Measure</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans font-bold text-slate-900">Critical IT Load (Server / Network)</td>
+              <td class="text-right font-bold text-slate-900">45,000 kW</td>
+              <td class="text-right text-slate-500">1.000</td>
+              <td class="font-sans text-[10.5px] text-slate-600">Base productive computation energy</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans text-slate-800">Water Chillers &amp; Condenser Pumps</td>
+              <td class="text-right text-slate-700">6,120 kW</td>
+              <td class="text-right text-sky-700 font-bold">+0.136</td>
+              <td class="font-sans text-[10.5px] text-slate-600">Magnetic bearings, high chilled supply water (12°C)</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans text-slate-800">Cooling Towers &amp; CRAH / Fan Walls</td>
+              <td class="text-right text-slate-700">2,880 kW</td>
+              <td class="text-right text-sky-700 font-bold">+0.064</td>
+              <td class="font-sans text-[10.5px] text-slate-600">EC variable speed fan arrays, low face velocity</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans text-slate-800">Static UPS Losses &amp; Inverters</td>
+              <td class="text-right text-slate-700">1,350 kW</td>
+              <td class="text-right text-amber-700 font-bold">+0.030</td>
+              <td class="font-sans text-[10.5px] text-slate-600">97.2% VFI mode double conversion efficiency</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans text-slate-800">Transformers &amp; MV/LV Switchgear Losses</td>
+              <td class="text-right text-slate-700">1,080 kW</td>
+              <td class="text-right text-amber-700 font-bold">+0.024</td>
+              <td class="font-sans text-[10.5px] text-slate-600">Amorphous metal low-loss core transformers</td>
+            </tr>
+            <tr class="hover:bg-slate-50/80">
+              <td class="font-sans text-slate-800">Lighting, BMS &amp; Security SOC</td>
+              <td class="text-right text-slate-700">1,170 kW</td>
+              <td class="text-right text-slate-500 font-bold">+0.026</td>
+              <td class="font-sans text-[10.5px] text-slate-600">100% smart LED with microwave occupancy sensors</td>
+            </tr>
+            <tr class="bg-slate-100 font-bold">
+              <td class="font-sans text-slate-900">Total Facility Gross Load</td>
+              <td class="text-right text-slate-900">57,600 kW</td>
+              <td class="text-right text-emerald-800 text-sm">
+                <span class="calc-cell"
+                      data-name="Total Design PUE Formulation"
+                      data-formula="PUE = \frac{57,600\ kW}{45,000\ kW} = 1.280"
+                      data-desc="PUE guaranteed under EPC contract with liquidated damages penalty of $250,000 USD per 0.01 PUE exceedance above 1.28."
+                      data-val="1.280">1.280</span>
+              </td>
+              <td class="font-sans text-[10.5px] text-emerald-800">Verified Design Target &le; 1.28</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FOOTER AUDIT -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-001_Rev_Final</span> | Classification: Proprietary Technical
+      </div>
+      <div class="text-[11px]">
+        Engineering Standards: ANSI/TIA-942-B &bull; ASHRAE TC 9.9 &bull; IEEE 519 &bull; NFPA 75/76
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Zone Drawer Details Data
+    const zoneData = {
+      zone1: {
+        tag: "ZONE 1: WHITE SPACE DATA HALLS",
+        title: "45 MW Critical IT Load White Space (Halls 1–4)",
+        desc: "4 dedicated data halls across 2 storeys, each engineered for 11.25 MW critical IT load across 1,050 server cabinets. Structural floor loading rated at 15 kN/m² with precast hollow-core slab construction.",
+        specs: [
+          { label: "Critical IT Capacity", val: "45.0 MW (11.25 MW per Hall)" },
+          { label: "Cabinet Count", val: "4,200 Racks (600x1200mm footprint)" },
+          { label: "Thermal Containment", val: "Hot Aisle Containment (HAC) with auto sliding doors" },
+          { label: "AI GPU Capability", val: "Hall 3 dedicated DLC up to 80 kW/rack" },
+          { label: "Fire Suppression", val: "VESDA + FK-5-1-12 + Double-Interlock Sprinkler" }
+        ]
+      },
+      zone2: {
+        tag: "ZONE 2: 110kV/22kV GIS SUBSTATION",
+        title: "Dedicated On-Site High-Voltage Gas-Insulated Substation",
+        desc: "2 independent underground 110kV feeder cables connecting from diverse EVN grid bulk points. 2 x 40 MVA cast-resin/oil immersed step-down transformers stepping down directly to 22kV distribution.",
+        specs: [
+          { label: "Firm Grid Capacity", val: "60 MVA Contracted Firm Load" },
+          { label: "Substation Type", val: "SF6 Gas-Insulated Switchgear (GIS)" },
+          { label: "Bus Configuration", val: "Main-Tie-Main with numerical auto transfer" },
+          { label: "Fault Level Rating", val: "31.5 kA for 3 seconds" },
+          { label: "Physical Protection", val: "Blast-resistant reinforced concrete bunker" }
+        ]
+      },
+      zone3: {
+        tag: "ZONE 3: 2N STATIC UPS GALLERIES",
+        title: "Double-Conversion Static UPS & LiFePO4 Energy Storage",
+        desc: "Complete 2N dual isolated UPS topology. High-density Lithium Iron Phosphate (LiFePO4) battery racks eliminate acid fumes, extend cycle life to 4,000 cycles, and incorporate multi-point thermal runaway gas detection.",
+        specs: [
+          { label: "UPS Sizing", val: "60,000 kVA Total Installed (2N Architecture)" },
+          { label: "Battery Chemistry", val: "Lithium Iron Phosphate (LiFePO4)" },
+          { label: "Autonomy Holdover", val: "10 Minutes at 100% Critical IT Load" },
+          { label: "Efficiency Rating", val: "97.2% online double conversion" },
+          { label: "Safety Standard", val: "UL 9540A large-scale fire tested" }
+        ]
+      },
+      zone4: {
+        tag: "ZONE 4: CHILLER & COOLING YARD",
+        title: "Central Chiller Plant & Waterside Economizer",
+        desc: "6 x 2,500 RT magnetic-bearing centrifugal chillers operating in N+2 configuration. Thermal flywheel chilled water buffer storage tanks ensure continuous cooling delivery during utility-to-generator transfer.",
+        specs: [
+          { label: "Installed Capacity", val: "15,000 RT (N+2 Redundancy)" },
+          { label: "Compressor Type", val: "Oil-Free Variable-Speed Magnetic Bearing" },
+          { label: "Part-Load COP", val: "COP &ge; 10.3 (NPLV 0.34 kW/RT)" },
+          { label: "Thermal Buffer Tank", val: "4 x 250 m³ Chilled Water Flywheels (15 min)" },
+          { label: "Cooling Towers", val: "Dual-cell closed circuit with VFD EC fans" }
+        ]
+      },
+      zone5: {
+        tag: "ZONE 5: STANDBY GENERATOR FARM",
+        title: "Emergency Standby Diesel Generation & Fuel Storage",
+        desc: "10 x 3,000 kVA medium-voltage (22kV) diesel generator sets configured N+1. Underground double-wall fiberglass bulk fuel tanks provide 48 hours of autonomous full-load operation without refueling.",
+        specs: [
+          { label: "Generator Rating", val: "10 x 3,000 kVA (30,000 kVA Total)" },
+          { label: "Output Voltage", val: "22,000V Medium-Voltage Direct Generation" },
+          { label: "Start & Sync Time", val: "&lt; 10 Seconds to Bus Synchronization" },
+          { label: "Fuel Storage", val: "3 x 50,000L Underground Tanks (150kL)" },
+          { label: "Acoustic Package", val: "Critical Grade Silencers &le; 65 dBA @ Fence" }
+        ]
+      },
+      zone6: {
+        tag: "ZONE 6: MEET-ME-ROOMS (MMR)",
+        title: "Carrier-Neutral Dual Meet-Me-Rooms (MMR-1 & MMR-2)",
+        desc: "Two physically separated MMRs located on opposite sides of the building. 4 diverse underground fiber entry ducts connecting directly to international subsea cable landing stations.",
+        specs: [
+          { label: "Facility Redundancy", val: "Physically Isolated Dual MMR-1 and MMR-2" },
+          { label: "Fiber Diversity", val: "4 Independent Underground Conduit Entries" },
+          { label: "Interconnection", val: "Direct links to APG, SJC2, ADC & AAE-1" },
+          { label: "Cabling Standard", val: "OM5 Multimode & OS2 Single-Mode MPO" },
+          { label: "Carrier Access", val: "Open-access carrier-neutral colocation" }
+        ]
+      },
+      zone7: {
+        tag: "ZONE 7: SECURITY SOC & ACCESS CONTROL",
+        title: "5-Tier Physical Security & Security Operations Center",
+        desc: "Comprehensive perimeter anti-ram barriers, biometric multi-factor authentication, dual-mantrap airlocks at white space entrances, and 24/7/365 dedicated Security Operations Center (SOC).",
+        specs: [
+          { label: "Perimeter Barrier", val: "ASTM F2656 M50 / K12 Crash-Rated Wall" },
+          { label: "Access Control", val: "Biometric Iris & Facial Scanning Mantraps" },
+          { label: "Video Analytics", val: "4K AI Perimeter Intrusion Cameras (90-day archive)" },
+          { label: "Monitoring Operations", val: "24/7/365 SOC / NOC Dual Redundant Desks" },
+          { label: "Compliance Standards", val: "SOC 2 Type II &bull; PCI-DSS &bull; ISO 27001" }
+        ]
+      }
+    };
+
+    function showZoneDetails(zoneKey) {
+      const data = zoneData[zoneKey];
+      if (!data) return;
+
+      document.getElementById('drawer-tag').innerText = data.tag;
+      document.getElementById('drawer-title').innerText = data.title;
+      document.getElementById('drawer-desc').innerText = data.desc;
+
+      const specsContainer = document.getElementById('drawer-specs');
+      specsContainer.innerHTML = '';
+
+      data.specs.forEach(s => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between text-xs py-1 border-b border-slate-100 last:border-0';
+        row.innerHTML = `
+          <span class="text-slate-500 font-medium">${s.label}:</span>
+          <span class="font-mono font-bold text-slate-800 text-right">${s.val}</span>
+        `;
+        specsContainer.appendChild(row);
+      });
+
+      document.getElementById('zone-drawer').classList.remove('closed');
+    }
+
+    function closeZoneDrawer() {
+      document.getElementById('zone-drawer').classList.add('closed');
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const formula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Verified Parameter: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 15;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 440 > window.innerWidth) {
+        left = e.clientX - 450;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>
