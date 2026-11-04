@@ -597,13 +597,13 @@
           <!-- 2-Tab View Navigation Switcher (Assets Dossier & PDP8 Priority) -->
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-1 p-0.5 rounded-lg bg-slate-200/60 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-[11px] w-full sm:w-auto">
-                            <button id="tabAssetsBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md bg-teal-600 text-white font-semibold transition-all cursor-pointer">
+                            <button id="tabAssetsBtn" onclick="switchDossierTab('assets')" class="flex-1 sm:flex-initial px-3 py-1 rounded-md bg-teal-600 text-white font-semibold transition-all cursor-pointer">
                 Assets Dossier (<span id="totalAssetsCount">960</span>)
               </button>
-              <button id="tabPipelineBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+              <button id="tabPipelineBtn" onclick="switchDossierTab('pipeline')" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
                 PDP8 Priority (<span id="pipelineCount">10</span>)
               </button>
-              <button id="tabGridBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+              <button id="tabGridBtn" onclick="switchDossierTab('grid')" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
                 National Grid (<span id="totalGridSubstationsCount">1,915</span>)
               </button>
             </div>
@@ -695,13 +695,13 @@
             <!-- Grid Navigation Sub-Bar & Voltage Filters -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-slate-50/80 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder">
               <div class="flex items-center gap-1 font-mono text-[11px]">
-                <button id="gridSubViewMapBtn" class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer">
+                <button id="gridSubViewMapBtn" onclick="switchGridSubView('map')" class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer">
                   Topology Map
                 </button>
-                <button id="gridSubViewSubstationsBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
+                <button id="gridSubViewSubstationsBtn" onclick="switchGridSubView('substations')" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
                   Substations (1,915)
                 </button>
-                <button id="gridSubViewLinesBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
+                <button id="gridSubViewLinesBtn" onclick="switchGridSubView('lines')" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
                   Transmission Lines (2,877)
                 </button>
               </div>
@@ -4373,6 +4373,69 @@ function initMainFlowMap() {
       // Tab Listeners
       document.getElementById("tabAssetsBtn")?.addEventListener("click", () => switchDossierTab('assets'));
       document.getElementById("tabPipelineBtn")?.addEventListener("click", () => switchDossierTab('pipeline'));
+      document.getElementById("tabGridBtn")?.addEventListener("click", () => switchDossierTab('grid'));
+
+      // Grid Workstation Sub-Views
+      window.switchGridSubView = function(mode) {
+        const viewMap = document.getElementById('gridSubViewMap');
+        const viewSubs = document.getElementById('gridSubViewSubstations');
+        const viewLines = document.getElementById('gridSubViewLines');
+        const btnMap = document.getElementById('gridSubViewMapBtn');
+        const btnSubs = document.getElementById('gridSubViewSubstationsBtn');
+        const btnLines = document.getElementById('gridSubViewLinesBtn');
+
+        [viewMap, viewSubs, viewLines].forEach(v => v && v.classList.add('hidden'));
+        [btnMap, btnSubs, btnLines].forEach(b => {
+          if (!b) return;
+          b.className = 'px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer';
+        });
+
+        if (mode === 'substations') {
+          if (viewSubs) viewSubs.classList.remove('hidden');
+          if (btnSubs) btnSubs.className = 'px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer';
+          renderGridSubstationsTable();
+        } else if (mode === 'lines') {
+          if (viewLines) viewLines.classList.remove('hidden');
+          if (btnLines) btnLines.className = 'px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer';
+          renderGridLinesTable();
+        } else {
+          if (viewMap) viewMap.classList.remove('hidden');
+          if (btnMap) btnMap.className = 'px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer';
+          setTimeout(() => {
+            initGridMap();
+            if (gridMapInstance) gridMapInstance.invalidateSize();
+          }, 100);
+        }
+      };
+
+      document.getElementById('gridSubViewMapBtn')?.addEventListener('click', () => switchGridSubView('map'));
+      document.getElementById('gridSubViewSubstationsBtn')?.addEventListener('click', () => switchGridSubView('substations'));
+      document.getElementById('gridSubViewLinesBtn')?.addEventListener('click', () => switchGridSubView('lines'));
+
+      // Grid Voltage Selector Pills
+      document.querySelectorAll('.grid-v-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          selectedGridVoltage = pill.dataset.v || 'ALL';
+          document.querySelectorAll('.grid-v-pill').forEach(p => {
+            p.classList.remove('bg-rose-600', 'text-white', 'font-semibold');
+            p.classList.add('bg-white', 'dark:bg-darkSurface');
+          });
+          pill.classList.add('bg-rose-600', 'text-white', 'font-semibold');
+          pill.classList.remove('bg-white', 'dark:bg-darkSurface');
+
+          renderGridMapVectors();
+          renderGridSubstationsTable();
+          renderGridLinesTable();
+        });
+      });
+
+      // Grid Substation & Line Search Inputs
+      document.getElementById('gridSubstationSearchInput')?.addEventListener('input', () => {
+        renderGridSubstationsTable();
+      });
+      document.getElementById('gridLineSearchInput')?.addEventListener('input', () => {
+        renderGridLinesTable();
+      });
 
       // Sector Table Expand/Collapse Setup
       setupSectorTableCollapse();
