@@ -43,6 +43,8 @@
 
   <!-- Performance & Fonts -->
   <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/assets/js/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js'"></script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
@@ -2553,24 +2555,24 @@
       if (!window.RV_Supabase) return;
       const badge = document.getElementById('telemetryStatusBadge');
       try {
-        await window.RV_Supabase.getWithFallback('hub_topics', '/data/pdp8_targets.json', {
-          limit: 1,
-          cacheKey: 'apex_pdp8_summary',
-          ttl: 30 * 60 * 1000,
+        const regionalData = await window.RV_Supabase.getWithFallback('regional_summaries', '/data/regional_energy_summaries.json', {
+          cacheKey: 'apex_regional_energy_summaries_v1',
+          ttl: 60 * 60 * 1000,
           swr: true
         });
+        window.REGIONAL_ENERGY_DATA = regionalData;
         const tel = window.RV_Supabase.getTelemetry();
         if (badge) {
-          const srcLabel = tel.lastSource === 'supabase' ? 'Cloud Live' : (tel.lastSource === 'indexeddb' ? 'IndexedDB' : 'GZIP Stream');
-          const pingStr = tel.latencyMs ? ` (${tel.latencyMs}ms)` : '';
-          badge.textContent = `${srcLabel}${pingStr}`;
-          badge.className = 'text-[11px] font-semibold text-emerald-600 dark:text-emerald-400';
-          badge.title = `Source: ${tel.lastSource} | Native GZIP: ${tel.supportsGzipStream ? 'Active' : 'N/A'}`;
+          const totalGw = regionalData && regionalData.total_capacity_mw ? (regionalData.total_capacity_mw / 1000).toFixed(1) + ' GW' : '166.5 GW';
+          const srcLabel = tel.lastSource === 'supabase' ? 'Live' : (tel.lastSource === 'indexeddb' ? 'IndexedDB' : 'Cached');
+          badge.textContent = `${totalGw} (${srcLabel})`;
+          badge.className = 'text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 font-mono';
+          badge.title = `Total Tracked Clean Energy: ${totalGw} | Source: ${tel.lastSource} | Native GZIP: ${tel.supportsGzipStream ? 'Active' : 'N/A'}`;
         }
       } catch (e) {
         if (badge) {
-          badge.textContent = 'GZIP Fallback';
-          badge.className = 'text-[11px] font-semibold text-slate-600 dark:text-slate-400';
+          badge.textContent = '166.5 GW (GZIP)';
+          badge.className = 'text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 font-mono';
         }
       }
     }

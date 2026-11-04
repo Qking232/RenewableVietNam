@@ -98,18 +98,34 @@ export default {
     headers.set('X-Forwarded-Proto', 'https');
     headers.set('X-From-Worker', 'subdomain-gateway');
 
-    const originRequest = new Request(originUrl.toString(), {
+    // Edge cache control for static datasets, scripts and assets
+    const isStaticAsset = isSharedAsset || /\.(json|gz|js|css|svg|png|jpg|jpeg|webp|woff2?|ico)(\?.*)?$/i.test(pathname);
+
+    const fetchOptions = {
       method: request.method,
       headers: headers,
       body: request.method !== 'GET' && request.method !== 'HEAD' ? request.body : null,
       redirect: 'follow'
-    });
+    };
+
+    if (isStaticAsset && request.method === 'GET') {
+      fetchOptions.cf = {
+        cacheTtl: 86400,
+        cacheEverything: true
+      };
+    }
+
+    const originRequest = new Request(originUrl.toString(), fetchOptions);
 
     try {
       const response = await fetch(originRequest);
       const responseHeaders = new Headers(response.headers);
       responseHeaders.set('X-Proxy-By', 'Cloudflare-Worker-Subdomain-Gateway');
       responseHeaders.delete('X-Frame-Options');
+
+      if (isStaticAsset && response.status === 200) {
+        responseHeaders.set('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800');
+      }
 
       return new Response(response.body, {
         status: response.status,
