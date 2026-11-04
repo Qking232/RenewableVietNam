@@ -906,7 +906,7 @@
 
     <!-- Table Matrix Section: Dual Responsive Architecture -->
     <!-- 1. DESKTOP VIEW: Bảng Ma Trận 8 Cột Cổ Điển (Hiển thị trên màn hình >= md: 768px) -->
-    <section class="hidden md:block w-full max-w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
+    <section class="hidden md:block w-full max-w-full bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden print-shadow-none">
       <div class="w-full max-w-full overflow-x-auto table-container" style="-webkit-overflow-scrolling: touch;">
         <table class="w-full min-w-[960px] text-left border-collapse text-xs">
           <thead class="bg-slate-100 dark:bg-slate-900/90 border-b-2 border-slate-300 dark:border-slate-700">
@@ -921,7 +921,7 @@
               <th scope="col" id="thColActions" class="py-2.5 px-2 text-center w-14 no-print">Actions</th>
             </tr>
           </thead>
-          <tbody id="checklistTableBody" class="divide-y divide-slate-200 dark:divide-slate-700 text-slate-800 dark:text-slate-200">
+          <tbody id="checklistTableBody" class="divide-y divide-slate-200 dark:divide-slate-700/80 text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900">
             <!-- Rendered by JavaScript -->
           </tbody>
         </table>
@@ -2733,15 +2733,15 @@
     // Phase Badge Formatter
     function getPhaseBadge(phase) {
       const map = {
-        'M&A & DD': 'bg-amber-100 text-amber-900 border-amber-300 font-bold',
-        'Giai đoạn 1': 'bg-slate-100 text-slate-800 border-slate-300 font-semibold',
-        'Giai đoạn 2': 'bg-sky-50 text-sky-700 border-sky-200/80',
-        'Giai đoạn 3': 'bg-orange-50 text-orange-700 border-orange-200/80',
-        'Giai đoạn 4': 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-        'Giai đoạn 5': 'bg-teal-50 text-teal-800 border-teal-200 font-semibold',
-        'Giai đoạn 6': 'bg-rose-50 text-rose-700 border-rose-200/80',
+        'M&A & DD': 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border-amber-300 dark:border-amber-800 font-bold',
+        'Giai đoạn 1': 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-700 font-semibold',
+        'Giai đoạn 2': 'bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border-sky-200/80 dark:border-sky-800/80',
+        'Giai đoạn 3': 'bg-orange-50 dark:bg-orange-950/70 text-orange-700 dark:text-orange-300 border-orange-200/80 dark:border-orange-800/80',
+        'Giai đoạn 4': 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border-emerald-200/80 dark:border-emerald-800/80',
+        'Giai đoạn 5': 'bg-teal-50 dark:bg-teal-950/70 text-teal-800 dark:text-teal-300 border-teal-200 dark:border-teal-800 font-semibold',
+        'Giai đoạn 6': 'bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200/80 dark:border-rose-800/80',
       };
-      const cls = map[phase] || 'bg-slate-100 text-slate-700 border-slate-200';
+      const cls = map[phase] || 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
       const label = currentLang === 'en' ? (phase.replace('Giai đoạn', 'Stage')) : phase;
       return `<span class="inline-block px-2 py-0.5 text-[10px] font-semibold rounded-md border ${cls} whitespace-nowrap">${label}</span>`;
     }
@@ -2787,13 +2787,13 @@
     function getStatusSelectClass(status) {
       switch(status) {
         case 'Đã hoàn thành':
-          return 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 focus:ring-emerald-400';
+          return 'bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 focus:ring-emerald-400';
         case 'Đang xử lý':
-          return 'bg-blue-50 text-blue-800 border-blue-300 hover:bg-blue-100 focus:ring-blue-400';
+          return 'bg-blue-50 dark:bg-blue-950/70 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/60 focus:ring-blue-400';
         case 'Bị nghẽn / Trễ hạn':
-          return 'bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100 focus:ring-rose-400';
+          return 'bg-rose-50 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border-rose-300 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/60 focus:ring-rose-400';
         default:
-          return 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 focus:ring-slate-400';
+          return 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 focus:ring-slate-400';
       }
     }
 
@@ -2801,7 +2801,7 @@
     function renderSubInputsCompact(task) {
       const subInputs = task.subInputs || [];
       if (!Array.isArray(subInputs) || subInputs.length === 0) {
-        return `<span class="text-slate-400 italic text-[10px]">${currentLang === 'en' ? 'Not configured' : 'Chưa thiết lập'}</span>`;
+        return `<span class="text-slate-400 dark:text-slate-500 italic text-[10px]">${currentLang === 'en' ? 'Not configured' : 'Chưa thiết lập'}</span>`;
       }
       const total = subInputs.length;
       const completed = subInputs.filter(s => s.done).length;
@@ -2809,17 +2809,17 @@
       const isAllDone = completed === total;
 
       return `
-        <div class="group/sub inline-flex flex-col w-full max-w-[125px] mx-auto bg-slate-50 hover:bg-blue-50/80 px-2 py-1 rounded border border-slate-200 hover:border-blue-300 transition cursor-pointer toggle-drawer-btn select-none" data-id="${task.id}" title="${currentLang === 'en' ? `Details: ${completed}/${total} sub-items (Click to expand & select)` : `Chi tiết ${completed}/${total} hồ sơ thành phần (Bấm để xem & tích chọn)`}">
+        <div class="group/sub inline-flex flex-col w-full max-w-[125px] mx-auto bg-slate-50 dark:bg-slate-800/90 hover:bg-blue-50/80 dark:hover:bg-slate-750 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition cursor-pointer toggle-drawer-btn select-none" data-id="${task.id}" title="${currentLang === 'en' ? `Details: ${completed}/${total} sub-items (Click to expand & select)` : `Chi tiết ${completed}/${total} hồ sơ thành phần (Bấm để xem & tích chọn)`}">
           <div class="flex items-center justify-between text-[10.5px] leading-tight font-sans">
-            <span class="font-bold text-slate-700 group-hover/sub:text-blue-700 flex items-center gap-1">
-              <i data-lucide="${isAllDone ? 'check-circle-2' : 'files'}" class="w-3 h-3 ${isAllDone ? 'text-emerald-600' : 'text-blue-600'}"></i>
+            <span class="font-bold text-slate-700 dark:text-slate-200 group-hover/sub:text-blue-700 dark:group-hover/sub:text-blue-400 flex items-center gap-1">
+              <i data-lucide="${isAllDone ? 'check-circle-2' : 'files'}" class="w-3 h-3 ${isAllDone ? 'text-emerald-600 dark:text-emerald-400' : 'text-blue-600 dark:text-blue-400'}"></i>
               <span>${completed}/${total}</span>
             </span>
-            <span class="font-bold text-[10px] font-mono px-1 py-0.2 rounded ${isAllDone ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">
+            <span class="font-bold text-[10px] font-mono px-1 py-0.2 rounded ${isAllDone ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60' : 'bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60'}">
               ${pct}%
             </span>
           </div>
-          <div class="w-full bg-slate-200 rounded-full h-1 mt-1 overflow-hidden">
+          <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1 mt-1 overflow-hidden">
             <div class="${isAllDone ? 'bg-emerald-500' : 'bg-blue-600'} h-full rounded-full transition-all duration-300" style="width: ${pct}%"></div>
           </div>
         </div>
@@ -2917,11 +2917,11 @@
         const isDelayed = task.status === 'Bị nghẽn / Trễ hạn';
         const isExpanded = expandedRows.has(task.id);
 
-        let rowBg = 'hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors';
+        let rowBg = 'bg-white dark:bg-slate-900/90 hover:bg-slate-50/80 dark:hover:bg-slate-800/80 transition-colors';
         if (isCompleted) {
-          rowBg = 'bg-emerald-50/20 dark:bg-emerald-950/20 hover:bg-emerald-50/35 dark:hover:bg-emerald-950/35';
+          rowBg = 'bg-emerald-50/20 dark:bg-emerald-950/30 hover:bg-emerald-50/35 dark:hover:bg-emerald-950/50';
         } else if (isDelayed) {
-          rowBg = 'bg-rose-50/25 dark:bg-rose-950/25 hover:bg-rose-50/40 dark:hover:bg-rose-950/40';
+          rowBg = 'bg-rose-50/25 dark:bg-rose-950/30 hover:bg-rose-50/40 dark:hover:bg-rose-950/50';
         }
         tr.id = `task-row-${task.id}`;
         tr.className = `${rowBg} border-b border-slate-200/80 dark:border-slate-700/70 transition-all duration-200 text-slate-800 dark:text-slate-200`;
@@ -2975,23 +2975,23 @@
                 ${escapeHtml(getLocalizedTaskTitle(task))}
               </div>
             </div>
-            ${task.law ? `<div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer text-[11px] text-blue-700 font-medium flex items-center gap-1 hover:underline" title="${currentLang === 'en' ? 'Click to view statutory basis details' : 'Bấm để xem căn cứ pháp luật chi tiết'}"><i data-lucide="book-open" class="w-3 h-3 text-blue-500 shrink-0"></i> <span class="truncate max-w-[280px]">${escapeHtml(getLocalizedLaw(task))}</span></div>` : ''}
+            ${task.law ? `<div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer text-[11px] text-blue-700 dark:text-blue-400 font-medium flex items-center gap-1 hover:underline" title="${currentLang === 'en' ? 'Click to view statutory basis details' : 'Bấm để xem căn cứ pháp luật chi tiết'}"><i data-lucide="book-open" class="w-3 h-3 text-blue-500 dark:text-blue-400 shrink-0"></i> <span class="truncate max-w-[280px]">${escapeHtml(getLocalizedLaw(task))}</span></div>` : ''}
           </td>
 
           <!-- Cột 4: Timeline: Luật định vs Thực tế -->
           <td class="${cellPadding} px-2.5 align-middle border-r border-slate-200 dark:border-slate-700/70">
             <div class="flex flex-col gap-1 min-w-[130px]">
-              <div class="inline-flex items-center gap-1 text-[10.5px] text-slate-600 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/80">
-                <span class="text-slate-400 font-medium text-[9.5px] uppercase">${currentLang === "en" ? "Law:" : "Luật:"}</span>
-                <span class="font-mono text-[10px] font-semibold text-slate-700 truncate max-w-[105px]" title="${escapeHtml(getLocalizedTimeline(task.statutoryTime))}">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
+              <div class="inline-flex items-center gap-1 text-[10.5px] text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-800/90 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700">
+                <span class="text-slate-400 dark:text-slate-400 font-medium text-[9.5px] uppercase">${currentLang === "en" ? "Law:" : "Luật:"}</span>
+                <span class="font-mono text-[10px] font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[105px]" title="${escapeHtml(getLocalizedTimeline(task.statutoryTime))}">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
               </div>
-              <div class="inline-flex items-center gap-1 text-[10.5px] text-amber-900 bg-amber-50/90 px-1.5 py-0.5 rounded border border-amber-200/80">
-                <span class="text-amber-600 font-bold text-[9.5px] uppercase">${currentLang === "en" ? "Actual:" : "Thực:"}</span>
-                <span class="font-mono text-[10px] font-bold text-amber-800 truncate max-w-[105px]" title="${escapeHtml(getLocalizedTimeline(task.actualTime))}">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
+              <div class="inline-flex items-center gap-1 text-[10.5px] text-amber-900 dark:text-amber-200 bg-amber-50/90 dark:bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-200/80 dark:border-amber-800/60">
+                <span class="text-amber-600 dark:text-amber-400 font-bold text-[9.5px] uppercase">${currentLang === "en" ? "Actual:" : "Thực:"}</span>
+                <span class="font-mono text-[10px] font-bold text-amber-800 dark:text-amber-300 truncate max-w-[105px]" title="${escapeHtml(getLocalizedTimeline(task.actualTime))}">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
               </div>
-              ${task.finishDateFormatted ? `<div class="inline-flex items-center gap-1 text-[10px] text-black bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 font-bold mt-0.5">
-                <span class="text-slate-600 text-[9px] uppercase font-bold">${currentLang === "en" ? "Sched:" : "Lịch:"}</span>
-                <span class="font-mono text-black">${task.startDateFormatted || '...'} &rarr; ${task.finishDateFormatted}</span>
+              ${task.finishDateFormatted ? `<div class="inline-flex items-center gap-1 text-[10px] text-black dark:text-slate-100 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700 font-bold mt-0.5">
+                <span class="text-slate-600 dark:text-slate-400 text-[9px] uppercase font-bold">${currentLang === "en" ? "Sched:" : "Lịch:"}</span>
+                <span class="font-mono text-black dark:text-slate-200">${task.startDateFormatted || '...'} &rarr; ${task.finishDateFormatted}</span>
               </div>` : ''}
             </div>
           </td>
@@ -3005,34 +3005,34 @@
           <td class="${cellPadding} px-3 align-middle border-r border-slate-200 dark:border-slate-700/70">
             <div class="space-y-1.5 min-w-[190px]">
               <!-- Kết quả đầu ra (Deliverable) với dải viền xanh lá ở trên -->
-              <div class="text-[11px] font-semibold text-slate-800 leading-snug border-l-2 border-emerald-500 pl-2 py-0.5 bg-emerald-50/40 rounded-r transition-all cursor-pointer toggle-drawer-btn" data-id="${task.id}" title="${escapeHtml(getLocalizedDeliverable(task))} (Click to view full)">
+              <div class="text-[11px] font-semibold text-slate-800 dark:text-slate-200 leading-snug border-l-2 border-emerald-500 pl-2 py-0.5 bg-emerald-50/40 dark:bg-emerald-950/30 rounded-r transition-all cursor-pointer toggle-drawer-btn" data-id="${task.id}" title="${escapeHtml(getLocalizedDeliverable(task))} (Click to view full)">
                 ${escapeHtml(getLocalizedDeliverable(task))}
               </div>
               <!-- Cơ quan thẩm quyền liên quan ở dưới -->
-              <div class="flex items-center gap-1.5 text-[10.5px] text-slate-600 pl-2">
-                <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+              <div class="flex items-center gap-1.5 text-[10.5px] text-slate-600 dark:text-slate-400 pl-2">
+                <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0"></i>
                 <span class="font-medium truncate max-w-[210px]" title="${escapeHtml(getLocalizedAuthority(task))}">${escapeHtml(getLocalizedAuthority(task))}</span>
               </div>
             </div>
           </td>
 
           <!-- Cột 7: PIC & Deadline -->
-          <td class="${cellPadding} px-2.5 align-middle whitespace-nowrap border-r border-slate-200">
-            <div class="text-[11px] font-bold text-slate-800 truncate max-w-[115px]" title="${escapeHtml(getLocalizedPic(task))}">
+          <td class="${cellPadding} px-2.5 align-middle whitespace-nowrap border-r border-slate-200 dark:border-slate-700/70">
+            <div class="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate max-w-[115px]" title="${escapeHtml(getLocalizedPic(task))}">
               ${escapeHtml(getLocalizedPic(task))}
             </div>
-            <div class="text-[10px] font-mono text-slate-500 mt-0.5 flex items-center gap-1">
-              <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i> ${escapeHtml(formatVnDate(task.deadline))}
+            <div class="text-[10px] font-mono text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3 h-3 text-slate-400 dark:text-slate-500"></i> ${escapeHtml(formatVnDate(task.deadline))}
             </div>
           </td>
 
           <!-- Cột 8: Thao tác Lệnh -->
           <td class="${cellPadding} px-2 text-center align-middle no-print">
             <div class="inline-flex items-center gap-1">
-              <button data-id="${task.id}" class="edit-btn p-1 text-slate-400 hover:text-blue-600 rounded-md hover:bg-slate-100 transition" title="${currentLang === 'en' ? 'Edit milestone content' : 'Chỉnh sửa nội dung'}">
+              <button data-id="${task.id}" class="edit-btn p-1 text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="${currentLang === 'en' ? 'Edit milestone content' : 'Chỉnh sửa nội dung'}">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
               </button>
-              <button data-id="${task.id}" class="delete-btn p-1 text-slate-400 hover:text-rose-600 rounded-md hover:bg-rose-50 transition" title="${currentLang === 'en' ? 'Delete milestone' : 'Xóa thủ tục'}">
+              <button data-id="${task.id}" class="delete-btn p-1 text-slate-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 rounded-md hover:bg-rose-50 dark:hover:bg-rose-950/50 transition" title="${currentLang === 'en' ? 'Delete milestone' : 'Xóa thủ tục'}">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
@@ -3044,7 +3044,7 @@
         // Hàng Drawer Mở rộng hiển thị Chi tiết (3 Cột chuyên nghiệp)
         if (isExpanded) {
           const detailTr = document.createElement('tr');
-          detailTr.className = 'detail-drawer bg-slate-100/90 border-b border-slate-300/80 text-xs animate-in fade-in duration-150';
+          detailTr.className = 'detail-drawer bg-slate-100/90 dark:bg-slate-900 border-b border-slate-300/80 dark:border-slate-700/80 text-xs animate-in fade-in duration-150';
           
           const totalSubs = (task.subInputs || []).length;
           const doneSubs = (task.subInputs || []).filter(s => s.done).length;
@@ -3091,50 +3091,50 @@
                 </div>
 
                 <!-- Cột 2: Căn cứ pháp lý & Kết quả bàn giao (4 cột) -->
-                <div class="lg:col-span-4 bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+                <div class="lg:col-span-4 bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs space-y-3">
                   <div>
-                    <div class="flex items-center gap-1.5 text-slate-900 font-bold text-xs uppercase tracking-wide pb-1.5 border-b border-slate-100 mb-2">
-                      <i data-lucide="scale" class="w-3.5 h-3.5 text-blue-600"></i>
+                    <div class="flex items-center gap-1.5 text-slate-900 dark:text-slate-100 font-bold text-xs uppercase tracking-wide pb-1.5 border-b border-slate-100 dark:border-slate-700 mb-2">
+                      <i data-lucide="scale" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                       <span>${currentLang === "en" ? "Statutory Basis &amp; Authority Jurisdiction" : "Pháp Lý &amp; Thẩm Quyền Giải Quyết"}</span>
                     </div>
                     <div class="space-y-2 text-[11.5px]">
                       <div>
-                        <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "STATUTORY BASIS:" : "CĂN CỨ PHÁP LUẬT:"}</span>
-                        <span class="text-blue-900 font-medium leading-relaxed">${escapeHtml(getLocalizedLaw(task))}</span>
+                        <span class="font-semibold text-slate-500 dark:text-slate-400 block text-[10.5px]">${currentLang === "en" ? "STATUTORY BASIS:" : "CĂN CỨ PHÁP LUẬT:"}</span>
+                        <span class="text-blue-900 dark:text-blue-300 font-medium leading-relaxed">${escapeHtml(getLocalizedLaw(task))}</span>
                       </div>
                       <div>
-                        <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "GOVERNING AUTHORITY:" : "CƠ QUAN THẨM QUYỀN:"}</span>
-                        <span class="text-slate-800 font-medium">${escapeHtml(getLocalizedAuthority(task))}</span>
+                        <span class="font-semibold text-slate-500 dark:text-slate-400 block text-[10.5px]">${currentLang === "en" ? "GOVERNING AUTHORITY:" : "CƠ QUAN THẨM QUYỀN:"}</span>
+                        <span class="text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(getLocalizedAuthority(task))}</span>
                       </div>
                       <div class="grid grid-cols-2 gap-2 pt-1">
                         <div>
-                          <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "STATUTORY TIMELINE:" : "THỜI HẠN LUẬT:"}</span>
-                          <span class="font-mono text-slate-700 font-semibold">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
+                          <span class="font-semibold text-slate-500 dark:text-slate-400 block text-[10.5px]">${currentLang === "en" ? "STATUTORY TIMELINE:" : "THỜI HẠN LUẬT:"}</span>
+                          <span class="font-mono text-slate-700 dark:text-slate-300 font-semibold">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
                         </div>
                         <div>
-                          <span class="font-semibold text-slate-500 block text-[10.5px]">${currentLang === "en" ? "ACTUAL DURATION:" : "THỰC TẾ XỬ LÝ:"}</span>
-                          <span class="font-mono text-amber-800 font-semibold">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
+                          <span class="font-semibold text-slate-500 dark:text-slate-400 block text-[10.5px]">${currentLang === "en" ? "ACTUAL DURATION:" : "THỰC TẾ XỬ LÝ:"}</span>
+                          <span class="font-mono text-amber-800 dark:text-amber-300 font-semibold">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div class="pt-2 border-t border-slate-100">
-                    <span class="font-semibold text-slate-500 block text-[10.5px] uppercase tracking-wider mb-1">${currentLang === "en" ? "KEY STATUTORY DELIVERABLE (OUTPUT):" : "KẾT QUẢ ĐẦU RA BÀN GIAO (DELIVERABLE):"}</span>
-                    <div class="text-[11.5px] text-emerald-950 font-medium leading-relaxed bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200">
+                  <div class="pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <span class="font-semibold text-slate-500 dark:text-slate-400 block text-[10.5px] uppercase tracking-wider mb-1">${currentLang === "en" ? "KEY STATUTORY DELIVERABLE (OUTPUT):" : "KẾT QUẢ ĐẦU RA BÀN GIAO (DELIVERABLE):"}</span>
+                    <div class="text-[11.5px] text-emerald-950 dark:text-emerald-200 font-medium leading-relaxed bg-emerald-50/70 dark:bg-emerald-950/50 p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800/60">
                       ${escapeHtml(getLocalizedDeliverable(task))}
                     </div>
                   </div>
                 </div>
 
                 <!-- Cột 3: Điểm nghẽn rủi ro & Lưu ý thực tế (3 cột) -->
-                <div class="lg:col-span-3 bg-white p-3.5 rounded-xl border border-rose-200/90 bg-gradient-to-br from-white to-rose-50/20 shadow-2xs flex flex-col justify-between">
+                <div class="lg:col-span-3 bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-rose-200/90 dark:border-rose-900/60 bg-gradient-to-br from-white dark:from-slate-800 to-rose-50/20 dark:to-rose-950/20 shadow-2xs flex flex-col justify-between">
                   <div>
-                    <div class="flex items-center gap-1.5 text-rose-700 font-bold text-xs uppercase tracking-wide pb-2 mb-2 border-b border-rose-100">
-                      <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                    <div class="flex items-center gap-1.5 text-rose-700 dark:text-rose-400 font-bold text-xs uppercase tracking-wide pb-2 mb-2 border-b border-rose-100 dark:border-rose-900/60">
+                      <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0"></i>
                       <span>${currentLang === "en" ? "CRITICAL BOTTLENECK &amp; PRACTICAL NOTES" : "ĐIỂM NGHỄN RỦI RO &amp; LƯU Ý"}</span>
                     </div>
-                    <p class="text-slate-700 text-[11.5px] leading-relaxed font-normal">
+                    <p class="text-slate-700 dark:text-slate-300 text-[11.5px] leading-relaxed font-normal">
                       ${escapeHtml(getLocalizedNotes(task))}
                     </p>
                   </div>
@@ -3153,9 +3153,9 @@
         // Render Thẻ Di Động Thuần Túy (Mobile Card - Zero Horizontal Swipe)
         if (mobileContainer) {
           const mCard = document.createElement('div');
-          let mCardBorder = 'border-slate-200/90 bg-white';
-          if (isCompleted) mCardBorder = 'border-emerald-200 bg-emerald-50/20';
-          else if (isDelayed) mCardBorder = 'border-rose-200 bg-rose-50/25';
+          let mCardBorder = 'border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-800/90';
+          if (isCompleted) mCardBorder = 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/20 dark:bg-emerald-950/30';
+          else if (isDelayed) mCardBorder = 'border-rose-200 dark:border-rose-800/60 bg-rose-50/25 dark:bg-rose-950/30';
 
           const totalSubs = task.subInputs ? task.subInputs.length : 0;
           const doneSubs = task.subInputs ? task.subInputs.filter(s => s.done).length : 0;
@@ -3224,7 +3224,7 @@
 
             <!-- Tên Thủ Tục & Căn Cứ Pháp Lý -->
             <div>
-              <div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer font-bold text-slate-900 text-[13.5px] leading-snug hover:text-blue-600 transition ${isCompleted ? 'line-through text-slate-400' : ''}">
+              <div data-id="${task.id}" class="toggle-drawer-btn cursor-pointer font-bold text-slate-900 dark:text-slate-100 text-[13.5px] leading-snug hover:text-blue-600 dark:hover:text-blue-400 transition ${isCompleted ? 'line-through text-slate-400 dark:text-slate-500' : ''}">
                 ${escapeHtml(getLocalizedTaskTitle(task))}
               </div>
               ${task.law ? `
@@ -3237,28 +3237,28 @@
 
             <!-- Kết Quả Đầu Ra (Deliverable) & Cơ Quan Phê Duyệt -->
             <div class="space-y-1.5 text-xs">
-              <div class="border-l-2 border-emerald-500 bg-emerald-50/60 p-2 rounded-r text-[11.5px] text-slate-800 font-medium leading-relaxed">
+              <div class="border-l-2 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/40 p-2 rounded-r text-[11.5px] text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
                 ${escapeHtml(getLocalizedDeliverable(task))}
               </div>
-              <div class="flex items-center gap-1.5 text-[11px] text-slate-600 pl-1">
-                <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+              <div class="flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400 pl-1">
+                <i data-lucide="landmark" class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0"></i>
                 <span class="font-medium">${escapeHtml(getLocalizedAuthority(task))}</span>
               </div>
             </div>
 
             <!-- Dải Thời Gian: Luật vs Thực tế (Bố cục xếp lớp rõ ràng) -->
             <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="bg-slate-100 p-2 rounded-lg border border-slate-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] text-slate-500 uppercase font-bold tracking-wider mb-0.5">${currentLang === "en" ? "Statutory Timeline:" : "Thời hạn Luật định:"}</span>
-                <span class="font-mono font-bold text-slate-800 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
+              <div class="bg-slate-100 dark:bg-slate-800/90 p-2 rounded-lg border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between">
+                <span class="text-[9.5px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-0.5">${currentLang === "en" ? "Statutory Timeline:" : "Thời hạn Luật định:"}</span>
+                <span class="font-mono font-bold text-slate-800 dark:text-slate-200 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(getLocalizedTimeline(task.statutoryTime))}</span>
               </div>
-              <div class="bg-amber-50 p-2 rounded-lg border border-amber-200/80 flex flex-col justify-between">
-                <span class="text-[9.5px] text-amber-700 uppercase font-bold tracking-wider mb-0.5">${currentLang === "en" ? "Actual Duration:" : "Thực tế xử lý:"}</span>
-                <span class="font-mono font-bold text-amber-900 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
+              <div class="bg-amber-50 dark:bg-amber-950/60 p-2 rounded-lg border border-amber-200/80 dark:border-amber-800/60 flex flex-col justify-between">
+                <span class="text-[9.5px] text-amber-700 dark:text-amber-400 uppercase font-bold tracking-wider mb-0.5">${currentLang === "en" ? "Actual Duration:" : "Thực tế xử lý:"}</span>
+                <span class="font-mono font-bold text-amber-900 dark:text-amber-300 text-[11px] leading-snug break-words whitespace-normal">${escapeHtml(getLocalizedTimeline(task.actualTime))}</span>
               </div>
               ${task.finishDateFormatted ? `
-                <div class="col-span-2 bg-slate-100 p-2 rounded-lg border border-slate-300 font-bold flex items-center justify-between text-black text-[10.5px]">
-                  <span class="text-slate-500 uppercase font-bold text-[9.5px]">${currentLang === "en" ? "Schedule:" : "Tiến độ lịch:"}</span>
+                <div class="col-span-2 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg border border-slate-300 dark:border-slate-700 font-bold flex items-center justify-between text-black dark:text-slate-200 text-[10.5px]">
+                  <span class="text-slate-500 dark:text-slate-400 uppercase font-bold text-[9.5px]">${currentLang === "en" ? "Schedule:" : "Tiến độ lịch:"}</span>
                   <span class="font-mono">${task.startDateFormatted || '...'} &rarr; ${task.finishDateFormatted}</span>
                 </div>
               ` : ''}
