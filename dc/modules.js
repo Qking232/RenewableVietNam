@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.028 (BOD Stage Gates & Master Plan Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.029 (Domain 1 Comprehensive Statutory Dossier Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 6-Module Portfolio Grid
  */
@@ -20,9 +20,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Permits & Statutory",
     category: "Statutory Compliance",
     title: "Domain 1: Permits, Grid Tie & Statutory Approvals",
-    description: "IRC/ERC, 1/500 Detailed Plan, TKCS Basic Design, QCVN 06:2022 PCCC Fire Safety, Decree 08/2022 GPMT, and EVN 110kV Substation Interconnection.",
+    description: "Dual-Track Fast-Track GPXD (4.5 Mo Saved), 12 Master Licenses, QCVN 06:2022 PCCC Fire Design, Decree 08/2022 GPMT, and EVN 110kV Dual-Substation DPPA Protocol.",
     badge: "Permits",
-    file: "modules/domain1_statutory_permitting_Rev.001.html"
+    file: "modules/domain1_statutory_permitting_Rev.002.html"
   },
   {
     id: "domain2_engineering_esg",
