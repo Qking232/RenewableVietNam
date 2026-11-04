@@ -24,8 +24,6 @@ def get_nav(active_key):
           {pill("EV Tech", "https://ev.renewablevietnam.com/", active_key == "ev")}
           {dot}
           {pill("Legal &amp; Investment M&amp;A", "https://invest.renewablevietnam.com/", active_key == "invest")}
-          {dot}
-          {pill("Project Delivery", "https://project.renewablevietnam.com/", active_key == "project")}
         </nav>"""
     return desktop
 
@@ -44,7 +42,6 @@ def get_mobile(active_key):
       {mpill("Industrial", "https://industrial.renewablevietnam.com/", active_key == "industrial")}
       {mpill("EV Tech", "https://ev.renewablevietnam.com/", active_key == "ev")}
       {mpill("Legal &amp; M&amp;A", "https://invest.renewablevietnam.com/", active_key == "invest")}
-      {mpill("Project Delivery", "https://project.renewablevietnam.com/", active_key == "project")}
     </div>"""
     return mobile
 
