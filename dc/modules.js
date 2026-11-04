@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.027 (Production Deployment Alignment)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.028 (BOD Stage Gates & Master Plan Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 6-Module Portfolio Grid
  */
@@ -10,9 +10,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Project Delivery",
     category: "Executive Governance",
     title: "Project Delivery Framework",
-    description: "The '5+3' Capital Delivery System: 6-Stage Gate Process, 30-Deliverable RACI Matrix, and 8 Mission-Critical Execution Pillars.",
+    description: "The '5+3' Capital Delivery System: 24-Month Master Plan, 6 BOD Submission Stage Gates, 30 Statutory Deliverables & $180M Capital Tranches.",
     badge: "Framework",
-    file: "modules/master_project_governance_Rev.001.html"
+    file: "modules/master_project_governance_Rev.002.html"
   },
   {
     id: "domain1_permitting",

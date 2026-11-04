@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Project Delivery Framework &amp; BOD Submission Gates | Hyperscale Data Center - Rev.002</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 460px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    /* Table Typography */
+    .gov-table th, .gov-table td {
+      padding: 8px 10px;
+      font-size: 11.5px;
+      line-height: 1.35;
+      vertical-align: middle;
+    }
+
+    /* Active Tab Styling */
+    .nav-tab.active {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+    .nav-tab {
+      transition: all 0.15s ease;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-5 antialiased">
+
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Project Delivery Framework &amp; BOD Submission Gates
+            </h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
+              Rev.002 BOD Master Edition
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            The "5+3" Capital Delivery System: 24-Month Master Execution Plan, 6 BOD Submission Stage Gates, 30 Statutory Deliverables &amp; $180M Capital Tranche Authorizations
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TOTAL CAPITAL AT RISK (BAC)</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-slate-900 mt-0.5 leading-tight">$180,000,000 USD</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CRITICAL IT LOAD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">45.0 MW</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">EXECUTION SCHEDULE</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">24 Months (COD)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">BOD STAGE GATES</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">6 Formal Gates</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CAPITAL TRANCHES</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">6 Tranches ($180M)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">BOD DOSSIER DOCS</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">30 Statutory Packs</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">GOVERNANCE ROLES</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">10 RACI Entities</div>
+        </div>
+      </div>
+
+      <!-- TAB NAVIGATION CONTROLS -->
+      <div class="flex items-center gap-1.5 pt-2 overflow-x-auto no-scrollbar border-t border-slate-200">
+        <button onclick="switchTab('tab-plan')" id="btn-tab-plan" class="nav-tab active px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-slate-100 text-slate-700 whitespace-nowrap">
+          1. 24-Month Plan &amp; Delivery System
+        </button>
+        <button onclick="switchTab('tab-gates')" id="btn-tab-gates" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          2. BOD Stage Gates &amp; Tranches
+        </button>
+        <button onclick="switchTab('tab-docs')" id="btn-tab-docs" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          3. BOD Submission Document Matrix
+        </button>
+        <button onclick="switchTab('tab-raci')" id="btn-tab-raci" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          4. 30-Deliverable RACI Matrix
+        </button>
+        <button onclick="switchTab('tab-pillars')" id="btn-tab-pillars" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          5. 8 Execution Pillars &amp; SOPs
+        </button>
+        <button onclick="switchTab('tab-formulas')" id="btn-tab-formulas" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          6. Governance Formula Engine
+        </button>
+      </div>
+    </header>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: 24-MONTH PLAN & DELIVERY SYSTEM     -->
+    <!-- ========================================== -->
+    <div id="tab-plan" class="tab-content space-y-4">
+      
+      <!-- System Formula Overview -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              The "5+3" Capital Delivery System Architecture
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Enterprise project delivery model integrating physical execution, statutory licensing, and financial gate controls.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-bold border border-sky-200">
+            TOTAL BAC: $180,000,000 USD
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs leading-relaxed">
+          <div class="p-3 rounded border border-sky-100 bg-sky-50/50 space-y-1.5">
+            <div class="text-[11px] uppercase font-bold text-sky-800 tracking-wider">The "5" Statutory &amp; Physical Realization Streams</div>
+            <p class="text-slate-700">
+              Encompasses the sequential physical delivery stream: 
+              <strong>(1) Siting &amp; 1/500 Detailed Master Plan Approval</strong>, 
+              <strong>(2) Basic Design (TKCS) Appraisal &amp; QCVN 06:2022 PCCC Fire Approval</strong>, 
+              <strong>(3) Dual-Track Construction Permitting (GPXD Móng &amp; GPXD Thân)</strong>, 
+              <strong>(4) 110kV GIS Substation &amp; Critical MEP Fit-out</strong>, and 
+              <strong>(5) 5-Level Commissioning (Cx 1–5), Blackout IST &amp; Decree 06/2021 Statutory Hoàn Công</strong>.
+            </p>
+          </div>
+          <div class="p-3 rounded border border-indigo-100 bg-indigo-50/50 space-y-1.5">
+            <div class="text-[11px] uppercase font-bold text-indigo-800 tracking-wider">The "+3" Institutional Control Vectors</div>
+            <p class="text-slate-700">
+              Maintains continuous enterprise cross-functional oversight: 
+              <strong>(+1) Earned Value Management (EVM) Financial Controls</strong> via monthly S-Curve progress auditing, 
+              <strong>(+2) FIDIC Silver Book EPC Turnkey Risk Allocation</strong> with strict PUE performance liquidated damages ($250k per 0.01 exceedance), and 
+              <strong>(+3) Tier III Concurrent Maintainability Verification</strong> ensuring zero operational interruption during routine servicing.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 24-Month Master Execution Schedule Table -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              24-Month Master Project Execution Schedule &amp; Milestone Critical Path
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Phase-by-phase project delivery roadmap from site acquisition to Commercial Operations Date (COD).
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            TARGET COD: MONTH 24
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table w-full text-left text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="w-16">Phase</th>
+                <th class="w-36">Timeline</th>
+                <th class="w-56">Milestone Package</th>
+                <th>Critical Path Activities &amp; Technical Thresholds</th>
+                <th class="w-28 text-right">Budget Allocation</th>
+                <th class="w-28 text-center">Stage Gate</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-01</td>
+                <td class="font-mono text-slate-600">Month 1 – 4</td>
+                <td>
+                  <div class="font-bold text-slate-900">Site Feasibility &amp; Siting</div>
+                  <div class="text-[10.5px] text-slate-500">1/500 Master Plan Submission</div>
+                </td>
+                <td>Geotechnical borehole sampling (32 boreholes, bedrock &ge; 42m), 100-year flood hydrology, EVN 110kV grid connection feasibility (60 MVA firm reservation), submission of 1/500 detailed master plan dossier.</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$5,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 0</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-02</td>
+                <td class="font-mono text-slate-600">Month 4 – 7</td>
+                <td>
+                  <div class="font-bold text-slate-900">Statutory Scheme &amp; FEED</div>
+                  <div class="text-[10.5px] text-slate-500">TKCS &amp; PCCC Fire Appraisal</div>
+                </td>
+                <td>BXD appraisal of Basic Design (Thiết kế cơ sở), Cục Cảnh sát PCCC fire safety thẩm duyệt (QCVN 06:2022 compliant containment and VESDA), Decree 08/2022 Environmental Protection License (GPMT).</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$15,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 1</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-03</td>
+                <td class="font-mono text-slate-600">Month 6 – 9</td>
+                <td>
+                  <div class="font-bold text-slate-900">EPC FIDIC Silver Tender</div>
+                  <div class="text-[10.5px] text-slate-500">Contract Award &amp; Long-Lead POs</div>
+                </td>
+                <td>Competitive bidding among Tier-1 contractors, execution of lump-sum turnkey FIDIC Silver Book EPC contract, $18.0M (10%) on-demand performance bond, placement of long-lead POs (chillers, transformers, gensets).</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$45,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 2</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-04</td>
+                <td class="font-mono text-slate-600">Month 8 – 12</td>
+                <td>
+                  <div class="font-bold text-slate-900">Substructure &amp; Piling</div>
+                  <div class="text-[10.5px] text-slate-500">GPXD Móng &amp; 650 Bored Piles</div>
+                </td>
+                <td>Issuance of GPXD Giai đoạn 1 (Móng), driving 650 bored piles (D1000/D1200) with dynamic PDA testing, 2,500m³ reinforced concrete foundation pour, basement waterproofing membrane installation.</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$25,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">MILESTONE 1</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-05</td>
+                <td class="font-mono text-slate-600">Month 11 – 16</td>
+                <td>
+                  <div class="font-bold text-slate-900">Superstructure &amp; Hardened Shell</div>
+                  <div class="text-[10.5px] text-slate-500">GPXD Thân &amp; Precast Slabs</div>
+                </td>
+                <td>GPXD Giai đoạn 2 (Thân), 4-story cast-in-place shear wall frame, hollowcore precast slabs load-rated to 15 kN/m², building envelope weather-tight closure, rooftop MEP plant dunnage completion.</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$25,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 3</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-06</td>
+                <td class="font-mono text-slate-600">Month 14 – 19</td>
+                <td>
+                  <div class="font-bold text-slate-900">110kV GIS Substation</div>
+                  <div class="text-[10.5px] text-slate-500">Dual Grid Feeders &amp; Switchyard</div>
+                </td>
+                <td>Construction of dedicated 110kV/22kV substation building, installation of 2 x 63 MVA transformers, SF6 gas-insulated switchgear (GIS), SCADA integration with EVN National Load Dispatch Center (A0/A2).</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$22,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">MILESTONE 2</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-07</td>
+                <td class="font-mono text-slate-600">Month 15 – 20</td>
+                <td>
+                  <div class="font-bold text-slate-900">Critical MEP Plant Fit-Out</div>
+                  <div class="text-[10.5px] text-slate-500">2N UPS, Chillers &amp; 10x Gensets</div>
+                </td>
+                <td>Rigging and landing of 6 x 2,500 RT magnetic chillers, 10 x 3,000 kVA MTU diesel generators, 2N distributed UPS galleries, 150 kL double-walled fuel tank installation, FK-5-1-12 gas piping.</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$23,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 4</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">P-08</td>
+                <td class="font-mono text-slate-600">Month 20 – 24</td>
+                <td>
+                  <div class="font-bold text-slate-900">5-Level Cx, IST &amp; Hoàn Công</div>
+                  <div class="text-[10.5px] text-slate-500">ASHRAE Levels 1–5 &amp; Decree 06</div>
+                </td>
+                <td>ASHRAE Guideline 0-2019 commissioning levels 1–5, 45 MW heat load bank burn-in, 0ms blackout UPS ride-through transfer testing, Decree 06 Hoàn Công inspection, Tier III Uptime audit.</td>
+                <td class="font-mono text-right font-semibold text-slate-800">$20,000,000</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">GATE 5 (COD)</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-slate-100 font-bold text-slate-900 border-t border-slate-300">
+                <td colspan="4" class="text-right uppercase text-[10px] tracking-wider py-2">Total Project Budget (BAC):</td>
+                <td class="text-right font-mono text-sky-800 text-xs py-2">$180,000,000 USD</td>
+                <td class="text-center text-[10px] text-emerald-800 py-2">100.0% BAC</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: BOD STAGE GATES & TRANCHES          -->
+    <!-- ========================================== -->
+    <div id="tab-gates" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              BOD Capital Governance: 6-Stage Gate Tollgate Matrix
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Strict manual tollgates requiring 100% submission sign-off from designated C-Suite executives and Board of Directors committees prior to tranche release.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            ZERO CAPITAL COMMITMENT WITHOUT BOD RESOLUTION
+          </span>
+        </div>
+
+        <div class="space-y-4">
+
+          <!-- GATE 0 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-600 text-white">GATE 0</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">Concept, Site Feasibility &amp; Sizing Authorization</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 1 – 4)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 0: $5.0M (2.8%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: UNANIMOUS IC</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Site Legal Title Due Diligence Report</li>
+                  <li>32-Borehole Geotechnical Soil Report</li>
+                  <li>100-Year Flood &amp; Hydrology Assessment</li>
+                  <li>EVN 110kV Grid Feasibility (60 MVA)</li>
+                  <li>15-Year DCF Model (IRR &ge; 16.0%)</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Investment Registration Certificate (IRC)</li>
+                  <li>Enterprise Registration Certificate (ERC)</li>
+                  <li>Industrial Park Land Reservation Agreement</li>
+                  <li>EVN In-Principle Power Supply Agreement</li>
+                  <li>Environmental Screener Notice</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Pile tip blow count N-value &ge; 30</li>
+                  <li>Site elevation &ge; +2.50m above 100y flood</li>
+                  <li>Dual 110kV substation ROW cleared</li>
+                  <li>Baseline PUE model &le; 1.280</li>
+                  <li>Hyperscale tenant demand LOI &ge; 30 MW</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD authorizes Project Director to execute Land Reservation Agreement, commit $5.0M for statutory 1/500 filing, and tender Front-End Engineering Design (FEED)."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Full Board &amp; IC</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATE 1 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-600 text-white">GATE 1</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">Statutory Scheme, Basic Design (TKCS) &amp; PCCC Fire Approval</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 4 – 7)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 1: $15.0M (8.3%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: ALL PERMITS ISSUED</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Approved 1/500 Detailed Master Plan</li>
+                  <li>Basic Design (TKCS) Appraisal Dossier</li>
+                  <li>QCVN 06:2022 PCCC Fire Design Package</li>
+                  <li>Decree 08/2022 Environmental License (GPMT)</li>
+                  <li>BIM LOD 300 Architecture/MEP Package</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>People&#39;s Committee 1/500 Approval Decision</li>
+                  <li>BXD/SXD Basic Design Appraisal Notice</li>
+                  <li>PCCC Thẩm duyệt Certificate (C07)</li>
+                  <li>MONRE Approved Environmental License</li>
+                  <li>EVN Substation Interconnection Agreement</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>TIA-942 Rated 3 Design Review clean</li>
+                  <li>Fire compartmentalization REI 180 min</li>
+                  <li>VESDA smoke detection &amp; clean agent spec</li>
+                  <li>110kV line routing officially approved</li>
+                  <li>BIM clash detection: zero hard clashes</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD approves verified Statutory Basic Design, authorizes release of $15.0M for EPC tender issuance and long-lead vendor reservations under FIDIC Silver Book."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Audit Committee &amp; CFO</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATE 2 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-600 text-white">GATE 2</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">EPC Contractor Award &amp; FIDIC Silver Book Turnkey Execution</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 6 – 9)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 2: $45.0M (25.0%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: CONTRACT SIGNED</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>EPC Tender Evaluation &amp; Bid Commercials</li>
+                  <li>Lump-Sum Turnkey FIDIC Silver Contract</li>
+                  <li>10% Performance Bond ($18.0M Bank Guarantee)</li>
+                  <li>Parent Company Financial Guarantee</li>
+                  <li>Long-Lead Equipment PO Schedule (LLE)</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Class-1 Construction Contractor Capacity License</li>
+                  <li>Foreign Contractor License (Giấy phép NTNN)</li>
+                  <li>All-Risk CAR Insurance Policy ($180M)</li>
+                  <li>Letter of Credit Facility Terms ($45.0M)</li>
+                  <li>Delay LDs Agreement ($125k/day, 10% cap)</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Fixed Contract Price = $180,000,000 USD</li>
+                  <li>PUE &le; 1.280 warranty ($250k penalty/0.01)</li>
+                  <li>24-Month Guaranteed Completion Date</li>
+                  <li>Tier III Uptime Design Certification bound</li>
+                  <li>Zero material deviations from Employer&#39;s Req</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD approves contract award to winning EPC Joint Venture, executes FIDIC Silver Book contract, and authorizes release of $45.0M advance payment against Performance Bond."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Full Board Resolution</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATE 3 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-600 text-white">GATE 3</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">Civil Substructure, Hardened Shell &amp; Dual GPXD Verification</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 11 – 16)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 3: $50.0M (27.8%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: 15 kN/m² TEST PASSED</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Dual GPXD (Móng &amp; Thân) Construction Permits</li>
+                  <li>650-Bored Pile Dynamic PDA Testing Log</li>
+                  <li>Superstructure Concrete Core Strength Audit</li>
+                  <li>15 kN/m² Live Load Proof Testing Dossier</li>
+                  <li>Building Weather-Tight Envelope Sign-off</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>GPXD Foundation Permit No. 142/GPXD-SXD</li>
+                  <li>GPXD Superstructure Permit No. 208/GPXD-SXD</li>
+                  <li>Labor Safety Department HSE Audit Clean</li>
+                  <li>Independent Structural Inspection Sign-off</li>
+                  <li>Environmental Discharge Monitoring Records</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>650 piles verified: settlement &le; 8mm</li>
+                  <li>Concrete compressive grade &ge; B40 (M500)</li>
+                  <li>Hollowcore floor slab deflection &le; L/500</li>
+                  <li>Basement water ingress: 0.00 L/m²/day</li>
+                  <li>Substation structural building ready for gear</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD acknowledges completion of civil substructure and shell, authorizes release of $50.0M Tranche 3 for delivery and rigging of critical mechanical/electrical plant."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Project Director &amp; CSA Lead</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATE 4 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-sky-600 text-white">GATE 4</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">MEP Plant Landing, 110kV Grid Energization &amp; 100% FAT</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 15 – 20)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 4: $45.0M (25.0%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: 100% FAT SIGN-OFF</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Factory Acceptance Testing (FAT) Certificates</li>
+                  <li>EVN 110kV Substation Energization Protocol</li>
+                  <li>6 x 2,500 RT Magnetic Chillers Hydrotest</li>
+                  <li>10 x 3,000 kVA MTU Genset Load Test Sign-off</li>
+                  <li>150 kL Underground Fuel Integrity Certificate</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>EVN Grid Energization Acceptance Document</li>
+                  <li>National Load Dispatch Center (A0/A2) Protocol</li>
+                  <li>Fire Safety Inspection for Fuel Farm (PCCC)</li>
+                  <li>Pressure Vessel Statutory Registration Certificates</li>
+                  <li>Import Customs Declarations &amp; CO/CQ Sets</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Chiller COP &ge; 6.85 at ARI conditions</li>
+                  <li>2N UPS battery string capacity &ge; 100%</li>
+                  <li>Generator step load acceptance &ge; 60%</li>
+                  <li>Gas insulated switchgear partial discharge: 0</li>
+                  <li>BMS/EPMS telemetry latency &lt; 250ms</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD authorizes energization of critical 110kV switchyard and releases $45.0M Tranche 4 to commence 5-level commissioning and integrated system testing."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Lead MEP &amp; CxA Authority</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GATE 5 CARD -->
+          <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-emerald-600 text-white">GATE 5</span>
+                <span class="font-bold text-slate-900 text-xs sm:text-sm">Integrated Systems Testing (IST), Decree 06 Hoàn Công &amp; COD Handover</span>
+                <span class="text-[10.5px] text-slate-500 font-mono">(Month 20 – 24)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-mono font-bold">TRANCHE 5: $20.0M (11.1%)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">EXIT: COD DECLARED</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Mandatory BOD Submission Dossier</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>ASHRAE Guideline 0-2019 Level 5 IST Report</li>
+                  <li>45 MW Full Heat Load Bank Burn-in Data</li>
+                  <li>Blackout Transfer Test: 0ms UPS, 8.5s Gen</li>
+                  <li>Uptime Institute Tier III Facility Certificate</li>
+                  <li>Day-1 Operations Manual &amp; As-Built BIM</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Statutory &amp; Legal Proofs</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Decree 06/2021/ND-CP Hoàn Công Acceptance</li>
+                  <li>Final PCCC Police Acceptance Certificate</li>
+                  <li>Commercial Lease Activation (Anchor Tenant)</li>
+                  <li>Defects Liability Bond ($9.0M, 5.0% Escrow)</li>
+                  <li>Final Handover Protocol between EPC &amp; Ops</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Technical Audit Thresholds</div>
+                <ul class="list-disc list-inside text-slate-600 space-y-0.5 text-[11px]">
+                  <li>Annualized PUE &le; 1.280 verified at load</li>
+                  <li>Zero operational drop during maintenance</li>
+                  <li>Server inlet air 18°C–27°C (ASHRAE A1)</li>
+                  <li>Critical power path uptime = 99.982%</li>
+                  <li>100% of punchlist Category-A items closed</li>
+                </ul>
+              </div>
+              <div class="p-2.5 rounded bg-white border border-slate-200 space-y-1">
+                <div class="text-[9.5px] uppercase font-bold text-slate-400">Formal Board Resolution Sign-Off</div>
+                <p class="text-slate-600 text-[11px] leading-relaxed">
+                  <em>"BOD formally declares Commercial Operations Date (COD), authorizes commercial occupancy, releases final contract payment less $9.0M retention escrow, and commences revenue service."</em>
+                </p>
+                <div class="text-[10px] text-slate-500 font-mono font-semibold pt-1">Signatories: Full Board &amp; CEO</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: BOD SUBMISSION DOCUMENT MATRIX      -->
+    <!-- ========================================== -->
+    <div id="tab-docs" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Board of Directors (BOD) Statutory Submission Document Repository
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              30 indexed board deliverables, governance papers, statutory dossiers, and risk evaluations required across the project lifecycle.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="docSearch" onkeyup="filterDocs()" placeholder="Filter deliverables..." class="text-xs border border-slate-300 rounded px-2.5 py-1 w-44 focus:outline-none focus:ring-1 focus:ring-sky-500" />
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-bold border border-sky-200">
+              30 DOSSIERS
+            </span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-[560px] overflow-y-auto">
+          <table class="gov-table w-full text-left text-xs text-slate-700" id="docsTable">
+            <thead class="sticky top-0 bg-slate-100 border-y border-slate-200 z-10">
+              <tr class="text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="w-24">Doc Code</th>
+                <th class="w-16">Gate</th>
+                <th>Deliverable Title &amp; Statutory Scope</th>
+                <th class="w-32">Lead Sponsor</th>
+                <th class="w-36">BOD Committee</th>
+                <th class="w-28">Standard Base</th>
+                <th class="w-24 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <!-- Gate 0 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-01</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 0</span></td>
+                <td><strong>Site Legal Title Due Diligence Report</strong><br><span class="text-[10.5px] text-slate-500">Clean ownership, master industrial zoning, encumbrance audit</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Investment Comm.</td>
+                <td class="font-mono text-[10px]">Land Law 2024</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-02</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 0</span></td>
+                <td><strong>Geotechnical &amp; 100-Year Flood Survey</strong><br><span class="text-[10.5px] text-slate-500">32 boreholes, bedrock depth, flood return level +2.5m</span></td>
+                <td class="text-slate-800 font-medium">CSA Lead</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">TCVN 9386</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-03</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 0</span></td>
+                <td><strong>EVN 110kV Power Reservation Commitment</strong><br><span class="text-[10.5px] text-slate-500">60 MVA firm capacity allocation letter from EVN SPC</span></td>
+                <td class="text-slate-800 font-medium">Project Director</td>
+                <td class="text-slate-600">Investment Comm.</td>
+                <td class="font-mono text-[10px]">EVN Circular 25</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-04</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 0</span></td>
+                <td><strong>15-Year Project DCF Financial Valuation Model</strong><br><span class="text-[10.5px] text-slate-500">Base case unlevered IRR 18.24%, $42.82M NPV, 6.4y Payback</span></td>
+                <td class="text-slate-800 font-medium">CFO</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">IFRS / WACC</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-05</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 0</span></td>
+                <td><strong>Hyperscale Tenant Pre-Lease Offtake Term Sheet</strong><br><span class="text-[10.5px] text-slate-500">30 MW minimum anchor tenant take-or-pay agreement</span></td>
+                <td class="text-slate-800 font-medium">Commercial Dir</td>
+                <td class="text-slate-600">Investment Comm.</td>
+                <td class="font-mono text-[10px]">SLA Master</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+
+              <!-- Gate 1 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-06</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 1</span></td>
+                <td><strong>Approved 1/500 Detailed Master Plan Decision</strong><br><span class="text-[10.5px] text-slate-500">Provincial People&#39;s Committee statutory zoning approval</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">Law on Const.</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-07</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 1</span></td>
+                <td><strong>BXD Basic Design (TKCS) Appraisal Notice</strong><br><span class="text-[10.5px] text-slate-500">Ministry of Construction statutory engineering audit</span></td>
+                <td class="text-slate-800 font-medium">Lead MEP</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">Decree 15/2021</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-08</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 1</span></td>
+                <td><strong>QCVN 06:2022 Fire Safety Approval Certificate</strong><br><span class="text-[10.5px] text-slate-500">Cục Cảnh sát PCCC (C07) official thẩm duyệt certificate</span></td>
+                <td class="text-slate-800 font-medium">Lead MEP</td>
+                <td class="text-slate-600">Risk Committee</td>
+                <td class="font-mono text-[10px]">QCVN 06:2022</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-09</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 1</span></td>
+                <td><strong>Decree 08/2022 Environmental License (GPMT)</strong><br><span class="text-[10.5px] text-slate-500">MONRE wastewater, diesel generator emissions, and noise quota</span></td>
+                <td class="text-slate-800 font-medium">Project Director</td>
+                <td class="text-slate-600">ESG Committee</td>
+                <td class="font-mono text-[10px]">Decree 08/2022</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-10</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 1</span></td>
+                <td><strong>BIM LOD 300 Interdisciplinary Clash Audit</strong><br><span class="text-[10.5px] text-slate-500">Digital twin 3D coordination: zero unresolved MEP clashes</span></td>
+                <td class="text-slate-800 font-medium">CSA Lead</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ISO 19650</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+
+              <!-- Gate 2 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-11</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 2</span></td>
+                <td><strong>EPC Tender Evaluation &amp; Bid Commercial Analysis</strong><br><span class="text-[10.5px] text-slate-500">Multi-criteria contractor evaluation and commercial benchmarking</span></td>
+                <td class="text-slate-800 font-medium">Chief Procurement</td>
+                <td class="text-slate-600">Audit Committee</td>
+                <td class="font-mono text-[10px]">FIDIC Silver</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-12</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 2</span></td>
+                <td><strong>Turnkey Lump-Sum FIDIC Silver Book Contract</strong><br><span class="text-[10.5px] text-slate-500">Execution draft ($180.0M), 24-month hard delivery date</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">FIDIC 2017</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-13</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 2</span></td>
+                <td><strong>10% On-Demand Performance Bond ($18.0M)</strong><br><span class="text-[10.5px] text-slate-500">Unconditional bank guarantee issued by Tier-1 commercial bank</span></td>
+                <td class="text-slate-800 font-medium">CFO</td>
+                <td class="text-slate-600">Risk Committee</td>
+                <td class="font-mono text-[10px]">URDG 758</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-14</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 2</span></td>
+                <td><strong>Contractor Parent Company Guarantee (PCG)</strong><br><span class="text-[10.5px] text-slate-500">Full financial backstop and performance step-in rights</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Risk Committee</td>
+                <td class="font-mono text-[10px]">English Law</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-15</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 2</span></td>
+                <td><strong>Long-Lead Equipment (LLE) PO Master Schedule</strong><br><span class="text-[10.5px] text-slate-500">Factory build slots for chillers, transformers, and gensets</span></td>
+                <td class="text-slate-800 font-medium">Chief Procurement</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">Incoterms 2020</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+
+              <!-- Gate 3 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-16</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 3</span></td>
+                <td><strong>GPXD Dual Permits (Foundation &amp; Superstructure)</strong><br><span class="text-[10.5px] text-slate-500">Statutory construction permits issued by Department of Construction</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">Const. Law 2020</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-17</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 3</span></td>
+                <td><strong>650-Bored Pile Dynamic PDA Testing Log</strong><br><span class="text-[10.5px] text-slate-500">100% pile integrity tested, settlement within 8mm threshold</span></td>
+                <td class="text-slate-800 font-medium">CSA Lead</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ASTM D4945</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-18</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 3</span></td>
+                <td><strong>Superstructure 15 kN/m² Live Load Proof Test</strong><br><span class="text-[10.5px] text-slate-500">Heavy battery and chiller dunnage slab capacity certified</span></td>
+                <td class="text-slate-800 font-medium">CSA Lead</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">TCVN 5574</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-19</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 3</span></td>
+                <td><strong>Basement Waterproofing Membrane Sign-off</strong><br><span class="text-[10.5px] text-slate-500">Zero groundwater seepage verified across 2,500m² slab</span></td>
+                <td class="text-slate-800 font-medium">Project Director</td>
+                <td class="text-slate-600">Risk Committee</td>
+                <td class="font-mono text-[10px]">BS 8102 Type A</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-20</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 3</span></td>
+                <td><strong>Building Weather-Tight Envelope Certification</strong><br><span class="text-[10.5px] text-slate-500">Hardened shell complete: zero moisture ingress for MEP gear</span></td>
+                <td class="text-slate-800 font-medium">CSA Lead</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ASTM E1105</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+
+              <!-- Gate 4 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-21</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 4</span></td>
+                <td><strong>100% Factory Acceptance Testing (FAT) Certs</strong><br><span class="text-[10.5px] text-slate-500">Witnessed FAT for chillers, generators, UPS, and switchgear</span></td>
+                <td class="text-slate-800 font-medium">Commissioning Auth</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ASHRAE L1/L2</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-22</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 4</span></td>
+                <td><strong>EVN 110kV Substation Energization Protocol</strong><br><span class="text-[10.5px] text-slate-500">A0/A2 load dispatch test, relay protection sign-off, live energization</span></td>
+                <td class="text-slate-800 font-medium">Lead MEP</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">EVN Grid Code</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-23</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 4</span></td>
+                <td><strong>Chiller Plant Hydraulic Hydrotest Records</strong><br><span class="text-[10.5px] text-slate-500">1.5x working pressure hold for 24 hours on condenser loops</span></td>
+                <td class="text-slate-800 font-medium">Lead MEP</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ASME B31.5</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-24</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 4</span></td>
+                <td><strong>150 kL Underground Fuel Integrity &amp; Leak Log</strong><br><span class="text-[10.5px] text-slate-500">Double-walled tank vacuum monitoring and 48-hour fuel autonomy</span></td>
+                <td class="text-slate-800 font-medium">Lead MEP</td>
+                <td class="text-slate-600">Risk Committee</td>
+                <td class="font-mono text-[10px]">NFPA 30 / PCCC</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-25</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[9px]">GATE 4</span></td>
+                <td><strong>EPMS &amp; BMS Telemetry Calibration Protocol</strong><br><span class="text-[10.5px] text-slate-500">100% sensor I/O points calibrated, 250ms alarm latency verified</span></td>
+                <td class="text-slate-800 font-medium">Commissioning Auth</td>
+                <td class="text-slate-600">Technical Comm.</td>
+                <td class="font-mono text-[10px]">ASHRAE 135</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+
+              <!-- Gate 5 Docs -->
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-26</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">GATE 5</span></td>
+                <td><strong>ASHRAE Level 5 Integrated System Test (IST)</strong><br><span class="text-[10.5px] text-slate-500">45 MW heat load burn-in, full blackout drop, heat wave simulation</span></td>
+                <td class="text-slate-800 font-medium">Commissioning Auth</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">ASHRAE G-0</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-27</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">GATE 5</span></td>
+                <td><strong>Decree 06/2021/ND-CP Hoàn Công Acceptance</strong><br><span class="text-[10.5px] text-slate-500">Statutory completion certificate issued by State Inspection Council</span></td>
+                <td class="text-slate-800 font-medium">General Counsel</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">Decree 06/2021</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-28</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">GATE 5</span></td>
+                <td><strong>Uptime Institute Tier III Facility Certificate</strong><br><span class="text-[10.5px] text-slate-500">Concurrent maintainability physically audited under full electrical load</span></td>
+                <td class="text-slate-800 font-medium">Project Director</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">Uptime Tier III</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-29</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">GATE 5</span></td>
+                <td><strong>$9.0M DLP Retention Escrow Agreement</strong><br><span class="text-[10.5px] text-slate-500">5.0% contract value escrowed for 12 months for latent defects</span></td>
+                <td class="text-slate-800 font-medium">CFO</td>
+                <td class="text-slate-600">Audit Committee</td>
+                <td class="font-mono text-[10px]">FIDIC Cl. 14</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">BOD-DOC-30</td>
+                <td><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">GATE 5</span></td>
+                <td><strong>Formal Board Resolution on COD &amp; Handover</strong><br><span class="text-[10.5px] text-slate-500">Commercial operational transfer, Day-1 lease billing commencement</span></td>
+                <td class="text-slate-800 font-medium">CEO</td>
+                <td class="text-slate-600">Full Board</td>
+                <td class="font-mono text-[10px]">Corp Charter</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[9px]">APPROVED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: 30-DELIVERABLE RACI MATRIX          -->
+    <!-- ========================================== -->
+    <div id="tab-raci" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              30-Deliverable 10-Role RACI Governance Matrix
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              R: Responsible (Lead Executor), A: Accountable (Sole Sign-off), C: Consulted (Technical Advisor), I: Informed (Status Visibility).
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-bold border border-sky-200">
+            10 GOVERNANCE ROLES
+          </span>
+        </div>
+
+        <div class="overflow-x-auto max-h-[560px] overflow-y-auto">
+          <table class="gov-table w-full text-left text-xs text-slate-700">
+            <thead class="sticky top-0 bg-slate-100 border-y border-slate-200 z-10">
+              <tr class="text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="w-16">No.</th>
+                <th>Deliverable Description</th>
+                <th class="text-center w-10">BOD</th>
+                <th class="text-center w-10">IC</th>
+                <th class="text-center w-10">PD</th>
+                <th class="text-center w-10">CFO</th>
+                <th class="text-center w-10">CPO</th>
+                <th class="text-center w-10">GC</th>
+                <th class="text-center w-10">MEP</th>
+                <th class="text-center w-10">CSA</th>
+                <th class="text-center w-10">CxA</th>
+                <th class="text-center w-10">EPC</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80"><td>01</td><td class="font-sans font-medium">Site Selection &amp; Geotech Due Diligence</td><td class="text-center font-bold text-slate-800">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>02</td><td class="font-sans font-medium">1/500 Detailed Master Plan Approval</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>03</td><td class="font-sans font-medium">Basic Design (TKCS) Appraisal Notice</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>04</td><td class="font-sans font-medium">QCVN 06:2022 PCCC Fire Safety Certificate</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>05</td><td class="font-sans font-medium">Decree 08/2022 Environmental License (GPMT)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>06</td><td class="font-sans font-medium">EVN 110kV Substation PPA &amp; Connection</td><td class="text-center font-bold text-slate-800">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>07</td><td class="font-sans font-medium">FIDIC Silver EPC Tender &amp; Award</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>08</td><td class="font-sans font-medium">Performance Bank Guarantee ($18.0M)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>09</td><td class="font-sans font-medium">GPXD Phase 1 (Foundation Permit)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>10</td><td class="font-sans font-medium">GPXD Phase 2 (Superstructure Permit)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>11</td><td class="font-sans font-medium">Bored Piling (650 Piles) PDA Verification</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>12</td><td class="font-sans font-medium">Superstructure 15 kN/m² Floor Proof Load</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>13</td><td class="font-sans font-medium">110kV GIS Substation Energization</td><td class="text-center font-bold text-slate-800">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>14</td><td class="font-sans font-medium">Chiller Plant &amp; Cooling Towers FAT</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>15</td><td class="font-sans font-medium">10x 3,000 kVA Genset Factory FAT</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>16</td><td class="font-sans font-medium">2N UPS String Ride-Through Testing</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>17</td><td class="font-sans font-medium">150 kL Underground Fuel Leak Proof</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>18</td><td class="font-sans font-medium">Clean Agent Fire Suppression Discharge</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>19</td><td class="font-sans font-medium">ASHRAE Level 4 Functional Testing</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>20</td><td class="font-sans font-medium">ASHRAE Level 5 Integrated System Test</td><td class="text-center font-bold text-slate-800">I</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>21</td><td class="font-sans font-medium">45 MW Full Heat Load Burn-In Test</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>22</td><td class="font-sans font-medium">Blackout Generator Transfer (8.5s)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>23</td><td class="font-sans font-medium">Decree 06/2021 Statutory Hoàn Công</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>24</td><td class="font-sans font-medium">Final Police PCCC Acceptance Certificate</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>25</td><td class="font-sans font-medium">Uptime Institute Tier III Facility Cert</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>26</td><td class="font-sans font-medium">LEED Gold &amp; ESG Net Zero Compliance</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>27</td><td class="font-sans font-medium">As-Built BIM LOD 500 Digital Twin</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>28</td><td class="font-sans font-medium">Defects Liability Bond ($9.0M Escrow)</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">-</td><td class="text-center text-slate-400">-</td><td class="text-center font-bold text-sky-700">R</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>29</td><td class="font-sans font-medium">Day-1 Operations SLA &amp; Handover</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center text-slate-400">C</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">C</td><td class="text-center text-slate-400">I</td></tr>
+              <tr class="hover:bg-slate-50/80"><td>30</td><td class="font-sans font-medium">Commercial Operations Date (COD) Board Declaration</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-emerald-700">A</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center font-bold text-sky-700">R</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td><td class="text-center text-slate-400">I</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: 8 EXECUTION PILLARS & SOPS          -->
+    <!-- ========================================== -->
+    <div id="tab-pillars" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            8 Mission-Critical Project Execution Pillars
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Operational governance pillars safeguarding quality, schedule, capital, and life-safety.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 1: Quality Assurance &amp; BIM LOD 500</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">QA / QC</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Digital twin model integration through Autodesk Construction Cloud. Zero tolerance for uncoordinated pipe clashes. All concrete core pours subjected to 7, 14, and 28-day compression break testing.
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 2: Change Management &amp; Contingency Control</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800">Change Board</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Formal Change Order Review Board (CORB). Any scope deviation exceeding $50,000 USD or 5 calendar days requires unanimous Project Director sign-off; deviations &gt; $500,000 USD require Board Investment Committee approval.
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 3: Value Engineering &amp; Lifecycle TCO</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">TCO Focus</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Optimization focused on total 15-year lifecycle cost rather than initial CapEx. Premium allocated to magnetic-bearing chillers and high-efficiency UPS to compress operational power draw (PUE &le; 1.280).
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 4: Zero Harm HSE Governance</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Zero Harm</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Target: 0 Fatalities, 0 Lost Time Incidents (LTI) across 2,500,000 construction man-hours. Mandatory Permit-to-Work (PTW) system for high-voltage testing, crane rigging, and deep trenching.
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 5: 5-Level Commissioning (Cx 1–5)</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-sky-100 text-sky-800">ASHRAE G-0</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Independent Third-Party Commissioning Authority (CxA) reporting directly to Board Investment Committee. Sequential validation through factory witness testing, component startup, functional test, and full blackout IST.
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 6: Wholesale SLA &amp; PUE Guarantees</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">FIDIC LDs</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              Contractual performance bond securing PUE &le; 1.280 with $250k penalty per 0.01 exceedance. Turnkey delay liquidated damages set at $125,000 USD per day of unexcused delay up to $18.0M cap (10% BAC).
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 7: ESG, Net Zero &amp; Carbon Quotas</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">LEED Gold</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              USGBC LEED Gold certification baseline. Rooftop solar PV installation (1.2 MWp), rain-water harvesting storage (1,500m³), low-GWP refrigerants (R-1233zd), and EVN green power tariff matching.
+            </p>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center justify-between">
+              <span>Pillar 8: Physical &amp; Cyber Security Hardening</span>
+              <span class="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-800">Tier III / ISO 27001</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed text-[11px]">
+              5-ring physical defense barrier with biometric mantrap portals, vehicle anti-ram bollards (K12/M50), air-gapped industrial SCADA network, and round-the-clock Security Operations Center (SOC).
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 6: GOVERNANCE FORMULA ENGINE           -->
+    <!-- ========================================== -->
+    <div id="tab-formulas" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Project Governance &amp; Mathematical Verification Engine
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Hover cursor over calculation cells to inspect underlying mathematical formulations and statutory parameters.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            AUDIT VERIFIED
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">BUDGET AT COMPLETION</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Total Baseline Cost (BAC)"
+                    data-formula="BAC = Sum(WBS_01 to WBS_12) = $180,000,000 USD"
+                    data-desc="Approved capital budget encompassing all 12 WBS packages, site civil works, 110kV GIS substation, critical MEP gear, and 5% contingency reserve."
+                    data-val="$180.00M USD">$180.00M USD</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Lump-Sum Approved CapEx</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">UNLEVERED PROJECT IRR</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Unlevered Internal Rate of Return (IRR)"
+                    data-formula="0 = -CapEx_0 + Sum [ FCFF_t / (1 + IRR)^t ] + [ TV_15 / (1 + IRR)^15 ] -> 18.24%"
+                    data-desc="Project yield across 15-year DCF projection based on 42.75 MW wholesale contract off-take at $125/kW/month and 8.0% exit cap rate."
+                    data-val="18.24% IRR">18.24%</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">15-Year Wholesale DCF Yield</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">NET PRESENT VALUE (NPV)</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Net Present Value (NPV @ 10.5% WACC)"
+                    data-formula="NPV = Sum [ FCFF_t / (1 + WACC)^t ] - CapEx_0 = +$42,820,000 USD"
+                    data-desc="Net economic value created discounted at 10.50% Weighted Average Cost of Capital (WACC), reflecting Vietnam country risk premium."
+                    data-val="+$42.82M USD">+$42.82M USD</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">NPV @ 10.50% Hurdle Rate</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">PERFORMANCE SECURITY BOND</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="EPC Performance Bank Guarantee (Clause 4.2)"
+                    data-formula="Bond = 10.0% * Contract Price = 0.10 * $180,000,000 = $18,000,000 USD"
+                    data-desc="On-demand, irrevocable performance guarantee maintained through the issuance of the Final Completion Certificate."
+                    data-val="$18.00M USD">$18.00M USD</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">10% Unconditional Bank Guarantee</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">DELAY LIQUIDATED DAMAGES</div>
+            <div class="text-base font-bold font-mono text-rose-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="FIDIC Clause 8.7 Delay Liquidated Damages"
+                    data-formula="DLD = $125,000 / day delay | Maximum Cap = 10.0% * BAC = $18,000,000 USD"
+                    data-desc="Turnkey delay liquidated damages calculated to cover lost wholesale tenant capacity reservation revenues during commissioning slip."
+                    data-val="$125,000 / day">$125,000 / day</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Max Cap: $18.0M (10% BAC)</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">PUE EFFICIENCY PENALTY</div>
+            <div class="text-base font-bold font-mono text-amber-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="PUE Exceedance Liquidated Damages"
+                    data-formula="Penalty = max(0, Actual PUE - 1.280) / 0.01 * $250,000 USD"
+                    data-desc="Contractual liquidated damages levied against EPC contractor if verified annualized full load PUE exceeds 1.280 ceiling."
+                    data-val="$250,000 / 0.01">$250,000 / 0.01</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Per 0.01 PUE Exceedance</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">BLACKOUT TRANSIT TIME</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Utility Loss to Generator Synchronization"
+                    data-formula="Transit Time = t_UPS (0ms static) + t_gen (8.5s sync) = 8.5s"
+                    data-desc="Zero-break static UPS ride-through guarantees uninterrupted IT load. 10 x 3,000 kVA generators crank, parallel, and close to 22kV bus within 8.5 seconds (under 10s TIA-942 threshold)."
+                    data-val="8.5 Seconds">8.5 Seconds</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Full Grid Drop Transfer</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">RETENTION ESCROW (DLP)</div>
+            <div class="text-base font-bold font-mono text-sky-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Defects Liability Period Retention (Clause 14.9)"
+                    data-formula="Retention = 5.0% * Contract Price = 0.05 * $180,000,000 = $9,000,000 USD"
+                    data-desc="Escrowed cash retention held for 12 months following COD to backstop any latent mechanical/electrical defects."
+                    data-val="$9.00M USD">$9.00M USD</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">12-Month Post-COD Escrow</div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- DOCUMENT REVISION AUDIT TRAIL -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-GOV-FRM-001_Rev.002</span> | Classification: Confidential Board Dossier
+      </div>
+      <div class="text-[11px]">
+        Governing Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; ISO 9001:2015 &bull; FIDIC Silver Book
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab Switching Engine
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.classList.remove('active', 'bg-sky-600', 'text-white');
+        el.classList.add('bg-white', 'text-slate-700');
+      });
+
+      const selected = document.getElementById(tabId);
+      if (selected) {
+        selected.classList.remove('hidden');
+      }
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-sky-600', 'text-white');
+        activeBtn.classList.remove('bg-white', 'text-slate-700');
+      }
+    }
+
+    // Filter Document Table
+    function filterDocs() {
+      const input = document.getElementById('docSearch').value.toUpperCase();
+      const trs = document.getElementById('docsTable').getElementsByTagName('tr');
+      for (let i = 1; i < trs.length; i++) {
+        const text = trs[i].textContent || trs[i].innerText;
+        trs[i].style.display = text.toUpperCase().indexOf(input) > -1 ? '' : 'none';
+      }
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    function formatFormulaDisplay(raw) {
+      if (!raw) return '';
+      let clean = raw;
+      clean = clean.replace(/\\text\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathbf\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\times/g, '×');
+      clean = clean.replace(/\\cdot/g, '·');
+      clean = clean.replace(/\\le/g, '≤');
+      clean = clean.replace(/\\ge/g, '≥');
+      clean = clean.replace(/\\%/g, '%');
+      clean = clean.replace(/\\\$/g, '$');
+      clean = clean.replace(/\\_/g, '_');
+      clean = clean.replace(/\\/g, '');
+      return clean;
+    }
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const rawFormula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+        const formula = formatFormulaDisplay(rawFormula);
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700 leading-normal">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Verified Metric: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 20;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 460 > window.innerWidth) {
+        left = e.clientX - 470;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>
