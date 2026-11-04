@@ -183,22 +183,22 @@
         </p>
       </div>
 
-      <!-- Quick Metrics Ribbon -->
-      <div class="flex items-center gap-3 sm:gap-4 shrink-0 font-mono text-[11px] pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-700/50">
-        <div class="text-right">
-          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Generation Pipeline</span>
-          <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">107.5 GW</strong>
-        </div>
+      <!-- Quick Metrics Ribbon (Interactive Workstation Triggers) -->
+      <div class="flex items-center gap-2.5 sm:gap-4 shrink-0 font-mono text-[11px] pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-700/50">
+        <button type="button" onclick="switchHomepageWorkstation('telemetry', true); switchHomepageTelemetryLens('generation');" class="text-right hover:opacity-80 transition-opacity cursor-pointer" title="Jump to Generation Telemetry">
+          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Generation Pipeline &nearr;</span>
+          <strong class="text-xs sm:text-sm font-semibold text-teal-600 dark:text-teal-400">107.5 GW</strong>
+        </button>
         <div class="w-px h-7 bg-slate-200 dark:bg-slate-700"></div>
-        <div class="text-right">
-          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">EV Charging Ports</span>
-          <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">22,055+</strong>
-        </div>
+        <button type="button" onclick="switchHomepageWorkstation('telemetry', true); switchHomepageTelemetryLens('market');" class="text-right hover:opacity-80 transition-opacity cursor-pointer" title="Jump to EV Telemetry">
+          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">EV Charging Ports &nearr;</span>
+          <strong class="text-xs sm:text-sm font-semibold text-cyan-600 dark:text-cyan-400">22,055+</strong>
+        </button>
         <div class="w-px h-7 bg-slate-200 dark:bg-slate-700"></div>
-        <div class="text-right">
-          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Industrial Footprint</span>
-          <strong class="text-sm font-semibold text-slate-800 dark:text-slate-200">104.4K ha</strong>
-        </div>
+        <button type="button" onclick="switchHomepageWorkstation('telemetry', true); switchHomepageTelemetryLens('grid');" class="text-right hover:opacity-80 transition-opacity cursor-pointer" title="Jump to Grid Telemetry">
+          <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Industrial Footprint &nearr;</span>
+          <strong class="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-400">104.4K ha</strong>
+        </button>
         <div class="w-px h-7 bg-slate-200 dark:bg-slate-700"></div>
         <div class="text-right">
           <span class="block text-slate-500 dark:text-slate-400 text-[10px]">Cloud Telemetry</span>
@@ -207,7 +207,50 @@
       </div>
     </section>
 
-    <!-- SECTION: 5 CORE EXECUTIVE EDGE GATEWAYS (BENTO GRID) -->
+    <!-- WORKSTATION ARCHITECTURAL MODE SWITCHER & ACTIVE FILTER HUD -->
+    <div id="homepageWorkstationSwitcher" class="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-2 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 transition-colors">
+      <!-- 3-Segmented Mode Switcher -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto no-scrollbar">
+        <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-slate-700/80 text-teal-600 dark:text-teal-400 shadow-xs cursor-pointer">
+          <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+          </svg>
+          <span>Executive Gateways &amp; 12 Pillars</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold">Flagship</span>
+        </button>
+
+        <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span>10-Module Telemetry Suite</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono font-bold">10 Charts</span>
+        </button>
+
+        <button id="hpModeBtnSimulator" type="button" onclick="switchHomepageWorkstation('simulator')" class="hp-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+          <span>Decree 80 DPPA Simulator &amp; Hubs</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold">Decree 80</span>
+        </button>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-3 font-mono text-[11px] text-slate-500 dark:text-slate-400 pr-2">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="activeWorkstationStatusLabel">Mode: Executive Overview &amp; 12 Pillars</span>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- ================================================================== -->
+    <!-- WORKSTATION VIEW 1: EXECUTIVE GATEWAYS & 12 PILLARS                -->
+    <!-- ================================================================== -->
+    <div id="workstationViewOverview" class="space-y-6">
+<!-- SECTION: 5 CORE EXECUTIVE EDGE GATEWAYS (BENTO GRID) -->
     <section id="executiveHubGatewaySection" class="space-y-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -629,8 +672,15 @@
         </div>
       </div>
     </section>
+    </div>
 
-        <!-- SECTION 2: 10-MODULE INSTITUTIONAL VISUAL TELEMETRY SUITE -->
+
+
+    <!-- ================================================================== -->
+    <!-- WORKSTATION VIEW 2: 10-MODULE VISUAL TELEMETRY SUITE               -->
+    <!-- ================================================================== -->
+    <div id="workstationViewTelemetry" class="space-y-6 hidden">
+      <!-- SECTION 2: 10-MODULE INSTITUTIONAL VISUAL TELEMETRY SUITE -->
     <section class="space-y-4" id="visualTelemetrySuiteSection">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/50 pb-2">
         <div class="space-y-0.5 flex-1 min-w-0">
@@ -695,7 +745,41 @@
         </div>
       </div>
 
-      <!-- VISUAL ROW 1: TRAJECTORY AREA & PDP8 TECHNOLOGY MIX (CHARTS 01 & 02) -->
+      <!-- 3-LENS SUB-TAB SWITCHER -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/70 dark:border-slate-700/60 pb-3">
+        <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl font-mono text-xs overflow-x-auto no-scrollbar">
+          <button id="hpTelemetryLensBtnAll" type="button" onclick="switchHomepageTelemetryLens('all')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-slate-700/80 text-teal-600 dark:text-teal-400 shadow-xs cursor-pointer">
+            All 10 Visuals
+          </button>
+          <button id="hpTelemetryLensBtnGen" type="button" onclick="switchHomepageTelemetryLens('generation')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 1: Generation &amp; Trajectory (4)
+          </button>
+          <button id="hpTelemetryLensBtnGrid" type="button" onclick="switchHomepageTelemetryLens('grid')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 2: Grid &amp; Supergrid (3)
+          </button>
+          <button id="hpTelemetryLensBtnMarket" type="button" onclick="switchHomepageTelemetryLens('market')" class="telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Lens 3: Market &amp; E-Mobility (3)
+          </button>
+        </div>
+        <div class="text-[11px] font-mono text-slate-500 dark:text-slate-400 hidden sm:block">
+          Interactive analytical telemetry &middot; Horizon 2026&ndash;2050
+        </div>
+      </div>
+
+
+      <!-- ================================================================ -->
+      <!-- LENS 1: GENERATION & PDP8 TRAJECTORY (CHARTS 01, 02, 05, 06)       -->
+      <!-- ================================================================ -->
+      <div id="telemetryLensGroupGeneration" class="space-y-4">
+        <div class="p-3 rounded-xl bg-teal-500/5 dark:bg-teal-500/10 border border-teal-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+            <span><strong>Generation Trajectory Takeaway</strong>: PDP8 target of 150 GW by 2030 requires $134.7B generation capital, shifting baseload from coal to LNG and offshore wind.</span>
+          </div>
+          <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 font-semibold shrink-0">4 Active Models</span>
+        </div>
+
+        <!-- VISUAL ROW 1: TRAJECTORY AREA & PDP8 TECHNOLOGY MIX (CHARTS 01 & 02) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
         <!-- Visual 01: 2025-2050 Net Zero Transition Trajectory (7 cols) -->
@@ -759,73 +843,7 @@
 
       </div>
 
-      <!-- VISUAL ROW 2: 5-AXIS RADAR & EV CHARGING VELOCITY (CHARTS 03 & 04) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-        <!-- Visual 03: 5-Axis Regional Clean Energy Competitiveness Radar (6 cols) -->
-        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <span class="font-mono text-[9px] uppercase font-bold text-amber-600 dark:text-amber-400 block">VISUAL 03 &middot; REGIONAL VECTOR ANALYSIS</span>
-                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">5-Axis Regional Clean Competitiveness</span>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">South vs North vs Central across 5 infrastructure vectors</span>
-              </div>
-              <span class="font-mono text-[10px] text-slate-700 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded border border-slate-200/60 dark:border-slate-600/50">
-                168 Hubs
-              </span>
-            </div>
-            <div class="relative h-64 flex items-center justify-center">
-              <canvas id="regionalRadarChart"></canvas>
-            </div>
-          </div>
-          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
-            <span>South: High Solar &amp; Demand</span>
-            <span>North: High Grid Stability</span>
-            <span>Central: High Wind</span>
-          </div>
-        </div>
-
-        <!-- Visual 04: National EV Charging Infrastructure Footprint (6 cols) -->
-        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <span class="font-mono text-[9px] uppercase font-bold text-emerald-600 dark:text-emerald-400 block">VISUAL 04 &middot; E-MOBILITY DENSITY</span>
-                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">EV Charging Network Velocity &amp; CPO Slices</span>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">22,055+ verified ports across operators &amp; charging tiers</span>
-              </div>
-              <span class="font-mono text-[10px] text-slate-700 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded border border-slate-200/60 dark:border-slate-600/50">
-                62% DC Fast
-              </span>
-            </div>
-            <div class="relative h-64">
-              <canvas id="evNetworkChart"></canvas>
-            </div>
-          </div>
-          <div class="grid grid-cols-4 gap-1 text-center font-mono text-[9px] pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
-            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
-              <span class="text-slate-500 dark:text-slate-400 block">VinFast</span>
-              <strong class="text-slate-800 dark:text-slate-200 font-medium">18,500</strong>
-            </div>
-            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
-              <span class="text-slate-500 dark:text-slate-400 block">EV ONE</span>
-              <strong class="text-slate-800 dark:text-slate-200 font-medium">1,800</strong>
-            </div>
-            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
-              <span class="text-slate-500 dark:text-slate-400 block">Charge+</span>
-              <strong class="text-slate-800 dark:text-slate-200 font-medium">1,755</strong>
-            </div>
-            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
-              <span class="text-slate-500 dark:text-slate-400 block">DC Fast &ge;60kW</span>
-              <strong class="text-teal-700 dark:text-teal-300 font-medium">13,674</strong>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- VISUAL ROW 3: 24H LOAD CURVE & CAPEX ALLOCATION (CHARTS 05 & 06) -->
+        <!-- VISUAL ROW 3: 24H LOAD CURVE & CAPEX ALLOCATION (CHARTS 05 & 06) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
         <!-- Visual 05: National 24-Hour Load Curve & Merit-Order Dispatch (7 cols) -->
@@ -886,11 +904,46 @@
         </div>
 
       </div>
+      </div>
 
-      <!-- VISUAL ROW 4: SUBSTATION HIERARCHY & MARKET CLEARING PRICES (CHARTS 07 & 08) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
-        <!-- Visual 07: Substation Voltage & Headroom Hierarchy (6 cols) -->
+      <!-- ================================================================ -->
+      <!-- LENS 2: GRID CORRIDORS & REGIONAL INTERTIES (CHARTS 03, 07, 10)   -->
+      <!-- ================================================================ -->
+      <div id="telemetryLensGroupGrid" class="space-y-4">
+        <div class="p-3 rounded-xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+            <span><strong>Grid Supergrid Takeaway</strong>: North-to-South 500kV corridors transmit 3.2 GW inter-regional power flow, connecting Central/Southern renewable hubs to northern industrial centers.</span>
+          </div>
+          <span class="font-mono text-[10px] text-blue-600 dark:text-blue-400 font-semibold shrink-0">3 Active Models</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- Visual 03: 5-Axis Regional Clean Energy Competitiveness Radar (6 cols) -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
+              <div>
+                <span class="font-mono text-[9px] uppercase font-bold text-amber-600 dark:text-amber-400 block">VISUAL 03 &middot; REGIONAL VECTOR ANALYSIS</span>
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">5-Axis Regional Clean Competitiveness</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">South vs North vs Central across 5 infrastructure vectors</span>
+              </div>
+              <span class="font-mono text-[10px] text-slate-700 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded border border-slate-200/60 dark:border-slate-600/50">
+                168 Hubs
+              </span>
+            </div>
+            <div class="relative h-64 flex items-center justify-center">
+              <canvas id="regionalRadarChart"></canvas>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
+            <span>South: High Solar &amp; Demand</span>
+            <span>North: High Grid Stability</span>
+            <span>Central: High Wind</span>
+          </div>
+        </div>
+          <!-- Visual 07: Substation Voltage & Headroom Hierarchy (6 cols) -->
         <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
@@ -913,61 +966,11 @@
             <span>110kV: Industrial Feeders</span>
           </div>
         </div>
-
-        <!-- Visual 08: Wholesale Market (VWEM) Price Clearing Dynamics (6 cols) -->
-        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <span class="font-mono text-[9px] uppercase font-bold text-amber-600 dark:text-amber-400 block">VISUAL 08 &middot; MARKET CLEARING DYNAMICS</span>
-                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">VWEM Spot Clearing vs DPPA vs TOU Retail</span>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">System Marginal Price (SMP) dynamics vs industrial retail tariff schedules</span>
-              </div>
-              <span class="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/40">
-                FMP 1,825 VND
-              </span>
-            </div>
-            <div class="relative h-64">
-              <canvas id="marketClearingChart"></canvas>
-            </div>
-          </div>
-          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
-            <span>Off-Peak: 1,100 VND</span>
-            <span>Normal: 1,685 VND</span>
-            <span>Peak TOU: 3,171 VND</span>
-          </div>
         </div>
 
-      </div>
-
-      <!-- VISUAL ROW 5: PROVINCIAL CAPACITY & SYSTEMIC ENERGY FLOW (CHARTS 09 & 10) -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-        <!-- Visual 09: Top 10 Energy Provinces: Clean Capacity vs Eco-Parks (6 cols) -->
-        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
-              <div>
-                <span class="font-mono text-[9px] uppercase font-bold text-cyan-600 dark:text-cyan-400 block">VISUAL 09 &middot; TERRITORIAL CLUSTERING</span>
-                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">Top 10 Energy Provinces: Capacity vs Eco-Parks</span>
-                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Correlating clean generation (MW) with industrial manufacturing hubs</span>
-              </div>
-              <span class="font-mono text-[10px] text-cyan-600 dark:text-cyan-400 font-semibold bg-cyan-50 dark:bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-200 dark:border-cyan-800/40">
-                10 Strategic Provinces
-              </span>
-            </div>
-            <div class="relative h-64">
-              <canvas id="topProvincesEcoparkChart"></canvas>
-            </div>
-          </div>
-          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
-            <span>Top Generation: Ninh Thuận &amp; Bình Thuận</span>
-            <span>Top Demand: Bình Dương &amp; Đồng Nai</span>
-          </div>
-        </div>
-
-        <!-- Visual 10: End-to-End Systemic Energy Transition Flow Diagram (6 cols) -->
-        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- Visual 10: End-to-End Systemic Energy Transition Flow Diagram (6 cols) -->
+        <div class="lg:col-span-12 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
               <div>
@@ -1041,10 +1044,122 @@
             <span>Decree 80 Direct Wheeling Active</span>
           </div>
         </div>
-
+        </div>
       </div>
 
-      <!-- SECTION 3: INTERACTIVE DECREE 80 DPPA ECONOMIC SIMULATOR -->
+
+      <!-- ================================================================ -->
+      <!-- LENS 3: MARKET & E-MOBILITY INFRASTRUCTURE (CHARTS 04, 08, 09)     -->
+      <!-- ================================================================ -->
+      <div id="telemetryLensGroupMarket" class="space-y-4">
+        <div class="p-3 rounded-xl bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span><strong>Market &amp; E-Mobility Takeaway</strong>: Decree 80 DPPA establishes bilateral renewable offtake while 22,055+ EV charging ports build national highway density.</span>
+          </div>
+          <span class="font-mono text-[10px] text-amber-600 dark:text-amber-400 font-semibold shrink-0">3 Active Models</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- Visual 04: National EV Charging Infrastructure Footprint (6 cols) -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
+              <div>
+                <span class="font-mono text-[9px] uppercase font-bold text-emerald-600 dark:text-emerald-400 block">VISUAL 04 &middot; E-MOBILITY DENSITY</span>
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">EV Charging Network Velocity &amp; CPO Slices</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">22,055+ verified ports across operators &amp; charging tiers</span>
+              </div>
+              <span class="font-mono text-[10px] text-slate-700 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded border border-slate-200/60 dark:border-slate-600/50">
+                62% DC Fast
+              </span>
+            </div>
+            <div class="relative h-64">
+              <canvas id="evNetworkChart"></canvas>
+            </div>
+          </div>
+          <div class="grid grid-cols-4 gap-1 text-center font-mono text-[9px] pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
+            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
+              <span class="text-slate-500 dark:text-slate-400 block">VinFast</span>
+              <strong class="text-slate-800 dark:text-slate-200 font-medium">18,500</strong>
+            </div>
+            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
+              <span class="text-slate-500 dark:text-slate-400 block">EV ONE</span>
+              <strong class="text-slate-800 dark:text-slate-200 font-medium">1,800</strong>
+            </div>
+            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
+              <span class="text-slate-500 dark:text-slate-400 block">Charge+</span>
+              <strong class="text-slate-800 dark:text-slate-200 font-medium">1,755</strong>
+            </div>
+            <div class="p-1 rounded bg-slate-50 dark:bg-slate-800/50">
+              <span class="text-slate-500 dark:text-slate-400 block">DC Fast &ge;60kW</span>
+              <strong class="text-teal-700 dark:text-teal-300 font-medium">13,674</strong>
+            </div>
+          </div>
+        </div>
+          <!-- Visual 08: Wholesale Market (VWEM) Price Clearing Dynamics (6 cols) -->
+        <div class="lg:col-span-6 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
+              <div>
+                <span class="font-mono text-[9px] uppercase font-bold text-amber-600 dark:text-amber-400 block">VISUAL 08 &middot; MARKET CLEARING DYNAMICS</span>
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">VWEM Spot Clearing vs DPPA vs TOU Retail</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">System Marginal Price (SMP) dynamics vs industrial retail tariff schedules</span>
+              </div>
+              <span class="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/40">
+                FMP 1,825 VND
+              </span>
+            </div>
+            <div class="relative h-64">
+              <canvas id="marketClearingChart"></canvas>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
+            <span>Off-Peak: 1,100 VND</span>
+            <span>Normal: 1,685 VND</span>
+            <span>Peak TOU: 3,171 VND</span>
+          </div>
+        </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          <!-- Visual 09: Top 10 Energy Provinces: Clean Capacity vs Eco-Parks (6 cols) -->
+        <div class="lg:col-span-12 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
+              <div>
+                <span class="font-mono text-[9px] uppercase font-bold text-cyan-600 dark:text-cyan-400 block">VISUAL 09 &middot; TERRITORIAL CLUSTERING</span>
+                <span class="text-xs font-semibold text-slate-800 dark:text-slate-200">Top 10 Energy Provinces: Capacity vs Eco-Parks</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 block">Correlating clean generation (MW) with industrial manufacturing hubs</span>
+              </div>
+              <span class="font-mono text-[10px] text-cyan-600 dark:text-cyan-400 font-semibold bg-cyan-50 dark:bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-200 dark:border-cyan-800/40">
+                10 Strategic Provinces
+              </span>
+            </div>
+            <div class="relative h-64">
+              <canvas id="topProvincesEcoparkChart"></canvas>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 pt-2.5 border-t border-slate-100 dark:border-slate-700/50">
+            <span>Top Generation: Ninh Thuận &amp; Bình Thuận</span>
+            <span>Top Demand: Bình Dương &amp; Đồng Nai</span>
+          </div>
+        </div>
+        </div>
+      </div>
+
+
+      </section>
+    </div>
+
+
+
+    <!-- ================================================================== -->
+    <!-- WORKSTATION VIEW 3: DECREE 80 DPPA SIMULATOR & HUBS                -->
+    <!-- ================================================================== -->
+    <div id="workstationViewSimulator" class="space-y-6 hidden">
+      <section class="space-y-4" id="decree80SimulatorSection">
+<!-- SECTION 3: INTERACTIVE DECREE 80 DPPA ECONOMIC SIMULATOR -->
       <div class="bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-700/50 gap-2">
           <div>
@@ -1125,9 +1240,9 @@
           </div>
         </div>
       </div>
-    </section>
+      </section>
 
-    <!-- SECTION 4: BENTO SUBDOMAIN COMMAND CONSOLE -->
+<!-- SECTION 4: BENTO SUBDOMAIN COMMAND CONSOLE -->
     <section class="space-y-3">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50 pb-2">
         <h2 class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -1345,6 +1460,7 @@
 
       </div>
     </section>
+    </div>
 
   </main>
 
@@ -2241,6 +2357,130 @@
     sliderFactor?.addEventListener('input', updateSimulator);
 
     // Fail-safe Chart Initialization with Auto-Polling
+    
+    // ========================================================================
+    // WORKSTATION ARCHITECTURE & TELEMETRY LENS CONTROLLERS
+    // ========================================================================
+    let activeHomepageWorkstation = 'overview';
+    let activeHomepageLens = 'all';
+    let chartsInitialized = false;
+
+    function switchHomepageWorkstation(mode, scrollToTop = false) {
+      activeHomepageWorkstation = mode;
+
+      const viewOverview = document.getElementById('workstationViewOverview');
+      const viewTelemetry = document.getElementById('workstationViewTelemetry');
+      const viewSimulator = document.getElementById('workstationViewSimulator');
+
+      const btnOverview = document.getElementById('hpModeBtnOverview');
+      const btnTelemetry = document.getElementById('hpModeBtnTelemetry');
+      const btnSimulator = document.getElementById('hpModeBtnSimulator');
+      const statusLabel = document.getElementById('activeWorkstationStatusLabel');
+
+      const activeClasses = 'hp-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-slate-700/80 text-teal-600 dark:text-teal-400 shadow-xs cursor-pointer';
+      const inactiveClasses = 'hp-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      [btnOverview, btnTelemetry, btnSimulator].forEach(btn => {
+        if (btn) btn.className = inactiveClasses;
+      });
+
+      if (viewOverview) viewOverview.classList.add('hidden');
+      if (viewTelemetry) viewTelemetry.classList.add('hidden');
+      if (viewSimulator) viewSimulator.classList.add('hidden');
+
+      if (mode === 'telemetry') {
+        if (viewTelemetry) viewTelemetry.classList.remove('hidden');
+        if (btnTelemetry) btnTelemetry.className = activeClasses;
+        if (statusLabel) statusLabel.textContent = 'Mode: 10-Module Telemetry Suite';
+        history.replaceState(null, null, '#telemetry');
+
+        // Lazy chart initialization on first activation
+        if (!chartsInitialized) {
+          safeInitCharts();
+          chartsInitialized = true;
+        } else {
+          resizeActiveCharts();
+        }
+      } else if (mode === 'simulator') {
+        if (viewSimulator) viewSimulator.classList.remove('hidden');
+        if (btnSimulator) btnSimulator.className = activeClasses;
+        if (statusLabel) statusLabel.textContent = 'Mode: Decree 80 DPPA Simulator & Hubs';
+        history.replaceState(null, null, '#simulator');
+        updateSimulator();
+      } else {
+        // default overview
+        if (viewOverview) viewOverview.classList.remove('hidden');
+        if (btnOverview) btnOverview.className = activeClasses;
+        if (statusLabel) statusLabel.textContent = 'Mode: Executive Overview & 12 Pillars';
+        history.replaceState(null, null, '#overview');
+      }
+
+      if (scrollToTop) {
+        const switcher = document.getElementById('homepageWorkstationSwitcher');
+        if (switcher) switcher.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function switchHomepageTelemetryLens(lens) {
+      activeHomepageLens = lens;
+
+      const btnAll = document.getElementById('hpTelemetryLensBtnAll');
+      const btnGen = document.getElementById('hpTelemetryLensBtnGen');
+      const btnGrid = document.getElementById('hpTelemetryLensBtnGrid');
+      const btnMarket = document.getElementById('hpTelemetryLensBtnMarket');
+
+      const gGen = document.getElementById('telemetryLensGroupGeneration');
+      const gGrid = document.getElementById('telemetryLensGroupGrid');
+      const gMarket = document.getElementById('telemetryLensGroupMarket');
+
+      const activeBtnClass = 'telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-slate-700/80 text-teal-600 dark:text-teal-400 shadow-xs cursor-pointer';
+      const inactiveBtnClass = 'telemetry-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      [btnAll, btnGen, btnGrid, btnMarket].forEach(btn => {
+        if (btn) btn.className = inactiveBtnClass;
+      });
+
+      if (lens === 'generation') {
+        if (btnGen) btnGen.className = activeBtnClass;
+        if (gGen) gGen.classList.remove('hidden');
+        if (gGrid) gGrid.classList.add('hidden');
+        if (gMarket) gMarket.classList.add('hidden');
+      } else if (lens === 'grid') {
+        if (btnGrid) btnGrid.className = activeBtnClass;
+        if (gGen) gGen.classList.add('hidden');
+        if (gGrid) gGrid.classList.remove('hidden');
+        if (gMarket) gMarket.classList.add('hidden');
+      } else if (lens === 'market') {
+        if (btnMarket) btnMarket.className = activeBtnClass;
+        if (gGen) gGen.classList.add('hidden');
+        if (gGrid) gGrid.classList.add('hidden');
+        if (gMarket) gMarket.classList.remove('hidden');
+      } else {
+        // all
+        if (btnAll) btnAll.className = activeBtnClass;
+        if (gGen) gGen.classList.remove('hidden');
+        if (gGrid) gGrid.classList.remove('hidden');
+        if (gMarket) gMarket.classList.remove('hidden');
+      }
+
+      resizeActiveCharts();
+    }
+
+    function resizeActiveCharts() {
+      setTimeout(() => {
+        [
+          trajectoryChartInstance, pdp8ChartInstance, regionalRadarChartInstance,
+          evChartInstance, dailyDispatchChartInstance, capexAllocationChartInstance,
+          substationHierarchyChartInstance, marketClearingChartInstance,
+          topProvincesEcoparkChartInstance
+        ].forEach(inst => {
+          if (inst && typeof inst.resize === 'function') {
+            try { inst.resize(); } catch (e) {}
+          }
+        });
+      }, 50);
+    }
+
     function safeInitCharts(attempts = 0) {
       if (typeof Chart === 'undefined') {
         if (attempts < 30) {
@@ -2284,12 +2524,28 @@
       safeInitCharts();
     });
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => safeInitCharts());
-    } else {
-      safeInitCharts();
+    // Workstation Hash Routing & Lazy Chart Init
+    function initWorkstationRouting() {
+      const initHash = window.location.hash.replace('#', '').toLowerCase();
+      if (['overview', 'telemetry', 'simulator'].includes(initHash)) {
+        switchHomepageWorkstation(initHash);
+      } else {
+        switchHomepageWorkstation('overview');
+      }
+
+      window.addEventListener('hashchange', () => {
+        const h = window.location.hash.replace('#', '').toLowerCase();
+        if (['overview', 'telemetry', 'simulator'].includes(h) && h !== activeHomepageWorkstation) {
+          switchHomepageWorkstation(h);
+        }
+      });
     }
-    window.addEventListener('load', () => safeInitCharts());
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWorkstationRouting);
+    } else {
+      initWorkstationRouting();
+    }
 
     updateSimulator();
       // Live Cloud Telemetry & GZIP Diagnostics
