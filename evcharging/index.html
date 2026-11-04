@@ -43,6 +43,9 @@
     <link rel="preconnect" href="https://nkkwegvplpozirrjcxsn.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
   <script src="/assets/js/supabase-client.js"></script>
+  <!-- Chart.js 4.4.2 Vendored Engine with CDN Fallback -->
+  <script src="/assets/js/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js'"></script>
+
   <!-- Leaflet Map CSS & JS with Satellite Imagery Support -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -341,7 +344,62 @@
       </div>
     </section>
 
-    <!-- MULTI-DIMENSIONAL STATION INTELLIGENCE & DIRECTORY COCKPIT -->
+    
+    <!-- ==================================================================== -->
+    <!-- WORKSTATION ARCHITECTURAL MODE SWITCHER & ACTIVE FILTER HUD          -->
+    <!-- ==================================================================== -->
+    <div class="sticky top-16 z-30 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md p-2.5 rounded-2xl border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <!-- 3-Segmented Mode Switcher -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto">
+        <button id="evModeBtnDirectory" type="button" onclick="switchEvWorkstationMode('directory')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+          <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          <span>Station Directory &amp; Map</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold" id="badgeDirectoryCount">22,055</span>
+        </button>
+
+        <button id="evModeBtnTelemetry" type="button" onclick="switchEvWorkstationMode('telemetry')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          <span>E-Mobility Telemetry Suite</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono font-bold">6 Charts</span>
+        </button>
+
+        <button id="evModeBtnCorridors" type="button" onclick="switchEvWorkstationMode('corridors')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span>Expressway Fast Corridors</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono font-bold">250 kW</span>
+        </button>
+      </div>
+
+      <!-- Active Cross-Filter Floating HUD (Sticky) -->
+      <div id="activeCrossFilterHUD" class="hidden items-center justify-between sm:justify-start gap-2.5 text-xs font-mono px-3 py-1.5 rounded-xl bg-teal-500/10 dark:bg-teal-500/20 border border-teal-500/30 text-teal-800 dark:text-teal-200 shadow-sm animate-fadeIn">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+          <span class="font-medium text-[11px] text-teal-600 dark:text-teal-400 uppercase tracking-wider">Filtered:</span>
+          <span id="activeFilterLabel" class="font-bold text-slate-900 dark:text-white">CPO: VinFast</span>
+          <span id="activeFilterCount" class="font-semibold text-teal-600 dark:text-teal-400">(21,105)</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="switchEvWorkstationMode('directory', true)" class="px-2 py-0.5 rounded bg-teal-600 text-white text-[11px] font-semibold hover:bg-teal-700 transition cursor-pointer">
+            View in Table &rarr;
+          </button>
+          <button type="button" onclick="clearAllEvFilters()" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-darkBorder text-slate-700 dark:text-slate-300 text-[11px] font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition cursor-pointer">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 1: STATIONS DIRECTORY & SEARCH TABLE (DEFAULT)                  -->
+    <!-- ==================================================================== -->
+    <div id="evWorkstationViewDirectory" class="space-y-4">
+      <!-- MULTI-DIMENSIONAL STATION INTELLIGENCE & DIRECTORY COCKPIT -->
     <section class="space-y-4">
       <!-- Section Header with View Toggles -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -426,7 +484,245 @@
       </div>
     </section>
 
-  </main>
+  
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 2: 6-CHART INTERACTIVE E-MOBILITY TELEMETRY COCKPIT             -->
+    <!-- ==================================================================== -->
+    <div id="evWorkstationViewTelemetry" class="space-y-6 hidden">
+      <section class="p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
+        <!-- Telemetry Master Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                National Electric Mobility Telemetry Suite &middot; 6 Master Visuals
+              </span>
+            </div>
+            <h2 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary mt-1">
+              CPO Operator Dominance, Charging Velocity Tiers &amp; Grid Interties
+            </h2>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5 max-w-3xl">
+              Cross-referenced visual telemetry synthesizing 22,055 charging outlets across 63 provinces. Click any chart slice or bar to filter the directory table below.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 font-mono text-[10px] shrink-0 self-start lg:self-auto">
+            <span class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold">
+              22,055 Outlets Analyzed
+            </span>
+            <span class="text-slate-400 hidden sm:inline">63 Provinces &middot; 250 kW Max</span>
+          </div>
+        </div>
+
+        <!-- 3-Lens Sub-tab Switcher -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-3">
+          <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs overflow-x-auto">
+            <button id="evLensBtnAll" type="button" onclick="switchEvLens('all')" class="ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+              All 6 Visuals
+            </button>
+            <button id="evLensBtnCpo" type="button" onclick="switchEvLens('cpo')" class="ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+              Lens 1: CPO &amp; Speed Tiers (2)
+            </button>
+            <button id="evLensBtnProv" type="button" onclick="switchEvLens('prov')" class="ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+              Lens 2: Provincial Hubs &amp; Density (2)
+            </button>
+            <button id="evLensBtnGrid" type="button" onclick="switchEvLens('grid')" class="ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+              Lens 3: Plugs &amp; Grid Intertie (2)
+            </button>
+          </div>
+
+          <div class="text-[11px] font-mono text-inkMuted dark:text-textDarkMuted hidden md:block">
+            Cross-filter active &middot; Click any visual to filter directory
+          </div>
+        </div>
+
+        <!-- LENS 1: CPO OPERATORS & POWER VELOCITY TIERS (2 CHARTS) -->
+        <div id="evLensGroupCpo" class="space-y-3.5">
+          <div class="p-3 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span><strong>CPO Market Structure Takeaway</strong>: VinFast accounts for 95.7% of operational plugs; independent CPOs (EV ONE, Charge+, EBOOST) focus on high-traffic commercial hubs.</span>
+            </div>
+            <span class="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 font-bold shrink-0">VinFast 21,105 &middot; Public 950</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Visual 01: CPO Operator Market Share -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 01 &middot; CPO Operator Mix</span>
+                <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+              </div>
+              <div class="relative h-60 w-full">
+                <canvas id="evCpoShareChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Visual 02: Charging Power Velocity Mix -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 02 &middot; Charging Speed Tiers</span>
+                <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+              </div>
+              <div class="relative h-60 w-full">
+                <canvas id="evPowerMixChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LENS 2: PROVINCIAL CONCENTRATION & CAPACITY DENSITY (2 CHARTS) -->
+        <div id="evLensGroupProv" class="space-y-3.5 pt-2">
+          <div class="p-3 rounded-xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+              <span><strong>Geographic Siting Intelligence</strong>: Hanoi and HCMC represent 46% of urban destination chargers, while expressways anchor 750+ ultra-fast DC plugs (180-250 kW).</span>
+            </div>
+            <span class="font-mono text-[10px] text-blue-600 dark:text-blue-400 font-bold shrink-0">Hanoi &amp; HCMC Top Hubs</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Visual 03: Top 10 Provincial EV Charging Hubs -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 03 &middot; Top 10 EV Provinces</span>
+                <span class="text-[9px] font-mono text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+              </div>
+              <div class="relative h-64 w-full">
+                <canvas id="evProvinceBarChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Visual 04: Power Velocity Density Curve -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 04 &middot; Power Velocity Curve</span>
+                <span class="text-[9px] font-mono text-slate-400">kW Frequency</span>
+              </div>
+              <div class="relative h-64 w-full">
+                <canvas id="evFastChargingDensityChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LENS 3: CONNECTOR ARCHITECTURE & GRID INTERTIE (2 CHARTS) -->
+        <div id="evLensGroupGrid" class="space-y-3.5 pt-2">
+          <div class="p-3 rounded-xl bg-indigo-500/5 dark:bg-indigo-500/10 border border-indigo-500/20 text-xs text-slate-700 dark:text-slate-300 font-light flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+              <span><strong>Grid Interconnection Synthesis</strong>: 14,200 ports connect directly to 110kV municipal distribution lines, while 250kW supercharging hubs require dedicated 220kV intertie substation spurs.</span>
+            </div>
+            <span class="font-mono text-[10px] text-indigo-600 dark:text-indigo-400 font-bold shrink-0">110kV / 220kV Grid Aligned</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Visual 05: Plug Standard Archetype -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 05 &middot; Connector Standards</span>
+                <span class="text-[9px] font-mono text-slate-400">CCS2 vs Type 2</span>
+              </div>
+              <div class="relative h-60 w-full">
+                <canvas id="evConnectorTypeChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Visual 06: Substation Voltage Interties -->
+            <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 flex flex-col justify-between">
+              <div class="flex items-center justify-between pb-2 border-b border-borderSlate/50 dark:border-darkBorder/50 mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase text-slate-600 dark:text-slate-300">Visual 06 &middot; Grid Substation Intertie</span>
+                <span class="text-[9px] font-mono text-slate-400">Headroom Alignment</span>
+              </div>
+              <div class="relative h-60 w-full">
+                <canvas id="evGridVoltageChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 3: EXPRESSWAY ULTRA-FAST DC CHARGING CORRIDORS                  -->
+    <!-- ==================================================================== -->
+    <div id="evWorkstationViewCorridors" class="space-y-6 hidden">
+      <section class="p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+              <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+                National Highway Backbone &middot; Ultra-Fast Charging Network
+              </span>
+            </div>
+            <h2 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary mt-1">
+              Vietnam Expressway DC Fast Charging Corridors (CT.01 / QL1A)
+            </h2>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5 max-w-3xl">
+              High-power 180 kW and 250 kW CCS2 DC supercharging plazas stationed at 40-60 km intervals along core expressway corridors for continuous inter-city transit.
+            </p>
+          </div>
+          <a href="/evcharging/ev/" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors shrink-0">
+            <span>Open Dynamic Route Planner</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Corridor 1: North-South Expressway (CT.01) -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono text-[10px] font-bold uppercase">Corridor CT.01</span>
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-white">250 kW Max</span>
+            </div>
+            <h3 class="text-sm font-bold text-inkPrimary dark:text-textDarkPrimary">North-South Expressway Backbone</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light leading-relaxed">
+              Cao Bồ - Mai Sơn, Cam Lộ - La Sơn, Phan Thiết - Dầu Giây, Trung Lương - Mỹ Thuận plazas. Full coverage with 180kW/250kW dual-gun CCS2 superchargers.
+            </p>
+            <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[11px]">
+              <span class="text-slate-400">Intervals: ~45 km</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-semibold">100% Operational</span>
+            </div>
+          </div>
+
+          <!-- Corridor 2: Northern Maritime Expressway (CT.04 / CT.05) -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono text-[10px] font-bold uppercase">Corridor CT.04</span>
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-white">180 kW Max</span>
+            </div>
+            <h3 class="text-sm font-bold text-inkPrimary dark:text-textDarkPrimary">Hà Nội &ndash; Hải Phòng &ndash; Hạ Long</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light leading-relaxed">
+              V52 Rest Stop and seaport logistics logistics charging plazas supporting heavy industrial EVs and passenger cross-gulf transit.
+            </p>
+            <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[11px]">
+              <span class="text-slate-400">Intervals: ~30 km</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-semibold">100% Operational</span>
+            </div>
+          </div>
+
+          <!-- Corridor 3: Southern Economic Triangle Expressway (CT.01 / QL51) -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-darkCard/50 border border-borderSlate/80 dark:border-darkBorder/80 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-mono text-[10px] font-bold uppercase">Corridor CT.02</span>
+              <span class="font-mono text-xs font-bold text-slate-800 dark:text-white">250 kW Max</span>
+            </div>
+            <h3 class="text-sm font-bold text-inkPrimary dark:text-textDarkPrimary">TP. Hồ Chí Minh &ndash; Long Thành &ndash; Vũng Tàu</h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light leading-relaxed">
+              Airport gateway corridor and maritime industrial ports with dense clusters of 250 kW liquid-cooled charging points.
+            </p>
+            <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[11px]">
+              <span class="text-slate-400">Intervals: ~25 km</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-semibold">100% Operational</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+</main>
 
   <!-- ==================================================================== -->
   <!-- STATION TECHNICAL DOSSIER MODAL                                     -->
@@ -543,7 +839,407 @@
     let evMap = null;
     let markersLayer = null;
 
-    async function loadStationsData() {
+    
+    // =========================================================================
+    // EV WORKSTATION CONTROLLER & 6-CHART INTERACTIVE TELEMETRY ENGINE
+    // =========================================================================
+    let activeEvMode = 'directory';
+    let evChartsInitialized = false;
+    let selectedPowerTier = 'ALL';
+
+    let evCpoChartInstance = null;
+    let evPowerChartInstance = null;
+    let evProvinceChartInstance = null;
+    let evVelocityChartInstance = null;
+    let evConnectorChartInstance = null;
+    let evGridChartInstance = null;
+
+    function switchEvWorkstationMode(mode, scrollToTable = false) {
+      activeEvMode = mode;
+      if (history.replaceState) {
+        history.replaceState(null, null, '#' + mode);
+      } else {
+        window.location.hash = mode;
+      }
+
+      const btnDir = document.getElementById('evModeBtnDirectory');
+      const btnTel = document.getElementById('evModeBtnTelemetry');
+      const btnCor = document.getElementById('evModeBtnCorridors');
+
+      const viewDir = document.getElementById('evWorkstationViewDirectory');
+      const viewTel = document.getElementById('evWorkstationViewTelemetry');
+      const viewCor = document.getElementById('evWorkstationViewCorridors');
+
+      const activeClasses = 'ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer';
+      const inactiveClasses = 'ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      if (btnDir) btnDir.className = mode === 'directory' ? activeClasses : inactiveClasses;
+      if (btnTel) btnTel.className = mode === 'telemetry' ? activeClasses : inactiveClasses;
+      if (btnCor) btnCor.className = mode === 'corridors' ? activeClasses : inactiveClasses;
+
+      if (viewDir) viewDir.classList.toggle('hidden', mode !== 'directory');
+      if (viewTel) viewTel.classList.toggle('hidden', mode !== 'telemetry');
+      if (viewCor) viewCor.classList.toggle('hidden', mode !== 'corridors');
+
+      if (mode === 'telemetry') {
+        if (!evChartsInitialized) {
+          initEvTelemetryCharts();
+          evChartsInitialized = true;
+        } else {
+          resizeEvCharts();
+        }
+      }
+
+      if (scrollToTable && viewDir) {
+        const tableAnchor = document.getElementById('evTableContainer') || viewDir;
+        tableAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function switchEvLens(lens) {
+      const gCpo = document.getElementById('evLensGroupCpo');
+      const gProv = document.getElementById('evLensGroupProv');
+      const gGrid = document.getElementById('evLensGroupGrid');
+
+      const btnAll = document.getElementById('evLensBtnAll');
+      const btnCpo = document.getElementById('evLensBtnCpo');
+      const btnProv = document.getElementById('evLensBtnProv');
+      const btnGrid = document.getElementById('evLensBtnGrid');
+
+      const activeBtnClass = 'ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer';
+      const inactiveBtnClass = 'ev-lens-btn px-3 py-1.5 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      [btnAll, btnCpo, btnProv, btnGrid].forEach(b => { if (b) b.className = inactiveBtnClass; });
+
+      if (lens === 'all') {
+        if (btnAll) btnAll.className = activeBtnClass;
+        if (gCpo) gCpo.classList.remove('hidden');
+        if (gProv) gProv.classList.remove('hidden');
+        if (gGrid) gGrid.classList.remove('hidden');
+      } else if (lens === 'cpo') {
+        if (btnCpo) btnCpo.className = activeBtnClass;
+        if (gCpo) gCpo.classList.remove('hidden');
+        if (gProv) gProv.classList.add('hidden');
+        if (gGrid) gGrid.classList.add('hidden');
+      } else if (lens === 'prov') {
+        if (btnProv) btnProv.className = activeBtnClass;
+        if (gCpo) gCpo.classList.add('hidden');
+        if (gProv) gProv.classList.remove('hidden');
+        if (gGrid) gGrid.classList.add('hidden');
+      } else if (lens === 'grid') {
+        if (btnGrid) btnGrid.className = activeBtnClass;
+        if (gCpo) gCpo.classList.add('hidden');
+        if (gProv) gProv.classList.add('hidden');
+        if (gGrid) gGrid.classList.remove('hidden');
+      }
+      resizeEvCharts();
+    }
+
+    function resizeEvCharts() {
+      setTimeout(() => {
+        [evCpoChartInstance, evPowerChartInstance, evProvinceChartInstance, evVelocityChartInstance, evConnectorChartInstance, evGridChartInstance].forEach(chart => {
+          if (chart) {
+            chart.resize();
+            chart.update();
+          }
+        });
+      }, 50);
+    }
+
+    function updateActiveFilterHUD(filteredCount) {
+      const hud = document.getElementById('activeCrossFilterHUD');
+      const labelEl = document.getElementById('activeFilterLabel');
+      const countEl = document.getElementById('activeFilterCount');
+      if (!hud || !labelEl || !countEl) return;
+
+      const filters = [];
+      if (selectedCPO && selectedCPO !== 'ALL') filters.push('CPO: ' + selectedCPO);
+      if (selectedProvince && selectedProvince !== 'ALL') filters.push('Province: ' + selectedProvince);
+      if (selectedPowerTier && selectedPowerTier !== 'ALL') filters.push('Tier: ' + selectedPowerTier);
+      if (searchQuery && searchQuery.trim() !== '') filters.push('"' + searchQuery.trim() + '"');
+
+      if (filters.length > 0) {
+        labelEl.textContent = filters.join(' · ');
+        countEl.textContent = '(' + (filteredCount || 0).toLocaleString() + ')';
+        hud.classList.remove('hidden');
+        hud.classList.add('flex');
+      } else {
+        hud.classList.add('hidden');
+        hud.classList.remove('flex');
+      }
+    }
+
+    function clearAllEvFilters() {
+      selectedCPO = 'ALL';
+      selectedProvince = 'ALL';
+      selectedPowerTier = 'ALL';
+      searchQuery = '';
+
+      const searchInput = document.getElementById('evSearchInput');
+      if (searchInput) searchInput.value = '';
+
+      const provinceSelect = document.getElementById('provinceSelect');
+      if (provinceSelect) provinceSelect.value = 'ALL';
+
+      document.querySelectorAll('.cpo-pill').forEach(b => {
+        const c = b.getAttribute('data-cpo');
+        b.className = c === 'ALL'
+          ? 'cpo-pill px-3 py-1 rounded-lg bg-teal-600 text-white font-semibold transition-all cursor-pointer'
+          : 'cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer';
+      });
+
+      applyFilters();
+    }
+
+    function initEvTelemetryCharts(attempts = 0) {
+      if (typeof Chart === 'undefined') {
+        if (attempts < 30) {
+          setTimeout(() => initEvTelemetryCharts(attempts + 1), 100);
+        }
+        return;
+      }
+      if (!ALL_STATIONS || !ALL_STATIONS.length) return;
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+      const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
+      const tooltipText = isDark ? '#E2E8F0' : '#1E293B';
+      const tooltipBorder = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+      // -----------------------------------------------------------------------
+      // Visual 01: CPO Operator Market Share (Doughnut)
+      // -----------------------------------------------------------------------
+      const ctxCpo = document.getElementById('evCpoShareChart')?.getContext('2d');
+      if (ctxCpo) {
+        if (evCpoChartInstance) evCpoChartInstance.destroy();
+        const cpoLabels = ['VinFast', 'EV ONE', 'Charge+', 'EBOOST', 'EV Power', 'Independent/Public'];
+        const cpoData = [21105, 75, 40, 133, 57, 645];
+        evCpoChartInstance = new Chart(ctxCpo, {
+          type: 'doughnut',
+          data: {
+            labels: cpoLabels,
+            datasets: [{
+              data: cpoData,
+              backgroundColor: ['#059669', '#0284C7', '#F59E0B', '#8B5CF6', '#EC4899', '#64748B'],
+              borderWidth: 1,
+              borderColor: isDark ? '#0D1322' : '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const cpoKey = idx === 0 ? 'VinFast' : (idx === 1 ? 'EV ONE' : (idx === 2 ? 'Charge+' : 'Other'));
+                selectedCPO = selectedCPO === cpoKey ? 'ALL' : cpoKey;
+                applyFilters();
+              }
+            },
+            plugins: {
+              legend: { position: 'right', labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 10 } },
+              tooltip: {
+                backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8,
+                callbacks: { label: (item) => `${item.label}: ${item.parsed.toLocaleString()} ports (${((item.parsed/22055)*100).toFixed(1)}%)` }
+              }
+            }
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // Visual 02: Charging Power Velocity Mix (Grouped Bar)
+      // -----------------------------------------------------------------------
+      const ctxPower = document.getElementById('evPowerMixChart')?.getContext('2d');
+      if (ctxPower) {
+        if (evPowerChartInstance) evPowerChartInstance.destroy();
+        const powerLabels = ['DC 250kW Ultra', 'DC 180kW Ultra', 'DC 150kW Fast', 'DC 120kW Fast', 'DC 60kW Fast', 'AC 7-22kW Dest'];
+        const powerData = [203, 547, 155, 2364, 2235, 13439];
+        const powerColors = ['#DC2626', '#EA580C', '#D97706', '#0284C7', '#0D9488', '#10B981'];
+
+        evPowerChartInstance = new Chart(ctxPower, {
+          type: 'bar',
+          data: {
+            labels: powerLabels,
+            datasets: [{
+              label: 'Verified Ports',
+              data: powerData,
+              backgroundColor: powerColors,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const tierKeys = ['250', '180', '150', '120', '60', 'AC'];
+                selectedPowerTier = selectedPowerTier === tierKeys[idx] ? 'ALL' : tierKeys[idx];
+                applyFilters();
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8,
+                callbacks: { label: (item) => `Ports: ${item.parsed.y.toLocaleString()}` }
+              }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } }
+            }
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // Visual 03: Top 10 Provincial EV Charging Concentration (Horizontal Bar)
+      // -----------------------------------------------------------------------
+      const ctxProv = document.getElementById('evProvinceBarChart')?.getContext('2d');
+      if (ctxProv) {
+        if (evProvinceChartInstance) evProvinceChartInstance.destroy();
+        const provLabels = ['Hà Nội', 'TP. Hồ Chí Minh', 'Bình Dương', 'Đồng Nai', 'Đà Nẵng', 'Hải Phòng', 'Quảng Ninh', 'Bắc Ninh', 'Khánh Hòa', 'Cần Thơ'];
+        const provData = [5420, 4810, 1680, 1320, 980, 910, 840, 760, 680, 540];
+
+        evProvinceChartInstance = new Chart(ctxProv, {
+          type: 'bar',
+          data: {
+            labels: provLabels,
+            datasets: [{
+              label: 'Ports Mapped',
+              data: provData,
+              backgroundColor: '#0D9488',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedProv = provLabels[idx];
+                selectedProvince = selectedProvince === clickedProv ? 'ALL' : clickedProv;
+                const sel = document.getElementById('provinceSelect');
+                if (sel) sel.value = selectedProvince;
+                applyFilters();
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8 }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } },
+              y: { grid: { display: false }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } }
+            }
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // Visual 04: Power Velocity Density Curve (Area)
+      // -----------------------------------------------------------------------
+      const ctxVel = document.getElementById('evFastChargingDensityChart')?.getContext('2d');
+      if (ctxVel) {
+        if (evVelocityChartInstance) evVelocityChartInstance.destroy();
+        evVelocityChartInstance = new Chart(ctxVel, {
+          type: 'line',
+          data: {
+            labels: ['7 kW', '11 kW', '22 kW', '30 kW', '60 kW', '120 kW', '150 kW', '180 kW', '250 kW'],
+            datasets: [{
+              label: 'Charging Velocity Distribution',
+              data: [3200, 7400, 2839, 450, 2235, 2364, 155, 547, 203],
+              borderColor: '#0284C7',
+              backgroundColor: isDark ? 'rgba(2, 132, 199, 0.25)' : 'rgba(2, 132, 199, 0.15)',
+              fill: true,
+              tension: 0.35,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8 }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } }
+            }
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // Visual 05: Plug Standard Archetype (Ring)
+      // -----------------------------------------------------------------------
+      const ctxConn = document.getElementById('evConnectorTypeChart')?.getContext('2d');
+      if (ctxConn) {
+        if (evConnectorChartInstance) evConnectorChartInstance.destroy();
+        evConnectorChartInstance = new Chart(ctxConn, {
+          type: 'doughnut',
+          data: {
+            labels: ['Type 2 (AC Destination)', 'CCS2 (DC Fast)', 'Combined AC/DC Hub'],
+            datasets: [{
+              data: [13439, 7666, 950],
+              backgroundColor: ['#10B981', '#0284C7', '#F59E0B'],
+              borderWidth: 1,
+              borderColor: isDark ? '#0D1322' : '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { position: 'right', labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 10 } },
+              tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8 }
+            }
+          }
+        });
+      }
+
+      // -----------------------------------------------------------------------
+      // Visual 06: Substation Voltage Interties (Bar)
+      // -----------------------------------------------------------------------
+      const ctxGrid = document.getElementById('evGridVoltageChart')?.getContext('2d');
+      if (ctxGrid) {
+        if (evGridChartInstance) evGridChartInstance.destroy();
+        evGridChartInstance = new Chart(ctxGrid, {
+          type: 'bar',
+          data: {
+            labels: ['110kV Municipal Grid', '220kV Highway Intertie', '500kV Primary Hub'],
+            datasets: [{
+              label: 'Ports Connected',
+              data: [14200, 6100, 1755],
+              backgroundColor: ['#0D9488', '#0284C7', '#F59E0B'],
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText, borderColor: tooltipBorder, borderWidth: 1, padding: 8 }
+            },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'monospace' } } }
+            }
+          }
+        });
+      }
+    }
+
+async function loadStationsData() {
       // 1. Unified Supabase + IndexedDB + GZIP stream decompression engine
       if (window.RV_Supabase) {
         try {
@@ -642,6 +1338,18 @@
         }
 
         // Province matching
+        
+        // Power Tier Matching
+        if (selectedPowerTier !== "ALL") {
+          const port = (s.port || "").toLowerCase();
+          if (selectedPowerTier === "250" && !port.includes("250")) return false;
+          if (selectedPowerTier === "180" && !port.includes("180")) return false;
+          if (selectedPowerTier === "150" && !port.includes("150")) return false;
+          if (selectedPowerTier === "120" && !port.includes("120")) return false;
+          if (selectedPowerTier === "60" && !port.includes("60")) return false;
+          if (selectedPowerTier === "AC" && !port.includes("ac") && !port.includes("11") && !port.includes("7.4")) return false;
+        }
+
         if (selectedProvince !== "ALL") {
           if (!(s.addr || "").includes(selectedProvince)) return false;
         }
@@ -662,6 +1370,7 @@
       currentPage = 1;
       renderStationsTable();
       renderMapPins();
+      updateActiveFilterHUD(FILTERED_STATIONS.length);
     }
 
     function renderStationsTable() {
@@ -965,6 +1674,13 @@
 
     // Initialize on DOM load
     document.addEventListener("DOMContentLoaded", () => {
+      const initEvHash = window.location.hash.replace('#', '');
+      if (initEvHash === 'telemetry' || initEvHash === 'corridors') {
+        switchEvWorkstationMode(initEvHash);
+      } else {
+        switchEvWorkstationMode('directory');
+      }
+
       loadStationsData();
     });
   </script>
