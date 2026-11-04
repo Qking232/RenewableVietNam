@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Domain 2: Data Center Engineering Systems | Hyperscale Data Center - Rev.002</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 460px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .gov-table th, .gov-table td {
+      vertical-align: middle;
+      padding: 0.5rem 0.6rem !important;
+      white-space: normal !important;
+      word-break: normal;
+    }
+    .gov-table td.font-mono {
+      white-space: nowrap !important;
+    }
+
+    /* System Tabs Styling */
+    .sys-tab-btn.active {
+      background-color: #0369a1 !important;
+      color: #ffffff !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .sys-tab-content {
+      display: none;
+    }
+    .sys-tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Domain 2: Data Center Engineering Systems &amp; Schematics
+            </h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
+              Rev.002 Tabbed System Edition
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            8 Mission-Critical Systems: Schematics, Main Equipment Schedules, Technical Specifications &amp; Operational Workflows (SOO)
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">DESIGN PUE TARGET</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-0.5 leading-tight">&le; 1.280 Annualized</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CRITICAL IT LOAD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">45,000 kW</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">FACILITY TOTAL LOAD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">57,600 kW</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">RACK CAPACITY</div>
+          <div class="text-sm font-bold font-mono text-sky-700 mt-0.5">4,200 Racks</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">DLC RACK DENSITY</div>
+          <div class="text-sm font-bold font-mono text-sky-700 mt-0.5">Up to 80 kW / Rack</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">GENSET POWER</div>
+          <div class="text-sm font-bold font-mono text-amber-700 mt-0.5">10 x 3,000 kVA (N+1)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CHILLER CAPACITY</div>
+          <div class="text-sm font-bold font-mono text-cyan-700 mt-0.5">6 x 2,500 RT (N+2)</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- 8-SYSTEM INTERACTIVE FUNCTIONAL TAB NAVIGATION BAR -->
+    <nav class="bg-white p-1.5 rounded-lg border border-slate-200 shadow-2xs">
+      <div class="text-[10px] font-mono font-bold uppercase text-slate-400 px-2 py-1 flex items-center justify-between">
+        <span>SELECT MISSION-CRITICAL ENGINEERING SYSTEM:</span>
+        <span class="text-sky-700">8 DISCRETE ARCHITECTURES</span>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1.5 text-xs font-semibold">
+        <button type="button" onclick="switchSysTab('sys-substation')" id="btn-sys-substation" class="sys-tab-btn active px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-sky-200 font-bold">SYSTEM 1</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">110kV/22kV Substation</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-genset')" id="btn-sys-genset" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 2</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">MV Gensets &amp; Fuel</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-ups')" id="btn-sys-ups" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 3</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">2N Static UPS &amp; BESS</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-chiller')" id="btn-sys-chiller" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 4</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">Chillers &amp; Free Cooling</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-dlc')" id="btn-sys-dlc" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 5</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">White Space &amp; DLC</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-fire')" id="btn-sys-fire" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 6</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">PCCC &amp; Clean Agent</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-telecom')" id="btn-sys-telecom" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 7</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">Dual MMRs &amp; Fiber</span>
+        </button>
+        <button type="button" onclick="switchSysTab('sys-bms')" id="btn-sys-bms" class="sys-tab-btn px-2.5 py-2 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center flex flex-col justify-between">
+          <span class="text-[9px] font-mono text-slate-400 font-bold">SYSTEM 8</span>
+          <span class="text-[11px] truncate mt-0.5 font-bold">BMS &amp; DCIM Controls</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- TAB 1: 110kV/22kV SUBSTATION & GRID TIE -->
+    <div id="sys-substation" class="sys-tab-content active space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">1A. System Single Line Schematic Diagram (SLD)</h2>
+            <p class="text-xs text-slate-500">Dual 110kV Incomers &rarr; SF6 Gas-Insulated Switchgear &rarr; 2 x 40 MVA Transformers &rarr; 22kV MTM Bus</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">60 MVA FIRM GRID</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-emerald-400 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+[EVN 220/110kV Substation A]                [EVN 220/110kV Substation B]
+         |                                           |
+  110kV Feeder A (Underground XLPE 630mm²)    110kV Feeder B (Underground XLPE 630mm²)
+         |                                           |
+   [110kV GIS Bay A]                           [110kV GIS Bay B]
+   (Disconnector + VCB)                        (Disconnector + VCB)
+         |                                           |
+         +-------------------[ 110kV Bus Tie ]-------+
+         |                                           |
+   [Transformer 1]                             [Transformer 2]
+   40 MVA, 110kV / 22kV                        40 MVA, 110kV / 22kV
+   Dyn11, Z = 12.5%                            Dyn11, Z = 12.5%
+         |                                           |
+   [22kV Incomer 1]                            [22kV Incomer 2]
+   (31.5 kA / 3s VCB)                          (31.5 kA / 3s VCB)
+         |                                           |
+    [22kV Busbar A] <==== [22kV Bus Tie VCB] ====> [22kV Busbar B]
+         |                                           |
+  +------+------+                             +------+------+
+  |             |                             |             |
+[Feed to UPS-A] [Feed to Chiller-A]        [Feed to UPS-B] [Feed to Chiller-B]
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">1B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-sky-700">GIS-110-01/02</td>
+                <td class="font-sans font-medium text-slate-900">110kV SF6 Gas-Insulated Switchgear</td>
+                <td class="font-sans">ABB / ELK-04 C</td>
+                <td class="text-right font-bold text-slate-800">145 kV, 31.5 kA, 2500A</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">2 x 100% Bays</span></td>
+                <td class="text-right">18,500 kg / 45 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">XFMR-110-01/02</td>
+                <td class="font-sans font-medium text-slate-900">Main Power Step-Down Transformers</td>
+                <td class="font-sans">Siemens / GEAFOL Oil-Immersed</td>
+                <td class="text-right font-bold text-slate-800">40 MVA, 110/22kV, Dyn11</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">2 x 100% (N+1)</span></td>
+                <td class="text-right">52,000 kg / 60 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">SWG-22-MTM</td>
+                <td class="font-sans font-medium text-slate-900">22kV Metal-Clad Vacuum Switchgear</td>
+                <td class="font-sans">Schneider / UniGear ZS1</td>
+                <td class="text-right font-bold text-slate-800">24 kV, 31.5 kA 3s, 3150A</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">Main-Tie-Main</span></td>
+                <td class="text-right">24,000 kg / 85 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">REL-PROT-01</td>
+                <td class="font-sans font-medium text-slate-900">Numerical Line &amp; Transformer Protection</td>
+                <td class="font-sans">Schweitzer / SEL-411L + SEL-787</td>
+                <td class="text-right font-bold text-slate-800">Optical Diff &bull; Arc &lt; 5ms</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">Dual Redundant</span></td>
+                <td class="text-right">Rack-mount 19"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">1C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Primary Voltage &amp; BIL</div>
+            <div class="font-mono text-sm font-bold text-slate-900">110 kV &plusmn; 10% / 550 kV BIL</div>
+            <p class="text-[11px] text-slate-600">Neutral solidly grounded. BIL impulse withstand 550 kV peak per IEC 60071.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Short Circuit Withstand</div>
+            <div class="font-mono text-sm font-bold text-slate-900">31.5 kA RMS for 3.0 Seconds</div>
+            <p class="text-[11px] text-slate-600">Peak withstand 82 kA. Optical arc sensors detect arc within &lt; 2ms, trip VCB in &lt; 40ms.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Transformer Impedance</div>
+            <div class="font-mono text-sm font-bold text-slate-900">Z = 12.5% ONAN / ONAF</div>
+            <p class="text-[11px] text-slate-600">On-Load Tap Changer (OLTC) &plusmn; 8 x 1.25% steps under automated numerical AVC control.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">1D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">STEP 1: NORMAL</span>
+            <div class="font-bold text-slate-900 text-xs">Dual Independent Feed</div>
+            <p class="text-[11px] text-slate-600">Feeder A carries Busbar A (22.5 MW), Feeder B carries Busbar B (22.5 MW). 22kV Bus Tie VCB remains open.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">STEP 2: FAULT TRIP</span>
+            <div class="font-bold text-slate-900 text-xs">Feeder Loss Detection</div>
+            <p class="text-[11px] text-slate-600">Feeder A trips on EVN grid drop. Under-voltage relay (27) confirms loss of potential after 250ms debounce.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800">STEP 3: AUTO TRANSFER</span>
+            <div class="font-bold text-slate-900 text-xs">Fast Bus Transfer (ABT)</div>
+            <p class="text-[11px] text-slate-600">Incomer 1 trips open. Interlock checks Bus B healthy, closes 22kV Bus Tie in &lt; 400ms. Feeder B carries 45 MW.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">STEP 4: RESTORATION</span>
+            <div class="font-bold text-slate-900 text-xs">Closed-Transition Return</div>
+            <p class="text-[11px] text-slate-600">Feeder A voltage verified healthy for 5 mins. Synchro-check relay verifies phase angle &lt; 10°, closes tie and splits buses.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 2: MV STANDBY GENERATORS & BULK FUEL -->
+    <div id="sys-genset" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">2A. Generator &amp; Fuel Distribution Flow Schematic</h2>
+            <p class="text-xs text-slate-500">10 x 3,000 kVA N+1 Medium-Voltage Generators &bull; 150,000L Underground Double-Wall Fuel Storage Loop</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200">10 x 3,000 kVA N+1</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-amber-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+[Underground Fuel Farm: 3 x 50,000L Double-Wall Fiberglass Tanks]
+          |                               |
+    [Duplex Pump Skid A]            [Duplex Pump Skid B] (N+1)
+          |                               |
+          +===============[ Pressurized Fuel Ring Header ]================+
+                          |                       |                       |
+                     [GENSET 01]             [GENSET 05]             [GENSET 10]
+                     3,000 kVA, 22kV         3,000 kVA, 22kV         3,000 kVA, 22kV
+                     Day Tank (1,000L)       Day Tank (1,000L)       Day Tank (1,000L)
+                          |                       |                       |
+                     [22kV VCB 01]           [22kV VCB 05]           [22kV VCB 10]
+                          |                       |                       |
+          +---------------+-----------------------+-----------------------+
+          |
+    [22kV Emergency Generator Common Paralleling Busbar]
+          |
+    [Master Synchronizer &amp; ATS Closed-Transition Breakers]
+          |
+    +-----+-----+
+    |           |
+[22kV Bus A] [22kV Bus B]
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">2B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-amber-700">GEN-22-01..10</td>
+                <td class="font-sans font-medium text-slate-900">Medium Voltage Diesel Generator Sets</td>
+                <td class="font-sans">Cummins / QSK95-G4 or CAT 3516E</td>
+                <td class="text-right font-bold text-slate-800">3,000 kVA / 2,400 kWe @ 22kV</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">10 Units (9+1 N+1)</span></td>
+                <td class="text-right">29,500 kg / 42 m² each</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">TANK-UG-01..03</td>
+                <td class="font-sans font-medium text-slate-900">Underground Bulk Diesel Storage Tanks</td>
+                <td class="font-sans">Containment Solutions Double-Wall</td>
+                <td class="text-right font-bold text-slate-800">50,000 L each (150,000L total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">3 Tanks (48h Run)</span></td>
+                <td class="text-right">Underground Concrete Vault</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">PUMP-FUEL-SKID</td>
+                <td class="font-sans font-medium text-slate-900">Duplex Fuel Supply &amp; Polish Skid</td>
+                <td class="font-sans">Pryco / Simplex Auto-Filtration</td>
+                <td class="text-right font-bold text-slate-800">120 L/min @ 4.0 bar &bull; 1&mu; filter</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">2 x 100% Pumps</span></td>
+                <td class="text-right">1,850 kg / 6 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">SYNC-CTRL-MST</td>
+                <td class="font-sans font-medium text-slate-900">Digital Generator Master Controller</td>
+                <td class="font-sans">Woodward / easYgen-3500XT</td>
+                <td class="text-right font-bold text-slate-800">10-Gen Auto-Paralleling</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Dual Redundant Hot</span></td>
+                <td class="text-right">NEMA 4X Cabinet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">2C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Transient Step Load (ISO 8528 G3)</div>
+            <div class="font-mono text-sm font-bold text-slate-900">&le; 10% Voltage Dip / &le; 5% Freq</div>
+            <p class="text-[11px] text-slate-600">Accepts 60% initial step load block within 3.5s with recovery in &lt; 1.5s per ISO 8528-5.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Cranking &amp; Start Duration</div>
+            <div class="font-mono text-sm font-bold text-slate-900">T &le; 8.5 Seconds to Synced Bus</div>
+            <p class="text-[11px] text-slate-600">Dual 24V DC electric starter motors + pneumatic air accumulator backup.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Fuel Consumption &amp; Autonomy</div>
+            <div class="font-mono text-sm font-bold text-slate-900">620 L/hr @ 100% Load per Unit</div>
+            <p class="text-[11px] text-slate-600">150,000L total fuel provides 48.4 hours of continuous full-facility operation (57.6 MW).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">2D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">T + 0.0s: GRID LOSS</span>
+            <div class="font-bold text-slate-900 text-xs">Auto-Start Signal</div>
+            <p class="text-[11px] text-slate-600">Loss of 110kV grid triggers hardwired dry contacts to all 10 engine controllers simultaneously.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">T + 4.8s: CRANK</span>
+            <div class="font-bold text-slate-900 text-xs">Speed &amp; Voltage Achieved</div>
+            <p class="text-[11px] text-slate-600">Engines reach 1,500 RPM and 22,000V. Automatic voltage regulators (AVR) stabilize within 1.0s.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800">T + 7.2s: PARALLEL</span>
+            <div class="font-bold text-slate-900 text-xs">Bus Synchronization</div>
+            <p class="text-[11px] text-slate-600">First gen closes to dead bus. Subsequent 9 units parallel simultaneously using auto-synch in &lt; 2.5s.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">T + 8.5s: ATS ON</span>
+            <div class="font-bold text-slate-900 text-xs">Load Transfer Complete</div>
+            <p class="text-[11px] text-slate-600">ATS closes. Genset bus assumes 57.6 MW facility load. Chiller motors staged in 15s intervals.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 3: 2N STATIC UPS & LiFePO4 ENERGY STORAGE -->
+    <div id="sys-ups" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">3A. 2N Static UPS Electrical Topology</h2>
+            <p class="text-xs text-slate-500">Dual Isolated A+B Distribution Paths &bull; Lithium Iron Phosphate (LiFePO4) Battery Energy Storage</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">2N ISOLATED (60,000 kVA)</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-emerald-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+   [22kV Utility / Gen Bus A]                          [22kV Utility / Gen Bus B]
+               |                                                   |
+      [22kV / 400V XFMR A]                                [22kV / 400V XFMR B]
+               |                                                   |
+       [STATIC UPS PATH A]                                 [STATIC UPS PATH B]
+      +-[Rectifier / Charger]-+                           +-[Rectifier / Charger]-+
+      |                       |                           |                       |
+  [LiFePO4 BESS A]        [Inverter A]                [LiFePO4 BESS B]        [Inverter B]
+  (10-Min @ 45MW)             |                       (10-Min @ 45MW)             |
+      |                 [Static Switch A]                 |                 [Static Switch B]
+      +-----------------------+                           +-----------------------+
+                              |                                                   |
+                  [Output Switchboard A]                              [Output Switchboard B]
+                              |                                                   |
+                  [Overhead Track Busway A]                           [Overhead Track Busway B]
+                              |                                                   |
+                              +==============[ DUAL-CORD SERVER RACK ]============+
+                                             [ PSU A ]     [ PSU B ]
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">3B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-emerald-700">UPS-MOD-A01..04</td>
+                <td class="font-sans font-medium text-slate-900">Static Double Conversion UPS (Path A)</td>
+                <td class="font-sans">Schneider / Galaxy VX or Vertiv Liebert</td>
+                <td class="text-right font-bold text-slate-800">4 x 7,500 kVA (30,000 kVA)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">2N System A</span></td>
+                <td class="text-right">14,200 kg / 48 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-emerald-700">UPS-MOD-B01..04</td>
+                <td class="font-sans font-medium text-slate-900">Static Double Conversion UPS (Path B)</td>
+                <td class="font-sans">Schneider / Galaxy VX or Vertiv Liebert</td>
+                <td class="text-right font-bold text-slate-800">4 x 7,500 kVA (30,000 kVA)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">2N System B</span></td>
+                <td class="text-right">14,200 kg / 48 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-emerald-700">BATT-LFP-A/B</td>
+                <td class="font-sans font-medium text-slate-900">LiFePO4 Battery Energy Storage Racks</td>
+                <td class="font-sans">Samsung SDI / Mega-E or CATL EnerOne</td>
+                <td class="text-right font-bold text-slate-800">512V DC, 10-Min Holdover @ 45MW</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">2N Dual Banks</span></td>
+                <td class="text-right">48,000 kg / 180 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-emerald-700">BUS-TRK-A/B</td>
+                <td class="font-sans font-medium text-slate-900">Overhead Track Power Busways</td>
+                <td class="font-sans">Starline / Series T5 Track Busway</td>
+                <td class="text-right font-bold text-slate-800">800A, 400V 3-Phase + Neutral</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">Dual A+B Overhead</span></td>
+                <td class="text-right">Ceiling Suspended</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">3C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Double Conversion Efficiency</div>
+            <div class="font-mono text-sm font-bold text-emerald-700">97.2% VFI Mode (99.0% ECOnversion)</div>
+            <p class="text-[11px] text-slate-600">Patented 4-level inverter topology with input harmonic distortion THDi &lt; 2.5%.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Transfer Time on Outage</div>
+            <div class="font-mono text-sm font-bold text-emerald-700">0.0 ms (Zero Interruption)</div>
+            <p class="text-[11px] text-slate-600">DC bus continuously connected between rectifier and inverter. Zero contactor transit time.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Fire Safety Certification</div>
+            <div class="font-mono text-sm font-bold text-slate-900">UL 9540A Large-Scale Tested</div>
+            <p class="text-[11px] text-slate-600">No cell-to-cell thermal runaway propagation. Internal aerosol suppression + deflagration vents.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">3D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">STATE 1: ONLINE</span>
+            <div class="font-bold text-slate-900 text-xs">VFI Double Conversion</div>
+            <p class="text-[11px] text-slate-600">AC mains rectified to DC, then inverted to clean AC sine wave. LiFePO4 batteries maintained at float charge.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">STATE 2: DISCHARGE</span>
+            <div class="font-bold text-slate-900 text-xs">0ms Battery Transition</div>
+            <p class="text-[11px] text-slate-600">Mains voltage drops. Inverter draws seamlessly from LiFePO4 DC bus. Critical IT load experiences zero transient drop.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800">STATE 3: GEN TIE</span>
+            <div class="font-bold text-slate-900 text-xs">Generator Supply Ramp</div>
+            <p class="text-[11px] text-slate-600">Gensets synchronize in 8.5s. Rectifiers soft-start over 15s to prevent generator overload, and begin recharge.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">STATE 4: BYPASS</span>
+            <div class="font-bold text-slate-900 text-xs">Maintenance Isolation</div>
+            <p class="text-[11px] text-slate-600">Inverter static bypass engaged for service without load disturbance. Wrap-around mechanical switch locks out module.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 4: CHILLERS & FREE COOLING -->
+    <div id="sys-chiller" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">4A. Primary/Secondary Chilled Water Hydraulic Flow Schematic</h2>
+            <p class="text-xs text-slate-500">6 x 2,500 RT Magnetic Centrifugal Chillers (N+2) &bull; Plate Free-Cooling Economizers &bull; 4 x 250 m³ Buffer Tanks</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-50 text-cyan-700 font-bold border border-cyan-200">15,000 RT (N+2)</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-cyan-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+   [Dual Closed-Circuit Cooling Towers 1..6] (VFD EC Fans, 32°C Entering CW)
+                     |                                       ^
+                     v                                       |
+           [Condenser Water Pumps] --------------------------+
+                     |
+         +-----------+-----------------------------------+
+         | (Wet bulb &lt;= 22°C)                            | (Normal Mechanical)
+         v                                               v
+[Plate Free-Cooling Heat Exchangers]           [6 x 2,500 RT Magnetic Chillers]
+(Alfa Laval, 2 x 4,000 RT)                     (4 Duty + 2 Standby N+2, COP 10.3)
+         |                                               |
+         +-----------------------+-----------------------+
+                                 | (Chilled Supply Water: 12°C)
+                                 v
+               [4 x 250 m³ Thermal Buffer Tanks] (15-Min Holdover)
+                                 |
+                                 v
+               [Variable Primary Distribution Pumps 1..6]
+                                 |
+               +-----------------+-----------------+
+               |                                   |
+    [Data Hall Fan Wall CRAHs]           [Direct Liquid Cooling CDUs]
+    (Hot Aisle Containment, 23°C Supply) (80 kW/rack AI Clusters, 32°C Supply)
+               |                                   |
+               +-----------------+-----------------+
+                                 | (Return Water: 18°C)
+                                 v
+               [Return Ring Header back to Chiller Plant]
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">4B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-cyan-700">CH-MAG-01..06</td>
+                <td class="font-sans font-medium text-slate-900">Oil-Free Magnetic Centrifugal Chillers</td>
+                <td class="font-sans">York / YMC2 or Daikin Magnitude</td>
+                <td class="text-right font-bold text-slate-800">2,500 RT each (15,000 RT Total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]">6 Units (4+2 N+2)</span></td>
+                <td class="text-right">36,000 kg / 45 m² each</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-cyan-700">CT-CLSD-01..06</td>
+                <td class="font-sans font-medium text-slate-900">Closed-Circuit Cooling Towers</td>
+                <td class="font-sans">Baltimore Aircoil (BAC) / Series 3000</td>
+                <td class="text-right font-bold text-slate-800">3,000 GPM per cell &bull; VFD EC Fans</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]">6 Cells (4+2 N+2)</span></td>
+                <td class="text-right">18,000 kg / 65 m² each</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-cyan-700">HEX-PHE-01/02</td>
+                <td class="font-sans font-medium text-slate-900">Plate &amp; Frame Free-Cooling Economizers</td>
+                <td class="font-sans">Alfa Laval / Industrial Line</td>
+                <td class="text-right font-bold text-slate-800">4,000 RT each (8,000 RT total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]">2 x 100% Economizer</span></td>
+                <td class="text-right">6,500 kg / 12 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-cyan-700">TANK-FLY-01..04</td>
+                <td class="font-sans font-medium text-slate-900">Thermal Flywheel Stratified Buffer Tanks</td>
+                <td class="font-sans">Caldwell Energy / Stratified Chilled</td>
+                <td class="text-right font-bold text-slate-800">250 m³ each (1,000 m³ Total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]">15-Min Thermal Hold</span></td>
+                <td class="text-right">Vertical Cylindrical Tanks</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">4C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Chilled Water Supply / Return</div>
+            <div class="font-mono text-sm font-bold text-slate-900">12.0&deg;C Supply / 18.0&deg;C Return (&Delta;T = 6&deg;C)</div>
+            <p class="text-[11px] text-slate-600">Elevated supply water temperature optimization reduces chiller compressor lift.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Coefficient of Performance</div>
+            <div class="font-mono text-sm font-bold text-emerald-700">Full Load COP &ge; 6.8 &bull; IPLV &ge; 10.3</div>
+            <p class="text-[11px] text-slate-600">Frictionless magnetic levitation bearings eliminate oil management losses.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Thermal Ride-Through Storage</div>
+            <div class="font-mono text-sm font-bold text-slate-900">1,000 m³ (15 Minutes @ 45 MW)</div>
+            <p class="text-[11px] text-slate-600">Maintains supply chilled water &lt; 13.5°C during generator start and compressor ramp-up.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">4D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">MODE 1: MECHANICAL</span>
+            <div class="font-bold text-slate-900 text-xs">Summer Peak Operation</div>
+            <p class="text-[11px] text-slate-600">4 chillers run at 75% load in optimum COP band. Cooling towers reject heat via closed loop. PUE = 1.30.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-100 text-cyan-800">MODE 2: FREE COOLING</span>
+            <div class="font-bold text-slate-900 text-xs">Wet Bulb &le; 22&deg;C Mode</div>
+            <p class="text-[11px] text-slate-600">Economizer valves open. Condenser water pre-cools return chilled water, reducing compressor lift. PUE = 1.22.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800">MODE 3: BLACKOUT</span>
+            <div class="font-bold text-slate-900 text-xs">Flywheel Tank Discharge</div>
+            <p class="text-[11px] text-slate-600">Chillers trip on utility loss. UPS-backed primary pumps draw cold water from 1,000 m³ tanks. Temp &lt; 12°C.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">MODE 4: FAST RESTART</span>
+            <div class="font-bold text-slate-900 text-xs">Compressor Re-acceleration</div>
+            <p class="text-[11px] text-slate-600">Generators online in 8.5s. Magnetic chillers execute fast-restart, restoring 80% cooling in &lt; 90 seconds.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 5: WHITE SPACE CRAH & DIRECT LIQUID COOLING (DLC) -->
+    <div id="sys-dlc" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">5A. Hybrid Air &amp; Direct Liquid Cooling (DLC) Flow Schematic</h2>
+            <p class="text-xs text-slate-500">Hot Aisle Containment (HAC) Fan Walls (8-15 kW/rack) &bull; Coolant Distribution Units for AI GPU Racks (40-80 kW/rack)</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold border border-sky-200">UP TO 80 kW / RACK</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-sky-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+   [Primary Chilled Water Supply from Central Plant: 12°C]
+          |                                       |
+          v                                       v
+[Fan Wall CRAH Units]                   [In-Row Coolant Distribution Units (CDU)]
+(EC Fans, Air-Cooling 15 kW/rack)       (1,000 kW Liquid-to-Liquid HEX, Dual Pumps)
+          |                                       |
+    [Cold Aisle Plenums: 23°C]              [Secondary Treated Deionized Loop: 32°C]
+          |                                       |
+          v                                       v
+[Standard Server Racks (Air Cooled)]    [High-Density AI GPU Racks (Direct Liquid Cooled)]
+(Internal Heat Sink Fans)               (Micro-Channel Copper Cold Plates on GPUs/CPUs)
+          |                                       | (Return Fluid: 42°C &bull; 85% Heat)
+          v                                       v
+[Hot Aisle Containment (HAC) Duct]      [Stainless Steel Return Manifold to CDU]
+(Return Air: 35°C to CRAH Intake)                 |
+          |                                       v
+          +=================[ Return to Central Chiller Header: 18°C ]=================+
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">5B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-sky-700">CDU-ROW-01..12</td>
+                <td class="font-sans font-medium text-slate-900">In-Row Coolant Distribution Units</td>
+                <td class="font-sans">Vertiv / Liebert XDU or CoolIT CHx</td>
+                <td class="text-right font-bold text-slate-800">1,000 kW per unit @ 10&deg;C &Delta;T</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">N+1 Canned Pumps</span></td>
+                <td class="text-right">1,600 kg / 600x1200mm</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">CRAH-WALL-01..32</td>
+                <td class="font-sans font-medium text-slate-900">High-Efficiency Fan Wall CRAH Units</td>
+                <td class="font-sans">Stulz / CyberAir or Schneider Uniflair</td>
+                <td class="text-right font-bold text-slate-800">280 kW &bull; 18,000 CFM EC Fans</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">N+20% per Hall</span></td>
+                <td class="text-right">2,800 kg / 3200x1200mm</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">COLD-PLATE-AI</td>
+                <td class="font-sans font-medium text-slate-900">Direct-to-Chip Micro-Channel Cold Plates</td>
+                <td class="font-sans">Asetek / CoolIT Direct Contact</td>
+                <td class="text-right font-bold text-slate-800">700W GPU / 350W CPU Dissipation</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">Component Integrated</span></td>
+                <td class="text-right">Chassis Internal</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-sky-700">HAC-ENCL-01..48</td>
+                <td class="font-sans font-medium text-slate-900">Hot Aisle Containment Roof &amp; Doors</td>
+                <td class="font-sans">Subzero / Polargy Dual Sliding Doors</td>
+                <td class="text-right font-bold text-slate-800">&Delta;P = 2.5 Pa Airtight Seal</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">NFPA 75 UL 94-V0</span></td>
+                <td class="text-right">Aisle Envelope</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">5C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Secondary DLC Fluid Loop</div>
+            <div class="font-mono text-sm font-bold text-slate-900">32.0&deg;C Supply / 42.0&deg;C Return</div>
+            <p class="text-[11px] text-slate-600">Secondary fluid: Inhibited Propylene Glycol 25% + Deionized Water (corrosion-inhibited).</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Fluid Flow Rate per AI Rack</div>
+            <div class="font-mono text-sm font-bold text-sky-700">1.91 L/s (30.3 GPM) @ 80 kW Rack</div>
+            <p class="text-[11px] text-slate-600">Secondary operating pressure &le; 2.0 bar to prevent coupling stress and burst risk.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Leak Detection &amp; Safety</div>
+            <div class="font-mono text-sm font-bold text-slate-900">Conductive Sensing Rope + Fast Shutoff</div>
+            <p class="text-[11px] text-slate-600">Sensing rope beneath every rack manifold closes motorized isolation valves within &lt; 500ms.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">5D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">STAGE 1: MODULATION</span>
+            <div class="font-bold text-slate-900 text-xs">Dynamic Thermal Tracking</div>
+            <p class="text-[11px] text-slate-600">CDU VFD pumps modulate flow dynamically based on rack return temperature sensors, keeping GPU junction &lt; 70°C.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">STAGE 2: PUMP TRIP</span>
+            <div class="font-bold text-slate-900 text-xs">CDU Pump Changeover</div>
+            <p class="text-[11px] text-slate-600">Primary CDU pump faults. Standby canned-motor pump starts instantly (&lt; 200ms) with zero secondary flow drop.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800">STAGE 3: LEAK ALARM</span>
+            <div class="font-bold text-slate-900 text-xs">Automated Manifold Isolation</div>
+            <p class="text-[11px] text-slate-600">Moisture rope detects droplet (&gt; 5ml). CDU controller isolates manifold, sounds alarm, and switches GPU to idle.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">STAGE 4: HOT SWAP</span>
+            <div class="font-bold text-slate-900 text-xs">Dripless Blind-Mate Service</div>
+            <p class="text-[11px] text-slate-600">Server technician unlatches blade using dry-break disconnects. Fluid loss &lt; 0.05 ml. Rack continues operating.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 6: PCCC & CLEAN AGENT -->
+    <div id="sys-fire" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">6A. Fire Detection &amp; Dual Suppression Flow Schematic</h2>
+            <p class="text-xs text-slate-500">Dual-Chamber VESDA Early Warning &bull; FK-5-1-12 Total Flooding &bull; Double-Interlock Pre-Action Sprinkler</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-bold border border-rose-200">QCVN 06:2022 &bull; NFPA 75/2001</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-rose-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+[VESDA Aspiration Sampling Grid (Cold &amp; Hot Aisles)]
+          |
+  (Alert: 0.005% &bull; Action: 0.015% &bull; Fire 1: 0.04% &bull; Fire 2: 0.08% obs/m)
+          |
+          v
+[Main Fire Alarm Control Panel (FACP)] <==== Cross-Zoned Addressable Smoke Detectors
+          |
+          +-------------------------------+-------------------------------+
+          | (1st Smoke Alarm)             | (Cross-Zone Fire 2 Confirmed) |
+          v                               v                               v
+[Audible / Strobe Evacuation Alarm]  [30-Sec Discharge Countdown]    [HVAC Dampers Close]
+                                          |
+                                          v
+                    [Clean Agent Storage Manifold: FK-5-1-12]
+                    (50 Bar Nitrogen Charge, 6,608 kg per Hall)
+                                          |
+                                          v
+                    [10-Second Total Flooding Discharge Nozzles]
+                                          |
+                    (Fire Suppressed &bull; Electronics Undamaged &bull; ODP = 0)
+                                          |
+          +-------------------------------+-------------------------------+
+          | (Secondary Fail-Safe Safeguard only if Fire Persists &gt; 68°C)
+          v
+[Pre-Action Solenoid Valve Arms] + [Sprinkler Glass Bulb Bursts @ 68°C]
+          |
+          v
+[Double-Interlock Water Flooding from 750 m³ Concrete Cistern]
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">6B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-rose-700">VESDA-DET-01..16</td>
+                <td class="font-sans font-medium text-slate-900">Laser Aspirating Smoke Detectors</td>
+                <td class="font-sans">Xtralis / VESDA-E VEP Dual Pipe</td>
+                <td class="text-right font-bold text-slate-800">4 Pipes &bull; 2,000 m² coverage each</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">Dual Sampling Loop</span></td>
+                <td class="text-right">Wall Mount 4.5 kg</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-rose-700">GAS-CYL-FK01..48</td>
+                <td class="font-sans font-medium text-slate-900">Clean Agent FK-5-1-12 Cylinders</td>
+                <td class="font-sans">Johnson Controls / HYGOOD Sapphire</td>
+                <td class="text-right font-bold text-slate-800">180 L Cylinders @ 50 bar N2</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">2 x 100% Reserve</span></td>
+                <td class="text-right">380 kg per cylinder</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-rose-700">VALV-PREACT-01..08</td>
+                <td class="font-sans font-medium text-slate-900">Double-Interlock Pre-Action Valves</td>
+                <td class="font-sans">Viking / Model G-4000P Preaction</td>
+                <td class="text-right font-bold text-slate-800">DN150 / 6" Flanged &bull; 1.5 bar N2</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">Cross-Zoned Interlock</span></td>
+                <td class="text-right">Riser Station 85 kg</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-rose-700">PUMP-FIRE-DIESEL</td>
+                <td class="font-sans font-medium text-slate-900">UL/FM Fire Pump Set &amp; Jockey</td>
+                <td class="font-sans">Patterson / Horizontal Split-Case</td>
+                <td class="text-right font-bold text-slate-800">2,500 GPM @ 12 bar (Diesel + Electric)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">Duty + Standby (1+1)</span></td>
+                <td class="text-right">Pump House 35 m²</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">6C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Design Concentration (NFPA 2001)</div>
+            <div class="font-mono text-sm font-bold text-rose-700">5.6% vol FK-5-1-12 Concentration</div>
+            <p class="text-[11px] text-slate-600">Safe for occupied rooms (NOAEL = 10.0% vol, safety margin 78%).</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Total Flooding Discharge Duration</div>
+            <div class="font-mono text-sm font-bold text-rose-700">&le; 10.0 Seconds Discharge</div>
+            <p class="text-[11px] text-slate-600">Rapid extinguishing prevents chemical combustion chain without leaving residue.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Room Integrity Retention Time</div>
+            <div class="font-mono text-sm font-bold text-slate-900">&ge; 10 Minutes Hold Time</div>
+            <p class="text-[11px] text-slate-600">Door fan test verifies airtight enclosure leakage area &le; 0.05 m² to prevent re-ignition.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">6D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">STAGE 1: VESDA ALERT</span>
+            <div class="font-bold text-slate-900 text-xs">Incipient Particle Warning</div>
+            <p class="text-[11px] text-slate-600">VESDA detects sub-micron particles (0.015% obs/m). NOC alerted to inspect specific cabinet via CCTV.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-rose-100 text-rose-800">STAGE 2: 1ST SMOKE</span>
+            <div class="font-bold text-slate-900 text-xs">Evacuation Horn &amp; Strobe</div>
+            <p class="text-[11px] text-slate-600">Point smoke detector trips. Alarm bells ring. White space personnel evacuate. Gas discharge NOT yet initiated.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-rose-200 text-rose-900">STAGE 3: 2ND CROSS-ZONE</span>
+            <div class="font-bold text-slate-900 text-xs">30s Countdown &amp; Dump</div>
+            <p class="text-[11px] text-slate-600">2nd detector trips. 30s abort countdown begins. HVAC motorized dampers snap shut. FK-5-1-12 floods in 10s.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-800">STAGE 4: EXTRACT</span>
+            <div class="font-bold text-slate-900 text-xs">Post-Fire Smoke Exhaust</div>
+            <p class="text-[11px] text-slate-600">Fire declared extinguished by PCCC. Dedicated smoke spill fans purge gas/air mixture outside building envelope.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 7: TELECOM DUAL MMRS & OPTICAL BACKBONES -->
+    <div id="sys-telecom" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">7A. Telecommunications &amp; MMR Interconnection Schematic</h2>
+            <p class="text-xs text-slate-500">4 Diverse Underground Street Ducts &bull; Dual Carrier-Neutral MMR-1 &amp; MMR-2 &bull; 400G/800G OS2 Single-Mode Backbones</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-50 text-purple-700 font-bold border border-purple-200">CARRIER-NEUTRAL</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-purple-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+[Telco Duct Route 1 (North Street)]                 [Telco Duct Route 2 (South Street)]
+         |                                                   |
+   (Manhole MH-01)                                     (Manhole MH-02)
+         |                                                   |
+   [MMR-1 (East Campus Vault)]                        [MMR-2 (West Campus Vault)]
+   - Carrier Demarcation ODF                          - Carrier Demarcation ODF
+   - Cross-Connect Patch Bays                         - Cross-Connect Patch Bays
+   - Subsea Cable Landing Feeds                       - Subsea Cable Landing Feeds
+         |                                                   |
+         +=================[ Diverse Inter-MMR Tie: 288-Core OS2 ]================+
+         |                                                   |
+   [Main Distribution Area (MDA-A)]                   [Main Distribution Area (MDA-B)]
+         |                                                   |
+   [Zone Distribution Area (ZDA-1)]                   [Zone Distribution Area (ZDA-2)]
+         |                                                   |
+         +-------------------+-------------------------------+
+                             |
+             [Top-of-Rack (ToR) Spine-Leaf Switches]
+             (MPO-12 OM5 Multimode &bull; 400G / 800G Ethernet)
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">7B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-purple-700">MMR-FAC-01/02</td>
+                <td class="font-sans font-medium text-slate-900">Carrier-Neutral Meet-Me-Rooms</td>
+                <td class="font-sans">Tier III Separated Rooms</td>
+                <td class="text-right font-bold text-slate-800">40 Telco Cabinets each (80 Total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 font-bold text-[10px]">Dual Isolated (&ge;150m)</span></td>
+                <td class="text-right">120 m² per room</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-purple-700">ODF-HIGH-01..16</td>
+                <td class="font-sans font-medium text-slate-900">High-Density Optical Distribution Frames</td>
+                <td class="font-sans">CommScope / FACT or Corning EDGE8</td>
+                <td class="text-right font-bold text-slate-800">2,880 Fiber LC/MPO Ports per Frame</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 font-bold text-[10px]">Cross-Connect A+B</span></td>
+                <td class="text-right">Cabinet 42U</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-purple-700">FIB-SM-288C</td>
+                <td class="font-sans font-medium text-slate-900">OS2 Single-Mode Backbone Trunks</td>
+                <td class="font-sans">Corning / SMF-28 Ultra Optical Fiber</td>
+                <td class="text-right font-bold text-slate-800">288 Cores per cable &bull; &lt; 0.18 dB/km</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 font-bold text-[10px]">Dual Underground Routes</span></td>
+                <td class="text-right">Heavy Armored Duct</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-purple-700">SW-SPINE-400G</td>
+                <td class="font-sans font-medium text-slate-900">Campus Interconnection Spine Switches</td>
+                <td class="font-sans">Arista / 7060X or Cisco Nexus 9300</td>
+                <td class="text-right font-bold text-slate-800">32 x 400 GbE QSFP-DD Ports</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 font-bold text-[10px]">Dual Spine Topology</span></td>
+                <td class="text-right">Rack Mount 1U</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">7C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Physical Separation Distance</div>
+            <div class="font-mono text-sm font-bold text-slate-900">&ge; 150 Meters Separation</div>
+            <p class="text-[11px] text-slate-600">MMR-1 and MMR-2 located on opposite exterior building facades in separate fire compartments.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Connector Insertion Loss</div>
+            <div class="font-mono text-sm font-bold text-emerald-700">&le; 0.25 dB (Ultra Low Loss MPO)</div>
+            <p class="text-[11px] text-slate-600">Total optical channel loss budget &le; 1.9 dB supporting 400GBASE-SR8 and 800G optics.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Subsea Landing Interconnects</div>
+            <div class="font-mono text-sm font-bold text-purple-700">ADC &bull; SJC2 &bull; APG &bull; AAE-1</div>
+            <p class="text-[11px] text-slate-600">Dark fiber backhauls connect directly to international cable landing stations at Vung Tau and Danang.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">7D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">STAGE 1: FIBER ENTRY</span>
+            <div class="font-bold text-slate-900 text-xs">External Carrier Ingress</div>
+            <p class="text-[11px] text-slate-600">Telecommunications carrier pulls fiber through dedicated concrete duct into MMR vault. Gas seals installed.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-purple-100 text-purple-800">STAGE 2: TERMINATE</span>
+            <div class="font-bold text-slate-900 text-xs">ODF Patch Splice</div>
+            <p class="text-[11px] text-slate-600">Cables fusion spliced into high-density optical distribution frames. OTDR testing verifies attenuation &lt; 0.18 dB/km.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800">STAGE 3: CROSS-CONNECT</span>
+            <div class="font-bold text-slate-900 text-xs">Tenant Demarcation</div>
+            <p class="text-[11px] text-slate-600">Authorized cross-connect patch jumper run through overhead fiber runner to customer cabinet demarcation panel.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">STAGE 4: DUAL PATH</span>
+            <div class="font-bold text-slate-900 text-xs">A+B BGP Interconnect</div>
+            <p class="text-[11px] text-slate-600">Customer activates dual redundant BGP peering sessions over MMR-1 and MMR-2 with automated failover.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 8: BMS, DCIM SUPERVISORY & AUTOMATION -->
+    <div id="sys-bms" class="sys-tab-content space-y-4">
+      <!-- Section A: Schematic -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide">8A. 3-Tier BMS &amp; DCIM Automation Supervisory Architecture</h2>
+            <p class="text-xs text-slate-500">Field Sensor Layer &bull; Redundant Automation PLCs &bull; Central SCADA / DCIM Dual Servers &amp; SOC Consoles</p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-50 text-teal-700 font-bold border border-teal-200">REAL-TIME TELEMETRY</span>
+        </div>
+        <div class="bg-slate-900 rounded p-3 text-teal-300 font-mono text-xs overflow-x-auto leading-relaxed border border-slate-800">
+<pre>
+[Field Devices &amp; Sensors: Modbus RTU / TCP, BACnet/IP, SNMP v3]
+(Power Meters &bull; BCPM &bull; Flow Meters &bull; VFD Drives &bull; Temp/Humidity &bull; Gas Sensors)
+          |                                       |
+          +-------------------+-------------------+
+                              | (Dual Ring Ethernet: IEC 62439 PRP)
+                              v
+          [Redundant Programmable Logic Controllers (PLC)]
+          (Siemens S7-1500R or Schneider Modicon M580 Dual Hot-Standby)
+                              |
+          +-------------------+-------------------+
+          |                                       |
+          v                                       v
+[Central SCADA Server A (Primary)]      [Central SCADA Server B (Hot Mirror)]
+(Wonderware System Platform / Ignition) (1-Second Synchronous DB Replication)
+          |                                       |
+          +-------------------+-------------------+
+                              |
+                              v
+[Enterprise DCIM Platform (Data Center Infrastructure Management)]
+(Sunbird dcTrack / Schneider EcoStruxure &bull; Real-time PUE / Capacity / Asset Twin)
+                              |
+          +-------------------+-------------------+
+          |                                       |
+          v                                       v
+[24/7/365 NOC / SOC Operator Consoles]  [EVN A0 / A2 Dispatch Gateway]
+(4K Multi-Screen Visual Walls)          (IEC 60870-5-104 Encrypted Link)
+</pre>
+        </div>
+      </section>
+
+      <!-- Section B: Main Equipment Schedule -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">8B. Main Equipment Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px]">
+                <th class="text-left w-28">Tag</th>
+                <th class="text-left w-48">Equipment Name</th>
+                <th class="text-left w-36">Manufacturer / Model</th>
+                <th class="text-right w-36">Rated Capacity</th>
+                <th class="text-center w-28">Redundancy</th>
+                <th class="text-right w-32">Weight / Footprint</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr>
+                <td class="font-bold text-teal-700">SRV-DCIM-01/02</td>
+                <td class="font-sans font-medium text-slate-900">Enterprise DCIM Application Servers</td>
+                <td class="font-sans">Dell PowerEdge R760 Dual Xeon</td>
+                <td class="text-right font-bold text-slate-800">50,000 Data Points &bull; 1s Polling</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 font-bold text-[10px]">Dual Hot-Standby</span></td>
+                <td class="text-right">Server Rack 2U</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-teal-700">PLC-MST-01/02</td>
+                <td class="font-sans font-medium text-slate-900">Fault-Tolerant Automation PLCs</td>
+                <td class="font-sans">Siemens / SIMATIC S7-1500R/H</td>
+                <td class="text-right font-bold text-slate-800">Dual Sync CPUs &bull; 50ms Switchover</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 font-bold text-[10px]">2N Controller Pair</span></td>
+                <td class="text-right">Control Panel 800mm</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-teal-700">BCPM-MTR-01..48</td>
+                <td class="font-sans font-medium text-slate-900">Branch Circuit Power Monitors</td>
+                <td class="font-sans">Schneider / PowerLogic BCPM</td>
+                <td class="text-right font-bold text-slate-800">84 Circuits per panel &bull; Class 0.5S</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 font-bold text-[10px]">Dual Bus A+B</span></td>
+                <td class="text-right">Panel Integrated</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-teal-700">DISP-GW-A0</td>
+                <td class="font-sans font-medium text-slate-900">National Dispatch SCADA Gateway</td>
+                <td class="font-sans">Advantech / UNO-420 Embedded</td>
+                <td class="text-right font-bold text-slate-800">IEC 60870-5-104 &bull; DNP3 IPsec</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 font-bold text-[10px]">Dual Router WAN</span></td>
+                <td class="text-right">DIN-Rail Mount</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section C: Engineering Specifications -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">8C. Technical Specifications</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Real-Time Data Acquisition</div>
+            <div class="font-mono text-sm font-bold text-slate-900">&le; 1.0 Second Polling Cycle</div>
+            <p class="text-[11px] text-slate-600">Electrical parameters (kW, kVA, PF, V, I) updated every 1,000ms. Alarms updated &lt; 200ms.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Telemetry Data Retention</div>
+            <div class="font-mono text-sm font-bold text-teal-700">5-Year Historical Time-Series DB</div>
+            <p class="text-[11px] text-slate-600">InfluxDB / TimescaleDB cluster with automated archiving for energy auditing and billing proof.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Cybersecurity Compliance</div>
+            <div class="font-mono text-sm font-bold text-slate-900">IEC 62443 Security Level 3 (SL3)</div>
+            <p class="text-[11px] text-slate-600">Encrypted field communications (TLS 1.3), role-based access control (RBAC), air-gapped from public web.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section D: Operational Workflow -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-2.5">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-2">8D. Step-by-Step Operational Workflow (SOO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-sky-100 text-sky-800">STAGE 1: ACQUIRE</span>
+            <div class="font-bold text-slate-900 text-xs">Continuous Telemetry</div>
+            <p class="text-[11px] text-slate-600">Over 50,000 data points collected every second across power meters, chillers, UPS, and cold aisle sensors.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-teal-100 text-teal-800">STAGE 2: ANALYZE</span>
+            <div class="font-bold text-slate-900 text-xs">Live PUE &amp; Anomaly</div>
+            <p class="text-[11px] text-slate-600">BMS engine calculates real-time PUE (Total / IT Load). Machine learning models detect bearing vibrations early.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">STAGE 3: ALARM</span>
+            <div class="font-bold text-slate-900 text-xs">Tiered Dispatch</div>
+            <p class="text-[11px] text-slate-600">Threshold breach automatically creates high-priority work order on NOC consoles and dispatches SMS alerts.</p>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/60 space-y-1">
+            <span class="text-[9.5px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">STAGE 4: AUDIT</span>
+            <div class="font-bold text-slate-900 text-xs">BOD &amp; Client Billing</div>
+            <p class="text-[11px] text-slate-600">Automated end-of-month power consumption certificates and PUE compliance audit reports exported to ERP.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER AUDIT -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.002</span> | Classification: Confidential Technical
+      </div>
+      <div class="text-[11px]">
+        Engineering Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; IEEE 519 &bull; IEC 62271 &bull; ASHRAE TC 9.9
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab Switching Functionality
+    function switchSysTab(tabId) {
+      const contents = document.querySelectorAll('.sys-tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const buttons = document.querySelectorAll('.sys-tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        const spanTag = btn.querySelector('span:first-child');
+        if (spanTag) spanTag.className = 'text-[9px] font-mono text-slate-400 font-bold';
+      });
+
+      const targetContent = document.getElementById(tabId);
+      if (targetContent) targetContent.classList.add('active');
+
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetBtn) {
+        targetBtn.classList.add('active');
+        const spanTag = targetBtn.querySelector('span:first-child');
+        if (spanTag) spanTag.className = 'text-[9px] font-mono text-sky-200 font-bold';
+      }
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const formula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Verified Parameter: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 15;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 460 > window.innerWidth) {
+        left = e.clientX - 470;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>

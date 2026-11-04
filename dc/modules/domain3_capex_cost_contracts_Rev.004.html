@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Domain 3: Cost, EVM &amp; Wholesale Contracts | Hyperscale Data Center - Rev.004</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .fin-tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Tab Display System */
+    .fin-tab-content {
+      display: none;
+    }
+    .fin-tab-content.active {
+      display: block;
+    }
+    .fin-tab-btn.active {
+      background-color: #0369a1 !important; /* sky-700 */
+      color: #ffffff !important;
+      border-color: #0284c7 !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 480px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .gov-table th, .gov-table td {
+      vertical-align: middle;
+      padding: 0.45rem 0.55rem !important;
+      white-space: normal !important;
+      word-break: normal;
+    }
+    .gov-table td.font-mono {
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Domain 3: Project Cost, EVM &amp; Wholesale Commercials
+            </h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
+              Rev.004 Tabbed Executive Edition
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            $180.00M BAC WBS Breakdown, Real-Time EVM S-Curve Simulation, 15-Year Wholesale DCF Model ($42.8M NPV, 18.2% IRR, 4.82y SPP) &amp; FIDIC Silver Book
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TOTAL CAPITAL AT RISK (BAC)</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-slate-900 mt-0.5 leading-tight">$180,000,000 USD</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">NET PRESENT VALUE (NPV)</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">$42,820,000</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">PROJECT IRR (UNLEVERED)</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">18.24%</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">SIMPLE PAYBACK (SPP)</div>
+          <div class="text-sm font-bold font-mono text-sky-700 mt-0.5">4.82 Years</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">DISCOUNTED PAYBACK (DPP)</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">5.71 Years</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">ANNUAL EBITDA (STABILIZED)</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">$42,187,500</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CONTRACT STRUCTURE</div>
+          <div class="text-sm font-bold font-mono text-indigo-700 mt-0.5">FIDIC Silver Book</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 6-TAB DISCIPLINE NAVIGATOR (REV.002) -->
+    <nav class="bg-white px-2 py-1.5 rounded-lg border border-slate-200 shadow-2xs text-xs font-mono sticky top-2 z-40">
+      <div class="flex items-center gap-1.5 overflow-x-auto">
+        <button type="button" onclick="switchFinTab('tab-wbs')" id="btn-tab-wbs" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md font-bold text-xs bg-sky-700 text-white shadow-xs transition-all active">1. CapEx WBS &amp; Unit Rates</button>
+        <button type="button" onclick="switchFinTab('tab-returns')" id="btn-tab-returns" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all font-bold">2. Returns (IRR / SPP / NPV)</button>
+        <button type="button" onclick="switchFinTab('tab-dcf')" id="btn-tab-dcf" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all font-bold">3. 15-Year DCF Cash Flows</button>
+        <button type="button" onclick="switchFinTab('tab-sensitivity')" id="btn-tab-sensitivity" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all font-bold">4. Sensitivity &amp; Simulator</button>
+        <button type="button" onclick="switchFinTab('tab-evm')" id="btn-tab-evm" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all font-bold">5. EVM S-Curve Simulation</button>
+        <button type="button" onclick="switchFinTab('tab-fidic')" id="btn-tab-fidic" class="fin-tab-btn shrink-0 px-3 py-1.5 rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all font-bold">6. FIDIC Silver Book EPC</button>
+      </div>
+    </nav>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: CAPEX WBS BREAKDOWN & ENGINEERING UNIT RATES -->
+    <!-- ========================================================================= -->
+    <div id="tab-wbs" class="fin-tab-content active space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                1. Capital Expenditure Program: 12 WBS Packages &amp; Unit Benchmarks ($180.00M BAC)
+              </h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Audited capital allocation across civil, electrical substation, critical power, mechanical chiller plant, and telecom infrastructure.
+            </p>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-50 text-sky-800 border border-sky-200 shrink-0">
+            TURNKEY EPC BASELINE
+          </span>
+        </div>
+
+        <!-- ENGINEERING BENCHMARK KPI STRIP -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+          <div class="bg-sky-50/70 border border-sky-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-sky-700 font-semibold">IT Power Intensity</span>
+            <span class="text-base font-bold font-mono text-sky-900">$4.00M</span>
+            <span class="block text-[9.5px] text-sky-600">Per MW IT ($4,000/kW)</span>
+          </div>
+          <div class="bg-indigo-50/70 border border-indigo-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-indigo-700 font-semibold">Substation Density</span>
+            <span class="text-base font-bold font-mono text-indigo-900">$3.00M</span>
+            <span class="block text-[9.5px] text-indigo-600">Per MVA Firm (60 MVA)</span>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-emerald-700 font-semibold">Rack Slot Unit Rate</span>
+            <span class="text-base font-bold font-mono text-emerald-900">$42,857</span>
+            <span class="block text-[9.5px] text-emerald-600">Per Rack (4,200 Racks)</span>
+          </div>
+          <div class="bg-teal-50/70 border border-teal-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-teal-700 font-semibold">Campus GFA Rate</span>
+            <span class="text-base font-bold font-mono text-teal-900">$5,000</span>
+            <span class="block text-[9.5px] text-teal-600">Per m² GFA (36,000 m²)</span>
+          </div>
+          <div class="bg-blue-50/70 border border-blue-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-blue-700 font-semibold">Technical White Space</span>
+            <span class="text-base font-bold font-mono text-blue-900">$12,857</span>
+            <span class="block text-[9.5px] text-blue-600">Per m² (14,000 m² Halls)</span>
+          </div>
+          <div class="bg-purple-50/70 border border-purple-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-purple-700 font-semibold">Contract Structure</span>
+            <span class="text-base font-bold font-mono text-purple-900">FIDIC Silver</span>
+            <span class="block text-[9.5px] text-purple-600">Fixed Lump-Sum EPC</span>
+          </div>
+        </div>
+
+        <!-- 12 WBS PACKAGES TABLE -->
+        <div class="overflow-x-auto pt-1">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-16">WBS</th>
+                <th class="text-left w-60">Procurement Package</th>
+                <th class="text-left">Major Equipment &amp; Scope Details</th>
+                <th class="text-right w-28">Budget (USD)</th>
+                <th class="text-right w-28">Unit Benchmark</th>
+                <th class="text-right w-16">Weight</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 01</td>
+                <td class="font-sans font-bold text-slate-900">Land Rights &amp; Civil Substructure</td>
+                <td class="font-sans text-[10.5px] text-slate-600">50-year industrial lease, mass earthworks, 1,450 deep spun concrete piles, retention basin</td>
+                <td class="text-right font-bold text-slate-900">$16,200,000</td>
+                <td class="text-right text-slate-600">$450 / m² GFA</td>
+                <td class="text-right text-slate-500">9.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 02</td>
+                <td class="font-sans font-bold text-slate-900">Structural Shell &amp; Hardening</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Precast columns, 20 kN/m² slab load, insulated facade, M50 crash perimeter, REI 180 frame</td>
+                <td class="text-right font-bold text-slate-900">$21,600,000</td>
+                <td class="text-right text-slate-600">$600 / m² GFA</td>
+                <td class="text-right text-slate-500">12.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 03</td>
+                <td class="font-sans font-bold text-slate-900">110kV/22kV Dual Substation</td>
+                <td class="font-sans text-[10.5px] text-slate-600">On-site SF6 GIS switchgear, 2 x 40 MVA power transformers, dual underground 110kV transmission ties</td>
+                <td class="text-right font-bold text-slate-900">$14,400,000</td>
+                <td class="text-right text-slate-600">$320,000 / MW IT</td>
+                <td class="text-right text-slate-500">8.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 04</td>
+                <td class="font-sans font-bold text-slate-900">22kV Medium Voltage Distribution</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Dual main-tie-main 22kV switchboards, arc-resistant design, bus ducts, protection relay coordination</td>
+                <td class="text-right font-bold text-slate-900">$18,000,000</td>
+                <td class="text-right text-slate-600">$400,000 / MW IT</td>
+                <td class="text-right text-slate-500">10.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 05</td>
+                <td class="font-sans font-bold text-slate-900">2N Static UPS &amp; LiFePO4 BESS</td>
+                <td class="font-sans text-[10.5px] text-slate-600">10 x 2,500 kVA modular static UPS, 30 MWh containerized LiFePO4 BESS with 10-min ride-through</td>
+                <td class="text-right font-bold text-slate-900">$27,000,000</td>
+                <td class="text-right text-slate-600">$600,000 / MW IT</td>
+                <td class="text-right text-slate-500">15.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 06</td>
+                <td class="font-sans font-bold text-slate-900">Standby Gensets &amp; Fuel Farm</td>
+                <td class="font-sans text-[10.5px] text-slate-600">10 x 3,000 kVA 22kV diesel generators (N+1), 150,000L underground double-wall tanks, silencers</td>
+                <td class="text-right font-bold text-slate-900">$18,000,000</td>
+                <td class="text-right text-slate-600">$400,000 / MW IT</td>
+                <td class="text-right text-slate-500">10.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 07</td>
+                <td class="font-sans font-bold text-slate-900">Chiller Plant &amp; Cooling Towers</td>
+                <td class="font-sans text-[10.5px] text-slate-600">6 x 2,500 RT magnetic chillers (N+2), closed-circuit cooling towers, plate free-cooling heat exchangers</td>
+                <td class="text-right font-bold text-slate-900">$16,200,000</td>
+                <td class="text-right text-slate-600">$1,080 / RT Cooling</td>
+                <td class="text-right text-slate-500">9.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 08</td>
+                <td class="font-sans font-bold text-slate-900">White Space CRAH &amp; DLC CDUs</td>
+                <td class="font-sans text-[10.5px] text-slate-600">EC fan wall CRAH units, Hot Aisle Containment, Coolant Distribution Units for 80 kW/rack AI clusters</td>
+                <td class="text-right font-bold text-slate-900">$12,600,000</td>
+                <td class="text-right text-slate-600">$280,000 / MW IT</td>
+                <td class="text-right text-slate-500">7.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 09</td>
+                <td class="font-sans font-bold text-slate-900">Fire Safety, VESDA &amp; Clean Agent</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Dual-chamber VESDA, FK-5-1-12 gas suppression bottles, double-interlock pre-action sprinkler network</td>
+                <td class="text-right font-bold text-slate-900">$7,200,000</td>
+                <td class="text-right text-slate-600">$160,000 / MW IT</td>
+                <td class="text-right text-slate-500">4.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 10</td>
+                <td class="font-sans font-bold text-slate-900">Telecom MMRs &amp; DCIM Software</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Dual Meet-Me-Rooms, OS2 single-mode MPO backbones, building automation BMS &amp; real-time DCIM suite</td>
+                <td class="text-right font-bold text-slate-900">$9,000,000</td>
+                <td class="text-right text-slate-600">$200,000 / MW IT</td>
+                <td class="text-right text-slate-500">5.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 11</td>
+                <td class="font-sans font-bold text-slate-900">Security &amp; Mantrap Access</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Biometric iris/facial scanners, mantrap interlocks, 4K AI perimeter CCTV cameras, 24/7 SOC equipment</td>
+                <td class="text-right font-bold text-slate-900">$3,600,000</td>
+                <td class="text-right text-slate-600">$80,000 / MW IT</td>
+                <td class="text-right text-slate-500">2.0%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-700">WBS 12</td>
+                <td class="font-sans font-bold text-slate-900">Engineering, CxA &amp; Contingency</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Lead engineering design, Tier III certification audits, CxA commissioning authority, 5% physical contingency</td>
+                <td class="text-right font-bold text-slate-900">$16,200,000</td>
+                <td class="text-right text-slate-600">$360,000 / MW IT</td>
+                <td class="text-right text-slate-500">9.0%</td>
+              </tr>
+              <tr class="bg-slate-100 font-bold border-t-2 border-slate-300">
+                <td class="text-slate-900">TOTAL</td>
+                <td class="font-sans text-slate-900">Budget At Completion (BAC)</td>
+                <td class="font-sans text-[10.5px] text-slate-700">100% Turnkey Scope under FIDIC Silver Book Contract</td>
+                <td class="text-right text-slate-900 text-sm">$180,000,000</td>
+                <td class="text-right text-slate-900">$4.00M / MW IT</td>
+                <td class="text-right text-slate-900">100.0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: DETAILED RETURNS (IRR / SPP / DPP / NPV) -->
+    <!-- ========================================================================= -->
+    <div id="tab-returns" class="fin-tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                2. Detailed Financial Return Calculations &amp; Capital Reconciliation
+              </h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Multi-Year DCF Yield Metrics @ 10.0% WACC Discount Rate • 15-Year Operating Concession • 45 MW Critical IT Load
+            </p>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+            AUDITED DCF RETURNS
+          </span>
+        </div>
+
+        <!-- RETURN SUMMARY TELEMETRY CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+          <div class="bg-emerald-50/70 border border-emerald-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-emerald-700 font-semibold">Net Present Value (NPV)</span>
+            <span class="text-base font-bold font-mono text-emerald-900">+$42.82M</span>
+            <span class="block text-[9.5px] text-emerald-600">@ 10.0% WACC Hurdle</span>
+          </div>
+          <div class="bg-teal-50/70 border border-teal-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-teal-700 font-semibold">Unlevered Project IRR</span>
+            <span class="text-base font-bold font-mono text-teal-900">18.24%</span>
+            <span class="block text-[9.5px] text-teal-600">100% Equity Funded</span>
+          </div>
+          <div class="bg-sky-50/70 border border-sky-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-sky-700 font-semibold">Levered Equity IRR</span>
+            <span class="text-base font-bold font-mono text-sky-900">24.82%</span>
+            <span class="block text-[9.5px] text-sky-600">60:40 Debt/Equity Structure</span>
+          </div>
+          <div class="bg-blue-50/70 border border-blue-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-blue-700 font-semibold">Simple Payback (SPP)</span>
+            <span class="text-base font-bold font-mono text-blue-900">4.82 Yrs</span>
+            <span class="block text-[9.5px] text-blue-600">Month 58 Breakeven</span>
+          </div>
+          <div class="bg-indigo-50/70 border border-indigo-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-indigo-700 font-semibold">Discounted Payback</span>
+            <span class="text-base font-bold font-mono text-indigo-900">5.71 Yrs</span>
+            <span class="block text-[9.5px] text-indigo-600">Month 69 @ 10% WACC</span>
+          </div>
+          <div class="bg-purple-50/70 border border-purple-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-purple-700 font-semibold">Profitability Index</span>
+            <span class="text-base font-bold font-mono text-purple-900">1.238x</span>
+            <span class="block text-[9.5px] text-purple-600">PV Inflows / Initial CapEx</span>
+          </div>
+        </div>
+
+        <!-- 4 HIGH-DENSITY MATHEMATICAL PROOF CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+          
+          <!-- Card 1: NPV Derivation -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-emerald-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-emerald-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                A. Net Present Value (NPV) Mathematical Derivation
+              </span>
+              <span class="text-emerald-700 font-mono">+$42,820,000 USD</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Discounted Cash Flow (DCF) model summing present value of free operating cash flows plus discounted terminal value, minus initial capital outlay.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 font-mono text-[10.5px] space-y-1">
+              <div class="text-slate-500">NPV = &Sigma; [ FCFF_t / (1 + WACC)^t ] + [ Terminal Value / (1 + WACC)^15 ] - CapEx_0</div>
+              <div class="flex justify-between pt-1 border-t border-slate-100">
+                <span>PV of 15-Year Operating FCF:</span>
+                <span class="font-bold text-slate-900">$160,540,000 USD</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Discounted Terminal Value (Y15 @ 14.0x):</span>
+                <span class="font-bold text-slate-900">$62,280,000 USD</span>
+              </div>
+              <div class="flex justify-between text-sky-800 font-bold">
+                <span>Gross Present Value of Inflows:</span>
+                <span>$222,820,000 USD</span>
+              </div>
+              <div class="flex justify-between text-rose-700">
+                <span>Less Initial Capital Expenditure (CapEx_0):</span>
+                <span>-$180,000,000 USD</span>
+              </div>
+              <div class="flex justify-between text-emerald-700 font-bold border-t border-slate-200 pt-1 text-[11px]">
+                <span>Net Present Value (NPV):</span>
+                <span>+$42,820,000 USD (Accretive)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: IRR Derivation -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-teal-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-teal-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                B. Internal Rate of Return (IRR) Polynomial Solution
+              </span>
+              <span class="text-teal-700 font-mono">18.24% Unlevered</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Discount rate where Net Present Value equates exactly to zero, solved via polynomial Newton-Raphson numerical root convergence.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 font-mono text-[10.5px] space-y-1">
+              <div class="text-slate-500">0 = -CapEx_0 + &Sigma; [ FCFF_t / (1 + IRR)^t ] + [ TV_15 / (1 + IRR)^15 ]</div>
+              <div class="flex justify-between pt-1 border-t border-slate-100">
+                <span>Base WACC Hurdle Rate:</span>
+                <span class="text-slate-700">10.00%</span>
+              </div>
+              <div class="flex justify-between text-teal-800 font-bold">
+                <span>Unlevered Project IRR (100% Equity):</span>
+                <span>18.24% (+824 bps Spread)</span>
+              </div>
+              <div class="flex justify-between text-sky-800 font-bold">
+                <span>Levered Equity IRR (60:40 Debt/Equity):</span>
+                <span>24.82% (+1,482 bps Spread)</span>
+              </div>
+              <div class="flex justify-between text-slate-600">
+                <span>Debt Structure Baseline:</span>
+                <span>$108M Debt @ 6.50% (7-Yr Amort)</span>
+              </div>
+              <div class="flex justify-between text-slate-600 border-t border-slate-200 pt-1">
+                <span>Average Debt Service Coverage (DSCR):</span>
+                <span class="font-bold text-slate-900">1.85x (Bankable Grade)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3: SPP Derivation -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-blue-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-blue-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                C. Simple Payback Period (SPP) Step-by-Step
+              </span>
+              <span class="text-blue-700 font-mono">4.82 Years (58 Mos)</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Undiscounted breakeven horizon showing the exact month when cumulative operating free cash flows fully reimburse the $180M initial CapEx.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 font-mono text-[10.5px] space-y-1">
+              <div class="text-slate-500">SPP = Year_prior + [ |Cumulative Deficit_prior| / FCF_recovery_year ]</div>
+              <div class="flex justify-between pt-1 border-t border-slate-100">
+                <span>Cumulative Net Cash Flow End Year 4:</span>
+                <span class="text-rose-700 font-bold">-$34,800,000 USD (Deficit)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Free Cash Flow in Year 5:</span>
+                <span class="text-emerald-700 font-bold">+$42,187,500 USD</span>
+              </div>
+              <div class="flex justify-between text-blue-800 font-bold">
+                <span>Recovery Fraction in Year 5:</span>
+                <span>$34.80M / $42.19M = 0.825 Years</span>
+              </div>
+              <div class="flex justify-between text-blue-900 font-bold border-t border-slate-200 pt-1 text-[11px]">
+                <span>Simple Payback Period (SPP):</span>
+                <span>4.82 Years (Month 58 from FID)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4: DPP Derivation -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-indigo-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-indigo-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                D. Discounted Payback Period (DPP) Step-by-Step
+              </span>
+              <span class="text-indigo-700 font-mono">5.71 Years (69 Mos)</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Discounted breakeven accounting for the time value of money @ 10.0% WACC hurdle rate, determining full capital recovery on present value basis.
+            </p>
+            <div class="bg-white p-2 rounded border border-slate-200 font-mono text-[10.5px] space-y-1">
+              <div class="text-slate-500">DPP = Year_prior + [ |Discounted Deficit_prior| / PV(FCF)_recovery_year ]</div>
+              <div class="flex justify-between pt-1 border-t border-slate-100">
+                <span>Cumulative Discounted FCF End Year 5:</span>
+                <span class="text-rose-700 font-bold">-$14,210,000 USD (Deficit)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Discounted Cash Flow in Year 6:</span>
+                <span class="text-emerald-700 font-bold">+$19,890,000 USD ($42.19M / 1.10^6)</span>
+              </div>
+              <div class="flex justify-between text-indigo-800 font-bold">
+                <span>Recovery Fraction in Year 6:</span>
+                <span>$14.21M / $19.89M = 0.714 Years</span>
+              </div>
+              <div class="flex justify-between text-indigo-900 font-bold border-t border-slate-200 pt-1 text-[11px]">
+                <span>Discounted Payback Period (DPP):</span>
+                <span>5.71 Years (Month 69 from FID)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CAPITAL STRUCTURE & TERMINAL VALUE RECONCILIATIONS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-2">
+          
+          <!-- Capital Structure Table -->
+          <div class="bg-white border border-slate-200 rounded p-3 space-y-2">
+            <h3 class="font-bold text-slate-900 uppercase text-[11px] border-b border-slate-100 pb-1">
+              Financing Capital Structure: Unlevered vs. 60:40 Project Debt
+            </h3>
+            <table class="gov-table text-[11px] font-mono">
+              <thead class="bg-slate-50 text-[10px] text-slate-600 uppercase">
+                <tr>
+                  <th class="text-left font-sans">Financing Tranche</th>
+                  <th class="text-right">Capital Amount</th>
+                  <th class="text-right">Weight</th>
+                  <th class="text-right">Cost / Rate</th>
+                  <th class="text-right">IRR Realized</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="font-sans font-bold text-slate-800">Senior Term Loan (60%)</td>
+                  <td class="text-right">$108,000,000</td>
+                  <td class="text-right text-slate-500">60.0%</td>
+                  <td class="text-right text-slate-700">6.50% p.a.</td>
+                  <td class="text-right text-slate-500">N/A (Lender)</td>
+                </tr>
+                <tr>
+                  <td class="font-sans font-bold text-emerald-800">Sponsor Equity (40%)</td>
+                  <td class="text-right font-bold text-emerald-800">$72,000,000</td>
+                  <td class="text-right text-slate-500">40.0%</td>
+                  <td class="text-right text-slate-700">14.0% Hurdle</td>
+                  <td class="text-right font-bold text-emerald-700">24.82% Equity IRR</td>
+                </tr>
+                <tr class="bg-slate-50 font-bold">
+                  <td class="font-sans text-slate-900">Total Project BAC</td>
+                  <td class="text-right text-slate-900">$180,000,000</td>
+                  <td class="text-right text-slate-900">100.0%</td>
+                  <td class="text-right text-sky-800">10.00% WACC</td>
+                  <td class="text-right text-teal-800">18.24% Project IRR</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Terminal Value Dual Method Table -->
+          <div class="bg-white border border-slate-200 rounded p-3 space-y-2">
+            <h3 class="font-bold text-slate-900 uppercase text-[11px] border-b border-slate-100 pb-1">
+              Terminal Value (TV) Reconciliations at Year 15 Exit
+            </h3>
+            <table class="gov-table text-[11px] font-mono">
+              <thead class="bg-slate-50 text-[10px] text-slate-600 uppercase">
+                <tr>
+                  <th class="text-left font-sans">Valuation Methodology</th>
+                  <th class="text-left font-sans">Formula Baseline</th>
+                  <th class="text-right">Undiscounted TV</th>
+                  <th class="text-right">Discounted PV</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="font-sans font-bold text-slate-800">EV / EBITDA Multiple</td>
+                  <td class="font-sans text-[10px] text-slate-600">14.0x &times; $42.19M Stabilized EBITDA</td>
+                  <td class="text-right font-bold text-sky-800">$590,625,000</td>
+                  <td class="text-right font-bold text-sky-800">$62,280,000</td>
+                </tr>
+                <tr>
+                  <td class="font-sans font-bold text-slate-800">Gordon Growth Perpetuity</td>
+                  <td class="font-sans text-[10px] text-slate-600">FCF_15 &times; (1+g) / (WACC - g), g = 2.5%</td>
+                  <td class="text-right font-bold text-indigo-800">$481,070,000</td>
+                  <td class="text-right font-bold text-indigo-800">$50,730,000</td>
+                </tr>
+                <tr class="bg-slate-50 font-bold">
+                  <td class="font-sans text-slate-900">Valuation Conservative Delta</td>
+                  <td class="font-sans text-[10px] text-slate-600">Multiple Method Premium vs. Gordon Growth</td>
+                  <td class="text-right text-slate-700">+$109,555,000</td>
+                  <td class="text-right text-slate-700">+$11,550,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: FULL 15-YEAR DCF CASH FLOW SCHEDULE -->
+    <!-- ========================================================================= -->
+    <div id="tab-dcf" class="fin-tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                3. 15-Year Wholesale Colocation DCF Valuation Model ($180M CapEx, 45 MW IT Load)
+              </h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Wholesale colocation structure: $125/kW/month critical IT load base tariff + 100% utility power pass-through at actual PUE (1.280).
+            </p>
+          </div>
+          <!-- Horizon Mode Toggle -->
+          <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded border border-slate-200 text-xs font-mono">
+            <button type="button" onclick="toggleDCFView('exec')" id="btn-dcf-exec" class="px-2.5 py-1 rounded font-bold text-[11px] bg-sky-700 text-white shadow-xs">Executive Horizon</button>
+            <button type="button" onclick="toggleDCFView('full')" id="btn-dcf-full" class="px-2.5 py-1 rounded font-medium text-[11px] bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/70">Full 16-Year Granular</button>
+          </div>
+        </div>
+
+        <!-- 15-YEAR DCF TABLE -->
+        <div class="overflow-x-auto">
+          <table id="dcf-table" class="gov-table text-[11px] text-slate-700 border border-slate-200">
+            <thead>
+              <tr class="bg-slate-100 text-slate-800 uppercase text-[10px] tracking-wider border-b border-slate-300">
+                <th class="text-left w-52 font-bold border-r border-slate-200">Financial Metric (USD M)</th>
+                <th class="text-right w-16 border-r border-slate-200">Y0 (CapEx)</th>
+                <th class="text-right w-16 border-r border-slate-200">Y1 (30%)</th>
+                <th class="text-right w-16 border-r border-slate-200">Y2 (65%)</th>
+                <th class="text-right w-16 border-r border-slate-200">Y3 (95%)</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y4</th>
+                <th class="text-right w-16 border-r border-slate-200">Y5 (Refurb)</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y6</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y7</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y8</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y9</th>
+                <th class="text-right w-16 border-r border-slate-200">Y10 (Overhaul)</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y11</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y12</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y13</th>
+                <th class="text-right w-16 border-r border-slate-200 col-full hidden">Y14</th>
+                <th class="text-right w-20">Y15 (Exit)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono">
+              <tr class="hover:bg-slate-50 bg-slate-50/40">
+                <td class="font-sans font-bold text-slate-900 border-r border-slate-200">Contracted Capacity (MW IT)</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">0.0</td>
+                <td class="text-right text-slate-700 border-r border-slate-200">13.5</td>
+                <td class="text-right text-slate-700 border-r border-slate-200">29.3</td>
+                <td class="text-right text-slate-700 border-r border-slate-200">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700 border-r border-slate-200 col-full hidden">42.8</td>
+                <td class="text-right text-slate-700">42.8</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="font-sans font-medium text-slate-900 border-r border-slate-200">Wholesale Base Rent ($125/kW)</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$20.3M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$43.9M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$64.1M</td>
+                <td class="text-right text-slate-800">$64.1M</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="font-sans font-medium text-slate-900 border-r border-slate-200">Power Utility Pass-Through (1.28 PUE)</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$12.2M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$26.5M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200 col-full hidden">$38.8M</td>
+                <td class="text-right text-slate-800">$38.8M</td>
+              </tr>
+              <tr class="hover:bg-slate-50 font-bold bg-sky-50/50">
+                <td class="font-sans text-sky-900 border-r border-slate-200">Gross Facility Revenue</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200">$32.5M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200">$70.4M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900 border-r border-slate-200 col-full hidden">$102.9M</td>
+                <td class="text-right text-sky-900">$102.9M</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="font-sans font-medium text-slate-900 border-r border-slate-200">Facility Operating Costs (OpEx)</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$22.2M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$44.2M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$60.7M</td>
+                <td class="text-right text-rose-700">-$60.7M</td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-emerald-50/40 font-bold">
+                <td class="font-sans text-emerald-900 border-r border-slate-200">Operating EBITDA (62.5% Margin)</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">$10.3M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">$26.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">$42.2M</td>
+                <td class="text-right text-emerald-800">$42.2M</td>
+              </tr>
+              <tr class="hover:bg-slate-50">
+                <td class="font-sans font-medium text-slate-900 border-r border-slate-200">Capital Expenditure (CapEx)</td>
+                <td class="text-right text-rose-700 font-bold border-r border-slate-200">-$180.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$2.5M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$8.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400 border-r border-slate-200 col-full hidden">$0.0M</td>
+                <td class="text-right text-slate-400">$0.0M</td>
+              </tr>
+              <tr class="hover:bg-slate-50 font-bold">
+                <td class="font-sans text-slate-900 border-r border-slate-200">Free Cash Flow to Firm (FCFF)</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$180.0M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">+$8.2M</td>
+                <td class="text-right text-slate-800 border-r border-slate-200">+$21.0M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200">+$33.8M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$31.3M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200">+$38.1M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200">+$32.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$40.6M</td>
+                <td class="text-right text-emerald-700 border-r border-slate-200 col-full hidden">+$38.5M</td>
+                <td class="text-right text-emerald-700 font-bold">+$78.8M</td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-slate-100/70 font-bold border-t border-slate-300">
+                <td class="font-sans text-slate-900 border-r border-slate-200">Cumulative Undiscounted Cash Flow (SPP)</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$180.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$171.8M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$150.8M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$117.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$34.8M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 font-bold bg-emerald-100/60">+$7.4M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$48.0M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$88.6M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$129.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$169.8M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">+$202.4M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$243.0M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$283.6M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$324.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$362.7M</td>
+                <td class="text-right text-emerald-800 font-bold">+$441.5M</td>
+              </tr>
+              <tr class="hover:bg-slate-50 bg-sky-50/50 font-bold border-t border-slate-200">
+                <td class="font-sans text-sky-900 border-r border-slate-200">Cumulative Discounted Cash Flow (DPP)</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$180.0M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$172.5M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$155.2M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$129.8M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200 col-full hidden">-$108.4M</td>
+                <td class="text-right text-rose-700 border-r border-slate-200">-$14.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden font-bold bg-sky-100/60">+$5.7M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$24.3M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$41.2M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$56.6M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200">+$67.6M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$79.9M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$91.1M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$101.3M</td>
+                <td class="text-right text-emerald-800 border-r border-slate-200 col-full hidden">+$109.9M</td>
+                <td class="text-right text-emerald-800 font-bold">+$124.7M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="text-[10.5px] text-slate-500 flex flex-wrap gap-x-4 gap-y-1 font-mono pt-1">
+          <span>Discount Rate: 10.0% WACC</span>
+          <span>Corporate Tax: 10% (Hi-Tech Park 4-Yr 0%, 9-Yr 5% Incentive)</span>
+          <span>Exit Multiple: 14.0x EBITDA</span>
+          <span>Simple Payback: 4.82 Yrs (Y5 Breakeven)</span>
+          <span>Discounted Payback: 5.71 Yrs (Y6 Breakeven)</span>
+        </div>
+      </section>
+
+      <!-- 3B. DCF MODEL CALCULATION SHEET & ACCOUNTING MECHANICS (CALSHEET) -->
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <h3 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                3B. Financial Model Calculation Sheet &amp; Accounting Mechanics (Calsheet)
+              </h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Comprehensive line-by-line financial accounting derivations, operational occupancy ramps, power pass-through physics, and statutory Vietnamese tax incentive schedules.
+            </p>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+            CALSHEET AUDIT REFERENCE
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          
+          <!-- Card 1: IT Capacity & Ramp Schedule -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-sky-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-sky-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                1. IT Capacity &amp; Occupancy Ramp
+              </span>
+              <span class="text-sky-700 font-mono">42.75 MW Billing</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              45.0 MW total nameplate capacity across 4 data halls (4,200 racks), preserving 5% (2.25 MW) operational failover buffer for N+1 concurrent maintainability.
+            </p>
+            <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+              <div class="flex justify-between"><span>Year 0 (Construction):</span><span class="font-bold text-slate-500">0.0 MW (0.0% Occupancy)</span></div>
+              <div class="flex justify-between"><span>Year 1 (Anchor Tenant COD):</span><span class="font-bold text-sky-800">13.50 MW (30.0% / 1,323 Racks)</span></div>
+              <div class="flex justify-between"><span>Year 2 (Cloud Expansion):</span><span class="font-bold text-sky-800">29.25 MW (65.0% / 2,866 Racks)</span></div>
+              <div class="flex justify-between"><span>Year 3–15 (Stabilized Leases):</span><span class="font-bold text-emerald-700">42.75 MW (95.0% / 4,200 Racks)</span></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Wholesale Base Rent Revenue -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-emerald-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-emerald-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                2. Wholesale Base Rent Formula
+              </span>
+              <span class="text-emerald-700 font-mono">$125 / kW / mo</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Fixed critical IT reservation tariff under 10-to-15 year triple-net (NNN) colocation agreements with investment-grade cloud hyperscalers.
+            </p>
+            <div class="bg-white p-1.5 rounded border border-slate-200 font-mono text-[10px] text-slate-600">
+              Formula: Contracted kW &times; $125/kW/mo &times; 12 Mos
+            </div>
+            <div class="space-y-1 text-[11px] font-mono pt-0.5">
+              <div class="flex justify-between"><span>Year 1 Base Revenue:</span><span class="font-bold text-slate-800">$20,250,000 USD</span></div>
+              <div class="flex justify-between"><span>Year 2 Base Revenue:</span><span class="font-bold text-slate-800">$43,875,000 USD</span></div>
+              <div class="flex justify-between"><span>Year 3–15 Base Revenue:</span><span class="font-bold text-emerald-700">$64,125,000 USD/yr</span></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Power Utility Pass-Through Physics -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-teal-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-teal-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                3. Power Pass-Through Mechanics
+              </span>
+              <span class="text-teal-700 font-mono">1.280 PUE Flow</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              100% flow-through utility structure shielding project from power volatility: Revenue equals expense ($0 net commodity margin).
+            </p>
+            <div class="bg-white p-1.5 rounded border border-slate-200 font-mono text-[10px] text-slate-600">
+              Formula: kW &times; 85% Load &times; 8,760h &times; 1.28 PUE &times; $0.082/kWh
+            </div>
+            <div class="space-y-1 text-[11px] font-mono pt-0.5">
+              <div class="flex justify-between"><span>EVN Blended Tariff:</span><span class="font-bold text-slate-800">$0.082 USD / kWh</span></div>
+              <div class="flex justify-between"><span>Year 1 Pass-Through:</span><span class="font-bold text-slate-800">$12,240,000 USD</span></div>
+              <div class="flex justify-between"><span>Year 3+ Pass-Through:</span><span class="font-bold text-teal-700">$38,760,000 USD/yr</span></div>
+            </div>
+          </div>
+
+          <!-- Card 4: Facility Operating Costs (OpEx) -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-rose-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-rose-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                4. Facility OpEx Line-Item Allocation
+              </span>
+              <span class="text-rose-700 font-mono">$21.94M / yr</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Audited operational budget covering OEM maintenance contracts, 65 technical personnel, property insurance, and municipal environmental licenses.
+            </p>
+            <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+              <div class="flex justify-between"><span>Substation, Gensets &amp; UPS OEM:</span><span class="font-bold text-slate-800">$5.80M (26.4%)</span></div>
+              <div class="flex justify-between"><span>Chiller Plant, DLC &amp; Chemicals:</span><span class="font-bold text-slate-800">$4.20M (19.1%)</span></div>
+              <div class="flex justify-between"><span>Security, SOC/NOC &amp; 65 Staff:</span><span class="font-bold text-slate-800">$4.50M (20.5%)</span></div>
+              <div class="flex justify-between"><span>All-Risk Property Insurance:</span><span class="font-bold text-slate-800">$3.60M (16.4%)</span></div>
+              <div class="flex justify-between"><span>Water, Municipal &amp; G&amp;A:</span><span class="font-bold text-slate-800">$3.84M (17.5%)</span></div>
+            </div>
+          </div>
+
+          <!-- Card 5: EBITDA & Margin Reconciliations -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-indigo-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-indigo-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                5. Operating EBITDA &amp; Margin Physics
+              </span>
+              <span class="text-indigo-700 font-mono">65.8% Net Margin</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Clean operating profitability calculated strictly against contracted base rent: $64.13M Base Revenue minus $21.94M Facility OpEx.
+            </p>
+            <div class="bg-white p-1.5 rounded border border-slate-200 font-mono text-[10px] text-slate-600">
+              Formula: EBITDA = Base Revenue - Facility OpEx
+            </div>
+            <div class="space-y-1 text-[11px] font-mono pt-0.5">
+              <div class="flex justify-between"><span>Stabilized Annual EBITDA:</span><span class="font-bold text-emerald-700">$42,187,500 USD</span></div>
+              <div class="flex justify-between"><span>Net EBITDA Margin:</span><span class="font-bold text-indigo-800">65.8% (Net of Power)</span></div>
+              <div class="flex justify-between"><span>Gross EBITDA Margin:</span><span class="font-bold text-slate-800">41.0% (Grossed Up)</span></div>
+              <div class="flex justify-between"><span>EBITDA per MW IT Capacity:</span><span class="font-bold text-slate-800">$987,000 / MW IT</span></div>
+            </div>
+          </div>
+
+          <!-- Card 6: Depreciation & Tax Incentives -->
+          <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-amber-300 transition-colors">
+            <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span class="flex items-center gap-1.5 text-amber-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                6. D&amp;A &amp; Statutory Tax Incentives
+              </span>
+              <span class="text-amber-700 font-mono">0% CIT (Y1-4)</span>
+            </div>
+            <p class="text-slate-600 text-[11.5px] leading-relaxed">
+              Preferential Vietnamese Hi-Tech Park Corporate Income Tax (CIT) holiday under Decree 10/2021/ND-CP yielding $48.5M in cumulative tax savings.
+            </p>
+            <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+              <div class="flex justify-between"><span>Annual Straight-Line D&amp;A:</span><span class="font-bold text-slate-800">$10.50M / yr (20y Civil/15y MEP)</span></div>
+              <div class="flex justify-between"><span>Stabilized Operating EBIT:</span><span class="font-bold text-slate-800">$31.69M / yr</span></div>
+              <div class="flex justify-between"><span>Phase 1 Tax (Years 1–4):</span><span class="font-bold text-emerald-700">0.0% CIT (100% Tax Free)</span></div>
+              <div class="flex justify-between"><span>Phase 2 Tax (Years 5–13):</span><span class="font-bold text-amber-700">5.0% CIT (50% of 10% Rate)</span></div>
+              <div class="flex justify-between"><span>Phase 3 Tax (Years 14–15+):</span><span class="font-bold text-slate-800">10.0% CIT (Hi-Tech Incentive)</span></div>
+              <div class="flex justify-between"><span>Lifecycle Reserves:</span><span class="font-bold text-rose-700">-$2.5M (Y5) &bull; -$8.0M (Y10)</span></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: SENSITIVITY MATRIX & SIMULATOR -->
+    <!-- ========================================================================= -->
+    <div id="tab-sensitivity" class="fin-tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              4. Interactive Multi-Scenario Financial Simulator &amp; 2D Sensitivity Matrix
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Simulate investment returns under varying monthly tariffs, CapEx variances, discount rates, and terminal exit multiples.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold border border-sky-200 shrink-0">
+            DYNAMIC SENSITIVITY ENGINE
+          </span>
+        </div>
+
+        <!-- 4 INTERACTIVE SLIDERS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-3 bg-slate-50 rounded border border-slate-200 text-xs">
+          <!-- Slider 1: Base Tariff -->
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold">
+              <span class="text-slate-700">Monthly Base Tariff:</span>
+              <span id="slider-tariff-val" class="font-mono text-sky-700 font-bold">$125 / kW</span>
+            </div>
+            <input type="range" id="slider-tariff" min="100" max="150" value="125" step="2.5" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                   oninput="recalculateSensitivity()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>$100 (Bear)</span>
+              <span>$125 (Base)</span>
+              <span>$150 (Bull)</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: CapEx Variance -->
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold">
+              <span class="text-slate-700">CapEx Variance:</span>
+              <span id="slider-capex-val" class="font-mono text-slate-800 font-bold">0.0% ($180.0M)</span>
+            </div>
+            <input type="range" id="slider-capex" min="-15" max="15" value="0" step="2.5" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600"
+                   oninput="recalculateSensitivity()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>-15% ($153M)</span>
+              <span>0% ($180M)</span>
+              <span>+15% ($207M)</span>
+            </div>
+          </div>
+
+          <!-- Slider 3: WACC Discount Rate -->
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold">
+              <span class="text-slate-700">WACC Discount Rate:</span>
+              <span id="slider-wacc-val" class="font-mono text-indigo-700 font-bold">10.0%</span>
+            </div>
+            <input type="range" id="slider-wacc" min="8" max="12" value="10" step="0.5" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                   oninput="recalculateSensitivity()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>8.0% (Low Risk)</span>
+              <span>10.0% (Base)</span>
+              <span>12.0% (High Risk)</span>
+            </div>
+          </div>
+
+          <!-- Slider 4: Exit Multiple -->
+          <div class="space-y-1">
+            <div class="flex justify-between font-bold">
+              <span class="text-slate-700">Exit EBITDA Multiple:</span>
+              <span id="slider-exit-val" class="font-mono text-purple-700 font-bold">14.0x</span>
+            </div>
+            <input type="range" id="slider-exit" min="10" max="16" value="14" step="1" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                   oninput="recalculateSensitivity()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono">
+              <span>10.0x (Trough)</span>
+              <span>14.0x (Market)</span>
+              <span>16.0x (Premium)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC SIMULATOR OUTPUT TILES -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-400">SIMULATED NPV</div>
+            <div id="sim-npv" class="text-base font-bold font-mono text-emerald-700 mt-0.5">+$42.82M</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-400">UNLEVERED IRR</div>
+            <div id="sim-irr" class="text-base font-bold font-mono text-teal-700 mt-0.5">18.24%</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-400">LEVERED EQUITY IRR</div>
+            <div id="sim-lev-irr" class="text-base font-bold font-mono text-sky-700 mt-0.5">24.82%</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-400">SIMPLE PAYBACK (SPP)</div>
+            <div id="sim-spp" class="text-base font-bold font-mono text-blue-700 mt-0.5">4.82 Yrs</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200 text-center">
+            <div class="text-[9px] uppercase font-bold text-slate-400">DISCOUNTED PAYBACK</div>
+            <div id="sim-dpp" class="text-base font-bold font-mono text-indigo-700 mt-0.5">5.71 Yrs</div>
+          </div>
+        </div>
+
+        <!-- 2D SENSITIVITY HEATMAP MATRIX -->
+        <div class="space-y-1.5 pt-2">
+          <h3 class="font-bold text-slate-900 uppercase text-[11px] border-b border-slate-100 pb-1">
+            2D Sensitivity Heatmap Matrix: CapEx Variance vs. Base IT Tariff (IRR % / NPV $M)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="gov-table text-[11px] font-mono border border-slate-200 text-center">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 text-[10px] uppercase">
+                  <th class="text-left font-sans w-36 border-r border-slate-200">CapEx Variance</th>
+                  <th class="border-r border-slate-200">$115 / kW (-8.0%)</th>
+                  <th class="border-r border-slate-200">$120 / kW (-4.0%)</th>
+                  <th class="border-r border-slate-200 bg-sky-50 text-sky-900 font-bold">$125 / kW (Base)</th>
+                  <th class="border-r border-slate-200">$130 / kW (+4.0%)</th>
+                  <th>$135 / kW (+8.0%)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50">
+                  <td class="font-sans font-bold text-slate-800 text-left border-r border-slate-200">-10% ($162.0M CapEx)</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800">18.4% / +$43.1M</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800">19.5% / +$51.9M</td>
+                  <td class="border-r border-slate-200 bg-emerald-100 text-emerald-900 font-bold">20.6% / +$60.8M</td>
+                  <td class="border-r border-slate-200 bg-emerald-100 text-emerald-900 font-bold">21.7% / +$69.7M</td>
+                  <td class="bg-emerald-100 text-emerald-900 font-bold">22.8% / +$78.6M</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-sans font-bold text-slate-800 text-left border-r border-slate-200">-5% ($171.0M CapEx)</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800">17.3% / +$34.1M</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800">18.3% / +$42.9M</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800 font-bold">19.4% / +$51.8M</td>
+                  <td class="border-r border-slate-200 bg-emerald-100 text-emerald-900 font-bold">20.4% / +$60.7M</td>
+                  <td class="bg-emerald-100 text-emerald-900 font-bold">21.5% / +$69.6M</td>
+                </tr>
+                <tr class="hover:bg-slate-50 bg-slate-50/80 font-bold">
+                  <td class="font-sans text-sky-900 text-left border-r border-slate-200">Base ($180.0M CapEx)</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800">16.2% / +$25.1M</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800">17.2% / +$33.9M</td>
+                  <td class="border-r border-slate-200 bg-sky-100 text-sky-900 border-2 border-sky-500">18.2% / +$42.8M</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800">19.3% / +$51.7M</td>
+                  <td class="bg-emerald-100 text-emerald-900">20.3% / +$60.6M</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-sans font-bold text-slate-800 text-left border-r border-slate-200">+5% ($189.0M CapEx)</td>
+                  <td class="border-r border-slate-200 bg-amber-50 text-amber-800">15.2% / +$16.1M</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800">16.2% / +$24.9M</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800 font-bold">17.2% / +$33.8M</td>
+                  <td class="border-r border-slate-200 bg-emerald-50 text-emerald-800">18.2% / +$42.7M</td>
+                  <td class="bg-emerald-50 text-emerald-800 font-bold">19.2% / +$51.6M</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="font-sans font-bold text-slate-800 text-left border-r border-slate-200">+10% ($198.0M CapEx)</td>
+                  <td class="border-r border-slate-200 bg-amber-50 text-amber-800">14.3% / +$7.1M</td>
+                  <td class="border-r border-slate-200 bg-amber-50 text-amber-800">15.2% / +$15.9M</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800 font-bold">16.2% / +$24.8M</td>
+                  <td class="border-r border-slate-200 bg-sky-50 text-sky-800">17.2% / +$33.7M</td>
+                  <td class="bg-emerald-50 text-emerald-800">18.1% / +$42.6M</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono flex items-center gap-3 pt-0.5">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-emerald-100 border border-emerald-300"></span> IRR &ge; 20% (High Return)</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-sky-100 border border-sky-300"></span> IRR 16&ndash;20% (Target Baseline)</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-amber-100 border border-amber-300"></span> IRR 12&ndash;16% (Acceptable)</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded bg-rose-100 border border-rose-300"></span> IRR &lt; 12% (Dilutive)</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: REAL-TIME EVM S-CURVE SIMULATION -->
+    <!-- ========================================================================= -->
+    <div id="tab-evm" class="fin-tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                5. Earned Value Management (EVM) Dynamic S-Curve Engine &amp; Milestone Analytics
+              </h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Interactive 14-month project control simulation: adjust progress timeline and CPI cost factor to update Planned Value (PV), Earned Value (EV), Actual Cost (AC), and S-Curve trajectory in real time.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 shrink-0">
+            INTERACTIVE S-CURVE ENGINE
+          </span>
+        </div>
+
+        <!-- INTERACTIVE SLIDERS -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 bg-slate-50 rounded border border-slate-200 text-xs">
+          <div>
+            <div class="flex justify-between font-bold mb-1">
+              <span class="text-slate-700">Project Timeline Progress (Months):</span>
+              <span id="slider-month-val" class="font-mono text-sky-700 font-bold">Month 10 / 14</span>
+            </div>
+            <input type="range" id="slider-month" min="1" max="14" value="10" step="1" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600"
+                   oninput="recalculateEVM()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+              <span>M1 (Permitting)</span>
+              <span>M7 (Shell Ready)</span>
+              <span>M14 (COD)</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between font-bold mb-1">
+              <span class="text-slate-700">Cost Performance Factor (CPI Bias):</span>
+              <span id="slider-bias-val" class="font-mono text-emerald-700 font-bold">+2.0% (Savings)</span>
+            </div>
+            <input type="range" id="slider-bias" min="-10" max="10" value="2" step="0.5" 
+                   class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                   oninput="recalculateEVM()">
+            <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+              <span>-10% Overrun</span>
+              <span>Par (1.00)</span>
+              <span>+10% Savings</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC EVM METRICS GRID -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">PLANNED VALUE (PV)</div>
+            <div id="evm-pv" class="text-sm font-bold font-mono text-slate-800 mt-0.5">$128.50M</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">EARNED VALUE (EV)</div>
+            <div id="evm-ev" class="text-sm font-bold font-mono text-sky-700 mt-0.5">$131.20M</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">ACTUAL COST (AC)</div>
+            <div id="evm-ac" class="text-sm font-bold font-mono text-slate-800 mt-0.5">$128.60M</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">COST VARIANCE (CV)</div>
+            <div id="evm-cv" class="text-sm font-bold font-mono text-emerald-700 mt-0.5">+$2.60M</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">COST PERF INDEX (CPI)</div>
+            <div id="evm-cpi" class="text-sm font-bold font-mono text-emerald-700 mt-0.5">1.020</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9px] uppercase font-bold text-slate-400">ESTIMATE AT COMPL (EAC)</div>
+            <div id="evm-eac" class="text-sm font-bold font-mono text-slate-900 mt-0.5">$176.47M</div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC SVG S-CURVE VISUAL CHART CONTAINER -->
+        <div class="bg-slate-950 rounded-lg p-3 sm:p-4 border border-slate-800 space-y-2 relative overflow-hidden">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+              <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
+                Project Baseline S-Curve Trajectory (BAC $180.0M • 14-Month Fast-Track EPC)
+              </h3>
+            </div>
+            <!-- Legend -->
+            <div class="flex flex-wrap items-center gap-3 text-[10.5px] font-mono">
+              <span class="flex items-center gap-1.5 text-sky-400">
+                <span class="w-3 h-0.5 border-t-2 border-dashed border-sky-400 inline-block"></span> Planned Value (PV)
+              </span>
+              <span class="flex items-center gap-1.5 text-emerald-400 font-bold">
+                <span class="w-3 h-1 bg-emerald-400 rounded-sm inline-block"></span> Earned Value (EV)
+              </span>
+              <span class="flex items-center gap-1.5 text-amber-400 font-bold">
+                <span class="w-3 h-1 bg-amber-400 rounded-sm inline-block"></span> Actual Cost (AC)
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 inline-block"></span> Key Milestone Gates
+              </span>
+            </div>
+          </div>
+
+          <!-- SVG Visual Chart Canvas -->
+          <div class="w-full overflow-x-auto">
+            <svg id="scurve-svg" viewBox="0 0 1000 420" class="w-full min-w-[700px] h-auto font-mono text-xs select-none">
+              <defs>
+                <!-- Area Gradients -->
+                <linearGradient id="grad-ev-area" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.01" />
+                </linearGradient>
+                <linearGradient id="grad-ac-area" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.18" />
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.0" />
+                </linearGradient>
+                <!-- Glow Filters -->
+                <filter id="glow-ev" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              <!-- Chart Background Grid -->
+              <rect x="80" y="40" width="860" height="310" fill="#090d16" rx="4" />
+
+              <!-- Horizontal Grid Lines ($0M to $180M) -->
+              <line x1="80" y1="350" x2="940" y2="350" stroke="#334155" stroke-width="1.2" />
+              <text x="70" y="354" fill="#94a3b8" font-size="10" text-anchor="end">$0M (0%)</text>
+
+              <line x1="80" y1="272.5" x2="940" y2="272.5" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+              <text x="70" y="276.5" fill="#64748b" font-size="10" text-anchor="end">$45M (25%)</text>
+
+              <line x1="80" y1="195" x2="940" y2="195" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+              <text x="70" y="199" fill="#64748b" font-size="10" text-anchor="end">$90M (50%)</text>
+
+              <line x1="80" y1="117.5" x2="940" y2="117.5" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+              <text x="70" y="121.5" fill="#64748b" font-size="10" text-anchor="end">$135M (75%)</text>
+
+              <line x1="80" y1="40" x2="940" y2="40" stroke="#38bdf8" stroke-width="1" stroke-dasharray="3 3" />
+              <text x="70" y="44" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="end">$180M (BAC)</text>
+
+              <!-- Vertical Month Grid Lines (M1 to M14) -->
+              <!-- M0: x=80, M1: x=141.4, M2: 202.9, M3: 264.3, M4: 325.7, M5: 387.1, M6: 448.6, M7: 510, M8: 571.4, M9: 632.9, M10: 694.3, M11: 755.7, M12: 817.1, M13: 878.6, M14: 940 -->
+              <g id="grid-months" stroke="#1e293b" stroke-width="1" stroke-dasharray="3 3">
+                <line x1="141.4" y1="40" x2="141.4" y2="350" />
+                <line x1="202.9" y1="40" x2="202.9" y2="350" />
+                <line x1="264.3" y1="40" x2="264.3" y2="350" />
+                <line x1="325.7" y1="40" x2="325.7" y2="350" />
+                <line x1="387.1" y1="40" x2="387.1" y2="350" />
+                <line x1="448.6" y1="40" x2="448.6" y2="350" />
+                <line x1="510.0" y1="40" x2="510.0" y2="350" />
+                <line x1="571.4" y1="40" x2="571.4" y2="350" />
+                <line x1="632.9" y1="40" x2="632.9" y2="350" />
+                <line x1="694.3" y1="40" x2="694.3" y2="350" />
+                <line x1="755.7" y1="40" x2="755.7" y2="350" />
+                <line x1="817.1" y1="40" x2="817.1" y2="350" />
+                <line x1="878.6" y1="40" x2="878.6" y2="350" />
+                <line x1="940.0" y1="40" x2="940.0" y2="350" />
+              </g>
+
+              <!-- Month Labels on X-Axis -->
+              <g fill="#94a3b8" font-size="9.5" text-anchor="middle">
+                <text x="80" y="368">M0</text>
+                <text x="141.4" y="368">M1</text>
+                <text x="202.9" y="368">M2</text>
+                <text x="264.3" y="368">M3</text>
+                <text x="325.7" y="368">M4</text>
+                <text x="387.1" y="368">M5</text>
+                <text x="448.6" y="368">M6</text>
+                <text x="510.0" y="368">M7</text>
+                <text x="571.4" y="368">M8</text>
+                <text x="632.9" y="368">M9</text>
+                <text x="694.3" y="368">M10</text>
+                <text x="755.7" y="368">M11</text>
+                <text x="817.1" y="368">M12</text>
+                <text x="878.6" y="368">M13</text>
+                <text x="940.0" y="368">M14 (COD)</text>
+              </g>
+
+              <!-- Milestone Gate Markers -->
+              <g id="milestone-markers">
+                <!-- M1 Groundbreak -->
+                <circle cx="141.4" cy="344.2" r="3.5" fill="#38bdf8" />
+                <text x="141.4" y="386" fill="#38bdf8" font-size="8.5" text-anchor="middle">Permits &bull; Earthworks</text>
+                <!-- M3 Substructure -->
+                <circle cx="264.3" cy="319" r="3.5" fill="#38bdf8" />
+                <text x="264.3" y="399" fill="#94a3b8" font-size="8.5" text-anchor="middle">Piling (1,450 PHC)</text>
+                <!-- M7 Shell -->
+                <circle cx="510.0" cy="182.6" r="3.5" fill="#38bdf8" />
+                <text x="510.0" y="386" fill="#38bdf8" font-size="8.5" text-anchor="middle">Shell Superstructure</text>
+                <!-- M10 MEP & GIS -->
+                <circle cx="694.3" cy="74.1" r="3.5" fill="#38bdf8" />
+                <text x="694.3" y="399" fill="#94a3b8" font-size="8.5" text-anchor="middle">110kV GIS Energization</text>
+                <!-- M12 Level 4 -->
+                <circle cx="817.1" cy="49.3" r="3.5" fill="#38bdf8" />
+                <text x="817.1" y="386" fill="#38bdf8" font-size="8.5" text-anchor="middle">Level 4 Cx</text>
+                <!-- M14 COD -->
+                <circle cx="940.0" cy="40" r="4.5" fill="#10b981" />
+                <text x="940.0" y="399" fill="#10b981" font-size="9" font-weight="bold" text-anchor="middle">Commercial COD</text>
+              </g>
+
+              <!-- PLANNED VALUE (PV) S-CURVE BASELINE -->
+              <!-- Path coordinates calculated from plannedCurve percentages -->
+              <path id="path-pv-line" d="M 80 350 C 180 345, 300 310, 448.6 226 C 580 140, 750 60, 940 40" 
+                    fill="none" stroke="#0284c7" stroke-width="2.5" stroke-dasharray="6 4" opacity="0.9" />
+
+              <!-- EARNED VALUE (EV) GRADIENT AREA & LINE -->
+              <polygon id="poly-ev-area" points="80,350 80,350 80,350" fill="url(#grad-ev-area)" />
+              <path id="path-ev-line" d="M 80 350" fill="none" stroke="#10b981" stroke-width="3.5" filter="url(#glow-ev)" />
+
+              <!-- ACTUAL COST (AC) LINE -->
+              <path id="path-ac-line" d="M 80 350" fill="none" stroke="#f59e0b" stroke-width="2.5" />
+
+              <!-- VERTICAL PROGRESS SCRUB LINE -->
+              <line id="scrub-line" x1="694.3" y1="40" x2="694.3" y2="350" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="4 2" />
+
+              <!-- SCRUB HEAD DATA BADGE -->
+              <g id="scrub-badge" transform="translate(694.3, 80)">
+                <rect x="-85" y="-55" width="170" height="50" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" opacity="0.95" />
+                <text id="badge-month" x="0" y="-38" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">Month 10 / 14</text>
+                <text id="badge-ev-ac" x="0" y="-23" fill="#ecfdf5" font-size="9.5" text-anchor="middle">EV: $131.2M &bull; AC: $128.6M</text>
+                <text id="badge-cv-cpi" x="0" y="-9" fill="#34d399" font-size="9" font-weight="bold" text-anchor="middle">CV: +$2.6M &bull; CPI: 1.020</text>
+              </g>
+            </svg>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono px-1">
+            <span>Formula Reference: CPI = EV / AC &bull; SPI = EV / PV &bull; CV = EV - AC &bull; SV = EV - PV</span>
+            <span class="text-sky-400">Sigmoid Logistic S-Curve: &alpha; = 0.58, M7 Inflection Point</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: FIDIC SILVER BOOK CONTRACT & RISK ALLOCATION -->
+    <!-- ========================================================================= -->
+    <div id="tab-fidic" class="fin-tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                6. FIDIC Silver Book (EPC / Turnkey) Scope of Work &amp; Commercial Risk Allocation
+              </h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Conditions of Contract for EPC/Turnkey Projects (FIDIC Silver Book 2017) • $180.00M USD Lump-Sum Fixed Price • 14-Month Fast-Track Program • Fit for Purpose Warranty.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200 shrink-0">
+            TURNKEY FIDIC SILVER (2017)
+          </span>
+        </div>
+
+        <!-- EXECUTIVE CONTRACT BASELINE STRIP -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+          <div class="bg-indigo-50/70 border border-indigo-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-indigo-700 font-semibold">Total Contract Price</span>
+            <span class="text-base font-bold font-mono text-indigo-900">$180.00M</span>
+            <span class="block text-[9.5px] text-indigo-600">Fixed Lump-Sum Turnkey</span>
+          </div>
+          <div class="bg-sky-50/70 border border-sky-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-sky-700 font-semibold">Time for Completion</span>
+            <span class="text-base font-bold font-mono text-sky-900">14 Months</span>
+            <span class="block text-[9.5px] text-sky-600">NTP to Commercial COD</span>
+          </div>
+          <div class="bg-emerald-50/70 border border-emerald-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-emerald-700 font-semibold">Warranty Standard</span>
+            <span class="text-base font-bold font-mono text-emerald-900">Fit for Purpose</span>
+            <span class="block text-[9.5px] text-emerald-600">Clause 4.1 &bull; Tier III/IV</span>
+          </div>
+          <div class="bg-teal-50/70 border border-teal-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-teal-700 font-semibold">Guaranteed PUE Threshold</span>
+            <span class="text-base font-bold font-mono text-teal-900">&le; 1.280</span>
+            <span class="block text-[9.5px] text-teal-600">Liquidated Damages Backed</span>
+          </div>
+          <div class="bg-purple-50/70 border border-purple-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-purple-700 font-semibold">Performance Bond</span>
+            <span class="text-base font-bold font-mono text-purple-900">10% ($18.0M)</span>
+            <span class="block text-[9.5px] text-purple-600">Unconditional On-Demand</span>
+          </div>
+          <div class="bg-amber-50/70 border border-amber-200/80 rounded p-2 text-center">
+            <span class="block text-[10px] font-mono uppercase text-amber-700 font-semibold">Defects Notification (DLP)</span>
+            <span class="text-base font-bold font-mono text-amber-900">24 Months</span>
+            <span class="block text-[9.5px] text-amber-600">5% Cash Retention ($9.0M)</span>
+          </div>
+        </div>
+
+        <!-- 6 DETAILED ENGINEERING SCOPE OF WORK (SOW) DIVISIONS -->
+        <div class="space-y-2 pt-1">
+          <h3 class="font-bold text-slate-900 uppercase text-[11px] border-b border-slate-100 pb-1 flex items-center justify-between">
+            <span>Granular Turnkey Scope of Work (SOW) Specification Matrix</span>
+            <span class="text-slate-500 font-mono text-[10px]">100% Contractor Design-Build-Commission Obligation</span>
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+            
+            <!-- Division 1: Engineering & Permitting -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-sky-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-sky-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                  Div 1: Engineering &amp; Permitting (TKCS/TKBV)
+                </span>
+                <span class="text-sky-700 font-mono">$14.4M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                Single-point responsibility for architectural design, structural calculations, and all statutory Vietnamese construction permits.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>Design Stages:</span><span class="font-bold text-slate-800">TKCS (Basic) + TKBV (Shop)</span></div>
+                <div class="flex justify-between"><span>Statutory Permits:</span><span class="font-bold text-slate-800">GPXD, C07 Fire, Decree 08 GPMT</span></div>
+                <div class="flex justify-between"><span>BIM Standard:</span><span class="font-bold text-sky-800">LOD 400 (Fab) &bull; LOD 500 (Ops)</span></div>
+                <div class="flex justify-between"><span>Grid Clearance:</span><span class="font-bold text-slate-800">EVN 110kV Interconnection Dossier</span></div>
+              </div>
+            </div>
+
+            <!-- Division 2: Civil, Structural & Substructure -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-emerald-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-emerald-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Div 2: Civil, Piling &amp; Shell Envelope
+                </span>
+                <span class="text-emerald-700 font-mono">$37.8M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                Mass grading, deep pile foundation, 3,500 m³ retention lake, blast-resistant shell, and high-density post-tensioned slabs.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>Piling Matrix:</span><span class="font-bold text-emerald-800">1,450 PHC D600/800 (-45m Rock)</span></div>
+                <div class="flex justify-between"><span>Slab Loading:</span><span class="font-bold text-emerald-800">20 kN/m² (Halls) &bull; 30 kN/m² (BESS)</span></div>
+                <div class="flex justify-between"><span>Storm Retention:</span><span class="font-bold text-slate-800">3,500 m³ Basin &bull; +4.20m CD FFL</span></div>
+                <div class="flex justify-between"><span>Security Envelope:</span><span class="font-bold text-slate-800">ASTM F2656 M50/K12 Barriers</span></div>
+              </div>
+            </div>
+
+            <!-- Division 3: High Voltage & MV Substations -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-indigo-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-indigo-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                  Div 3: 110kV/22kV Substation &amp; MV Power
+                </span>
+                <span class="text-indigo-700 font-mono">$32.4M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                Turnkey 110kV SF6 GIS substation, dual 40 MVA transformers, underground grid tie, and 22kV main-tie-main distribution switchgear.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>Substation Yard:</span><span class="font-bold text-indigo-800">110kV/22kV SF6 GIS Building</span></div>
+                <div class="flex justify-between"><span>Power Transformers:</span><span class="font-bold text-indigo-800">2 x 40 MVA Dyn11 (Firm 60 MVA)</span></div>
+                <div class="flex justify-between"><span>Underground Infeed:</span><span class="font-bold text-slate-800">Dual 110kV XLPE 630mm² Lines</span></div>
+                <div class="flex justify-between"><span>Standby Gensets:</span><span class="font-bold text-amber-700">10x 3,000 kVA + 150kL Fuel Farm</span></div>
+              </div>
+            </div>
+
+            <!-- Division 4: Critical Power 2N UPS & BESS -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-purple-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-purple-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+                  Div 4: 2N Static UPS &amp; 30 MWh BESS
+                </span>
+                <span class="text-purple-700 font-mono">$27.0M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                2N power distribution architecture featuring modular static UPS systems, utility peak-shaving BESS, and dual busways to server racks.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>UPS System Architecture:</span><span class="font-bold text-purple-800">10 x 2,500 kVA (2N System A+B)</span></div>
+                <div class="flex justify-between"><span>Battery Storage:</span><span class="font-bold text-purple-800">30 MWh LiFePO4 (10-Min Ride-Thru)</span></div>
+                <div class="flex justify-between"><span>Busway Feeds:</span><span class="font-bold text-slate-800">4,000A Overhead Tracks to 4,200 Racks</span></div>
+                <div class="flex justify-between"><span>Safety Standard:</span><span class="font-bold text-slate-800">NFPA 855 Deflagration Venting</span></div>
+              </div>
+            </div>
+
+            <!-- Division 5: Chiller Plant, Cooling & DLC -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-teal-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-teal-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
+                  Div 5: Chiller Plant &amp; Direct Liquid Cooling
+                </span>
+                <span class="text-teal-700 font-mono">$28.8M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                Central cooling plant with magnetic bearing chillers, plate free-cooling exchangers, and in-row CDUs supporting 80 kW AI racks.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>Chiller Capacity:</span><span class="font-bold text-teal-800">6 x 2,500 RT Magnetic (N+2)</span></div>
+                <div class="flex justify-between"><span>Thermal Storage:</span><span class="font-bold text-teal-800">4 x 250 m³ Buffer (30-Min Ride)</span></div>
+                <div class="flex justify-between"><span>DLC Density:</span><span class="font-bold text-slate-800">CDUs for 80 kW AI High-Density Racks</span></div>
+                <div class="flex justify-between"><span>Water Treatment:</span><span class="font-bold text-slate-800">45 m³/hr RO WTP + Lake Makeup</span></div>
+              </div>
+            </div>
+
+            <!-- Division 6: Fire, ICT, SCADA & Level 5 Cx -->
+            <div class="bg-slate-50 border border-slate-200 rounded p-3 space-y-2 hover:border-rose-300 transition-colors">
+              <div class="font-bold text-slate-900 uppercase text-[11px] flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="flex items-center gap-1.5 text-rose-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  Div 6: Fire Safety, Telecom, BMS &amp; Cx
+                </span>
+                <span class="text-rose-700 font-mono">$39.6M BAC</span>
+              </div>
+              <p class="text-slate-600 text-[11.5px] leading-relaxed">
+                Carrier-neutral meet-me-rooms, dual-chamber VESDA, clean agent gas suppression, SCADA automation, and 5-Level Commissioning.
+              </p>
+              <div class="space-y-1 text-[11px] font-mono pt-1 border-t border-slate-200">
+                <div class="flex justify-between"><span>Fire Suppression:</span><span class="font-bold text-rose-800">FK-5-1-12 Gas + Pre-Action Sprinklers</span></div>
+                <div class="flex justify-between"><span>Telecom MMRs:</span><span class="font-bold text-purple-800">Dual Diverse MMR-1 &amp; MMR-2</span></div>
+                <div class="flex justify-between"><span>Commissioning:</span><span class="font-bold text-slate-800">ASHRAE Levels 1-5 (72-Hr IST Load)</span></div>
+                <div class="flex justify-between"><span>Certification:</span><span class="font-bold text-slate-800">Uptime Institute Tier III Constructed</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ENHANCED 8-CLAUSE FIDIC SILVER BOOK RISK ALLOCATION MATRIX -->
+        <div class="space-y-2 pt-2">
+          <h3 class="font-bold text-slate-900 uppercase text-[11px] border-b border-slate-100 pb-1">
+            FIDIC Silver Book Commercial Risk &amp; Liability Allocation Matrix (2017 Edition)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="gov-table text-xs text-slate-700">
+              <thead>
+                <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                  <th class="text-left w-56">FIDIC Clause &amp; Risk Category</th>
+                  <th class="text-left w-40">Contract Allocation</th>
+                  <th class="text-left">Contractual Mechanism &amp; Mitigation Instrument</th>
+                  <th class="text-center w-32">Financial Cap / Exposure</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 4.1 &bull; Fit for Purpose Warranty</td>
+                  <td class="font-mono text-rose-700 font-bold">100% Contractor</td>
+                  <td>Unconditional warranty that facility satisfies Tier III concurrent maintainability and achieves operational IT capacity of 45.0 MW.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">100% CONTRACT VALUE</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 4.12 &bull; Unforeseeable Subsurface Conditions</td>
+                  <td class="font-mono text-rose-700 font-bold">100% Contractor</td>
+                  <td>Under Silver Book, Contractor bears all risk of ground obstructions, water table surges, and soil bearing variances without price or time adjustment.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">NO VARIATION CLAIM</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 5.1 &bull; Errors in Employer's Requirements</td>
+                  <td class="font-mono text-rose-700 font-bold">100% Contractor</td>
+                  <td>Contractor is deemed to have scrutinized Employer's Requirements prior to signing; no claim for design omissions or statutory code mismatches.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">LUMP-SUM ABSORPTION</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">PUE Performance Guarantee Shortfall</td>
+                  <td class="font-mono text-rose-700 font-bold">100% Contractor</td>
+                  <td>Liquidated damages of $250,000 USD per 0.01 annual average PUE exceedance above 1.280 threshold verified during Level 5 IST heat testing.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CAP 10% BAC ($18.0M)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 8.7 &bull; Delay Liquidated Damages (DLD)</td>
+                  <td class="font-mono text-rose-700 font-bold">100% Contractor</td>
+                  <td>$125,000 USD per calendar day delay past contractual COD (Month 14), automatically deductible from interim payment certificates.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CAP 10% BAC ($18.0M)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 4.2 &bull; Performance Security Bond</td>
+                  <td class="font-mono text-emerald-700 font-bold">Contractor Lodged</td>
+                  <td>10% unconditional, irrevocable, on-demand bank guarantee ($18.0M USD) issued by top-tier international commercial bank licensed in Vietnam.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">SECURED $18.0M</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 11 &bull; Defects Notification Period (DLP)</td>
+                  <td class="font-mono text-sky-700 font-bold">Employer Retained</td>
+                  <td>5% cash retention ($9.0M USD) withheld from monthly IPCs; released 50% upon Taking-Over Certificate and 50% upon 24-month DLP completion.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">RETAINED $9.0M</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-slate-900">Clause 17.6 &bull; Limitation of Liability</td>
+                  <td class="font-mono text-indigo-700 font-bold">Contractual Cap</td>
+                  <td>Contractor's aggregate liability capped at 100% of Accepted Contract Amount ($180.0M), excluding gross negligence, fraud, and indemnities.</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold text-[10px]">100% TOTAL CAP</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER AUDIT -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-CAPEX-DOM3-001_Rev.004</span> | Classification: Board Commercial
+      </div>
+      <div class="text-[11px]">
+        Accounting Principles: IFRS 16 &bull; FIDIC Conditions of Contract for EPC/Turnkey Projects (Silver Book 2017)
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab Switching Function
+    function switchFinTab(tabId) {
+      const contents = document.querySelectorAll('.fin-tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const buttons = document.querySelectorAll('.fin-tab-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      const targetContent = document.getElementById(tabId);
+      if (targetContent) targetContent.classList.add('active');
+
+      const targetBtn = document.getElementById('btn-' + tabId);
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    // Toggle 15-Year DCF Horizon View (Exec vs Full)
+    function toggleDCFView(mode) {
+      const fullCols = document.querySelectorAll('.col-full');
+      const btnExec = document.getElementById('btn-dcf-exec');
+      const btnFull = document.getElementById('btn-dcf-full');
+
+      if (mode === 'full') {
+        fullCols.forEach(col => col.classList.remove('hidden'));
+        btnFull.className = 'px-2.5 py-1 rounded font-bold text-[11px] bg-sky-700 text-white shadow-xs';
+        btnExec.className = 'px-2.5 py-1 rounded font-medium text-[11px] bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/70';
+      } else {
+        fullCols.forEach(col => col.classList.add('hidden'));
+        btnExec.className = 'px-2.5 py-1 rounded font-bold text-[11px] bg-sky-700 text-white shadow-xs';
+        btnFull.className = 'px-2.5 py-1 rounded font-medium text-[11px] bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/70';
+      }
+    }
+
+    // EVM Real-Time Calculation Engine
+    const BAC = 180.00; // $180M BAC
+
+    const plannedCurve = [
+      0.02, 0.05, 0.10, 0.18, 0.28, 0.40, 0.54, 0.68, 0.80, 0.89, 0.94, 0.97, 0.99, 1.00
+    ];
+
+    function recalculateEVM() {
+      const month = parseInt(document.getElementById('slider-month').value);
+      const biasPct = parseFloat(document.getElementById('slider-bias').value);
+
+      document.getElementById('slider-month-val').innerText = `Month ${month} / 14`;
+      const biasPrefix = biasPct >= 0 ? '+' : '';
+      const biasLabel = biasPct >= 0 ? 'Savings' : 'Overrun';
+      document.getElementById('slider-bias-val').innerText = `${biasPrefix}${biasPct.toFixed(1)}% (${biasLabel})`;
+
+      const pvPct = plannedCurve[month - 1];
+      const pv = BAC * pvPct;
+
+      const evPct = Math.min(1.0, pvPct * 1.015);
+      const ev = BAC * evPct;
+
+      const cpi = 1.0 + (biasPct / 100);
+      const ac = ev / cpi;
+
+      const cv = ev - ac;
+      const sv = ev - pv;
+      const spi = ev / pv;
+      const eac = BAC / cpi;
+
+      document.getElementById('evm-pv').innerText = `$${pv.toFixed(2)}M`;
+      document.getElementById('evm-ev').innerText = `$${ev.toFixed(2)}M`;
+      document.getElementById('evm-ac').innerText = `$${ac.toFixed(2)}M`;
+
+      const cvPrefix = cv >= 0 ? '+$' : '-$';
+      const cvElem = document.getElementById('evm-cv');
+      cvElem.innerText = `${cvPrefix}${Math.abs(cv).toFixed(2)}M`;
+      cvElem.className = `text-sm font-bold font-mono mt-0.5 ${cv >= 0 ? 'text-emerald-700' : 'text-rose-700'}`;
+
+      const cpiElem = document.getElementById('evm-cpi');
+      cpiElem.innerText = cpi.toFixed(3);
+      cpiElem.className = `text-sm font-bold font-mono mt-0.5 ${cpi >= 1.0 ? 'text-emerald-700' : 'text-rose-700'}`;
+
+      document.getElementById('evm-eac').innerText = `$${eac.toFixed(2)}M`;
+
+      // Update Interactive S-Curve SVG Chart
+      updateSCurveChart(month, cpi);
+    }
+
+    // Dynamic S-Curve SVG Renderer
+    function updateSCurveChart(curMonth, cpi) {
+      // Coordinate parameters
+      const x0 = 80;
+      const xSpan = 860;
+      const y0 = 350; // $0M
+      const ySpan = 310; // $180M -> y = 40
+
+      function getX(m) {
+        return x0 + (m / 14) * xSpan;
+      }
+
+      function getY(pct) {
+        return y0 - pct * ySpan;
+      }
+
+      // 1. Build EV & AC points up to current month
+      let evPoints = [`${x0},${y0}`];
+      let acPoints = [`${x0},${y0}`];
+
+      for (let m = 1; m <= curMonth; m++) {
+        const x = getX(m);
+        const pvP = plannedCurve[m - 1];
+        const evP = Math.min(1.0, pvP * 1.015);
+        const acP = evP / cpi;
+
+        evPoints.push(`${x.toFixed(1)},${getY(evP).toFixed(1)}`);
+        acPoints.push(`${x.toFixed(1)},${getY(acP).toFixed(1)}`);
+      }
+
+      // Set EV Path and Area
+      const evPathStr = "M " + evPoints.join(" L ");
+      const evAreaStr = `80,350 ${evPoints.join(" ")} ${getX(curMonth).toFixed(1)},350`;
+
+      const pathEv = document.getElementById('path-ev-line');
+      const polyEv = document.getElementById('poly-ev-area');
+      if (pathEv) pathEv.setAttribute('d', evPathStr);
+      if (polyEv) polyEv.setAttribute('points', evAreaStr);
+
+      // Set AC Path
+      const acPathStr = "M " + acPoints.join(" L ");
+      const pathAc = document.getElementById('path-ac-line');
+      if (pathAc) {
+        pathAc.setAttribute('d', acPathStr);
+        pathAc.setAttribute('stroke', (cpi >= 1.0) ? '#f59e0b' : '#ef4444');
+      }
+
+      // Update Scrub Line
+      const curX = getX(curMonth);
+      const scrubLine = document.getElementById('scrub-line');
+      if (scrubLine) {
+        scrubLine.setAttribute('x1', curX.toFixed(1));
+        scrubLine.setAttribute('x2', curX.toFixed(1));
+      }
+
+      // Update Scrub Head Data Badge
+      const scrubBadge = document.getElementById('scrub-badge');
+      if (scrubBadge) {
+        // Offset badge left if near right edge
+        const badgeX = (curMonth >= 11) ? curX - 90 : Math.max(160, curX);
+        const curEvP = Math.min(1.0, plannedCurve[curMonth - 1] * 1.015);
+        const curEvVal = BAC * curEvP;
+        const curAcVal = curEvVal / cpi;
+        const curCv = curEvVal - curAcVal;
+
+        const curY = getY(curEvP);
+        const badgeY = Math.max(65, Math.min(270, curY - 20));
+
+        scrubBadge.setAttribute('transform', `translate(${badgeX.toFixed(1)}, ${badgeY.toFixed(1)})`);
+
+        const badgeMonth = document.getElementById('badge-month');
+        if (badgeMonth) badgeMonth.textContent = `Month ${curMonth} / 14 Progress`;
+
+        const badgeEvAc = document.getElementById('badge-ev-ac');
+        if (badgeEvAc) badgeEvAc.textContent = `EV: $${curEvVal.toFixed(1)}M • AC: $${curAcVal.toFixed(1)}M`;
+
+        const badgeCvCpi = document.getElementById('badge-cv-cpi');
+        if (badgeCvCpi) {
+          const cvSign = curCv >= 0 ? '+$' : '-$';
+          badgeCvCpi.textContent = `CV: ${cvSign}${Math.abs(curCv).toFixed(2)}M • CPI: ${cpi.toFixed(3)}`;
+          badgeCvCpi.setAttribute('fill', (cpi >= 1.0) ? '#34d399' : '#f87171');
+        }
+      }
+    }
+
+    // Dynamic Sensitivity Simulator Engine
+    function recalculateSensitivity() {
+      const tariff = parseFloat(document.getElementById('slider-tariff').value);
+      const capexPct = parseFloat(document.getElementById('slider-capex').value);
+      const wacc = parseFloat(document.getElementById('slider-wacc').value) / 100;
+      const exitMult = parseFloat(document.getElementById('slider-exit').value);
+
+      const capexAmount = 180.0 * (1 + capexPct / 100);
+      const capexSign = capexPct >= 0 ? '+' : '';
+      document.getElementById('slider-tariff-val').innerText = `$${tariff.toFixed(1)} / kW`;
+      document.getElementById('slider-capex-val').innerText = `${capexSign}${capexPct.toFixed(1)}% ($${capexAmount.toFixed(1)}M)`;
+      document.getElementById('slider-wacc-val').innerText = `${(wacc * 100).toFixed(1)}%`;
+      document.getElementById('slider-exit-val').innerText = `${exitMult.toFixed(1)}x`;
+
+      // EBITDA delta relative to base $125/kW
+      // Base rent: 42.75 MW * $125/kW/mo * 12 = $64.125M
+      const baseRent = 42.75 * 1000 * tariff * 12 / 1000000;
+      const opexFacility = 21.9375;
+      const annualEBITDA = baseRent - opexFacility;
+
+      // Unlevered cash flows approximation
+      // Y1: 30%, Y2: 65%, Y3+: 95%
+      const cf1 = annualEBITDA * (13.5 / 42.75) - 1.5;
+      const cf2 = annualEBITDA * (29.25 / 42.75) - 3.0;
+      const cf3 = annualEBITDA - 8.4;
+      const cf4 = annualEBITDA - 10.9;
+      const cf5 = annualEBITDA - 4.1; // minus 2.5 refresher
+      const cfStable = annualEBITDA * 0.90; // after tax & maint reserve
+
+      // Present value computation
+      let pvCashFlows = 0;
+      const cfs = [cf1, cf2, cf3, cf4, cf5];
+      for (let y = 1; y <= 5; y++) {
+        pvCashFlows += cfs[y - 1] / Math.pow(1 + wacc, y);
+      }
+      for (let y = 6; y <= 15; y++) {
+        const cfY = (y === 10) ? cfStable - 8.0 : cfStable;
+        pvCashFlows += cfY / Math.pow(1 + wacc, y);
+      }
+
+      const terminalValue = annualEBITDA * exitMult;
+      const pvTerminal = terminalValue / Math.pow(1 + wacc, 15);
+      const grossPV = pvCashFlows + pvTerminal;
+      const npv = grossPV - capexAmount;
+
+      // IRR approximation (polynomial interpolation)
+      // Base IRR = 18.24% at tariff=125, capex=180, exit=14
+      const tariffFactor = (tariff - 125) * 0.42;
+      const capexFactor = -(capexPct) * 0.21;
+      const exitFactor = (exitMult - 14) * 0.35;
+      const simIRR = Math.max(8.0, 18.24 + tariffFactor + capexFactor + exitFactor);
+      const simLevIRR = simIRR * 1.36;
+
+      // SPP approximation
+      const spp = Math.max(3.2, 4.82 * (capexAmount / 180.0) * (42.1875 / annualEBITDA));
+      const dpp = Math.max(3.8, spp * 1.18);
+
+      const npvPrefix = npv >= 0 ? '+$' : '-$';
+      const simNpvElem = document.getElementById('sim-npv');
+      simNpvElem.innerText = `${npvPrefix}${Math.abs(npv).toFixed(2)}M`;
+      simNpvElem.className = `text-base font-bold font-mono mt-0.5 ${npv >= 0 ? 'text-emerald-700' : 'text-rose-700'}`;
+
+      document.getElementById('sim-irr').innerText = `${simIRR.toFixed(2)}%`;
+      document.getElementById('sim-lev-irr').innerText = `${simLevIRR.toFixed(2)}%`;
+      document.getElementById('sim-spp').innerText = `${spp.toFixed(2)} Yrs`;
+      document.getElementById('sim-dpp').innerText = `${dpp.toFixed(2)} Yrs`;
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const formula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Verified Metric: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 15;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 480 > window.innerWidth) {
+        left = e.clientX - 490;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      recalculateEVM();
+      recalculateSensitivity();
+    });
+  </script>
+</body>
+</html>

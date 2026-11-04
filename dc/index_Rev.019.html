@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="./assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="./assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="./assets/images/apple-touch-icon.png">
+  <title>Hyperscale Data Center Executive Portal | 45 MW Tier III/IV Campus - Rev.019</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border-subtle: #e2e8f0;
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+    }
+
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .nav-btn, .tab-item {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .module-frame {
+      width: 100%;
+      border: none;
+      min-height: 1100px;
+      transition: opacity 0.2s ease-in-out;
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+
+  <!-- Master Top Navigation Bar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-2xs">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <img src="./assets/images/favicon.svg" alt="Portal Logo" class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg shadow-2xs shrink-0 select-none border border-slate-200/80 p-0.5 bg-slate-900">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-bold text-slate-900 tracking-tight truncate">
+              Hyperscale Data Center Executive Portal
+            </h1>
+            <span class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200 shrink-0">
+              Rev.019
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-500 font-medium truncate hidden sm:block">
+            45 MW IT Capacity &bull; ANSI/TIA-942 Rated 3 &bull; Tier III Concurrently Maintainable &bull; Vietnam Campus
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="hidden md:flex items-center gap-2 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-[11px] font-mono">
+          <span class="text-slate-500 font-bold">BAC:</span>
+          <span class="text-slate-900 font-bold">$180.00M USD</span>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-500 font-bold">PUE:</span>
+          <span class="text-emerald-700 font-bold">1.280</span>
+        </div>
+        <a href="https://invest.renewablevietnam.com/" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 text-[11px] font-semibold transition-colors shadow-2xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>DPPA / Green Power</span>
+          <span class="text-[10px]">&nearr;</span>
+        </a>
+        <span class="text-[11px] font-mono bg-sky-50 text-sky-700 font-semibold px-2.5 py-1 border border-sky-200 rounded-md">
+          Realistic 3D Master Layout Edition
+        </span>
+      </div>
+    </div>
+
+    <!-- Executive 6-Segment Grid Navigation (Simultaneous Visibility Across All Screens) -->
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 border-t border-slate-100 py-2.5">
+      <nav id="module-nav-bar" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        <!-- Rendered dynamically via modules_Rev.019.js -->
+      </nav>
+    </div>
+
+    <!-- Active Viewport Toolbar -->
+    <div class="bg-slate-50/70 border-t border-slate-200 px-3 sm:px-6 py-1.5 sm:py-2 text-xs">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-slate-600">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="text-slate-400 uppercase font-semibold text-[9.5px] sm:text-[10px] shrink-0">Active Module:</span>
+          <strong id="active-module-title" class="text-slate-900 font-bold text-xs truncate">Loading...</strong>
+        </div>
+        <a id="open-standalone-link" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white border border-slate-200 text-sky-700 font-medium hover:bg-sky-50 transition-colors shadow-2xs text-[11px] shrink-0 self-end sm:self-auto">
+          <span>Open Standalone View</span>
+          <span class="text-[11px]">&nearr;</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Module Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4">
+    <iframe id="module-viewport" src="about:blank" class="module-frame no-scrollbar" title="Executive Module Viewport"></iframe>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="bg-white border-t border-slate-200 py-3 px-4 text-center text-xs text-slate-500 font-medium">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span>Hyperscale Data Center Vietnam &bull; 45 MW Critical IT Load &bull; ANSI/TIA-942 Rated 3</span>
+      </div>
+      <div class="font-mono text-[11px] text-slate-400">
+        Statutory Compliance: QCVN 06:2022/BXD &bull; Decree 15/2021 &bull; Decree 06/2021 &bull; Decree 80/2024
+      </div>
+    </div>
+  </footer>
+
+  <script src="./modules_Rev.019.js"></script>
+  <script>
+    let activeModuleId = null;
+
+    if (!window.PORTAL_MODULES || window.PORTAL_MODULES.length === 0) {
+      window.PORTAL_MODULES = [
+        {
+          id: "master_governance",
+          tag: "FRAMEWORK",
+          shortTitle: "Project Delivery",
+          category: "Executive Governance",
+          title: "Project Delivery Framework",
+          description: "The '5+3' Capital Delivery System: 6-Stage Gate Process, 30-Deliverable RACI Matrix, and 8 Mission-Critical Execution Pillars.",
+          badge: "Framework",
+          file: "modules/master_project_governance_Rev.001.html"
+        },
+        {
+          id: "domain1_permitting",
+          tag: "DOMAIN 1",
+          shortTitle: "Permits & Statutory",
+          category: "Statutory Compliance",
+          title: "Domain 1: Permits, Grid Tie & Statutory Approvals",
+          description: "IRC/ERC, 1/500 Detailed Plan, TKCS Basic Design, QCVN 06:2022 PCCC Fire Safety, Decree 08/2022 GPMT, and EVN 110kV Substation Interconnection.",
+          badge: "Permits",
+          file: "modules/domain1_statutory_permitting_Rev.001.html"
+        },
+        {
+          id: "domain2_engineering_esg",
+          tag: "DOMAIN 2",
+          shortTitle: "Critical Engineering",
+          category: "Core Engineering & ESG",
+          title: "Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure",
+          description: "45 MW Critical IT Capacity, Dual 110kV/22kV Substation, 10x 3,000 kVA Gensets, 2N UPS + 30 MWh BESS, 15,000 RT Magnetic Chillers, 80 kW AI DLC, PUE 1.280.",
+          badge: "Engineering Systems",
+          file: "modules/domain2_datacenter_engineering_Rev.019.html"
+        },
+        {
+          id: "domain3_capex",
+          tag: "DOMAIN 3",
+          shortTitle: "Cost & Contracts",
+          category: "Commercial & Controls",
+          title: "Domain 3: Project Cost, EVM & Wholesale Commercials",
+          description: "$180.00M BAC Breakdown (12 WBS Packages), EVM S-Curve Progress Engine, 15-Year Wholesale DCF Model ($42.8M NPV, 18.2% IRR), and FIDIC Silver Book EPC.",
+          badge: "Cost & Contracts",
+          file: "modules/domain3_capex_cost_contracts_Rev.001.html"
+        },
+        {
+          id: "domain4_handover",
+          tag: "DOMAIN 4",
+          shortTitle: "5-Level Cx & Handover",
+          category: "Operational Readiness",
+          title: "Domain 4: 5-Level Commissioning, Blackout IST & Operational Handover",
+          description: "Cx Levels 1–5 (ASHRAE 0-2019 / Uptime), Decree 06/2021 Statutory Hoan Cong, 0ms UPS Ride-Through & 8.5s Blackout Transfer, and $9.0M DLP Bond.",
+          badge: "Cx & Handover",
+          file: "modules/domain4_commissioning_handover_Rev.001.html"
+        },
+        {
+          id: "bod_charter",
+          tag: "BOARD DOSSIER",
+          shortTitle: "Board Report",
+          category: "Executive Authorization",
+          title: "Board Report & Project Charter",
+          description: "Executive Capital Authorization Dossier: 45 MW Technical Sizing, Financial Sensitivity Stress Testing, and Formal Board Resolution.",
+          badge: "Board Report",
+          file: "modules/bod_capex_charter_report_Rev.001.html"
+        }
+      ];
+    }
+
+    function renderModuleNavigation() {
+      const navBar = document.getElementById('module-nav-bar');
+      navBar.innerHTML = '';
+
+      window.PORTAL_MODULES.forEach((mod, index) => {
+        const btn = document.createElement('button');
+        btn.id = 'nav-mod-' + mod.id;
+        btn.type = 'button';
+        btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ' +
+          (index === 2 
+            ? 'bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30' 
+            : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300');
+        
+        btn.innerHTML = `
+          <div class="flex items-center justify-between gap-1 mb-0.5">
+            <span class="text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold ${index === 2 ? 'text-sky-200' : 'text-slate-400'}">${mod.tag || 'MODULE'}</span>
+            <span class="text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold ${index === 2 ? 'bg-sky-800 text-sky-100' : 'bg-slate-100 text-slate-500'}">${mod.badge || ''}</span>
+          </div>
+          <div class="text-[11.5px] sm:text-xs font-bold leading-tight truncate">${mod.shortTitle || mod.title}</div>
+        `;
+        
+        btn.onclick = () => loadModule(mod.id);
+        navBar.appendChild(btn);
+      });
+
+      // Default load Domain 2 Realistic 3D view
+      if (window.PORTAL_MODULES.length > 2) {
+        loadModule(window.PORTAL_MODULES[2].id);
+      } else if (window.PORTAL_MODULES.length > 0) {
+        loadModule(window.PORTAL_MODULES[0].id);
+      }
+    }
+
+    function loadModule(moduleId) {
+      const targetMod = window.PORTAL_MODULES.find(m => m.id === moduleId);
+      if (!targetMod) return;
+
+      activeModuleId = moduleId;
+
+      document.getElementById('active-module-title').innerText = targetMod.title;
+      const standaloneLink = document.getElementById('open-standalone-link');
+      standaloneLink.href = targetMod.file;
+
+      window.PORTAL_MODULES.forEach(m => {
+        const btn = document.getElementById('nav-mod-' + m.id);
+        if (btn) {
+          const tagSpan = btn.querySelector('span:nth-child(1)');
+          const badgeSpan = btn.querySelector('span:nth-child(2)');
+          if (m.id === moduleId) {
+            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30';
+            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-sky-200';
+            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-sky-800 text-sky-100';
+          } else {
+            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300';
+            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-slate-400';
+            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-slate-100 text-slate-500';
+          }
+        }
+      });
+
+      const viewport = document.getElementById('module-viewport');
+      viewport.style.opacity = '0.3';
+      viewport.src = targetMod.file;
+      viewport.onload = () => {
+        viewport.style.opacity = '1';
+        try {
+          const doc = viewport.contentDocument || viewport.contentWindow.document;
+          if (doc && doc.body) {
+            const contentHeight = Math.max(doc.body.scrollHeight + 40, 1100);
+            viewport.style.minHeight = contentHeight + 'px';
+          }
+        } catch (e) {
+          viewport.style.minHeight = '1200px';
+        }
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', renderModuleNavigation);
+  </script>
+</body>
+</html>
