@@ -428,7 +428,450 @@
           <p class="text-[9px] sm:text-[10px] text-inkMuted dark:text-textDarkMuted">27.9 GW Wind + 20.6 GW Solar</p>
         </div>
       </div></section>
+    
     <!-- ==================================================================== -->
+    <!-- WORKSTATION ARCHITECTURAL MODE SWITCHER                              -->
+    <!-- ==================================================================== -->
+    <div class="sticky top-16 z-30 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md p-2.5 rounded-2xl border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <!-- 3-Segmented Mode Switcher -->
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto">
+        <button id="energyModeBtnMap" type="button" onclick="switchEnergyWorkstationMode('map')" class="energy-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+          <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+          </svg>
+          <span>Grid &amp; Asset Workstation</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold">960 Plants</span>
+        </button>
+
+        <button id="energyModeBtnPdp8" type="button" onclick="switchEnergyWorkstationMode('pdp8')" class="energy-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <span>PDP8 Quotas &amp; 12 Pillars</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-mono font-bold">107.5 GW</span>
+        </button>
+
+        <button id="energyModeBtnMarket" type="button" onclick="switchEnergyWorkstationMode('market')" class="energy-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          <span>Transition Flow &amp; Market Wire</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 font-mono font-bold">Real-time</span>
+        </button>
+      </div>
+
+      <!-- Quick Telemetry Status Indicator -->
+      <div class="hidden sm:flex items-center gap-2 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>NSMO Topology &middot; 1,915 Subs &middot; 42.8k km Spine</span>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 1: GRID CARTOGRAPHY & ASSETS DOSSIER WORKSTATION (HERO)         -->
+    <!-- ==================================================================== -->
+    <div id="energyWorkstationViewMap" class="space-y-6">
+      <!-- ==================================================================== -->
+    <!-- INTERACTIVE GIS TRANSMISSION & RENEWABLE POWER FLOW COCKPIT          -->
+    <!-- ==================================================================== -->
+    <section id="flowCockpitSection" class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-borderSlate/60 dark:border-darkBorder/60">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+            <span class="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-rose-600 dark:text-rose-400 font-semibold">
+              Decision 500/QĐ-TTg &middot; 500kV Supergrid Backbone &middot; Inter-Regional Wheeling Flow
+            </span>
+          </div>
+          <h2 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary">
+            National Electrical Transmission Spine &amp; Clean Energy Power Flow
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light max-w-4xl">
+            Live geospatial topology visualizing North-South power wheeling corridors between Central/Southern renewable hubs and Northern load centers across 65,566 km of AC circuits and 1,915 substations.
+          </p>
+        </div>
+
+        <!-- Quick Flow Telemetry Metrics -->
+        <div class="flex flex-wrap items-center gap-2 font-mono text-[11px] shrink-0">
+          <div class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 text-rose-700 dark:text-rose-400 font-semibold flex items-center gap-1.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            <span>500kV Flow: 15,888 km (180 Circuits)</span>
+          </div>
+          <div class="px-2.5 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            <span>220kV Grid: 27,007 km (780 Circuits)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDE-BY-SIDE TRANSMISSION MAP & NODE TELEMETRY WORKSTATION -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        
+        <!-- Left: Sovereign Vector Map (lg:col-span-8) -->
+        <div class="lg:col-span-7 xl:col-span-6 relative h-[560px] sm:h-[600px] rounded-2xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-sm bg-slate-950 flex flex-col">
+          <div id="mainEnergyFlowMap" class="w-full h-full z-10"></div>
+
+          <!-- Top Right Layer Filter Pills & Analytical Modes -->
+          <div class="absolute top-3 right-3 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px]">
+            <button id="mapToggleFlow500Btn" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold transition-all cursor-pointer" title="500kV Supergrid Backbone Flow">
+              500kV Spine Flow
+            </button>
+            <button id="mapToggleGrid220Btn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-amber-600 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="220kV Regional Grid Corridors">
+              220kV Grid
+            </button>
+            <button id="mapToggleAssetsBtn" class="px-2.5 py-1 rounded-lg bg-teal-600 text-white font-semibold border border-teal-500/20 transition-all cursor-pointer" title="960 Operating Clean Energy Generation Plants">
+              Clean Plants (960)
+            </button>
+            <button id="mapToggleHeadroomBtn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="Substation Transformer Headroom Audit">
+              Grid Headroom
+            </button>
+            <button id="mapToggleResetViewBtn" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-darkCard hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" title="Reset Vietnam View">
+              Reset ⟲
+            </button>
+          </div>
+
+          <!-- Bottom Left Interactive Flow Telemetry Legend -->
+          <div class="absolute bottom-3 left-3 z-20 p-3 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px] space-y-1.5 max-w-xs">
+            <div class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider text-[11px] flex items-center justify-between">
+              <span>Transmission Corridor Flow</span>
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-1 rounded-full bg-rose-500 shadow-sm"></span>
+              <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">500kV North-South Spine</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-1 rounded-full bg-amber-500"></span>
+              <span class="text-inkPrimary dark:text-textDarkPrimary">220kV Intertie Regional Corridors</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
+              <span class="text-inkPrimary dark:text-textDarkPrimary">Operational Generation Plants (960)</span>
+            </div>
+            <div class="pt-1.5 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between text-[9px] text-slate-400">
+              <span>Model: NSMO Vietnam 2025</span>
+              <span>65,566 km Circuits</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Node Telemetry & Substation Inspection Dossier (lg:col-span-4) -->
+        <div id="nodeInspectionContainer" class="lg:col-span-5 xl:col-span-6 h-[560px] sm:h-[600px] flex flex-col rounded-2xl border border-borderSlate dark:border-darkBorder bg-white dark:bg-darkSurface shadow-sm overflow-hidden">
+          <!-- Dynamic Dossier Header -->
+          <div class="p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-inkPrimary dark:text-textDarkPrimary">Node Telemetry Dossier</h3>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="nodeStatusPill" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">National Overview</span>
+              <button id="resetNodePanelBtn" onclick="resetNodeInspectionPanel()" class="p-1 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors hidden cursor-pointer" title="Reset to National Overview">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Dossier Body Content -->
+          <div id="nodePanelContent" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-xs">
+            <!-- Populated via resetNodeInspectionPanel() on DOM load -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- ==================================================================== -->
+    <!-- MODULE 2: TRANSITION ENERGY FLOW & DYNAMIC POWER BALANCE WORKSTATION -->
+    <!-- ==================================================================== -->
+    
+      <!-- FULL-WIDTH ASSET DOSSIER & PDP8 PIPELINE WORKSPACE -->
+    <section id="cockpitContainer" class="w-full flex flex-col min-h-[640px] lg:h-[calc(100vh-230px)]">
+      
+      <!-- SYNCHRONIZED ASSET DOSSIER & PDP8 PIPELINE (FULL WIDTH) -->
+      <div id="dossierContainer" class="w-full flex flex-col h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
+        
+        <!-- View Switcher & Filter Toolbar (Sticky Header) -->
+        <div class="p-3 sm:p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 space-y-2.5 shrink-0">
+          <!-- 2-Tab View Navigation Switcher (Assets Dossier & PDP8 Priority) -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-1 p-0.5 rounded-lg bg-slate-200/60 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-[11px] w-full sm:w-auto">
+                            <button id="tabAssetsBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md bg-teal-600 text-white font-semibold transition-all cursor-pointer">
+                Assets Dossier (<span id="totalAssetsCount">960</span>)
+              </button>
+              <button id="tabPipelineBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+                PDP8 Priority (<span id="pipelineCount">10</span>)
+              </button>
+              <button id="tabGridBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
+                National Grid (<span id="totalGridSubstationsCount">1,915</span>)
+              </button>
+            </div>
+
+            <button id="tableOrCardsToggleBtn" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 font-mono text-[10px] cursor-pointer" title="Toggle Cards / Table Layout">
+              <svg id="viewModeIcon" class="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              <span id="viewModeText">Cards</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Filter Controls (Active for Assets Dossier) -->
+          <div id="dossierFiltersContainer" class="space-y-2">
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="text" id="projectSearchInput" placeholder="Filter by asset name, developer, or province..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs focus:outline-none focus:border-teal-500 font-mono transition-colors" />
+                <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <select id="provinceSelect" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-teal-500 transition-colors cursor-pointer max-w-[140px] sm:max-w-[180px]">
+                <option value="ALL">All Provinces (63)</option>
+              </select>
+            </div>
+
+            <!-- Sector Pills Carousel -->
+            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar font-mono text-[10px] pt-0.5">
+              <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Fuel:</span>
+              <button data-type="ALL" class="fuel-pill px-2.5 py-0.5 rounded-md bg-teal-600 text-white font-semibold shrink-0 cursor-pointer">All</button>
+              <button data-type="Hydropower" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Hydro</button>
+              <button data-type="Solar" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Solar</button>
+              <button data-type="Wind" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Wind</button>
+              <button data-type="LNG / gas" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">LNG</button>
+              <button data-type="Biomass" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Biomass</button>
+              <button id="resetFiltersBtn" class="ml-auto text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] underline shrink-0 cursor-pointer">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable Dossier Content -->
+        <div id="dossierScrollArea" class="flex-1 overflow-y-auto p-3 sm:p-3.5 space-y-3 custom-scrollbar">
+          
+          <!-- VIEW 1: ASSETS DOSSIER (CARDS & TABLE) -->
+          <div id="viewAssetsDossier" class="space-y-2.5">
+            <!-- Cards Container -->
+            <div id="dossierCardsList" class="hidden space-y-2">
+              <!-- Dynamically rendered via renderAssetsDossier() -->
+              <div class="p-8 text-center text-slate-400 font-mono text-xs">
+                Loading Clean Energy Assets Telemetry...
+              </div>
+            </div>
+
+            <!-- Table Container (Hidden by default, toggled via tableOrCardsToggleBtn) -->
+            <div id="dossierTableContainer" class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="border-b border-borderSlate dark:border-darkBorder bg-slate-50/50 dark:bg-darkCard/50 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted uppercase tracking-wider">
+                      <th class="p-2.5">Facility Name</th>
+                      <th class="p-2.5">Developer / Sponsor</th>
+                      <th class="p-2.5">Type</th>
+                      <th class="p-2.5">Capacity</th>
+                      <th class="p-2.5">Province</th>
+                      <th class="p-2.5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projectsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- VIEW 2: PDP8 PRIORITY PIPELINE -->
+          <div id="viewPipelineContainer" class="hidden space-y-3">
+            <div class="flex items-center justify-between pb-1 font-mono text-[11px] text-inkMuted dark:text-textDarkMuted border-b border-borderSlate/60 dark:border-darkBorder/60">
+              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary">Mandated National Projects (Decision 500/QĐ-TTg)</span>
+              <span>10 Strategic Facilities</span>
+            </div>
+            <div id="pdp8ProjectsGrid" class="space-y-2.5">
+              <!-- Populated dynamically from pdp8_targets.json priority_projects -->
+            </div>
+          </div>
+
+          <!-- VIEW 3: NATIONAL ELECTRICAL GRID NETWORK (NSMO 2025 MODEL) -->
+          <div id="viewGridContainer" class="hidden space-y-3">
+            <!-- Grid Navigation Sub-Bar & Voltage Filters -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-slate-50/80 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder">
+              <div class="flex items-center gap-1 font-mono text-[11px]">
+                <button id="gridSubViewMapBtn" class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer">
+                  Topology Map
+                </button>
+                <button id="gridSubViewSubstationsBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
+                  Substations (1,915)
+                </button>
+                <button id="gridSubViewLinesBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
+                  Transmission Lines (2,877)
+                </button>
+              </div>
+
+              <!-- Voltage Selector Pills -->
+              <div class="flex items-center gap-1 font-mono text-[10px] overflow-x-auto no-scrollbar">
+                <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Voltage:</span>
+                <button data-v="ALL" class="grid-v-pill px-2 py-0.5 rounded bg-rose-600 text-white font-semibold cursor-pointer">All</button>
+                <button data-v="500" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 cursor-pointer">500 kV (92)</button>
+                <button data-v="220" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 cursor-pointer">220 kV (326)</button>
+                <button data-v="110" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-sky-300 dark:border-sky-800 text-sky-600 dark:text-sky-400 cursor-pointer">110 kV (1,497)</button>
+              </div>
+            </div>
+
+            <!-- SUB-VIEW A: LEAFLET GIS TOPOLOGY MAP -->
+            <div id="gridSubViewMap" class="space-y-2">
+              <div class="relative w-full h-[540px] rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-inner bg-slate-900">
+                <div id="gridTopologyMap" class="w-full h-full z-10"></div>
+                <!-- Interactive Floating Legend -->
+                <div class="absolute bottom-3 left-3 z-20 p-2.5 rounded-lg bg-white/90 dark:bg-darkSurface/90 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-md font-mono text-[10px] space-y-1">
+                  <div class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider mb-1">Grid Corridors</div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-1 rounded-full bg-rose-500"></span>
+                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">500 kV Supergrid (15,888 km)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-1 rounded-full bg-amber-500"></span>
+                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">220 kV Regional Grid (27,007 km)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-3.5 h-1 rounded-full bg-cyan-500"></span>
+                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">110 kV Interties (22,672 km)</span>
+                  </div>
+                  <div class="pt-1 border-t border-borderSlate/60 dark:border-darkBorder/60 text-[9px] text-slate-400">
+                    Source: NSMO Model Vietnam 2025
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-VIEW B: SUBSTATIONS DIRECTORY TABLE -->
+            <div id="gridSubViewSubstations" class="hidden space-y-2.5">
+              <div class="flex items-center gap-2">
+                <input type="text" id="gridSubstationSearchInput" placeholder="Search substations by name, province, or bay code..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
+                <span id="gridSubstationCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
+                  Showing 1,915 Substations
+                </span>
+              </div>
+              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
+                <div class="overflow-x-auto max-h-[500px]">
+                  <table class="w-full text-left border-collapse text-xs">
+                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
+                      <tr>
+                        <th class="p-2.5">Substation Name</th>
+                        <th class="p-2.5 text-center">Voltage Class</th>
+                        <th class="p-2.5 text-right">Transformers</th>
+                        <th class="p-2.5 text-right">Generation</th>
+                        <th class="p-2.5">Location / Province</th>
+                        <th class="p-2.5 text-right">Technical Dossier</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gridSubstationsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
+                      <!-- Populated dynamically via renderGridSubstationsTable() -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUB-VIEW C: TRANSMISSION LINES DIRECTORY TABLE -->
+            <div id="gridSubViewLines" class="hidden space-y-2.5">
+              <div class="flex items-center gap-2">
+                <input type="text" id="gridLineSearchInput" placeholder="Search transmission lines by corridor, substation, or conductor..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
+                <span id="gridLineCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
+                  Showing 2,877 Circuits
+                </span>
+              </div>
+              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
+                <div class="overflow-x-auto max-h-[500px]">
+                  <table class="w-full text-left border-collapse text-xs">
+                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
+                      <tr>
+                        <th class="p-2.5">Circuit Corridor (From - To)</th>
+                        <th class="p-2.5 text-center">Voltage</th>
+                        <th class="p-2.5">Conductor</th>
+                        <th class="p-2.5 text-right">R (Ω)</th>
+                        <th class="p-2.5 text-right">X (Ω)</th>
+                        <th class="p-2.5 text-right">Length (km)</th>
+                      </tr>
+                    </thead>
+                    <tbody id="gridLinesTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
+                      <!-- Populated dynamically via renderGridLinesTable() -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Bottom Pagination Bar -->
+        <div id="dossierPaginationBar" class="p-2.5 sm:p-3 border-t border-borderSlate dark:border-darkBorder bg-slate-50/60 dark:bg-darkCard/50 flex items-center justify-between text-xs font-mono text-inkMuted dark:text-textDarkMuted shrink-0">
+          <div id="paginationInfo" class="text-[11px]">Showing 1 to 25 of 960 assets</div>
+          <div class="flex items-center gap-1.5">
+            <button id="prevPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Previous</button>
+            <span id="currentPageIndicator" class="px-1.5 text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">1 / 39</span>
+            <button id="nextPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Next</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  
+      <!-- INTERACTIVE PROVINCIAL CAPACITY & ASSET LIFECYCLE CHARTS -->
+    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-2.5">
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-inkPrimary dark:text-textDarkPrimary flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            Provincial Capacity Intelligence &amp; Asset Lifecycle Analytics
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
+            Interactive multi-fuel generation analytics across 960+ assets. Click any province bar or status slice to filter the table below.
+          </p>
+        </div>
+        <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20 self-start sm:self-auto">
+          Interactive Cross-Filter Enabled
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Chart 1: Top 10 Energy Provinces (8 cols) -->
+        <div class="lg:col-span-8 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
+          <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
+            <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Top 10 Energy Provinces (MW Capacity)</span>
+            <span class="text-teal-600 dark:text-teal-400">Click bar &rarr; Filter Table</span>
+          </div>
+          <div class="relative h-56">
+            <canvas id="energyTopProvincesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Asset Status Lifecycle (4 cols) -->
+        <div class="lg:col-span-4 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
+              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Commercial Status</span>
+              <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+            </div>
+            <div class="relative h-48 flex items-center justify-center">
+              <canvas id="energyStatusDoughnutChart"></canvas>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px] text-slate-400">
+            <span>Operational Baselines</span>
+            <span>PDP8 Quota Target</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+        
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VIEW 2: PDP8 STATUTORY QUOTAS & 12 STRATEGIC PILLARS                 -->
+    <!-- ==================================================================== -->
+    <div id="energyWorkstationViewPdp8" class="space-y-6 hidden">
+      <!-- ==================================================================== -->
     <!-- PDP8 STATUTORY SECTOR TARGETS & FUEL TRANSITION MATRIX TABLE         -->
     <!-- ==================================================================== -->
     
@@ -1334,169 +1777,14 @@
 
 
 
-    <!-- INTERACTIVE PROVINCIAL CAPACITY & ASSET LIFECYCLE CHARTS -->
-    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-2.5">
-        <div>
-          <h2 class="text-sm sm:text-base font-bold text-inkPrimary dark:text-textDarkPrimary flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
-            Provincial Capacity Intelligence &amp; Asset Lifecycle Analytics
-          </h2>
-          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
-            Interactive multi-fuel generation analytics across 960+ assets. Click any province bar or status slice to filter the table below.
-          </p>
-        </div>
-        <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20 self-start sm:self-auto">
-          Interactive Cross-Filter Enabled
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <!-- Chart 1: Top 10 Energy Provinces (8 cols) -->
-        <div class="lg:col-span-8 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-          <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-            <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Top 10 Energy Provinces (MW Capacity)</span>
-            <span class="text-teal-600 dark:text-teal-400">Click bar &rarr; Filter Table</span>
-          </div>
-          <div class="relative h-56">
-            <canvas id="energyTopProvincesChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Chart 2: Asset Status Lifecycle (4 cols) -->
-        <div class="lg:col-span-4 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Commercial Status</span>
-              <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
-            </div>
-            <div class="relative h-48 flex items-center justify-center">
-              <canvas id="energyStatusDoughnutChart"></canvas>
-            </div>
-          </div>
-          <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px] text-slate-400">
-            <span>Operational Baselines</span>
-            <span>PDP8 Quota Target</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-        <!-- ==================================================================== -->
-    <!-- INTERACTIVE GIS TRANSMISSION & RENEWABLE POWER FLOW COCKPIT          -->
-    <!-- ==================================================================== -->
-    <section id="flowCockpitSection" class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-borderSlate/60 dark:border-darkBorder/60">
-        <div class="space-y-0.5">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-            <span class="font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-rose-600 dark:text-rose-400 font-semibold">
-              Decision 500/QĐ-TTg &middot; 500kV Supergrid Backbone &middot; Inter-Regional Wheeling Flow
-            </span>
-          </div>
-          <h2 class="text-base sm:text-lg font-bold text-inkPrimary dark:text-textDarkPrimary">
-            National Electrical Transmission Spine &amp; Clean Energy Power Flow
-          </h2>
-          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light max-w-4xl">
-            Live geospatial topology visualizing North-South power wheeling corridors between Central/Southern renewable hubs and Northern load centers across 65,566 km of AC circuits and 1,915 substations.
-          </p>
-        </div>
-
-        <!-- Quick Flow Telemetry Metrics -->
-        <div class="flex flex-wrap items-center gap-2 font-mono text-[11px] shrink-0">
-          <div class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 text-rose-700 dark:text-rose-400 font-semibold flex items-center gap-1.5 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-            <span>500kV Flow: 15,888 km (180 Circuits)</span>
-          </div>
-          <div class="px-2.5 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 font-semibold flex items-center gap-1.5 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span>220kV Grid: 27,007 km (780 Circuits)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- SIDE-BY-SIDE TRANSMISSION MAP & NODE TELEMETRY WORKSTATION -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-        
-        <!-- Left: Sovereign Vector Map (lg:col-span-8) -->
-        <div class="lg:col-span-7 xl:col-span-6 relative h-[560px] sm:h-[600px] rounded-2xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-sm bg-slate-950 flex flex-col">
-          <div id="mainEnergyFlowMap" class="w-full h-full z-10"></div>
-
-          <!-- Top Right Layer Filter Pills & Analytical Modes -->
-          <div class="absolute top-3 right-3 z-20 flex flex-wrap items-center gap-1.5 p-1.5 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px]">
-            <button id="mapToggleFlow500Btn" class="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-semibold transition-all cursor-pointer" title="500kV Supergrid Backbone Flow">
-              500kV Spine Flow
-            </button>
-            <button id="mapToggleGrid220Btn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-amber-600 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="220kV Regional Grid Corridors">
-              220kV Grid
-            </button>
-            <button id="mapToggleAssetsBtn" class="px-2.5 py-1 rounded-lg bg-teal-600 text-white font-semibold border border-teal-500/20 transition-all cursor-pointer" title="960 Operating Clean Energy Generation Plants">
-              Clean Plants (960)
-            </button>
-            <button id="mapToggleHeadroomBtn" class="px-2.5 py-1 rounded-lg bg-white dark:bg-darkCard text-inkMuted dark:text-textDarkMuted hover:text-emerald-500 border border-borderSlate dark:border-darkBorder transition-all cursor-pointer" title="Substation Transformer Headroom Audit">
-              Grid Headroom
-            </button>
-            <button id="mapToggleResetViewBtn" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-darkCard hover:bg-slate-200 text-slate-600 dark:text-slate-300 transition-all cursor-pointer" title="Reset Vietnam View">
-              Reset ⟲
-            </button>
-          </div>
-
-          <!-- Bottom Left Interactive Flow Telemetry Legend -->
-          <div class="absolute bottom-3 left-3 z-20 p-3 rounded-xl bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-lg font-mono text-[10px] space-y-1.5 max-w-xs">
-            <div class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider text-[11px] flex items-center justify-between">
-              <span>Transmission Corridor Flow</span>
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-4 h-1 rounded-full bg-rose-500 shadow-sm"></span>
-              <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">500kV North-South Spine</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-4 h-1 rounded-full bg-amber-500"></span>
-              <span class="text-inkPrimary dark:text-textDarkPrimary">220kV Intertie Regional Corridors</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white"></span>
-              <span class="text-inkPrimary dark:text-textDarkPrimary">Operational Generation Plants (960)</span>
-            </div>
-            <div class="pt-1.5 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between text-[9px] text-slate-400">
-              <span>Model: NSMO Vietnam 2025</span>
-              <span>65,566 km Circuits</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Node Telemetry & Substation Inspection Dossier (lg:col-span-4) -->
-        <div id="nodeInspectionContainer" class="lg:col-span-5 xl:col-span-6 h-[560px] sm:h-[600px] flex flex-col rounded-2xl border border-borderSlate dark:border-darkBorder bg-white dark:bg-darkSurface shadow-sm overflow-hidden">
-          <!-- Dynamic Dossier Header -->
-          <div class="p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
-              <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-inkPrimary dark:text-textDarkPrimary">Node Telemetry Dossier</h3>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span id="nodeStatusPill" class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">National Overview</span>
-              <button id="resetNodePanelBtn" onclick="resetNodeInspectionPanel()" class="p-1 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors hidden cursor-pointer" title="Reset to National Overview">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-          </div>
-
-          <!-- Dynamic Dossier Body Content -->
-          <div id="nodePanelContent" class="flex-1 p-4 overflow-y-auto space-y-4 font-mono text-xs">
-            <!-- Populated via resetNodeInspectionPanel() on DOM load -->
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-
+    
+    </div>
 
     <!-- ==================================================================== -->
-    <!-- MODULE 2: TRANSITION ENERGY FLOW & DYNAMIC POWER BALANCE WORKSTATION -->
+    <!-- VIEW 3: TRANSITION FLOW & POWER MARKET INTELLIGENCE WIRE             -->
     <!-- ==================================================================== -->
-    <section id="transitionFlowSection" class="p-4 sm:p-5 lg:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-5">
+    <div id="energyWorkstationViewMarket" class="space-y-6 hidden">
+      <section id="transitionFlowSection" class="p-4 sm:p-5 lg:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-5">
       
       <!-- Section Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-borderSlate dark:border-darkBorder">
@@ -1744,7 +2032,8 @@
     <!-- ==================================================================== -->
     <!-- MODULE 3: NATIONAL ENERGY SITUATION & WHOLESALE MARKET TERMINAL     -->
     <!-- ==================================================================== -->
-    <section id="energyMarketSection" class="p-4 sm:p-5 lg:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-5">
+    
+      <section id="energyMarketSection" class="p-4 sm:p-5 lg:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-5">
       
       <!-- Section Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-borderSlate dark:border-darkBorder">
@@ -1934,236 +2223,9 @@
     </section>
 
 
-        <!-- FULL-WIDTH ASSET DOSSIER & PDP8 PIPELINE WORKSPACE -->
-    <section id="cockpitContainer" class="w-full flex flex-col min-h-[640px] lg:h-[calc(100vh-230px)]">
-      
-      <!-- SYNCHRONIZED ASSET DOSSIER & PDP8 PIPELINE (FULL WIDTH) -->
-      <div id="dossierContainer" class="w-full flex flex-col h-full rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm overflow-hidden">
         
-        <!-- View Switcher & Filter Toolbar (Sticky Header) -->
-        <div class="p-3 sm:p-3.5 border-b border-borderSlate dark:border-darkBorder bg-slate-50/70 dark:bg-darkCard/50 space-y-2.5 shrink-0">
-          <!-- 2-Tab View Navigation Switcher (Assets Dossier & PDP8 Priority) -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-1 p-0.5 rounded-lg bg-slate-200/60 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder font-mono text-[11px] w-full sm:w-auto">
-                            <button id="tabAssetsBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md bg-teal-600 text-white font-semibold transition-all cursor-pointer">
-                Assets Dossier (<span id="totalAssetsCount">960</span>)
-              </button>
-              <button id="tabPipelineBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
-                PDP8 Priority (<span id="pipelineCount">10</span>)
-              </button>
-              <button id="tabGridBtn" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
-                National Grid (<span id="totalGridSubstationsCount">1,915</span>)
-              </button>
-            </div>
-
-            <button id="tableOrCardsToggleBtn" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 font-mono text-[10px] cursor-pointer" title="Toggle Cards / Table Layout">
-              <svg id="viewModeIcon" class="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-              <span id="viewModeText">Cards</span>
-            </button>
-          </div>
-
-          <!-- Dynamic Filter Controls (Active for Assets Dossier) -->
-          <div id="dossierFiltersContainer" class="space-y-2">
-            <div class="flex items-center gap-2">
-              <div class="relative flex-1">
-                <input type="text" id="projectSearchInput" placeholder="Filter by asset name, developer, or province..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs focus:outline-none focus:border-teal-500 font-mono transition-colors" />
-                <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <select id="provinceSelect" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-teal-500 transition-colors cursor-pointer max-w-[140px] sm:max-w-[180px]">
-                <option value="ALL">All Provinces (63)</option>
-              </select>
-            </div>
-
-            <!-- Sector Pills Carousel -->
-            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar font-mono text-[10px] pt-0.5">
-              <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Fuel:</span>
-              <button data-type="ALL" class="fuel-pill px-2.5 py-0.5 rounded-md bg-teal-600 text-white font-semibold shrink-0 cursor-pointer">All</button>
-              <button data-type="Hydropower" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Hydro</button>
-              <button data-type="Solar" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Solar</button>
-              <button data-type="Wind" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Wind</button>
-              <button data-type="LNG / gas" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">LNG</button>
-              <button data-type="Biomass" class="fuel-pill px-2.5 py-0.5 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 shrink-0 cursor-pointer">Biomass</button>
-              <button id="resetFiltersBtn" class="ml-auto text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[10px] underline shrink-0 cursor-pointer">Reset</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Scrollable Dossier Content -->
-        <div id="dossierScrollArea" class="flex-1 overflow-y-auto p-3 sm:p-3.5 space-y-3 custom-scrollbar">
-          
-          <!-- VIEW 1: ASSETS DOSSIER (CARDS & TABLE) -->
-          <div id="viewAssetsDossier" class="space-y-2.5">
-            <!-- Cards Container -->
-            <div id="dossierCardsList" class="hidden space-y-2">
-              <!-- Dynamically rendered via renderAssetsDossier() -->
-              <div class="p-8 text-center text-slate-400 font-mono text-xs">
-                Loading Clean Energy Assets Telemetry...
-              </div>
-            </div>
-
-            <!-- Table Container (Hidden by default, toggled via tableOrCardsToggleBtn) -->
-            <div id="dossierTableContainer" class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
-              <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr class="border-b border-borderSlate dark:border-darkBorder bg-slate-50/50 dark:bg-darkCard/50 font-mono text-[10px] text-inkMuted dark:text-textDarkMuted uppercase tracking-wider">
-                      <th class="p-2.5">Facility Name</th>
-                      <th class="p-2.5">Developer / Sponsor</th>
-                      <th class="p-2.5">Type</th>
-                      <th class="p-2.5">Capacity</th>
-                      <th class="p-2.5">Province</th>
-                      <th class="p-2.5 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody id="projectsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
-                    <!-- Populated dynamically -->
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- VIEW 2: PDP8 PRIORITY PIPELINE -->
-          <div id="viewPipelineContainer" class="hidden space-y-3">
-            <div class="flex items-center justify-between pb-1 font-mono text-[11px] text-inkMuted dark:text-textDarkMuted border-b border-borderSlate/60 dark:border-darkBorder/60">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary">Mandated National Projects (Decision 500/QĐ-TTg)</span>
-              <span>10 Strategic Facilities</span>
-            </div>
-            <div id="pdp8ProjectsGrid" class="space-y-2.5">
-              <!-- Populated dynamically from pdp8_targets.json priority_projects -->
-            </div>
-          </div>
-
-          <!-- VIEW 3: NATIONAL ELECTRICAL GRID NETWORK (NSMO 2025 MODEL) -->
-          <div id="viewGridContainer" class="hidden space-y-3">
-            <!-- Grid Navigation Sub-Bar & Voltage Filters -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-slate-50/80 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder">
-              <div class="flex items-center gap-1 font-mono text-[11px]">
-                <button id="gridSubViewMapBtn" class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer">
-                  Topology Map
-                </button>
-                <button id="gridSubViewSubstationsBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
-                  Substations (1,915)
-                </button>
-                <button id="gridSubViewLinesBtn" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
-                  Transmission Lines (2,877)
-                </button>
-              </div>
-
-              <!-- Voltage Selector Pills -->
-              <div class="flex items-center gap-1 font-mono text-[10px] overflow-x-auto no-scrollbar">
-                <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Voltage:</span>
-                <button data-v="ALL" class="grid-v-pill px-2 py-0.5 rounded bg-rose-600 text-white font-semibold cursor-pointer">All</button>
-                <button data-v="500" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 cursor-pointer">500 kV (92)</button>
-                <button data-v="220" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 cursor-pointer">220 kV (326)</button>
-                <button data-v="110" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-sky-300 dark:border-sky-800 text-sky-600 dark:text-sky-400 cursor-pointer">110 kV (1,497)</button>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW A: LEAFLET GIS TOPOLOGY MAP -->
-            <div id="gridSubViewMap" class="space-y-2">
-              <div class="relative w-full h-[540px] rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-inner bg-slate-900">
-                <div id="gridTopologyMap" class="w-full h-full z-10"></div>
-                <!-- Interactive Floating Legend -->
-                <div class="absolute bottom-3 left-3 z-20 p-2.5 rounded-lg bg-white/90 dark:bg-darkSurface/90 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-md font-mono text-[10px] space-y-1">
-                  <div class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider mb-1">Grid Corridors</div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-rose-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">500 kV Supergrid (15,888 km)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-amber-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">220 kV Regional Grid (27,007 km)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-cyan-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">110 kV Interties (22,672 km)</span>
-                  </div>
-                  <div class="pt-1 border-t border-borderSlate/60 dark:border-darkBorder/60 text-[9px] text-slate-400">
-                    Source: NSMO Model Vietnam 2025
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW B: SUBSTATIONS DIRECTORY TABLE -->
-            <div id="gridSubViewSubstations" class="hidden space-y-2.5">
-              <div class="flex items-center gap-2">
-                <input type="text" id="gridSubstationSearchInput" placeholder="Search substations by name, province, or bay code..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
-                <span id="gridSubstationCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
-                  Showing 1,915 Substations
-                </span>
-              </div>
-              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
-                <div class="overflow-x-auto max-h-[500px]">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
-                      <tr>
-                        <th class="p-2.5">Substation Name</th>
-                        <th class="p-2.5 text-center">Voltage Class</th>
-                        <th class="p-2.5 text-right">Transformers</th>
-                        <th class="p-2.5 text-right">Generation</th>
-                        <th class="p-2.5">Location / Province</th>
-                        <th class="p-2.5 text-right">Technical Dossier</th>
-                      </tr>
-                    </thead>
-                    <tbody id="gridSubstationsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
-                      <!-- Populated dynamically via renderGridSubstationsTable() -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW C: TRANSMISSION LINES DIRECTORY TABLE -->
-            <div id="gridSubViewLines" class="hidden space-y-2.5">
-              <div class="flex items-center gap-2">
-                <input type="text" id="gridLineSearchInput" placeholder="Search transmission lines by corridor, substation, or conductor..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
-                <span id="gridLineCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
-                  Showing 2,877 Circuits
-                </span>
-              </div>
-              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
-                <div class="overflow-x-auto max-h-[500px]">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
-                      <tr>
-                        <th class="p-2.5">Circuit Corridor (From - To)</th>
-                        <th class="p-2.5 text-center">Voltage</th>
-                        <th class="p-2.5">Conductor</th>
-                        <th class="p-2.5 text-right">R (Ω)</th>
-                        <th class="p-2.5 text-right">X (Ω)</th>
-                        <th class="p-2.5 text-right">Length (km)</th>
-                      </tr>
-                    </thead>
-                    <tbody id="gridLinesTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
-                      <!-- Populated dynamically via renderGridLinesTable() -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sticky Bottom Pagination Bar -->
-        <div id="dossierPaginationBar" class="p-2.5 sm:p-3 border-t border-borderSlate dark:border-darkBorder bg-slate-50/60 dark:bg-darkCard/50 flex items-center justify-between text-xs font-mono text-inkMuted dark:text-textDarkMuted shrink-0">
-          <div id="paginationInfo" class="text-[11px]">Showing 1 to 25 of 960 assets</div>
-          <div class="flex items-center gap-1.5">
-            <button id="prevPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Previous</button>
-            <span id="currentPageIndicator" class="px-1.5 text-[11px] font-semibold text-inkPrimary dark:text-textDarkPrimary">1 / 39</span>
-            <button id="nextPageBtn" class="px-2.5 py-1 rounded border border-borderSlate dark:border-darkBorder hover:bg-slate-100 dark:hover:bg-darkSurface disabled:opacity-40 disabled:cursor-not-allowed text-[11px]">Next</button>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
+    </div>
+</main>
 
   <!-- MOBILE FLOATING SWITCHER BUTTON (< 1024px) -->
   <div class="lg:hidden fixed bottom-4 right-4 z-40">
@@ -3215,7 +3277,47 @@
     let show220Grid = false;
     let showCleanAssets = true;
 
-    function initMainFlowMap() {
+    
+    // =========================================================================
+    // WORKSTATION ARCHITECTURAL CONTROLLER (MAP, PDP8, MARKET)
+    // =========================================================================
+    let activeEnergyMode = 'map';
+
+    function switchEnergyWorkstationMode(mode) {
+      activeEnergyMode = mode;
+      if (history.replaceState) {
+        history.replaceState(null, null, '#' + mode);
+      } else {
+        window.location.hash = mode;
+      }
+
+      const btnMap = document.getElementById('energyModeBtnMap');
+      const btnPdp8 = document.getElementById('energyModeBtnPdp8');
+      const btnMarket = document.getElementById('energyModeBtnMarket');
+
+      const viewMap = document.getElementById('energyWorkstationViewMap');
+      const viewPdp8 = document.getElementById('energyWorkstationViewPdp8');
+      const viewMarket = document.getElementById('energyWorkstationViewMarket');
+
+      const activeClasses = 'energy-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer';
+      const inactiveClasses = 'energy-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+
+      if (btnMap) btnMap.className = mode === 'map' ? activeClasses : inactiveClasses;
+      if (btnPdp8) btnPdp8.className = mode === 'pdp8' ? activeClasses : inactiveClasses;
+      if (btnMarket) btnMarket.className = mode === 'market' ? activeClasses : inactiveClasses;
+
+      if (viewMap) viewMap.classList.toggle('hidden', mode !== 'map');
+      if (viewPdp8) viewPdp8.classList.toggle('hidden', mode !== 'pdp8');
+      if (viewMarket) viewMarket.classList.toggle('hidden', mode !== 'market');
+
+      if (mode === 'map' && mainFlowMapInstance) {
+        setTimeout(() => {
+          mainFlowMapInstance.invalidateSize();
+        }, 80);
+      }
+    }
+
+function initMainFlowMap() {
       const mapEl = document.getElementById('mainEnergyFlowMap');
       if (!mapEl) return;
       if (typeof L === 'undefined') {
@@ -4235,6 +4337,13 @@
 
     // 18. Event Listeners Setup
     document.addEventListener("DOMContentLoaded", () => {
+      const initHash = window.location.hash.replace('#', '');
+      if (initHash === 'pdp8' || initHash === 'market') {
+        switchEnergyWorkstationMode(initHash);
+      } else {
+        switchEnergyWorkstationMode('map');
+      }
+
       // Tab Listeners
       document.getElementById("tabAssetsBtn")?.addEventListener("click", () => switchDossierTab('assets'));
       document.getElementById("tabPipelineBtn")?.addEventListener("click", () => switchDossierTab('pipeline'));
