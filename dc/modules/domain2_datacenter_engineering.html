@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
-  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.020</title>
+  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.021</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -259,7 +259,7 @@
               Domain 2: Data Center Engineering Systems &amp; Schematics
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.020 Tabbed System Edition
+              Rev.021 2N UPS Precision Schematic Edition
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
@@ -1185,142 +1185,306 @@
 
         <!-- SVG Viewport -->
         <div class="bg-slate-950 rounded-lg p-2 border border-slate-800 overflow-x-auto">
-          <svg id="svg-substation" viewBox="0 0 920 600" class="w-full h-auto select-none" style="min-width: 780px;">
+          <svg id="svg-ups" viewBox="0 0 960 620" class="w-full h-auto select-none" style="min-width: 820px;">
             <defs>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
+              <linearGradient id="grad-bus" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#0284c7" />
+                <stop offset="100%" stop-color="#10b981" />
+              </linearGradient>
+              <linearGradient id="grad-dc" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f59e0b" />
+                <stop offset="100%" stop-color="#d97706" />
+              </linearGradient>
             </defs>
 
-            <!-- Feeder A Grid -->
-            <g class="node-interactive" onclick="inspectSubNode('EVN 220/110kV Substation A (Cat Lai 500kV Link)', '110 kV', '172 A', '32.8 MVA', 'PF 0.99', 'Active Energized', 'Underground XLPE 630mm2 CU')">
-              <rect x="110" y="15" width="220" height="40" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
-              <text x="220" y="32" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="bold" font-family="monospace">EVN SUBSTATION A</text>
-              <text x="220" y="46" text-anchor="middle" fill="#34d399" font-size="9" font-family="monospace">220/110kV &bull; 110kV FEEDER A</text>
+            <!-- ================= TRAIN A (LEFT HALF - CENTER X = 250) ================= -->
+            <!-- Train A Header -->
+            <rect x="40" y="12" width="420" height="34" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+            <text x="250" y="33" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" font-family="monospace">2N POWER TRAIN A (22.5 MW CRITICAL IT CAPACITY)</text>
+
+            <!-- Incomer Line A -->
+            <line id="line-incomer-a" x1="250" y1="46" x2="250" y2="70" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- Isolation Transformer A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Train A Isolation Transformer', '22 kV / 400V 3P4W', '2,500 kVA (Dyn11)', 'Schneider Trihal Cast Resin', '99.2% Efficiency', 'Normal Energized', '< 1.2%')">
+              <rect x="140" y="70" width="220" height="35" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
+              <text x="250" y="86" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">22kV / 400V DYN11 DRY XFMR A</text>
+              <text x="250" y="98" text-anchor="middle" fill="#38bdf8" font-size="7.5" font-family="monospace">2,500 kVA &bull; Cast Resin &bull; 99.2% Eff</text>
             </g>
 
-            <!-- Feeder B Grid -->
-            <g class="node-interactive" onclick="inspectSubNode('EVN 220/110kV Substation B (Thu Duc Tie)', '110 kV', '168 A', '32.0 MVA', 'PF 0.99', 'Active Energized', 'Underground XLPE 630mm2 CU')">
-              <rect x="590" y="15" width="220" height="40" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
-              <text x="700" y="32" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="bold" font-family="monospace">EVN SUBSTATION B</text>
-              <text x="700" y="46" text-anchor="middle" fill="#34d399" font-size="9" font-family="monospace">220/110kV &bull; 110kV FEEDER B</text>
+            <!-- Transformer Output Line to UPS Input Bus -->
+            <line id="line-xfmr-a" x1="250" y1="105" x2="250" y2="125" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- UPS Cabinet A Enclosure -->
+            <rect x="40" y="125" width="420" height="240" rx="6" fill="#0b1120" stroke="#10b981" stroke-width="1.2" />
+            <text x="250" y="142" text-anchor="middle" fill="#34d399" font-size="10" font-weight="bold" font-family="monospace">STATIC UPS SYSTEM A (15x 2,000 kVA MODULES &bull; N+1)</text>
+
+            <!-- Input Split Bus A (Horizontal distribution inside Cabinet) -->
+            <line x1="130" y1="150" x2="430" y2="150" stroke="#10b981" stroke-width="2" />
+
+            <!-- Path 1: Rectifier Feeder A with Breaker Q1 -->
+            <line id="line-q1-a" x1="130" y1="150" x2="130" y2="165" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Rectifier Input Breaker Q1 (Train A)', '400V 3P', '3,200A 4P ACB', 'Masterpact MTZ', 'Status: CLOSED', 'I_sc = 65 kA', '< 1.5%')">
+              <rect x="110" y="165" width="40" height="18" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="130" y="178" text-anchor="middle" fill="#34d399" font-size="8" font-family="monospace" font-weight="bold">Q1 [C]</text>
+            </g>
+            <line x1="130" y1="183" x2="130" y2="195" stroke="#10b981" stroke-width="2" class="flow-active" />
+
+            <!-- Rectifier A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('IGBT Active Front End Rectifier A', '400V AC to 540V DC', '22.5 MW Firm', 'Vertiv Liebert EXL S1', 'Input PF > 0.99', 'THDi < 3.0%', '< 1.0%')">
+              <rect id="box-rec-a" x="75" y="195" width="110" height="42" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="130" y="212" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">RECTIFIER A</text>
+              <text x="130" y="225" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">IGBT AFE &bull; THDi&lt;3%</text>
             </g>
 
-            <line id="line-sub-inc-a" x1="220" y1="55" x2="220" y2="95" stroke="#10b981" stroke-width="3" class="flow-active" />
-            <line id="line-sub-inc-b" x1="700" y1="55" x2="700" y2="95" stroke="#10b981" stroke-width="3" class="flow-active" />
+            <!-- DC Link Busbar A (540V - 600V DC) -->
+            <line x1="130" y1="237" x2="130" y2="252" stroke="#f59e0b" stroke-width="2.5" />
+            <line x1="130" y1="252" x2="260" y2="252" stroke="#f59e0b" stroke-width="3" />
+            <text x="195" y="247" text-anchor="middle" fill="#fbbf24" font-size="7" font-family="monospace">540V DC BUS</text>
 
-            <!-- GIS Bays -->
-            <g class="node-interactive" onclick="inspectSubNode('110kV GIS Bay A', '110 kV', '31.5 kA (3s Withstand)', 'ABB ELK-04', 'SF6 Gas', 'Closed & Armed', 'Double Busbar GIS')">
-              <rect x="140" y="95" width="160" height="48" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
-              <text x="220" y="115" text-anchor="middle" fill="#f8fafc" font-size="10.5" font-weight="bold" font-family="monospace">110kV GIS BAY A</text>
-              <text x="220" y="132" text-anchor="middle" fill="#94a3b8" font-size="8.5" font-family="monospace">VCB 31.5kA &bull; DISCONNECTOR</text>
+            <!-- Battery Disconnect Breaker QF1 A -->
+            <line x1="195" y1="252" x2="195" y2="268" stroke="#f59e0b" stroke-width="2.5" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Battery DC Disconnect Breaker QF1 A', '540V DC', '4,000A DC MCCB', 'ABB Tmax T8', 'Status: CLOSED', 'Remote Shunt Trip Enabled', '0% Ripple')">
+              <rect x="175" y="268" width="40" height="17" rx="2" fill="#451a03" stroke="#f59e0b" stroke-width="1" />
+              <text x="195" y="280" text-anchor="middle" fill="#fbbf24" font-size="7.5" font-family="monospace" font-weight="bold">QF1 [C]</text>
             </g>
-            <g class="node-interactive" onclick="inspectSubNode('110kV GIS Bay B', '110 kV', '31.5 kA (3s Withstand)', 'ABB ELK-04', 'SF6 Gas', 'Closed & Armed', 'Double Busbar GIS')">
-              <rect x="620" y="95" width="160" height="48" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
-              <text x="700" y="115" text-anchor="middle" fill="#f8fafc" font-size="10.5" font-weight="bold" font-family="monospace">110kV GIS BAY B</text>
-              <text x="700" y="132" text-anchor="middle" fill="#94a3b8" font-size="8.5" font-family="monospace">VCB 31.5kA &bull; DISCONNECTOR</text>
-            </g>
+            <line x1="195" y1="285" x2="195" y2="298" stroke="#f59e0b" stroke-width="2.5" />
 
-            <line id="line-sub-gis-a" x1="220" y1="143" x2="220" y2="180" stroke="#10b981" stroke-width="3" class="flow-active" />
-            <line id="line-sub-gis-b" x1="700" y1="143" x2="700" y2="180" stroke="#10b981" stroke-width="3" class="flow-active" />
-
-            <!-- 110kV Bus Tie -->
-            <line id="line-sub-110-tie-l" x1="220" y1="165" x2="410" y2="165" stroke="#475569" stroke-width="2.5" class="flow-standby" />
-            <line id="line-sub-110-tie-r" x1="510" y1="165" x2="700" y2="165" stroke="#475569" stroke-width="2.5" class="flow-standby" />
-            <g class="node-interactive" onclick="toggleSubBreaker('110-tie')">
-              <rect id="rect-sub-110-tie" x="410" y="152" width="100" height="26" rx="4" class="breaker-open" stroke-width="1.5" />
-              <text id="text-sub-110-tie" x="460" y="169" text-anchor="middle" fill="#fca5a5" font-size="9" font-family="monospace" font-weight="bold">110kV TIE: OPEN</text>
+            <!-- LiFePO4 BESS String A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('LiFePO4 BESS Energy Storage Train A', '540 V DC Nominal', '10-Min Holdover @ 22.5 MW', 'CATL LFP Cells (30 MWh)', '98.5% SoC', 'Float Charging (NFPA 855)', '< 0.5%')">
+              <rect id="box-bess-a" x="140" y="298" width="110" height="48" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1.2" />
+              <text x="195" y="315" text-anchor="middle" fill="#fbbf24" font-size="8.5" font-family="monospace" font-weight="bold">LiFePO4 BESS A</text>
+              <text x="195" y="328" text-anchor="middle" fill="#fef08a" font-size="7.5" font-family="monospace">540V DC &bull; 10m Full Load</text>
+              <text x="195" y="338" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="monospace">CATL LFP &bull; BMS Active</text>
             </g>
 
-            <!-- Transformers -->
-            <line id="line-sub-xfmr-in-a" x1="220" y1="180" x2="220" y2="220" stroke="#10b981" stroke-width="3" class="flow-active" />
-            <line id="line-sub-xfmr-in-b" x1="700" y1="180" x2="700" y2="220" stroke="#10b981" stroke-width="3" class="flow-active" />
+            <!-- Line into Inverter A -->
+            <line x1="260" y1="252" x2="260" y2="237" stroke="#f59e0b" stroke-width="2.5" />
 
-            <g class="node-interactive" onclick="inspectSubNode('Transformer 1 (Oil ONAN/ONAF)', '110 kV -> 22 kV', '40 MVA Rating', 'Dyn11, Z=12.5%', '54 deg C Top Oil', 'Operating 57% Load', 'ABB / Siemens Step-Down')">
-              <circle cx="220" cy="235" r="20" fill="#0f172a" stroke="#10b981" stroke-width="2" />
-              <circle cx="220" cy="260" r="20" fill="#0f172a" stroke="#10b981" stroke-width="2" />
-              <rect x="135" y="285" width="170" height="38" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="1" />
-              <text x="220" y="301" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold" font-family="monospace">TRANSFORMER 1</text>
-              <text x="220" y="315" text-anchor="middle" fill="#34d399" font-size="8.5" font-family="monospace">40 MVA &bull; 110/22kV &bull; Dyn11</text>
+            <!-- Inverter A (3-Level IGBT) -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('3-Level IGBT Inverter A', '400V 3P4W 50Hz', '22.5 MW (PF 1.0)', 'Vertiv / Schneider', 'Efficiency 97.2%', 'THDv < 1.5%', '< 1.5%')">
+              <rect id="box-inv-a" x="205" y="195" width="110" height="42" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="260" y="212" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">INVERTER A</text>
+              <text x="260" y="225" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">3-LEVEL &bull; THDv&lt;1.5%</text>
             </g>
 
-            <g class="node-interactive" onclick="inspectSubNode('Transformer 2 (Oil ONAN/ONAF)', '110 kV -> 22 kV', '40 MVA Rating', 'Dyn11, Z=12.5%', '52 deg C Top Oil', 'Operating 55% Load', 'ABB / Siemens Step-Down')">
-              <circle cx="700" cy="235" r="20" fill="#0f172a" stroke="#10b981" stroke-width="2" />
-              <circle cx="700" cy="260" r="20" fill="#0f172a" stroke="#10b981" stroke-width="2" />
-              <rect x="615" y="285" width="170" height="38" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="1" />
-              <text x="700" y="301" text-anchor="middle" fill="#f8fafc" font-size="10" font-weight="bold" font-family="monospace">TRANSFORMER 2</text>
-              <text x="700" y="315" text-anchor="middle" fill="#34d399" font-size="8.5" font-family="monospace">40 MVA &bull; 110/22kV &bull; Dyn11</text>
+            <!-- Inverter Output Breaker Q3 A -->
+            <line x1="285" y1="237" x2="285" y2="250" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Inverter Output Isolator Q3 A', '400V 3P4W', '3,200A ACB', 'Masterpact MTZ', 'Status: CLOSED', 'Synchronized with Bypass', '< 1.5%')">
+              <rect x="265" y="250" width="40" height="17" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="285" y="262" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace" font-weight="bold">Q3 [C]</text>
+            </g>
+            <line x1="285" y1="267" x2="330" y2="285" stroke="#10b981" stroke-width="2" class="flow-active" />
+
+            <!-- Path 2: Static Bypass Feeder A with Breaker Q2 -->
+            <line x1="350" y1="150" x2="350" y2="165" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3,2" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Static Bypass Input Breaker Q2 A', '400V 3P4W', '3,200A ACB', 'Masterpact MTZ', 'Status: CLOSED (Standby)', 'Phase-Locked Loop Sync', '< 1.8%')">
+              <rect x="330" y="165" width="40" height="18" rx="2" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1" />
+              <text x="350" y="178" text-anchor="middle" fill="#7dd3fc" font-size="8" font-family="monospace" font-weight="bold">Q2 [C]</text>
+            </g>
+            <line id="line-bypass-a" x1="350" y1="183" x2="350" y2="285" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="4,2" />
+
+            <!-- Static Transfer Switch STS A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Static Transfer Switch STS A (Thyristor SCR Pair)', '400V 3P4W', '22.5 MW Transfer', 'Vertiv Solid-State STS', 'Transfer Time: 0ms (PLL)', 'Forced Commutation', '< 1.5%')">
+              <rect id="box-sts-a" x="305" y="285" width="100" height="42" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.2" />
+              <text x="355" y="302" text-anchor="middle" fill="#a7f3d0" font-size="8.5" font-family="monospace" font-weight="bold">STATIC SWITCH A</text>
+              <text x="355" y="315" text-anchor="middle" fill="#38bdf8" font-size="7" font-family="monospace">0ms Transfer &bull; SCRs</text>
             </g>
 
-            <line id="line-sub-xfmr-out-a" x1="220" y1="323" x2="220" y2="365" stroke="#10b981" stroke-width="3" class="flow-active" />
-            <line id="line-sub-xfmr-out-b" x1="700" y1="323" x2="700" y2="365" stroke="#10b981" stroke-width="3" class="flow-active" />
-
-            <!-- 22kV Incomers -->
-            <g class="node-interactive" onclick="toggleSubBreaker('22-inc-1')">
-              <rect id="rect-sub-22-inc-1" x="160" y="365" width="120" height="26" rx="4" class="breaker-closed" stroke-width="1.5" />
-              <text id="text-sub-22-inc-1" x="220" y="382" text-anchor="middle" fill="#a7f3d0" font-size="9" font-family="monospace" font-weight="bold">22kV INC-1: CLOSED</text>
-            </g>
-            <g class="node-interactive" onclick="toggleSubBreaker('22-inc-2')">
-              <rect id="rect-sub-22-inc-2" x="640" y="365" width="120" height="26" rx="4" class="breaker-closed" stroke-width="1.5" />
-              <text id="text-sub-22-inc-2" x="700" y="382" text-anchor="middle" fill="#a7f3d0" font-size="9" font-family="monospace" font-weight="bold">22kV INC-2: CLOSED</text>
+            <!-- UPS Output Isolator Breaker Q5 A -->
+            <line x1="355" y1="327" x2="355" y2="338" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('UPS Output Isolator Breaker Q5 A', '400V 3P4W', '3,200A 4P ACB', 'Masterpact MTZ', 'Status: CLOSED', 'Feeds Main Switchboard A', '< 1.5%')">
+              <rect x="335" y="338" width="40" height="17" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="355" y="350" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace" font-weight="bold">Q5 [C]</text>
             </g>
 
-            <line id="line-sub-bus-in-a" x1="220" y1="391" x2="220" y2="430" stroke="#10b981" stroke-width="3" class="flow-active" />
-            <line id="line-sub-bus-in-b" x1="700" y1="391" x2="700" y2="430" stroke="#10b981" stroke-width="3" class="flow-active" />
+            <!-- Path 3: Manual Maintenance Bypass Breaker (MBB / Q4) -->
+            <line x1="430" y1="150" x2="430" y2="220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Maintenance Bypass Breaker Q4 MBB A', '400V 3P4W', '3,200A Manual Interlock', 'Kirk-Key Trapped Mechanical', 'Status: OPEN (N.O.)', 'UPS Overhaul Bypass', '0.0%')">
+              <rect x="410" y="220" width="40" height="18" rx="2" fill="#1e293b" stroke="#64748b" stroke-width="1" />
+              <text x="430" y="232" text-anchor="middle" fill="#94a3b8" font-size="7.5" font-family="monospace" font-weight="bold">Q4 [O]</text>
+            </g>
+            <text x="430" y="248" text-anchor="middle" fill="#64748b" font-size="6.5" font-family="monospace">KIRK-KEY</text>
+            <line x1="430" y1="254" x2="430" y2="358" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
 
-            <!-- 22kV Busbars -->
-            <rect id="rect-sub-bus-a" x="60" y="430" width="320" height="14" rx="3" fill="#10b981" filter="url(#glow)" />
-            <text x="220" y="441" text-anchor="middle" fill="#022c22" font-size="9" font-weight="bold" font-family="monospace">22kV MAIN BUSBAR A (3,150A FIRM)</text>
+            <!-- Output Tie from Q5 & Q4 into Common Bus A -->
+            <line x1="355" y1="355" x2="355" y2="358" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+            <line x1="355" y1="358" x2="430" y2="358" stroke="#10b981" stroke-width="2" />
+            <line x1="355" y1="358" x2="250" y2="358" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+            <line id="line-out-a" x1="250" y1="358" x2="250" y2="385" stroke="#10b981" stroke-width="3" class="flow-active" />
 
-            <rect id="rect-sub-bus-b" x="540" y="430" width="320" height="14" rx="3" fill="#10b981" filter="url(#glow)" />
-            <text x="700" y="441" text-anchor="middle" fill="#022c22" font-size="9" font-weight="bold" font-family="monospace">22kV MAIN BUSBAR B (3,150A FIRM)</text>
-
-            <!-- 22kV Tie -->
-            <line id="line-sub-22-tie-l" x1="380" y1="437" x2="410" y2="437" stroke="#475569" stroke-width="3" class="flow-standby" />
-            <line id="line-sub-22-tie-r" x1="510" y1="437" x2="540" y2="437" stroke="#475569" stroke-width="3" class="flow-standby" />
-            <g class="node-interactive" onclick="toggleSubBreaker('22-tie')">
-              <rect id="rect-sub-22-tie" x="410" y="424" width="100" height="26" rx="4" class="breaker-open" stroke-width="1.5" />
-              <text id="text-sub-22-tie" x="460" y="441" text-anchor="middle" fill="#fca5a5" font-size="9" font-family="monospace" font-weight="bold">22kV TIE: OPEN</text>
+            <!-- Output Switchboard A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Main Output Switchboard MSB-A', '400V 3P4W 50Hz', '3,200A Busbar Form 4b', 'ABB / Schneider Prisma', 'Status: ENERGIZED', 'BCMS Power Quality Metered', '< 1.5%')">
+              <rect x="130" y="385" width="240" height="38" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="250" y="402" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">OUTPUT SWITCHBOARD A</text>
+              <text x="250" y="414" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">400V 3P4W &bull; 3,200A Cu Busbar &bull; BCMS</text>
             </g>
 
-            <!-- Outgoers -->
-            <line id="line-sub-out-ups-a" x1="120" y1="444" x2="120" y2="500" stroke="#10b981" stroke-width="2.5" class="flow-active" />
-            <g class="node-interactive" onclick="inspectSubNode('Feed to 2N UPS Train A', '22 kV', '22.5 MW Capacity', 'Schneider / Vertiv', 'Dual A-Cord', 'Energized', 'Feeds 8 White Space Halls')">
-              <rect x="70" y="500" width="100" height="42" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
-              <text x="120" y="518" text-anchor="middle" fill="#f8fafc" font-size="9" font-weight="bold" font-family="monospace">FEED TO UPS-A</text>
-              <text x="120" y="532" text-anchor="middle" fill="#34d399" font-size="8" font-family="monospace">22.5 MW CRITICAL</text>
+            <!-- Line to Overhead Track Busway A -->
+            <line x1="250" y1="423" x2="250" y2="445" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- Overhead Track Busway A -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('1,600A Overhead Track Busway A', '400V 3P4W Dual Feed', '1,600A Continuous Rating', 'Starline / Schneider Canalis', 'Dual Tap-off Drop Cord A', 'Plug-and-Play AI Rack Expansion', '< 1.5%')">
+              <rect x="150" y="445" width="200" height="36" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" />
+              <text x="250" y="461" text-anchor="middle" fill="#f8fafc" font-size="8.5" font-family="monospace" font-weight="bold">OVERHEAD TRACK BUSWAY A</text>
+              <text x="250" y="473" text-anchor="middle" fill="#38bdf8" font-size="7.5" font-family="monospace">1,600A &bull; Plug-in Tap-off Units</text>
             </g>
 
-            <line id="line-sub-out-ch-a" x1="280" y1="444" x2="280" y2="500" stroke="#10b981" stroke-width="2.5" class="flow-active" />
-            <g class="node-interactive" onclick="inspectSubNode('Feed to Chiller Plant A', '22 kV', '6.3 MW Load', 'York 2500RT', 'Primary Pumps', 'Energized', 'N+2 Chiller Loop')">
-              <rect x="230" y="500" width="100" height="42" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
-              <text x="280" y="518" text-anchor="middle" fill="#f8fafc" font-size="9" font-weight="bold" font-family="monospace">FEED CHILLER-A</text>
-              <text x="280" y="532" text-anchor="middle" fill="#38bdf8" font-size="8" font-family="monospace">3x 2500RT CHILLERS</text>
+
+            <!-- ================= TRAIN B (RIGHT HALF - CENTER X = 710) ================= -->
+            <!-- Train B Header -->
+            <rect x="500" y="12" width="420" height="34" rx="5" fill="#0f172a" stroke="#10b981" stroke-width="1.5" />
+            <text x="710" y="33" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold" font-family="monospace">2N POWER TRAIN B (22.5 MW CRITICAL IT CAPACITY)</text>
+
+            <!-- Incomer Line B -->
+            <line id="line-incomer-b" x1="710" y1="46" x2="710" y2="70" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- Isolation Transformer B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Train B Isolation Transformer', '22 kV / 400V 3P4W', '2,500 kVA (Dyn11)', 'Schneider Trihal Cast Resin', '99.2% Efficiency', 'Normal Energized', '< 1.2%')">
+              <rect x="600" y="70" width="220" height="35" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
+              <text x="710" y="86" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">22kV / 400V DYN11 DRY XFMR B</text>
+              <text x="710" y="98" text-anchor="middle" fill="#38bdf8" font-size="7.5" font-family="monospace">2,500 kVA &bull; Cast Resin &bull; 99.2% Eff</text>
             </g>
 
-            <line id="line-sub-out-ch-b" x1="640" y1="444" x2="640" y2="500" stroke="#10b981" stroke-width="2.5" class="flow-active" />
-            <g class="node-interactive" onclick="inspectSubNode('Feed to Chiller Plant B', '22 kV', '6.3 MW Load', 'York 2500RT', 'Primary Pumps', 'Energized', 'N+2 Chiller Loop')">
-              <rect x="590" y="500" width="100" height="42" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" />
-              <text x="640" y="518" text-anchor="middle" fill="#f8fafc" font-size="9" font-weight="bold" font-family="monospace">FEED CHILLER-B</text>
-              <text x="640" y="532" text-anchor="middle" fill="#38bdf8" font-size="8" font-family="monospace">3x 2500RT CHILLERS</text>
+            <!-- Transformer Output Line to UPS Input Bus -->
+            <line id="line-xfmr-b" x1="710" y1="105" x2="710" y2="125" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- UPS Cabinet B Enclosure -->
+            <rect x="500" y="125" width="420" height="240" rx="6" fill="#0b1120" stroke="#10b981" stroke-width="1.2" />
+            <text x="710" y="142" text-anchor="middle" fill="#34d399" font-size="10" font-weight="bold" font-family="monospace">STATIC UPS SYSTEM B (15x 2,000 kVA MODULES &bull; N+1)</text>
+
+            <!-- Input Split Bus B (Horizontal distribution inside Cabinet) -->
+            <line x1="590" y1="150" x2="890" y2="150" stroke="#10b981" stroke-width="2" />
+
+            <!-- Path 1: Rectifier Feeder B with Breaker Q1 -->
+            <line id="line-q1-b" x1="590" y1="150" x2="590" y2="165" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Rectifier Input Breaker Q1 (Train B)', '400V 3P', '3,200A 4P ACB', 'Masterpact MTZ', 'Status: CLOSED', 'I_sc = 65 kA', '< 1.5%')">
+              <rect x="570" y="165" width="40" height="18" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="590" y="178" text-anchor="middle" fill="#34d399" font-size="8" font-family="monospace" font-weight="bold">Q1 [C]</text>
+            </g>
+            <line x1="590" y1="183" x2="590" y2="195" stroke="#10b981" stroke-width="2" class="flow-active" />
+
+            <!-- Rectifier B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('IGBT Active Front End Rectifier B', '400V AC to 540V DC', '22.5 MW Firm', 'Vertiv Liebert EXL S1', 'Input PF > 0.99', 'THDi < 3.0%', '< 1.0%')">
+              <rect id="box-rec-b" x="535" y="195" width="110" height="42" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="590" y="212" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">RECTIFIER B</text>
+              <text x="590" y="225" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">IGBT AFE &bull; THDi&lt;3%</text>
             </g>
 
-            <line id="line-sub-out-ups-b" x1="800" y1="444" x2="800" y2="500" stroke="#10b981" stroke-width="2.5" class="flow-active" />
-            <g class="node-interactive" onclick="inspectSubNode('Feed to 2N UPS Train B', '22 kV', '22.5 MW Capacity', 'Schneider / Vertiv', 'Dual B-Cord', 'Energized', 'Feeds 8 White Space Halls')">
-              <rect x="750" y="500" width="100" height="42" rx="5" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
-              <text x="800" y="518" text-anchor="middle" fill="#f8fafc" font-size="9" font-weight="bold" font-family="monospace">FEED TO UPS-B</text>
-              <text x="800" y="532" text-anchor="middle" fill="#34d399" font-size="8" font-family="monospace">22.5 MW CRITICAL</text>
+            <!-- DC Link Busbar B (540V - 600V DC) -->
+            <line x1="590" y1="237" x2="590" y2="252" stroke="#f59e0b" stroke-width="2.5" />
+            <line x1="590" y1="252" x2="720" y2="252" stroke="#f59e0b" stroke-width="3" />
+            <text x="655" y="247" text-anchor="middle" fill="#fbbf24" font-size="7" font-family="monospace">540V DC BUS</text>
+
+            <!-- Battery Disconnect Breaker QF1 B -->
+            <line x1="655" y1="252" x2="655" y2="268" stroke="#f59e0b" stroke-width="2.5" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Battery DC Disconnect Breaker QF1 B', '540V DC', '4,000A DC MCCB', 'ABB Tmax T8', 'Status: CLOSED', 'Remote Shunt Trip Enabled', '0% Ripple')">
+              <rect x="635" y="268" width="40" height="17" rx="2" fill="#451a03" stroke="#f59e0b" stroke-width="1" />
+              <text x="655" y="280" text-anchor="middle" fill="#fbbf24" font-size="7.5" font-family="monospace" font-weight="bold">QF1 [C]</text>
+            </g>
+            <line x1="655" y1="285" x2="655" y2="298" stroke="#f59e0b" stroke-width="2.5" />
+
+            <!-- LiFePO4 BESS String B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('LiFePO4 BESS Energy Storage Train B', '540 V DC Nominal', '10-Min Holdover @ 22.5 MW', 'CATL LFP Cells (30 MWh)', '98.5% SoC', 'Float Charging (NFPA 855)', '< 0.5%')">
+              <rect id="box-bess-b" x="600" y="298" width="110" height="48" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1.2" />
+              <text x="655" y="315" text-anchor="middle" fill="#fbbf24" font-size="8.5" font-family="monospace" font-weight="bold">LiFePO4 BESS B</text>
+              <text x="655" y="328" text-anchor="middle" fill="#fef08a" font-size="7.5" font-family="monospace">540V DC &bull; 10m Full Load</text>
+              <text x="655" y="338" text-anchor="middle" fill="#94a3b8" font-size="7" font-family="monospace">CATL LFP &bull; BMS Active</text>
             </g>
 
-            <!-- Standby Genset tie -->
-            <path d="M 460 580 L 460 480 L 460 450" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4" fill="none" />
-            <rect x="385" y="565" width="150" height="24" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1" />
-            <text x="460" y="581" text-anchor="middle" fill="#f59e0b" font-size="8.5" font-family="monospace" font-weight="bold">10x 3000kVA GENSETS (STANDBY)</text>
+            <!-- Line into Inverter B -->
+            <line x1="720" y1="252" x2="720" y2="237" stroke="#f59e0b" stroke-width="2.5" />
+
+            <!-- Inverter B (3-Level IGBT) -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('3-Level IGBT Inverter B', '400V 3P4W 50Hz', '22.5 MW (PF 1.0)', 'Vertiv / Schneider', 'Efficiency 97.2%', 'THDv < 1.5%', '< 1.5%')">
+              <rect id="box-inv-b" x="665" y="195" width="110" height="42" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="720" y="212" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">INVERTER B</text>
+              <text x="720" y="225" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">3-LEVEL &bull; THDv&lt;1.5%</text>
+            </g>
+
+            <!-- Inverter Output Breaker Q3 B -->
+            <line x1="745" y1="237" x2="745" y2="250" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Inverter Output Isolator Q3 B', '400V 3P4W', '3,200A ACB', 'Masterpact MTZ', 'Status: CLOSED', 'Synchronized with Bypass', '< 1.5%')">
+              <rect x="725" y="250" width="40" height="17" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="745" y="262" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace" font-weight="bold">Q3 [C]</text>
+            </g>
+            <line x1="745" y1="267" x2="790" y2="285" stroke="#10b981" stroke-width="2" class="flow-active" />
+
+            <!-- Path 2: Static Bypass Feeder B with Breaker Q2 -->
+            <line x1="810" y1="150" x2="810" y2="165" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="3,2" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Static Bypass Input Breaker Q2 B', '400V 3P4W', '3,200A ACB', 'Masterpact MTZ', 'Status: CLOSED (Standby)', 'Phase-Locked Loop Sync', '< 1.8%')">
+              <rect x="790" y="165" width="40" height="18" rx="2" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1" />
+              <text x="810" y="178" text-anchor="middle" fill="#7dd3fc" font-size="8" font-family="monospace" font-weight="bold">Q2 [C]</text>
+            </g>
+            <line id="line-bypass-b" x1="810" y1="183" x2="810" y2="285" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="4,2" />
+
+            <!-- Static Transfer Switch STS B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Static Transfer Switch STS B (Thyristor SCR Pair)', '400V 3P4W', '22.5 MW Transfer', 'Vertiv Solid-State STS', 'Transfer Time: 0ms (PLL)', 'Forced Commutation', '< 1.5%')">
+              <rect id="box-sts-b" x="765" y="285" width="100" height="42" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.2" />
+              <text x="815" y="302" text-anchor="middle" fill="#a7f3d0" font-size="8.5" font-family="monospace" font-weight="bold">STATIC SWITCH B</text>
+              <text x="815" y="315" text-anchor="middle" fill="#38bdf8" font-size="7" font-family="monospace">0ms Transfer &bull; SCRs</text>
+            </g>
+
+            <!-- UPS Output Isolator Breaker Q5 B -->
+            <line x1="815" y1="327" x2="815" y2="338" stroke="#10b981" stroke-width="2" class="flow-active" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('UPS Output Isolator Breaker Q5 B', '400V 3P4W', '3,200A 4P ACB', 'Masterpact MTZ', 'Status: CLOSED', 'Feeds Main Switchboard B', '< 1.5%')">
+              <rect x="795" y="338" width="40" height="17" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+              <text x="815" y="350" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace" font-weight="bold">Q5 [C]</text>
+            </g>
+
+            <!-- Path 3: Manual Maintenance Bypass Breaker (MBB / Q4) B -->
+            <line x1="890" y1="150" x2="890" y2="220" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Maintenance Bypass Breaker Q4 MBB B', '400V 3P4W', '3,200A Manual Interlock', 'Kirk-Key Trapped Mechanical', 'Status: OPEN (N.O.)', 'UPS Overhaul Bypass', '0.0%')">
+              <rect x="870" y="220" width="40" height="18" rx="2" fill="#1e293b" stroke="#64748b" stroke-width="1" />
+              <text x="890" y="232" text-anchor="middle" fill="#94a3b8" font-size="7.5" font-family="monospace" font-weight="bold">Q4 [O]</text>
+            </g>
+            <text x="890" y="248" text-anchor="middle" fill="#64748b" font-size="6.5" font-family="monospace">KIRK-KEY</text>
+            <line x1="890" y1="254" x2="890" y2="358" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
+
+            <!-- Output Tie from Q5 & Q4 into Common Bus B -->
+            <line x1="815" y1="355" x2="815" y2="358" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+            <line x1="815" y1="358" x2="890" y2="358" stroke="#10b981" stroke-width="2" />
+            <line x1="815" y1="358" x2="710" y2="358" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+            <line id="line-out-b" x1="710" y1="358" x2="710" y2="385" stroke="#10b981" stroke-width="3" class="flow-active" />
+
+            <!-- Output Switchboard B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Main Output Switchboard MSB-B', '400V 3P4W 50Hz', '3,200A Busbar Form 4b', 'ABB / Schneider Prisma', 'Status: ENERGIZED', 'BCMS Power Quality Metered', '< 1.5%')">
+              <rect x="590" y="385" width="240" height="38" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.2" />
+              <text x="710" y="402" text-anchor="middle" fill="#f8fafc" font-size="9" font-family="monospace" font-weight="bold">OUTPUT SWITCHBOARD B</text>
+              <text x="710" y="414" text-anchor="middle" fill="#34d399" font-size="7.5" font-family="monospace">400V 3P4W &bull; 3,200A Cu Busbar &bull; BCMS</text>
+            </g>
+
+            <!-- Line to Overhead Track Busway B -->
+            <line x1="710" y1="423" x2="710" y2="445" stroke="#10b981" stroke-width="2.5" class="flow-active" />
+
+            <!-- Overhead Track Busway B -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('1,600A Overhead Track Busway B', '400V 3P4W Dual Feed', '1,600A Continuous Rating', 'Starline / Schneider Canalis', 'Dual Tap-off Drop Cord B', 'Plug-and-Play AI Rack Expansion', '< 1.5%')">
+              <rect x="610" y="445" width="200" height="36" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2" />
+              <text x="710" y="461" text-anchor="middle" fill="#f8fafc" font-size="8.5" font-family="monospace" font-weight="bold">OVERHEAD TRACK BUSWAY B</text>
+              <text x="710" y="473" text-anchor="middle" fill="#38bdf8" font-size="7.5" font-family="monospace">1,600A &bull; Plug-in Tap-off Units</text>
+            </g>
+
+
+            <!-- ================= WHITE SPACE HIGH-DENSITY SERVER RACKS ================= -->
+            <!-- Dual-Cord Ingress Paths -->
+            <path id="path-feed-a" d="M 250 481 L 250 520 L 410 520 L 410 540" stroke="#10b981" stroke-width="2.5" class="flow-active" fill="none" />
+            <path id="path-feed-b" d="M 710 481 L 710 520 L 550 520 L 550 540" stroke="#10b981" stroke-width="2.5" class="flow-active" fill="none" />
+
+            <!-- Central Server Racks Box -->
+            <g class="node-interactive cursor-pointer" onclick="inspectUpsNode('Dual-Corded High-Density AI Server Racks', '400V / 230V Dual Ingress', '45.0 MW Total IT Compute', 'A+B Dual Titanium PSUs', '50/50 Active Load Sharing', '0ms Seamless Failover', '< 1.2%')">
+              <rect x="330" y="540" width="300" height="68" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />
+              <text x="480" y="559" text-anchor="middle" fill="#f8fafc" font-size="10.5" font-weight="bold" font-family="monospace">WHITE SPACE SERVER RACKS</text>
+              <text x="480" y="574" text-anchor="middle" fill="#38bdf8" font-size="8.5" font-family="monospace">DUAL-CORDED PSUs &bull; 0ms REDUNDANCY</text>
+              <text x="480" y="587" text-anchor="middle" fill="#94a3b8" font-size="7.5" font-family="monospace">Cord A: 50% Load | Cord B: 50% Load (80 kW/Rack)</text>
+              <rect x="375" y="593" width="100" height="11" rx="2" fill="#064e3b" />
+              <text x="425" y="601" text-anchor="middle" fill="#34d399" font-size="7" font-mono font-weight="bold">FEED A: ACTIVE</text>
+              <rect x="485" y="593" width="100" height="11" rx="2" fill="#064e3b" />
+              <text x="535" y="601" text-anchor="middle" fill="#34d399" font-size="7" font-mono font-weight="bold">FEED B: ACTIVE</text>
+            </g>
           </svg>
         </div>
 
-        <!-- Telemetry Card -->
+                <!-- Telemetry Card -->
         <div id="sub-telemetry" class="bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs font-mono">
           <div class="flex items-center gap-2.5">
             <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800 text-[10px]">INSPECT</span>
@@ -4081,7 +4245,7 @@
     <!-- FOOTER AUDIT -->
     <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="font-mono text-[11px]">
-        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.020</span> | Classification: Confidential Technical
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.021</span> | Classification: Confidential Technical
       </div>
       <div class="text-[11px]">
         Engineering Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; IEEE 519 &bull; IEC 62271 &bull; ASHRAE TC 9.9
@@ -4396,12 +4560,13 @@
     }
 
     // --- TAB 3: UPS ---
-    function inspectUpsNode(title, volts, cap, vendor, soc, status) {
-      document.getElementById('ups-tel-title').innerText = title;
-      document.getElementById('ups-tel-notes').innerText = vendor + ' | ' + volts;
-      document.getElementById('ups-tel-power').innerText = cap;
-      document.getElementById('ups-tel-soc').innerText = soc;
-      document.getElementById('ups-tel-eff').innerText = status;
+    function inspectUpsNode(title, volts, cap, vendor, soc, status, thd) {
+      if (document.getElementById('ups-tel-title')) document.getElementById('ups-tel-title').innerText = title;
+      if (document.getElementById('ups-tel-notes')) document.getElementById('ups-tel-notes').innerText = vendor + ' | ' + volts;
+      if (document.getElementById('ups-tel-power')) document.getElementById('ups-tel-power').innerText = cap;
+      if (document.getElementById('ups-tel-soc')) document.getElementById('ups-tel-soc').innerText = soc;
+      if (document.getElementById('ups-tel-eff')) document.getElementById('ups-tel-eff').innerText = status;
+      if (thd && document.getElementById('ups-tel-thd')) document.getElementById('ups-tel-thd').innerText = thd;
     }
 
     function setUpsScenario(mode) {
@@ -4410,12 +4575,43 @@
         if (btn) btn.className = (m === mode) ? 'px-2 py-1 rounded bg-emerald-700 text-white font-bold transition-all shadow-2xs' : 'px-2 py-1 rounded hover:bg-slate-200 text-slate-600 font-bold transition-all';
       });
 
+      const lineIncA = document.getElementById('line-incomer-a');
+      const lineIncB = document.getElementById('line-incomer-b');
+      const lineBypA = document.getElementById('line-bypass-a');
+      const lineBypB = document.getElementById('line-bypass-b');
+      const boxBessA = document.getElementById('box-bess-a');
+      const boxBessB = document.getElementById('box-bess-b');
+      const boxRecA = document.getElementById('box-rec-a');
+      const boxRecB = document.getElementById('box-rec-b');
+      const boxInvA = document.getElementById('box-inv-a');
+      const boxInvB = document.getElementById('box-inv-b');
+
       if (mode === 'normal') {
-        inspectUpsNode('Normal Double-Conversion Mode (2N 50/50 Load)', '400V 3P4W', '45.0 MW Total IT Load', 'Schneider / Vertiv', '98.5% (10m)', '96.8% Double-Conversion');
+        inspectUpsNode('Normal Double-Conversion Mode (2N 50/50 Load)', '400V 3P4W', '45.0 MW Total IT Load', 'Schneider / Vertiv', '98.5% (10m)', '96.8% Double-Conversion', '< 1.5%');
+        if (lineIncA) { lineIncA.setAttribute('stroke', '#10b981'); lineIncA.setAttribute('stroke-dasharray', 'none'); }
+        if (lineIncB) { lineIncB.setAttribute('stroke', '#10b981'); lineIncB.setAttribute('stroke-dasharray', 'none'); }
+        if (lineBypA) { lineBypA.setAttribute('stroke', '#38bdf8'); lineBypA.setAttribute('stroke-dasharray', '4,2'); }
+        if (lineBypB) { lineBypB.setAttribute('stroke', '#38bdf8'); lineBypB.setAttribute('stroke-dasharray', '4,2'); }
+        if (boxBessA) boxBessA.setAttribute('stroke', '#f59e0b');
+        if (boxBessB) boxBessB.setAttribute('stroke', '#f59e0b');
+        if (boxRecA) boxRecA.setAttribute('stroke', '#10b981');
+        if (boxRecB) boxRecB.setAttribute('stroke', '#10b981');
       } else if (mode === 'discharge') {
-        inspectUpsNode('Utility Drop: LiFePO4 Battery Discharge Mode', '540V DC Bus', '45.0 MW Supported on Batteries', 'CATL LFP Energy Storage', '94.2% (8.5m Holdover)', '0ms Ride-Through Active');
+        inspectUpsNode('Utility Outage: LiFePO4 Battery Discharge Mode', '540V DC Bus', '45.0 MW Supported on Batteries', 'CATL LFP Energy Storage', '94.2% (8.5m Holdover)', '0ms Ride-Through Active', '< 1.2%');
+        if (lineIncA) { lineIncA.setAttribute('stroke', '#475569'); lineIncA.setAttribute('stroke-dasharray', '3,3'); }
+        if (lineIncB) { lineIncB.setAttribute('stroke', '#475569'); lineIncB.setAttribute('stroke-dasharray', '3,3'); }
+        if (boxRecA) boxRecA.setAttribute('stroke', '#475569');
+        if (boxRecB) boxRecB.setAttribute('stroke', '#475569');
+        if (boxBessA) boxBessA.setAttribute('stroke', '#ef4444');
+        if (boxBessB) boxBessB.setAttribute('stroke', '#ef4444');
       } else if (mode === 'bypass') {
-        inspectUpsNode('Static Bypass Maintenance Mode', '400V Bypass Line', 'Maintenance Bypass Active', 'Static Switch Engaged', '100% Utility Bypass', '99.0% Efficiency');
+        inspectUpsNode('Static Bypass Maintenance Mode', '400V Bypass Line', 'Maintenance Bypass Active', 'Static Switch Engaged', '100% Utility Bypass', '99.0% Efficiency', '< 1.8%');
+        if (lineBypA) { lineBypA.setAttribute('stroke', '#0284c7'); lineBypA.setAttribute('stroke-width', '3'); lineBypA.setAttribute('stroke-dasharray', 'none'); }
+        if (lineBypB) { lineBypB.setAttribute('stroke', '#0284c7'); lineBypB.setAttribute('stroke-width', '3'); lineBypB.setAttribute('stroke-dasharray', 'none'); }
+        if (boxRecA) boxRecA.setAttribute('stroke', '#475569');
+        if (boxRecB) boxRecB.setAttribute('stroke', '#475569');
+        if (boxInvA) boxInvA.setAttribute('stroke', '#475569');
+        if (boxInvB) boxInvB.setAttribute('stroke', '#475569');
       }
     }
 
