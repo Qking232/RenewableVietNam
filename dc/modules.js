@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.032 (7-Module Master Suite Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.033 (Construction Sequences & 7-Module Master Suite Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -50,9 +50,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Civil & Construction",
     category: "Physical Delivery",
     title: "Domain 4: Physical Construction & Civil Infrastructure",
-    description: "1,250 PHC D600/D800 Spun Piles to -38m, 1.8m Mass Raft Slab (25 kN/m²), 12,000 m² White Space, 110kV Substation Yard, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
+    description: "14-Month Phased Sequences, 1,250 PHC D600/D800 Spun Piles to -38m, 1.8m Mass Raft Slab, 12,000 m² White Space, 110kV Substation Yard, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
     badge: "Construction",
-    file: "modules/domain4_physical_construction_Rev.001.html"
+    file: "modules/domain4_physical_construction_Rev.002.html"
   },
   {
     id: "domain5_handover",
