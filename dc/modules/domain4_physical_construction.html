@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
-  <title>Domain 4: Physical Construction &amp; Civil Infrastructure | Hyperscale Data Center - Rev.002</title>
+  <title>Domain 4: Physical Construction &amp; Civil Infrastructure | Hyperscale Data Center - Rev.003</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * {
@@ -29,12 +29,14 @@
     }
 
     /* Interactive Calculation Cell Styling */
-    .calc-cell {
+    .calc-cell, .gantt-item {
       position: relative;
       cursor: help;
+      transition: all 0.15s ease;
+    }
+    .calc-cell {
       text-decoration: underline dotted #0284c7 1.5px;
       text-underline-offset: 3px;
-      transition: background-color 0.15s ease, color 0.15s ease;
     }
     .calc-cell:hover {
       background-color: #f0f9ff !important;
@@ -74,6 +76,28 @@
     .gov-table td.font-mono {
       white-space: nowrap !important;
     }
+
+    /* Gantt Chart Custom Grid System */
+    .gantt-grid-col {
+      border-right: 1px dashed #e2e8f0;
+    }
+    .gantt-grid-col:last-child {
+      border-right: none;
+    }
+    .gantt-bar:hover {
+      filter: brightness(0.95);
+      transform: translateY(-1px);
+    }
+    .milestone-diamond {
+      width: 13px;
+      height: 13px;
+      transform: rotate(45deg);
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .milestone-diamond:hover {
+      transform: rotate(45deg) scale(1.3);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    }
   </style>
 </head>
 <body class="p-2 sm:p-4 antialiased">
@@ -88,16 +112,16 @@
               Domain 4: Physical Construction &amp; Civil Infrastructure
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.002 Phased Sequences Edition
+              Rev.003 Gantt Milestone Edition
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
-            14-Month Construction Sequencing Architecture, Deep Piling, Mass Raft Foundation, Post-Tensioned Frame, White Space Fit-Out, 110kV Switchyard Compound &amp; Zero-Harm Site Governance
+            14-Month Physical Construction Gantt Chart, Critical Path Method (CPM), Key Milestone Gates (MS-01 to MS-06), Deep Piling, Mass Raft Foundation &amp; Zero-Harm Site Governance
           </p>
         </div>
         <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
           <div class="text-[9.5px] uppercase font-bold text-slate-400">PHYSICAL EXECUTION STATUS</div>
-          <div class="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-0.5 leading-tight">Fast-Track Active Site</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-0.5 leading-tight">Month 08: 48.5% Complete (+2.3% Ahead)</div>
         </div>
       </div>
 
@@ -166,7 +190,7 @@
     <!-- TAB NAVIGATION BAR (7 EXPANDED TABS) -->
     <nav class="flex items-center space-x-1 border-b border-slate-200 pb-2 overflow-x-auto text-xs" aria-label="Tabs">
       <button onclick="switchTab('tab-sequences')" id="btn-tab-sequences" class="nav-tab active px-3 py-1.5 rounded text-xs font-semibold border border-sky-600 bg-sky-600 text-white whitespace-nowrap">
-        1. Construction Sequences
+        1. Construction Sequences &amp; Gantt
       </button>
       <button onclick="switchTab('tab-substructure')" id="btn-tab-substructure" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
         2. Substructure &amp; Piling
@@ -188,190 +212,371 @@
       </button>
     </nav>
 
-    <!-- TAB 1: CONSTRUCTION SEQUENCES & PHASING ARCHITECTURE (NEW) -->
+    <!-- TAB 1: CONSTRUCTION SEQUENCES & GANTT CHART -->
     <div id="tab-sequences" class="tab-content space-y-4">
+      
+      <!-- GANTT CHART MASTER SECTION -->
       <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
-        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+        <div class="border-b border-slate-100 pb-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
-              1. 14-Month Master Construction Sequences &amp; Phasing Architecture
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <span>14-Month Physical Construction Master Gantt Schedule</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                Tracking Month 08 Active
+              </span>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">
-              Chronological execution framework spanning Phase 1 Enabling Works through Phase 6 White Space Clean Room Turnover to Level 3-5 Commissioning.
+              Integrated Critical Path Method (CPM) Schedule with 10 Work Packages, 6 Critical Project Milestone Gates &amp; Real-Time Progress Pacing.
             </p>
           </div>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-bold border border-sky-200">
-            CRITICAL PATH VERIFIED
-          </span>
+          <!-- GANTT LEGEND -->
+          <div class="flex flex-wrap items-center gap-2.5 text-[10px] font-medium text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded border border-slate-200">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-2 rounded bg-emerald-600"></span> Completed (100%)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-2 rounded bg-sky-600"></span> Critical Path (Active)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-2 rounded bg-amber-500"></span> Parallel Track (Active)</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-2 rounded border border-slate-300 bg-slate-100"></span> Scheduled</span>
+            <span class="flex items-center gap-1.5"><span class="milestone-diamond bg-amber-400 border border-amber-600"></span> Key Milestone</span>
+          </div>
         </div>
 
-        <!-- 6-PHASE CHRONOLOGICAL SUMMARY CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs leading-relaxed">
-          
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 1: Mobilization &amp; Enabling
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 01&ndash;02</span>
+        <!-- GANTT CHART CONTAINER (RESPONSIVE HORIZONTAL SCROLL) -->
+        <div class="overflow-x-auto pb-2">
+          <div class="min-w-[860px] text-xs select-none">
+            
+            <!-- GANTT TIMELINE HEADER -->
+            <div class="grid grid-cols-12 gap-0 border-b border-slate-200 pb-1.5 mb-1.5 font-mono text-[10.5px] font-bold text-slate-600">
+              <div class="col-span-4 px-2 text-slate-500 uppercase tracking-wider text-[9.5px]">Work Package &amp; WBS Scope</div>
+              <div class="col-span-8 grid grid-cols-14 text-center">
+                <div class="gantt-grid-col py-0.5">M01</div>
+                <div class="gantt-grid-col py-0.5">M02</div>
+                <div class="gantt-grid-col py-0.5">M03</div>
+                <div class="gantt-grid-col py-0.5">M04</div>
+                <div class="gantt-grid-col py-0.5">M05</div>
+                <div class="gantt-grid-col py-0.5">M06</div>
+                <div class="gantt-grid-col py-0.5">M07</div>
+                <div class="gantt-grid-col py-0.5 bg-sky-50 text-sky-800 font-extrabold rounded-t">M08*</div>
+                <div class="gantt-grid-col py-0.5">M09</div>
+                <div class="gantt-grid-col py-0.5">M10</div>
+                <div class="gantt-grid-col py-0.5">M11</div>
+                <div class="gantt-grid-col py-0.5">M12</div>
+                <div class="gantt-grid-col py-0.5">M13</div>
+                <div class="gantt-grid-col py-0.5">M14</div>
+              </div>
             </div>
-            <p class="text-slate-600 text-[11px]">
-              Statutory site hoarding, batching plant mobilization, 120,000 m&sup3; cut-and-fill bulk earthworks, ground stabilization, wheel-wash basins, and temporary 22kV utility power tie-in.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Deliverable: Certified Building Platform
-            </div>
-          </div>
 
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 2: Deep Piling Array
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 02&ndash;04</span>
-            </div>
-            <p class="text-slate-600 text-[11px]">
-              6 hydraulic piling rigs driving 1,250 PHC D600/D800 prestressed spun concrete piles to -38m refusal. 100% Pile Integrity Testing (PIT), 5% Dynamic Testing (PDA), and 200% Static Load Tests.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Throughput: 3.47 Piles / Rig / Day
-            </div>
-          </div>
+            <!-- GANTT BARS CONTAINER WITH VERTICAL CURRENT TIME CURSOR -->
+            <div class="relative space-y-2 py-1">
+              
+              <!-- VERTICAL "TODAY / MONTH 08" CURSOR LINE -->
+              <div class="absolute top-0 bottom-0 pointer-events-none z-10" style="left: calc(33.333% + (66.666% * 7.5 / 14)); width: 2px; background-color: #0284c7; opacity: 0.85;">
+                <span class="absolute -top-3 -left-7 px-1.5 py-0.2 rounded bg-sky-600 text-white font-mono text-[9px] font-bold shadow-xs whitespace-nowrap">
+                  TODAY M08
+                </span>
+              </div>
 
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 3: Substructure Mass Raft
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 04&ndash;06</span>
-            </div>
-            <p class="text-slate-600 text-[11px]">
-              Pile head cropping, blinding concrete, and dual-layer bentonite waterproofing. Monolithic continuous pour of 1.8m thick raft slab (21,600 m&sup3; B35 LHPC) with continuous thermocouple logging.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Thermal Control: &Delta;T &le; 20&deg;C Core-to-Surface
-            </div>
-          </div>
+              <!-- ROW 1: SITE MOBILIZATION & BULK EARTHWORKS -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-800 text-[11px] truncate">1. Site Mobilization &amp; Bulk Earthworks</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-1 col-span-2 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="Site Mobilization &amp; Bulk Earthworks"
+                       data-formula="Phase 1: M01 - M02 (60 Days) &bull; 120,000 m&sup3; Cut &amp; Fill"
+                       data-desc="1/500 Master Plan boundary fencing, site offices, concrete batching plant mobilization, wheel wash basins, and temporary 22kV power tie-in."
+                       data-val="100% Complete">
+                    M01&ndash;M02
+                  </div>
+                  <!-- MILESTONE 1 DIAMOND (End of M02) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% * 2 / 14 - 6px);"
+                       data-name="Key Milestone MS-01: Foundation GPXD Issuance"
+                       data-formula="MS-01 &bull; Month 02 Milestone Target &bull; Decree 15/2021"
+                       data-desc="Statutory Construction Permit for deep foundations granted by Department of Construction (DOC), officially authorizing commercial piling commencement."
+                       data-val="ACHIEVED (M02)">
+                    <div class="milestone-diamond bg-amber-400 border border-amber-600"></div>
+                  </div>
+                </div>
+              </div>
 
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 4: Post-Tensioned Superstructure
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 06&ndash;10</span>
-            </div>
-            <p class="text-slate-600 text-[11px]">
-              Post-tensioned concrete columns, shear walls, and heavy slabs (25 kN/m&sup2;). Installation of 150mm mineral wool panels (EI 120) and FM 1-90 typhoon-rated roof achieving Weather-Tight Dry-In.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Milestone: Weather-Tight Building Envelope
-            </div>
-          </div>
+              <!-- ROW 2: DEEP PILING ARRAY (1,250 PHC PILES) -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-800 text-[11px] truncate">2. Deep Piling Array (1,250 PHC Piles)</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-2 col-span-3 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="PHC Spun Piling Array (-38m Refusal)"
+                       data-formula="Phase 2: M02 - M04 (60 Days) &bull; 1,250 Piles x PHC D600/D800"
+                       data-desc="6 hydraulic piling rigs driving 1,250 spun concrete piles to -38m refusal. 100% PIT, 5% PDA, and static load tests to 200% design capacity (4,800 kN)."
+                       data-val="100% Complete">
+                    M02&ndash;M04
+                  </div>
+                  <!-- MILESTONE 2 DIAMOND (End of M04) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% * 4 / 14 - 6px);"
+                       data-name="Key Milestone MS-02: Pile Load Test Certification"
+                       data-formula="MS-02 &bull; Month 04 Milestone Target &bull; TCVN 9393"
+                       data-desc="All static load tests successfully verified up to 4,800 kN with settlement &le; 15mm; pile head cropping and foundation blinding authorized."
+                       data-val="ACHIEVED (M04)">
+                    <div class="milestone-diamond bg-amber-400 border border-amber-600"></div>
+                  </div>
+                </div>
+              </div>
 
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 5: MEP Rough-In &amp; Yard Civil
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 08&ndash;12</span>
-            </div>
-            <p class="text-slate-600 text-[11px]">
-              Construction of 110kV GIS substation yard, EI 240 blast walls, 16-way concrete duct banks, 10 generator concrete plinths (&le;65 dBA), and 150kL underground fuel tank vault with vacuum monitoring.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Asset: 110kV Yard &amp; Generator Compound
-            </div>
-          </div>
+              <!-- ROW 3: MASS RAFT CONCRETE FOUNDATION -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-800 text-[11px] truncate">3. Mass Raft Foundation (1.8m Depth)</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-4 col-span-3 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="Monolithic Mass Concrete Raft Foundation"
+                       data-formula="Phase 3: M04 - M06 (60 Days) &bull; 21,600 m&sup3; B35 LHPC"
+                       data-desc="Continuous monolithic mass pour utilizing low-heat cement with continuous thermocouple logging ensuring core-to-surface &Delta;T &le; 20&deg;C."
+                       data-val="100% Complete">
+                    M04&ndash;M06
+                  </div>
+                  <!-- MILESTONE 3 DIAMOND (End of M06) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% * 6 / 14 - 6px);"
+                       data-name="Key Milestone MS-03: Substructure Sign-off"
+                       data-formula="MS-03 &bull; Month 06 Milestone Target &bull; ACI 207.2R"
+                       data-desc="Mass raft foundation 28-day core strength exceeds 35 MPa with zero thermal micro-fissuring; bentonite waterproofing tanking certified 100% water-tight."
+                       data-val="ACHIEVED (M06)">
+                    <div class="milestone-diamond bg-amber-400 border border-amber-600"></div>
+                  </div>
+                </div>
+              </div>
 
-          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
-                Phase 6: White Space Fit-out &amp; Turn-over
-              </span>
-              <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-sky-100 text-sky-700 font-bold">Month 10&ndash;14</span>
-            </div>
-            <p class="text-slate-600 text-[11px]">
-              Installation of 800mm calcium sulphate raised access flooring (12,000 m&sup2; across 3 halls), Unistrut ceiling grid, overhead power busways, Hot Aisle Containment, and ISO Class 8 clean room air purge.
-            </p>
-            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
-              Hand-Off: Clean Room Certified to Level 3 Cx
-            </div>
-          </div>
+              <!-- ROW 4: POST-TENSIONED SUPERSTRUCTURE -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded bg-sky-50/30">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-900 text-[11px] truncate">4. Post-Tensioned Superstructure</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-bold shrink-0">75% Active</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-6 col-span-5 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                       data-name="Post-Tensioned Reinforced Concrete Frame"
+                       data-formula="Phase 4: M06 - M10 (120 Days) &bull; 25 kN/m&sup2; Live Load"
+                       data-desc="Cast-in-place columns, core shear walls, and post-tensioned slabs designed to TCVN 9386 / IBC Seismic Zone 2A standards. Currently 75% complete."
+                       data-val="75% In Progress">
+                    <div class="h-full bg-sky-600 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 75%;">
+                      M06&ndash;M10 (75%)
+                    </div>
+                  </div>
+                </div>
+              </div>
 
+              <!-- ROW 5: BUILDING ENVELOPE & WEATHER-TIGHT DRY-IN -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded bg-sky-50/30">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-900 text-[11px] truncate">5. Building Envelope &amp; Dry-In</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-bold shrink-0">60% Active</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-7 col-span-4 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                       data-name="Building Envelope &amp; Weather-Tight Dry-In"
+                       data-formula="Phase 4: M07 - M10 (90 Days) &bull; EI 120 Cladding + FM 1-90 Roof"
+                       data-desc="150mm insulated mineral wool panels and standing seam metal roof rated for 180 km/h typhoon wind loads. Currently 60% complete."
+                       data-val="60% In Progress">
+                    <div class="h-full bg-sky-600 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 60%;">
+                      M07&ndash;M10 (60%)
+                    </div>
+                  </div>
+                  <!-- MILESTONE 4 DIAMOND (End of M10) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% * 10 / 14 - 6px);"
+                       data-name="Key Milestone MS-04: Weather-Tight Building Dry-In"
+                       data-formula="MS-04 &bull; Month 10 Milestone Target &bull; Critical Path Gate"
+                       data-desc="Building envelope completely enclosed and weather-tight; enables internal HVAC energization and clean room white space fit-out."
+                       data-val="SCHEDULED (M10)">
+                    <div class="milestone-diamond bg-amber-400 border border-amber-600"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ROW 6: 110kV GIS SUBSTATION CIVIL YARD -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-800 text-[11px] truncate">6. 110kV GIS Substation Civil Yard</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold shrink-0">50% Active</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-8 col-span-5 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                       data-name="110kV Substation Civil Compound &amp; Duct Banks"
+                       data-formula="Phase 5: M08 - M12 (120 Days) &bull; EI 240 Blast Walls &bull; Parallel Track"
+                       data-desc="Dual 40 MVA transformer plinths, EI 240 reinforced blast firewalls, 16-way concrete duct bank encasement, and GIS switchgear building. 50% complete."
+                       data-val="50% In Progress">
+                    <div class="h-full bg-amber-500 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 50%;">
+                      M08&ndash;M12 (50%)
+                    </div>
+                  </div>
+                  <!-- MILESTONE 5 DIAMOND (End of M12) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% * 12 / 14 - 6px);"
+                       data-name="Key Milestone MS-05: EVN 110kV Dual Energization"
+                       data-formula="MS-05 &bull; Month 12 Milestone Target &bull; EVN Interconnection"
+                       data-desc="EVN Southern Power Corp completes dual 110kV feeder energization; substation yard civil hand-off cleared for permanent station auxiliary power."
+                       data-val="SCHEDULED (M12)">
+                    <div class="milestone-diamond bg-amber-400 border border-amber-600"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ROW 7: GENERATOR YARD & FUEL TANK FARM -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-800 text-[11px] truncate">7. Standby Generator Compound &amp; Fuel Vault</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold shrink-0">40% Active</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-9 col-span-4 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                       data-name="Standby Generator Yard &amp; Fuel Storage"
+                       data-formula="Phase 5: M09 - M12 (90 Days) &bull; 10 Plinths &bull; 150kL Vault"
+                       data-desc="10 concrete generator plinths with seismic snubbers (&le;65 dBA acoustic louvers) and 150kL double-walled underground fuel tank vault. 40% complete."
+                       data-val="40% In Progress">
+                    <div class="h-full bg-amber-500 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 40%;">
+                      M09&ndash;M12 (40%)
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ROW 8: WHITE SPACE ARCHITECTURAL FIT-OUT -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-700 text-[11px] truncate">8. White Space Architectural Fit-out</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-10 col-span-5 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="White Space Structural Grid &amp; Fit-out"
+                       data-formula="Phase 6: M10 - M14 (120 Days) &bull; 12,000 m&sup2; White Space"
+                       data-desc="Unistrut overhead ceiling grids, overhead power busway drops (A+B 1,000A), fiber raceways, and perimeter wall partitions across 3 server halls."
+                       data-val="Scheduled Month 10">
+                    M10&ndash;M14 (Scheduled)
+                  </div>
+                </div>
+              </div>
+
+              <!-- ROW 9: RAISED FLOORING & CONTAINMENT -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-700 text-[11px] truncate">9. Raised Flooring (800mm FFH) &amp; HAC</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-11 col-span-4 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="Raised Access Floor &amp; Hot Aisle Containment"
+                       data-formula="Phase 6: M11 - M14 (90 Days) &bull; 15 kN Point Load"
+                       data-desc="Steel-encapsulated calcium sulphate raised access flooring (800mm FFH) with pressurized underfloor plenum and Hot Aisle Containment doors."
+                       data-val="Scheduled Month 11">
+                    M11&ndash;M14 (Scheduled)
+                  </div>
+                </div>
+              </div>
+
+              <!-- ROW 10: CLEAN ROOM ISO PURGE & HANDOVER -->
+              <div class="grid grid-cols-12 gap-0 items-center py-1 hover:bg-slate-50/60 rounded">
+                <div class="col-span-4 px-2 flex items-center justify-between pr-4">
+                  <span class="font-bold text-slate-700 text-[11px] truncate">10. Clean Room ISO Purge &amp; Cx Hand-off</span>
+                  <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
+                </div>
+                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
+                  <div class="col-start-13 col-span-2 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       data-name="ISO Class 8 Clean Room Air Purge"
+                       data-formula="Phase 6: M13 - M14 (45 Days) &bull; ISO 14644-1 Standard"
+                       data-desc="HEPA positive pressure air purging, particle counter verification, and formal civil turnover to Commissioning Authority (CxA) for Level 3-5 testing."
+                       data-val="Scheduled Month 13">
+                    M13&ndash;M14
+                  </div>
+                  <!-- MILESTONE 6 DIAMOND (End of M14) -->
+                  <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
+                       style="left: calc(100% - 6px);"
+                       data-name="Key Milestone MS-06: Civil Turnover to Level 3-5 Cx"
+                       data-formula="MS-06 &bull; Month 14 Target COD &bull; Physical Completion"
+                       data-desc="Complete civil, structural, and white space turnover; all punch list Category A items cleared for integrated system load bank testing."
+                       data-val="TARGET COD (M14)">
+                    <div class="milestone-diamond bg-emerald-500 border border-emerald-700"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
-        <!-- CRITICAL PATH METHOD (CPM) SEQUENCING TABLE -->
-        <div class="pt-2">
-          <div class="text-xs font-bold text-slate-900 mb-1.5 uppercase tracking-wide">
-            Critical Path Method (CPM) Execution Logic &amp; Milestone Predecessors
+        <!-- 6 MILESTONE GATES EXPLANATORY SUMMARY TABLE -->
+        <div class="pt-2 border-t border-slate-100">
+          <div class="text-xs font-bold text-slate-900 mb-1.5 uppercase tracking-wide flex items-center justify-between">
+            <span>Key Project Milestone Stage Gates &amp; Critical Verification Criteria</span>
+            <span class="text-[10px] text-slate-500 font-normal">Tied to FIDIC Silver Book Sub-Clause 8 &amp; BOD Capital Drawdown</span>
           </div>
           <div class="overflow-x-auto">
             <table class="gov-table text-xs text-slate-700">
               <thead>
                 <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
-                  <th class="text-left w-20">Phase Code</th>
-                  <th class="text-left w-52">Construction Sequence Activity</th>
-                  <th class="text-left w-32">Calendar Window</th>
-                  <th class="text-left">Immediate Predecessor &amp; Logic</th>
-                  <th class="text-center w-24">Total Float</th>
-                  <th class="text-center w-28">ITP Hold Point</th>
-                  <th class="text-center w-28">Schedule Path</th>
+                  <th class="text-left w-20">Gate</th>
+                  <th class="text-left w-64">Milestone Description &amp; Asset Scope</th>
+                  <th class="text-center w-28">Target Window</th>
+                  <th class="text-left">Statutory &amp; Technical Verification Deliverable</th>
+                  <th class="text-right w-36">Capital Drawdown</th>
+                  <th class="text-center w-28">Milestone Status</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
-                <tr class="hover:bg-slate-50/80 bg-emerald-50/20">
-                  <td class="font-bold text-sky-800">SEQ-P01</td>
-                  <td class="font-sans font-bold text-slate-900">Site Clearing &amp; Bulk Earthworks</td>
-                  <td class="text-slate-800 font-sans">Month 01&ndash;02</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">Statutory Land Clearance &amp; 1/500 Master Plan Approval</td>
-                  <td class="text-center font-bold text-slate-700">0 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">HP-EARTH-01</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CRITICAL</span></td>
-                </tr>
-                <tr class="hover:bg-slate-50/80 bg-emerald-50/20">
-                  <td class="font-bold text-sky-800">SEQ-P02</td>
-                  <td class="font-sans font-bold text-slate-900">PHC Spun Piling (1,250 Piles)</td>
-                  <td class="text-slate-800 font-sans">Month 02&ndash;04</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">SEQ-P01 (Bulk earthworks certified) + Foundation GPXD (Decree 15)</td>
-                  <td class="text-center font-bold text-slate-700">0 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">HP-PILE-02</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CRITICAL</span></td>
-                </tr>
-                <tr class="hover:bg-slate-50/80 bg-emerald-50/20">
-                  <td class="font-bold text-sky-800">SEQ-P03</td>
-                  <td class="font-sans font-bold text-slate-900">Mass Concrete Raft Foundation</td>
-                  <td class="text-slate-800 font-sans">Month 04&ndash;06</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">SEQ-P02 (Static pile load tests passed 200%) + Bentonite tanking</td>
-                  <td class="text-center font-bold text-slate-700">0 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">HP-RAFT-03</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CRITICAL</span></td>
-                </tr>
-                <tr class="hover:bg-slate-50/80 bg-emerald-50/20">
-                  <td class="font-bold text-sky-800">SEQ-P04</td>
-                  <td class="font-sans font-bold text-slate-900">Superstructure Framing &amp; Envelope</td>
-                  <td class="text-slate-800 font-sans">Month 06&ndash;10</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">SEQ-P03 (Raft slab 28d strength &ge; 35 MPa) + Superstructure GPXD</td>
-                  <td class="text-center font-bold text-slate-700">0 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">HP-DRYIN-04</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CRITICAL</span></td>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-sky-800">MS-01</td>
+                  <td class="font-sans font-bold text-slate-900">Foundation GPXD &amp; Ground Turnover</td>
+                  <td class="text-center text-slate-800 font-sans">End Month 02</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Approved 1/500 zoning, EIA Decree 08, DOC Foundation Construction Permit (GPXD)</td>
+                  <td class="text-right font-bold text-slate-900">$25,000,000 (13.9%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">100% ACHIEVED</span></td>
                 </tr>
                 <tr class="hover:bg-slate-50/80">
-                  <td class="font-bold text-sky-800">SEQ-P05</td>
-                  <td class="font-sans font-bold text-slate-900">110kV Yard &amp; Generator Civil Plinths</td>
-                  <td class="text-slate-800 font-sans">Month 08&ndash;12</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">Parallel with SEQ-P04 (Driven by EVN Substation Interconnection Accord)</td>
-                  <td class="text-center font-bold text-slate-700">14 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">WP-SUB-05</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">PARALLEL</span></td>
+                  <td class="font-bold text-sky-800">MS-02</td>
+                  <td class="font-sans font-bold text-slate-900">Static Pile Load Test (200% / 4,800 kN)</td>
+                  <td class="text-center text-slate-800 font-sans">End Month 04</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">1,250 PHC piles driven to -38m; IBST certified static tests with settlement &le; 15mm</td>
+                  <td class="text-right font-bold text-slate-900">$18,000,000 (10.0%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">100% ACHIEVED</span></td>
                 </tr>
-                <tr class="hover:bg-slate-50/80 bg-emerald-50/20">
-                  <td class="font-bold text-sky-800">SEQ-P06</td>
-                  <td class="font-sans font-bold text-slate-900">White Space Fit-Out &amp; Clean Room Purge</td>
-                  <td class="text-slate-800 font-sans">Month 10&ndash;14</td>
-                  <td class="font-sans text-[10.5px] text-slate-600">SEQ-P04 (Weather-tight certificate) + HVAC rough-in energization</td>
-                  <td class="text-center font-bold text-slate-700">0 Days</td>
-                  <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">HP-CLEAN-06</span></td>
-                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CRITICAL</span></td>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-sans font-bold text-slate-900">MS-03</td>
+                  <td class="font-sans font-bold text-slate-900">Mass Raft Pour (21,600 m&sup3;) &amp; Waterproofing</td>
+                  <td class="text-center text-slate-800 font-sans">End Month 06</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">28d core strength &ge; 35 MPa; thermocouple &Delta;T &le; 20&deg;C; dual bentonite tanking</td>
+                  <td class="text-right font-bold text-slate-900">$17,000,000 (9.4%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">100% ACHIEVED</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80 bg-sky-50/20">
+                  <td class="font-bold text-sky-800">MS-04</td>
+                  <td class="font-sans font-bold text-slate-900">Structural Topping-Out &amp; Envelope Dry-In</td>
+                  <td class="text-center text-sky-800 font-sans font-bold">End Month 10</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Post-tensioned frame complete; EI 120 mineral wool wall panels &amp; FM 1-90 roof certified</td>
+                  <td class="text-right font-bold text-sky-800">$40,000,000 (22.2%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">ACTIVE (75%)</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-sky-800">MS-05</td>
+                  <td class="font-sans font-bold text-slate-900">EVN 110kV Dual Substation Energization</td>
+                  <td class="text-center text-slate-800 font-sans">End Month 12</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">EVN SPC grid sync accord; dual 40 MVA transformer plinths &amp; 16-way duct banks ready</td>
+                  <td class="text-right font-bold text-slate-900">$45,000,000 (25.0%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">SCHEDULED M12</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-bold text-sky-800">MS-06</td>
+                  <td class="font-sans font-bold text-slate-900">White Space Clean Room Turnover to Cx</td>
+                  <td class="text-center text-slate-800 font-sans">End Month 14</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">800mm raised access floor (12k m&sup2;); ISO 14644-1 Class 8 air purge; CxA L3-5 handover</td>
+                  <td class="text-right font-bold text-slate-900">$35,000,000 (19.4%)</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-bold text-[10px]">SCHEDULED M14</span></td>
                 </tr>
               </tbody>
             </table>
@@ -1048,10 +1253,10 @@
     <!-- FOOTER AUDIT -->
     <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="font-mono text-[11px]">
-        Document Ref: <span class="text-slate-800 font-bold">DC-CIVIL-EXEC-001_Rev.002</span> | Classification: Engineering Protected
+        Document Ref: <span class="text-slate-800 font-bold">DC-CIVIL-EXEC-001_Rev.003</span> | Classification: Engineering Protected
       </div>
       <div class="text-[11px]">
-        Standards Baseline: TCVN 9386:2012 &bull; TCVN 2737:2023 &bull; IBC 2021 &bull; QCVN 06:2022 &bull; FIDIC Silver Book 2017
+        Standards Baseline: TCVN 9386:2012 &bull; TCVN 2737:2023 &bull; IBC 2021 &bull; QCVN 06:2022 &bull; FIDIC Silver Book 2017 &bull; ACI 207.2R
       </div>
     </footer>
 
@@ -1080,7 +1285,7 @@
 
     // Floating Tooltip Engine
     const tooltip = document.getElementById('calc-tooltip');
-    const cells = document.querySelectorAll('.calc-cell');
+    const items = document.querySelectorAll('.calc-cell, .gantt-item');
 
     function formatFormulaDisplay(raw) {
       if (!raw) return '';
@@ -1099,7 +1304,7 @@
       return clean;
     }
 
-    cells.forEach(cell => {
+    items.forEach(cell => {
       cell.addEventListener('mouseenter', (e) => {
         const name = cell.getAttribute('data-name');
         const rawFormula = cell.getAttribute('data-formula');
@@ -1111,7 +1316,7 @@
           <div class="font-bold text-sky-400 mb-1">${name}</div>
           <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700 leading-normal">${formula}</div>
           <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
-          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Audited Metric: ${val}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Audited Output: ${val}</div>
         `;
         tooltip.style.display = 'block';
         updateTooltipPosition(e);
