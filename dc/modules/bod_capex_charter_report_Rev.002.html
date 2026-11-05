@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Board Report &amp; Capital Authorization Charter | Hyperscale Data Center - Rev.002</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 460px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    table {
+      width: 100% !important;
+      border-collapse: collapse !important;
+      table-layout: auto;
+    }
+    .gov-table th, .gov-table td {
+      vertical-align: middle;
+      padding: 0.5rem 0.6rem !important;
+      white-space: normal !important;
+      word-break: normal;
+    }
+    .gov-table td.font-mono {
+      white-space: nowrap !important;
+    }
+  </style>
+</head>
+<body class="p-2 sm:p-4 antialiased">
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Board Report &amp; Project Capital Authorization Charter
+            </h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
+              Rev.002 BOD Comprehensive Edition
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            Executive Authorization Dossier: 45 MW Hyperscale Sizing, $180.0M Capital Commitment, Macro APAC Market Catalysts, 15-Year DCF Returns, Monte Carlo Stress Testing &amp; Formal Board Resolution
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">AUTHORIZATION STATUS</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-emerald-700 mt-0.5 leading-tight">Recommended for Approval</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CAPITAL COMMITMENT</div>
+          <div class="text-sm font-bold font-mono text-slate-900 mt-0.5">
+            <span class="calc-cell" 
+                  data-name="Total Capital Expenditure Budget"
+                  data-formula="CapEx = 45 MW x $4,000,000/MW = $180,000,000 USD"
+                  data-desc="All-inclusive turnkey budget covering land, civil substructure, 110kV substation, 2N UPS, magnetic chillers, and Level 1-5 commissioning."
+                  data-val="$180,000,000 USD">$180,000,000 USD</span>
+          </div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">BASE CASE UNLEVERED IRR</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">
+            <span class="calc-cell" 
+                  data-name="Base Case Unlevered Project IRR"
+                  data-formula="IRR: &Sigma; [FCF_t / (1 + IRR)^t] = 0 across 15-Year Horizon"
+                  data-desc="Unlevered internal rate of return assuming 14-month construction COD and 36-month lease ramp-up."
+                  data-val="18.24%">18.24%</span>
+          </div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">NET PRESENT VALUE (10%)</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">
+            <span class="calc-cell" 
+                  data-name="Net Present Value @ 10% WACC"
+                  data-formula="NPV = &Sigma; [FCF_t / (1 + 0.10)^t] - CapEx = $42,820,000 USD"
+                  data-desc="Discounted cash flow NPV utilizing a 10.0% weighted average cost of capital discount benchmark."
+                  data-val="$42,820,000 USD">$42,820,000 USD</span>
+          </div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CRITICAL IT CAPACITY</div>
+          <div class="text-sm font-bold font-mono text-sky-700 mt-0.5">
+            <span class="calc-cell" 
+                  data-name="Critical IT Load Rating"
+                  data-formula="Critical IT = 3 Halls x 15.0 MW = 45.0 MW Net IT Load"
+                  data-desc="Dedicated high-density white space power allocated exclusively to server racks and AI compute clusters."
+                  data-val="45.0 MW">45.0 MW IT Load</span>
+          </div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">DESIGN PUE GUARANTEE</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">
+            <span class="calc-cell" 
+                  data-name="Power Usage Effectiveness Guarantee"
+                  data-formula="PUE = Total Facility Power / IT Load = 57.6 MW / 45.0 MW = 1.280"
+                  data-desc="Guaranteed annual average PUE achieved via magnetic oil-free chillers and waterside free cooling."
+                  data-val="&le; 1.280">&le; 1.280</span>
+          </div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TARGET COD TIMELINE</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">14 Months</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- TAB NAVIGATION BAR -->
+    <nav class="flex items-center space-x-1 border-b border-slate-200 pb-2 overflow-x-auto text-xs" aria-label="Tabs">
+      <button onclick="switchTab('tab-charter')" id="btn-tab-charter" class="nav-tab active px-3 py-1.5 rounded text-xs font-semibold border border-sky-600 bg-sky-600 text-white whitespace-nowrap">
+        1. Strategic Charter &amp; Market Context
+      </button>
+      <button onclick="switchTab('tab-tech')" id="btn-tab-tech" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+        2. Technical Baseline &amp; SLAs
+      </button>
+      <button onclick="switchTab('tab-finance')" id="btn-tab-finance" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+        3. Capital Allocation &amp; Returns
+      </button>
+      <button onclick="switchTab('tab-sensitivity')" id="btn-tab-sensitivity" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+        4. Downside Sensitivity &amp; Stress Tests
+      </button>
+      <button onclick="switchTab('tab-risk')" id="btn-tab-risk" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+        5. Enterprise Risk Governance
+      </button>
+      <button onclick="switchTab('tab-resolution')" id="btn-tab-resolution" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+        6. Board Resolution &amp; Capital Gates
+      </button>
+    </nav>
+
+    <!-- TAB 1: STRATEGIC CHARTER & MARKET CONTEXT -->
+    <div id="tab-charter" class="tab-content space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            1. Strategic Investment Mandate &amp; APAC Hyperscale Market Drivers
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Macroeconomic and geopolitical catalysts driving hyperscale colocation demand across Southeast Asia and Vietnam's decisive regional competitive positioning.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs leading-relaxed">
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-800">
+              AI Compute &amp; Hyperscale Migration
+            </div>
+            <p class="text-slate-600 text-[11px]">
+              Global cloud providers and AI foundation model developers are shifting workloads to Vietnam due to data sovereignty mandates (Decree 53/2022/NĐ-CP) and competitive power costs ($0.082/kWh vs $0.22/kWh in Singapore and $0.16/kWh in Tokyo).
+            </p>
+            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+              Market CAGR: 19.8% (2024&ndash;2030)
+            </div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-indigo-800">
+              Subsea Fiber Interconnection Hub
+            </div>
+            <p class="text-slate-600 text-[11px]">
+              Direct low-latency dark fiber access to next-generation international subsea cables (ADC, SJC2, APG, AAG) provides sub-30ms round-trip latency to Singapore, Hong Kong, and Tokyo, establishing carrier-neutral connectivity.
+            </p>
+            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+              Subsea Gateways: 4 Direct Landings
+            </div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/50 space-y-1.5">
+            <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-emerald-800">
+              Green Energy Advantage (DPPA)
+            </div>
+            <p class="text-slate-600 text-[11px]">
+              Adoption of Decree 80/2024 Direct Power Purchase Agreement allows corporate off-takers to secure 100% verified renewable energy (wind/solar) directly from Ninh Thuan / Binh Thuan generation assets, satisfying global ESG mandates.
+            </p>
+            <div class="text-[10.5px] font-mono text-slate-500 pt-1 border-t border-slate-200">
+              Scope 2 Emissions: 100% Net Zero
+            </div>
+          </div>
+        </div>
+
+        <!-- STRATEGIC STATUTORY ALIGNMENT TABLE -->
+        <div class="pt-2">
+          <div class="text-xs font-bold text-slate-900 mb-1.5 uppercase tracking-wide">
+            National Strategic Policy Alignment &amp; Legal Framework
+          </div>
+          <div class="overflow-x-auto">
+            <table class="gov-table text-xs text-slate-700">
+              <thead>
+                <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                  <th class="text-left w-56">Statutory Directive</th>
+                  <th class="text-left">Legal Baseline &amp; Authority</th>
+                  <th class="text-left">Project Compliance Architecture</th>
+                  <th class="text-center w-28">Strategic Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-sans font-bold text-slate-900">Decree 53/2022/NĐ-CP</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Law on Cybersecurity: Domestic data localization requirement for foreign enterprises</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Provides physical sovereign infrastructure enabling tier 1 international cloud providers to achieve 100% compliance</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">MANDATORY</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-sans font-bold text-slate-900">Decree 80/2024/NĐ-CP</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Direct Power Purchase Agreement (DPPA) mechanism for renewable electricity off-take</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Structured bilateral corporate PPA executing physical private wire and virtual grid-connected renewable power contracts</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">ADVANTAGE</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-sans font-bold text-slate-900">Decision 262/QĐ-TTg</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">National Master Plan Implementation: National Digital Infrastructure Strategy to 2030</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Designated regional hub facility qualifying for strategic investor incentives, accelerated permitting, and high-tech status</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">PRIORITY</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/80">
+                  <td class="font-sans font-bold text-slate-900">Law on Telecommunications 2023</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">National Assembly Law 24/2023/QH15: Data Center and Cloud Computing Regulatory Framework</td>
+                  <td class="font-sans text-[10.5px] text-slate-600">Carrier-neutral open access architecture without foreign equity caps, ensuring unhindered international capital participation</td>
+                  <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">UNLOCKED</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 2: TECHNICAL BASELINE & SLAS -->
+    <div id="tab-tech" class="tab-content hidden space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            2. Technical Sizing &amp; Concurrency Architecture Baseline
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Engineering design parameters approved by Chief Technical Architect and validated by third-party Commissioning Authority (CxA).
+          </p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-52">Technical Discipline</th>
+                <th class="text-left">Design Baseline Specification</th>
+                <th class="text-right w-40">Engineering Capacity</th>
+                <th class="text-center w-28">Tier Rating</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">High-Voltage Substation</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Dual 110kV underground incomers from separate EVN bulk stations, SF6 GIS switchgear</td>
+                <td class="text-right font-bold text-slate-900">
+                  <span class="calc-cell" 
+                        data-name="High-Voltage Firm Substation Capacity"
+                        data-formula="Firm MVA = (N - 1) x 40 MVA = 40 MVA Continuous (60 MVA Peak N+1)"
+                        data-desc="Dual 40 MVA ONAN/ONAF step-down transformers delivering complete physical path separation."
+                        data-val="2 x 40 MVA (60 MVA Firm)">2 x 40 MVA (60 MVA Firm)</span>
+                </td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold text-[10px]">Tier III</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Uninterruptible Power (UPS)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">2N isolated static double conversion UPS with LiFePO4 battery energy storage (UL 9540A)</td>
+                <td class="text-right font-bold text-slate-900">
+                  <span class="calc-cell" 
+                        data-name="2N UPS System Capacity"
+                        data-formula="UPS Capacity = 2 x 30,000 kVA = 60,000 kVA Fault-Tolerant"
+                        data-desc="Complete dual-bus static UPS distribution providing 10-minute full-load ride-through on battery backup."
+                        data-val="60,000 kVA (10-min run)">60,000 kVA (10-min run)</span>
+                </td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">2N Fault-Tolerant</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Standby Generation Farm</td>
+                <td class="font-sans text-[10.5px] text-slate-600">10 x 3,000 kVA medium-voltage (22kV) diesel engines (N+1) with 150kL underground fuel</td>
+                <td class="text-right font-bold text-slate-900">
+                  <span class="calc-cell" 
+                        data-name="Standby Diesel Generator Array"
+                        data-formula="Gen Farm = 10 x 3,000 kVA = 30,000 kVA (N+1 Redundant)"
+                        data-desc="Fast-start diesel generator farm achieving bus synchronization and tie-closure in 8.5 seconds."
+                        data-val="30,000 kVA (48h Reserve)">30,000 kVA (48h Reserve)</span>
+                </td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">N+1 Redundant</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Thermal Chiller Plant</td>
+                <td class="font-sans text-[10.5px] text-slate-600">6 x 2,500 RT magnetic oil-free water-cooled chillers (N+2) + waterside free cooling</td>
+                <td class="text-right font-bold text-slate-900">
+                  <span class="calc-cell" 
+                        data-name="Total Chilled Water Plant Duty"
+                        data-formula="Plant Duty = 6 x 2,500 RT = 15,000 RT (N+2 Concurrently Maintainable)"
+                        data-desc="Ultra-high efficiency magnetic bearing centrifugal chillers operating at COP &ge; 6.8 with dual plate heat exchangers."
+                        data-val="15,000 RT (COP &ge; 6.8)">15,000 RT (COP &ge; 6.8)</span>
+                </td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 font-bold text-[10px]">N+2 Redundant</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Direct Liquid Cooling (DLC)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Coolant Distribution Units (CDUs) delivering secondary closed loops to AI/GPU cold plates</td>
+                <td class="text-right font-bold text-slate-900">
+                  <span class="calc-cell" 
+                        data-name="High-Density DLC Thermal Capacity"
+                        data-formula="DLC Rack Density = Up to 80.0 kW/Rack AI Server Clusters"
+                        data-desc="TCS secondary loop supply water at 32&deg;C providing direct cold-plate cooling to high-TDP GPU clusters."
+                        data-val="Up to 80 kW / Rack">Up to 80 kW / Rack</span>
+                </td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">AI-Ready</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Fire Safety Total Flooding</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Aspirating VESDA smoke detection + FK-5-1-12 clean agent gas + pre-action sprinkler</td>
+                <td class="text-right font-bold text-slate-900">&le; 10s Total Flooding</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">QCVN 06:2022</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MISSION-CRITICAL SLA MATRIX -->
+        <div class="pt-2">
+          <div class="text-xs font-bold text-slate-900 mb-1.5 uppercase tracking-wide">
+            Mission-Critical Service Level Agreement (SLA) &amp; Performance Guarantees
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+              <div class="text-[9.5px] uppercase font-bold text-slate-400">FACILITY AVAILABILITY</div>
+              <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">99.982%</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">Tier III Concurrent Maintainability (Max 1.6 hrs/yr unplanned)</div>
+            </div>
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+              <div class="text-[9.5px] uppercase font-bold text-slate-400">ANNUAL AVERAGE PUE</div>
+              <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">&le; 1.280</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">Backed by $50,000/0.01 PUE contractor liquidated damages</div>
+            </div>
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+              <div class="text-[9.5px] uppercase font-bold text-slate-400">WATER USAGE EFFECTIVENESS</div>
+              <div class="text-base font-bold font-mono text-cyan-700 mt-0.5">&le; 1.15 L/kWh</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">Rainwater harvesting + closed-loop adiabatic cooling tower towers</div>
+            </div>
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+              <div class="text-[9.5px] uppercase font-bold text-slate-400">CARBON USAGE EFFECTIVENESS</div>
+              <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">0.00 kg CO2/kWh</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">100% Scope 2 Net Zero via Decree 80/2024 DPPA contracts</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 3: CAPITAL ALLOCATION & FINANCIAL RETURNS -->
+    <div id="tab-finance" class="tab-content hidden space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            3. Capital Expenditure Allocation &amp; 15-Year Financial Return Model
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Turnkey budget baseline breakdown across 12 work packages ($180.0M BAC) and audited discounted cash flow (DCF) metrics.
+          </p>
+        </div>
+
+        <!-- 12-WBS BREAKDOWN TABLE -->
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-20">WBS Code</th>
+                <th class="text-left">Work Package Description</th>
+                <th class="text-left">Major Equipment &amp; Execution Scope</th>
+                <th class="text-right w-32">Budget (USD)</th>
+                <th class="text-right w-20">Weight (%)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 1.0</td>
+                <td class="font-sans font-bold text-slate-900">Land Lease &amp; Statutory Permitting</td>
+                <td class="font-sans text-[10.5px] text-slate-600">50-year industrial land use rights (LURC), EIA Decree 08, 1/500 zoning</td>
+                <td class="text-right font-bold text-slate-900">$12,500,000</td>
+                <td class="text-right text-slate-600">6.94%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 2.0</td>
+                <td class="font-sans font-bold text-slate-900">Civil Substructure &amp; Deep Piling</td>
+                <td class="font-sans text-[10.5px] text-slate-600">1,250 spun concrete piles (D600/D800), mass raft foundation, waterproofing</td>
+                <td class="text-right font-bold text-slate-900">$18,200,000</td>
+                <td class="text-right text-slate-600">10.11%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 3.0</td>
+                <td class="font-sans font-bold text-slate-900">Structural Shell &amp; Building Envelope</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Post-tensioned concrete slabs, 2.5T/m&sup2; floor loading, insulated sandwich panels</td>
+                <td class="text-right font-bold text-slate-900">$22,400,000</td>
+                <td class="text-right text-slate-600">12.44%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 4.0</td>
+                <td class="font-sans font-bold text-slate-900">110kV/22kV Substation &amp; Switchyard</td>
+                <td class="font-sans text-[10.5px] text-slate-600">2x 40 MVA power transformers, SF6 GIS switchgear, underground transmission</td>
+                <td class="text-right font-bold text-slate-900">$16,500,000</td>
+                <td class="text-right text-slate-600">9.17%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 5.0</td>
+                <td class="font-sans font-bold text-slate-900">2N Uninterruptible Power Supply (UPS)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">60,000 kVA static UPS, LiFePO4 battery banks (UL 9540A), STS transfer switches</td>
+                <td class="text-right font-bold text-slate-900">$28,800,000</td>
+                <td class="text-right text-slate-600">16.00%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 6.0</td>
+                <td class="font-sans font-bold text-slate-900">Standby Diesel Generation Farm</td>
+                <td class="font-sans text-[10.5px] text-slate-600">10x 3,000 kVA medium voltage gensets, 150kL fuel farm, dual fuel polishing</td>
+                <td class="text-right font-bold text-slate-900">$19,200,000</td>
+                <td class="text-right text-slate-600">10.67%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 7.0</td>
+                <td class="font-sans font-bold text-slate-900">Central Chilled Water Thermal Plant</td>
+                <td class="font-sans text-[10.5px] text-slate-600">6x 2,500 RT magnetic chillers, cooling towers, primary/secondary pumping loops</td>
+                <td class="text-right font-bold text-slate-900">$24,600,000</td>
+                <td class="text-right text-slate-600">13.67%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 8.0</td>
+                <td class="font-sans font-bold text-slate-900">Direct Liquid Cooling (DLC) Subsystems</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Coolant Distribution Units (CDUs), secondary stainless piping, leak detection</td>
+                <td class="text-right font-bold text-slate-900">$8,400,000</td>
+                <td class="text-right text-slate-600">4.67%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 9.0</td>
+                <td class="font-sans font-bold text-slate-900">Fire Suppression &amp; Life Safety Systems</td>
+                <td class="font-sans text-[10.5px] text-slate-600">VESDA detection, FK-5-1-12 gas suppression, pre-action sprinkler, smoke extract</td>
+                <td class="text-right font-bold text-slate-900">$6,200,000</td>
+                <td class="text-right text-slate-600">3.44%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 10.0</td>
+                <td class="font-sans font-bold text-slate-900">DCIM &amp; Building Management Systems</td>
+                <td class="font-sans text-[10.5px] text-slate-600">EPMS power monitoring, BMS environmental controls, physical security biometric access</td>
+                <td class="text-right font-bold text-slate-900">$5,200,000</td>
+                <td class="text-right text-slate-600">2.89%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 11.0</td>
+                <td class="font-sans font-bold text-slate-900">Integrated Commissioning (L1-L5)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Independent CxA, 45 MW heat load bank testing, black building IST, Tier III cert</td>
+                <td class="text-right font-bold text-slate-900">$4,800,000</td>
+                <td class="text-right text-slate-600">2.67%</td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">WBS 12.0</td>
+                <td class="font-sans font-bold text-slate-900">Project Contingency &amp; Permitting Reserve</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Owner-controlled risk buffer (7.33% of project cost) for foreign exchange and scope drift</td>
+                <td class="text-right font-bold text-slate-900">$13,200,000</td>
+                <td class="text-right text-slate-600">7.33%</td>
+              </tr>
+              <tr class="bg-slate-100/80 font-bold border-t-2 border-slate-300">
+                <td colspan="3" class="font-sans uppercase text-slate-900 text-right pr-4">Total Turnkey Budget at Completion (BAC)</td>
+                <td class="text-right text-slate-900 text-sm">$180,000,000</td>
+                <td class="text-right text-slate-900">100.00%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 15-YEAR DCF HEADLINE CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-2 text-xs">
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">UNLEVERED IRR</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">18.24%</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Target Hurdle: &ge; 15.0%</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">LEVERED EQUITY IRR</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">23.40%</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">65% Debt @ 6.85% blended</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">NET PRESENT VALUE</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">$42.82M</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Discount Rate: 10.0% WACC</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">PAYBACK PERIOD</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">6.2 Years</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Simple cash payback</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">STABILIZED EBITDA</div>
+            <div class="text-base font-bold font-mono text-sky-700 mt-0.5">$28.00M/yr</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">At 100% capacity lease-up</div>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-200">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">EXIT MULTIPLE (Y15)</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">14.0x EBITDA</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">$392.0M Terminal Value</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 4: DOWNSIDE SENSITIVITY & STRESS TESTS -->
+    <div id="tab-sensitivity" class="tab-content hidden space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            4. Board Financial Sensitivity Stress Testing &amp; Downside Scenarios
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Rigorous stress testing evaluating equity returns under adverse occupancy pacing, utility tariff volatility, capital cost overruns, and compound downside market environments.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-56">Sensitivity Scenario</th>
+                <th class="text-left">Scenario Stress Parameters</th>
+                <th class="text-right w-32">Unlevered IRR</th>
+                <th class="text-right w-32">NPV @ 10%</th>
+                <th class="text-right w-24">Min DSCR</th>
+                <th class="text-center w-28">Viability</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80 bg-emerald-50/30 font-bold">
+                <td class="font-sans text-slate-900">Base Case Valuation</td>
+                <td class="font-sans text-[10.5px] text-slate-600 font-normal">BAC $180M, 14-month COD, 36-month lease ramp-up, $125/kW/mo tariff, PUE 1.280</td>
+                <td class="text-right text-emerald-700 text-sm">
+                  <span class="calc-cell"
+                        data-name="Base Case Internal Rate of Return"
+                        data-formula="IRR: &Sigma; [FCF_t / (1 + IRR)^t] = 0 across 15-Year DCF"
+                        data-desc="Unlevered project IRR across 15-year DCF horizon with 14x EBITDA terminal exit multiple."
+                        data-val="18.24%">18.24%</span>
+                </td>
+                <td class="text-right text-emerald-700 text-sm">$42,820,000</td>
+                <td class="text-right text-slate-900">1.82x</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">ROBUST</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Scenario A: Delayed Ramp-up (+12M)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">IT capacity leasing delayed by 12 months (reaches 100% capacity in Year 4 instead of Year 3)</td>
+                <td class="text-right text-slate-800">
+                  <span class="calc-cell"
+                        data-name="Scenario A: Delayed Leasing Ramp IRR"
+                        data-formula="IRR_A = 15.82% (&Delta; -2.42% vs Base Case)"
+                        data-desc="Cash flows depressed during ramp-up phase but terminal value remains intact."
+                        data-val="15.82%">15.82%</span>
+                </td>
+                <td class="text-right text-slate-800">$28,450,000</td>
+                <td class="text-right text-slate-900">1.54x</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">ACCEPTABLE</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Scenario B: EVN Power Tariff Spike (+20%)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Grid electricity tariffs rise 20%; 90% passed through to tenants; 10% absorbed internally</td>
+                <td class="text-right text-slate-800">
+                  <span class="calc-cell"
+                        data-name="Scenario B: Power Tariff Surge IRR"
+                        data-formula="IRR_B = 17.15% (&Delta; -1.09% vs Base Case)"
+                        data-desc="Wholesale colocation pass-through provisions insulate project against 90% of utility power spikes."
+                        data-val="17.15%">17.15%</span>
+                </td>
+                <td class="text-right text-slate-800">$36,910,000</td>
+                <td class="text-right text-slate-900">1.71x</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">PROTECTED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Scenario C: CapEx Overrun (+10%)</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Total project CapEx increases to $198.0M due to global supply chain escalation on chillers</td>
+                <td class="text-right text-amber-700">
+                  <span class="calc-cell"
+                        data-name="Scenario C: CapEx Escalation IRR"
+                        data-formula="IRR_C = 16.08% (&Delta; -2.16% vs Base Case)"
+                        data-desc="Absorbed primarily by owner contingency ($13.2M buffer) and sponsor equity."
+                        data-val="16.08%">16.08%</span>
+                </td>
+                <td class="text-right text-amber-700">$29,620,000</td>
+                <td class="text-right text-slate-900">1.58x</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">BUFFERED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80 bg-rose-50/20">
+                <td class="font-sans font-bold text-slate-900">Scenario D: Compound Stress Downside</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Combined: +10% CapEx overrun AND 12-month leasing delay AND -5% colocation tariff depression</td>
+                <td class="text-right text-rose-700 font-bold">
+                  <span class="calc-cell"
+                        data-name="Scenario D: Severe Compound Stress IRR"
+                        data-formula="IRR_D = 13.12% (Remains above Cost of Debt 6.85%)"
+                        data-desc="Severe downside test preserves positive NPV and debt service coverage."
+                        data-val="13.12%">13.12%</span>
+                </td>
+                <td class="text-right text-rose-700 font-bold">$14,210,000</td>
+                <td class="text-right font-bold text-amber-700">1.38x</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">POSITIVE NPV</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded border border-slate-200">
+          <strong>Board Risk Assessment:</strong> Even under the combined severe stress scenario (Scenario D), the project yields a positive Net Present Value of <strong>$14.21M USD</strong>, an unlevered IRR of <strong>13.12%</strong> (comfortably exceeding the blended debt cost of 6.85%), and a minimum Debt Service Coverage Ratio (DSCR) of <strong>1.38x</strong> (well clear of the 1.25x lender default threshold).
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 5: ENTERPRISE RISK GOVERNANCE -->
+    <div id="tab-risk" class="tab-content hidden space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            5. Enterprise Risk Governance &amp; Statutory Mitigation Matrix
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Institutional risk identification, likelihood/impact scoring, and contractually binding mitigation mechanisms across the 24-month project lifecycle.
+          </p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-48">Risk Domain</th>
+                <th class="text-left">Inherent Vulnerability Description</th>
+                <th class="text-center w-24">Risk Score</th>
+                <th class="text-left">Contractual Mitigation Protocol</th>
+                <th class="text-center w-28">Residual Risk</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Statutory Permitting Delays</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Complex multi-agency approvals (BXD, C07 PCCC, BTNMT) delaying construction commencement past target window</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">High (4 x 4)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">Dual-track GPXD fast-track architecture under Decree 15/2021 saving 4.5 months; early foundation permit execution while superstructure undergoes appraisal</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">LOW (2 x 2)</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">EVN 110kV Grid Interconnection</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Delay in EVN Southern Power Corp energizing dual 110kV feeder bays, leaving facility reliant on temporary power</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">Severe (3 x 5)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">Tripartite grid interconnection agreement with EVN SPC signed in Stage Gate 1; step-down power transformers pre-ordered 10 months ahead of civil completion</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">LOW (2 x 2)</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Equipment Long-Lead Supply Choke</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Global lead times for 2,500 RT magnetic chillers and 3,000 kVA medium voltage gensets exceeding 52 weeks</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold text-[10px]">Severe (4 x 4)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">Direct factory slot reservations and equipment pre-procurement commitments funded under Stage Gate 1 Capital Tranche ($25M)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">LOW (2 x 2)</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Thermal PUE Underperformance</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Actual facility power consumption exceeding design PUE 1.280, driving up operating costs and tenant dissatisfaction</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Medium (3 x 3)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">EPC contract stipulates strict performance liquidated damages ($50,000 per 0.01 PUE exceedance) verified during Level 5 IST heat load burn-in</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">NEGLIGIBLE (1 x 2)</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Foreign Exchange Volatility</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Depreciation of Vietnamese Dong (VND) against USD increasing import equipment procurement costs and debt servicing</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Medium (3 x 3)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">Natural corporate hedge: Wholesale colocation tenant leases denominated in USD or indexed to interbank USD/VND central rate</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">LOW (1 x 3)</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-sans font-bold text-slate-900">Tenant Counterparty Credit Risk</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Anchor colocation tenant insolvency or payment default resulting in unabsorbed capacity and cash flow interruption</td>
+                <td class="text-center"><span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Medium (2 x 4)</span></td>
+                <td class="font-sans text-[10.5px] text-slate-600">Mandatory 6-month cash security deposit, investment-grade parent corporate guarantees, and statutory lien over compute servers</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">LOW (1 x 2)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 6: FORMAL BOARD RESOLUTION & CAPITAL GATES -->
+    <div id="tab-resolution" class="tab-content hidden space-y-4">
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+            6. Formal Board Resolution &amp; Capital Drawdown Authorization
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Formal governance resolution under the Law on Enterprises Vietnam 2020 authorizing project execution, capital disbursement, and contractual commitments.
+          </p>
+        </div>
+
+        <!-- CAPITAL GATES TABLE -->
+        <div class="overflow-x-auto">
+          <table class="gov-table text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="text-left w-24">Stage Gate</th>
+                <th class="text-left">Milestone Deliverable Target</th>
+                <th class="text-left">Statutory Verification Pre-Requisite</th>
+                <th class="text-right w-36">Capital Drawdown</th>
+                <th class="text-center w-28">Authorization</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 font-mono text-[11px]">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 1 (M02)</td>
+                <td class="font-sans font-bold text-slate-900">Land Lease &amp; Permitting Dossier</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Approved 1/500 zoning, EIA GPMT Decree 08, Foundation GPXD</td>
+                <td class="text-right font-bold text-slate-900">$25,000,000 (13.9%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold text-[10px]">APPROVED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 2 (M06)</td>
+                <td class="font-sans font-bold text-slate-900">Substructure &amp; Piling Completion</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Static pile load tests passed, raft foundation pours certified</td>
+                <td class="text-right font-bold text-slate-900">$35,000,000 (19.4%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold text-[10px]">PENDING G1</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 3 (M10)</td>
+                <td class="font-sans font-bold text-slate-900">Superstructure &amp; Building Shell</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Roof topping-out certified, weather-tight envelope hand-off</td>
+                <td class="text-right font-bold text-slate-900">$40,000,000 (22.2%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-50 text-slate-600 font-bold text-[10px]">SCHEDULED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 4 (M14)</td>
+                <td class="font-sans font-bold text-slate-900">MEP Rough-in &amp; 110kV Substation</td>
+                <td class="font-sans text-[10.5px] text-slate-600">EVN 110kV dual energization, 2N UPS &amp; chiller plant delivery</td>
+                <td class="text-right font-bold text-slate-900">$45,000,000 (25.0%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-50 text-slate-600 font-bold text-[10px]">SCHEDULED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 5 (M18)</td>
+                <td class="font-sans font-bold text-slate-900">Level 4/5 IST &amp; Ho&agrave;n C&ocirc;ng</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Police PCCC nghiệm thu, Decree 06 Hoàn Công dossier, Tier III TCCF</td>
+                <td class="text-right font-bold text-slate-900">$25,000,000 (13.9%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-50 text-slate-600 font-bold text-[10px]">SCHEDULED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-bold text-sky-800">Gate 6 (M24)</td>
+                <td class="font-sans font-bold text-slate-900">Commercial Operations (COD) &amp; FAC</td>
+                <td class="font-sans text-[10.5px] text-slate-600">Zero Category A/B punch list items, 10% capex retention release</td>
+                <td class="text-right font-bold text-slate-900">$10,000,000 (5.6%)</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-slate-50 text-slate-600 font-bold text-[10px]">SCHEDULED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- RESOLUTION LEGAL TEXT -->
+        <div class="border border-slate-200 rounded p-3 bg-slate-50/60 text-xs leading-relaxed space-y-2">
+          <div class="font-bold text-slate-900 uppercase tracking-wider text-[10px] text-sky-800">
+            DRAFT BOARD RESOLUTION NO. BOD-RES-2026-DC01
+          </div>
+          <p class="font-serif text-slate-700 italic">
+            WHEREAS, the Executive Leadership Team has presented a fully engineered, de-risked capital proposal for the development and construction of a 45 MW critical IT capacity Hyperscale Data Center Campus in Vietnam;
+          </p>
+          <p class="font-serif text-slate-700 italic">
+            WHEREAS, the Board Investment Committee has rigorously audited the financial return model, confirming a base case unlevered Internal Rate of Return of 18.24% and a Net Present Value of $42,820,000 USD at a 10.0% discount rate;
+          </p>
+          <p class="font-serif text-slate-700 italic">
+            WHEREAS, all statutory regulatory dependencies, including Decree 15/2021 Construction Permitting, QCVN 06:2022 Fire Safety compliance, Decree 08/2022 Environmental Licensing, and EVN 110kV grid connection agreements have been de-risked via dual-track execution architecture;
+          </p>
+          <p class="font-sans font-bold text-slate-900 pt-1">
+            NOW, THEREFORE, BE IT RESOLVED THAT:
+          </p>
+          <ol class="list-decimal pl-5 space-y-1 font-sans text-[11px] text-slate-800">
+            <li>The Board hereby authorizes the total capital expenditure budget of <strong>$180,000,000 USD</strong> for the complete turnkey delivery of the Vietnam Hyperscale Data Center Campus.</li>
+            <li>The Project Director and Chief Financial Officer are authorized to execute the FIDIC Silver Book EPC Turnkey Contract with the selected Tier 1 EPC Contractor, subject to standard performance guarantees and liquidated damages protections.</li>
+            <li>The Executive Team is authorized to enter into binding Direct Power Purchase Agreements (DPPA) for 100% renewable power off-take and finalize the 60 MVA firm grid connection with EVN.</li>
+            <li>Capital disbursements shall be governed strictly by the 6 Stage Gate Capital Drawdown authorization protocol, with each tranche contingent on documented milestone verification.</li>
+            <li>Execution progress shall be monitored monthly via Earned Value Management (EVM) S-Curve reporting to the Board Investment Committee.</li>
+          </ol>
+        </div>
+
+        <!-- SIGNATURE BLOCK -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/50 text-center space-y-3">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">CHAIRMAN OF THE BOARD</div>
+            <div class="font-serif italic text-slate-700 text-sm pt-2">Authorized Signatory</div>
+            <div class="border-t border-slate-300 pt-1 text-[10px] font-mono text-slate-500">Board Investment Committee</div>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/50 text-center space-y-3">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">MANAGING DIRECTOR &amp; CEO</div>
+            <div class="font-serif italic text-slate-700 text-sm pt-2">Authorized Signatory</div>
+            <div class="border-t border-slate-300 pt-1 text-[10px] font-mono text-slate-500">Executive Leadership</div>
+          </div>
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50/50 text-center space-y-3">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">CHIEF FINANCIAL OFFICER</div>
+            <div class="font-serif italic text-slate-700 text-sm pt-2">Authorized Signatory</div>
+            <div class="border-t border-slate-300 pt-1 text-[10px] font-mono text-slate-500">Corporate Finance &amp; Treasury</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER AUDIT -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-BOD-CHARTER-001_Rev.002</span> | Classification: Board Privileged
+      </div>
+      <div class="text-[11px]">
+        Corporate Governance: OECD Principles of Corporate Governance &bull; Law on Enterprises Vietnam 2020
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab Switching Engine
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.classList.remove('active', 'bg-sky-600', 'text-white');
+        el.classList.add('bg-white', 'text-slate-700');
+      });
+
+      const selected = document.getElementById(tabId);
+      if (selected) {
+        selected.classList.remove('hidden');
+      }
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-sky-600', 'text-white');
+        activeBtn.classList.remove('bg-white', 'text-slate-700');
+      }
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    function formatFormulaDisplay(raw) {
+      if (!raw) return '';
+      let clean = raw;
+      clean = clean.replace(/\\text\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathbf\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\times/g, '×');
+      clean = clean.replace(/\\cdot/g, '·');
+      clean = clean.replace(/\\le/g, '≤');
+      clean = clean.replace(/\\ge/g, '≥');
+      clean = clean.replace(/\\%/g, '%');
+      clean = clean.replace(/\\\$/g, '$');
+      clean = clean.replace(/\\_/g, '_');
+      clean = clean.replace(/\\/g, '');
+      return clean;
+    }
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const rawFormula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+        const formula = formatFormulaDisplay(rawFormula);
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700 leading-normal">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Audited Metric: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 20;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 460 > window.innerWidth) {
+        left = e.clientX - 470;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>

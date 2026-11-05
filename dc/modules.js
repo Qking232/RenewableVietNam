@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.030 (Domain 4 5-Level Commissioning & Operational Handover Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.031 (Domain 5 Board Report & Capital Charter Comprehensive Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 6-Module Portfolio Grid
  */
@@ -60,8 +60,8 @@ window.PORTAL_MODULES = [
     shortTitle: "Board Report",
     category: "Executive Authorization",
     title: "Board Report & Project Charter",
-    description: "Executive Capital Authorization Dossier: 45 MW Technical Sizing, Financial Sensitivity Stress Testing, and Formal Board Resolution.",
+    description: "Executive Capital Authorization Dossier: 45 MW Hyperscale Sizing, .0M CapEx, 15-Year DCF Returns, Monte Carlo Stress Testing, Enterprise Risk Matrix & Formal Board Resolution.",
     badge: "Board Report",
-    file: "modules/bod_capex_charter_report_Rev.001.html"
+    file: "modules/bod_capex_charter_report_Rev.002.html"
   }
 ];
