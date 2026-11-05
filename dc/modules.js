@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.035 (Construction Master Gantt Precision Layout Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.036 (DC-Exclusive Elements & Components Architecture Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -50,9 +50,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Civil & Construction",
     category: "Physical Delivery",
     title: "Domain 4: Physical Construction & Civil Infrastructure",
-    description: "14-Month Master Gantt Schedule, Key Milestone Tracking (MS-01 to MS-06), 1,250 PHC Piles to -38m, 1.8m Mass Raft Slab, 12,000 m² White Space, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
+    description: "14-Month Master Gantt Schedule, DC-Exclusive Elements & Components Matrix, Milestone Gates (MS-01 to MS-06), 1,250 PHC Piles to -38m, 1.8m Mass Raft Slab, 12,000 m² White Space, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
     badge: "Construction",
-    file: "modules/domain4_physical_construction_Rev.004.html"
+    file: "modules/domain4_physical_construction_Rev.005.html"
   },
   {
     id: "domain5_handover",
