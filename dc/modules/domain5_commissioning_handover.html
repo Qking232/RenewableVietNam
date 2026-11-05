@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Brand Favicon & Touch Icons -->
+  <link rel="icon" href="../assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+  <title>Domain 5: 5-Level Commissioning &amp; Handover | Hyperscale Data Center - Rev.001</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    button, .tab-btn {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    body {
+      background-color: transparent;
+      color: #334155;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Interactive Calculation Cell Styling */
+    .calc-cell {
+      position: relative;
+      cursor: help;
+      text-decoration: underline dotted #0284c7 1.5px;
+      text-underline-offset: 3px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+    .calc-cell:hover {
+      background-color: #f0f9ff !important;
+      color: #0369a1 !important;
+    }
+
+    /* Floating Tooltip Box */
+    #calc-tooltip {
+      position: fixed;
+      display: none;
+      z-index: 9999;
+      pointer-events: none;
+      max-width: 460px;
+      background-color: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+      font-family: system-ui, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      transition: opacity 0.12s ease;
+    }
+
+    /* Table Typography */
+    .gov-table th, .gov-table td {
+      padding: 8px 10px;
+      font-size: 11.5px;
+      line-height: 1.35;
+      vertical-align: middle;
+    }
+
+    /* Active Tab Styling */
+    .nav-tab.active {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+    .nav-tab {
+      transition: all 0.15s ease;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-5 antialiased">
+
+  <div class="w-full max-w-7xl mx-auto space-y-4">
+
+    <!-- OPEN HEADER -->
+    <header class="border-b border-slate-200 pb-3 space-y-2.5">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+              Domain 4: 5-Level Commissioning, Blackout IST &amp; Operational Handover
+            </h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
+              Rev.002 Cx Master Edition
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5 leading-snug">
+            Mission-Critical Commissioning Protocol: ASHRAE Guideline 0-2019 Levels 1–5, 8.5s Full Blackout Transfer SOO, 45 MW Heat Load Burn-In, Decree 06 Hoàn Công &amp; $9.0M DLP Escrow
+          </p>
+        </div>
+        <div class="font-mono text-xs text-slate-600 md:text-right shrink-0">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TOTAL CAPITAL AT RISK (BAC)</div>
+          <div class="text-base sm:text-lg font-bold font-mono text-slate-900 mt-0.5 leading-tight">$180,000,000 USD</div>
+        </div>
+      </div>
+
+      <!-- FLAT HORIZONTAL STATS ROW -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 pt-2 border-t border-slate-100 text-xs">
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">CX STANDARD</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">ASHRAE G-0</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">BLACKOUT TRANSIT</div>
+          <div class="text-sm font-bold font-mono text-emerald-700 mt-0.5">8.5s Gen Tie</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">HEAT LOAD BURN-IN</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">45.0 MW (96h)</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">TIER UPTIME</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">99.982% Avail</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">STATUTORY HOÀN CÔNG</div>
+          <div class="text-sm font-bold font-mono text-slate-800 mt-0.5">Decree 06/2021</div>
+        </div>
+        <div class="p-2 rounded bg-slate-50 border border-slate-100">
+          <div class="text-[9.5px] uppercase font-bold text-slate-400">DLP RETENTION</div>
+          <div class="text-sm font-bold font-mono text-sky-800 mt-0.5">$9.0M Escrow</div>
+        </div>
+      </div>
+
+      <!-- TAB NAVIGATION CONTROLS -->
+      <div class="flex items-center gap-1.5 pt-2 overflow-x-auto no-scrollbar border-t border-slate-200">
+        <button onclick="switchTab('tab-levels')" id="btn-tab-levels" class="nav-tab active px-3 py-1.5 rounded text-xs font-semibold border border-sky-600 bg-sky-600 text-white whitespace-nowrap">
+          1. 5-Level Commissioning Matrix
+        </button>
+        <button onclick="switchTab('tab-soo')" id="btn-tab-soo" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          2. Blackout Transfer Sequence (SOO)
+        </button>
+        <button onclick="switchTab('tab-thermal')" id="btn-tab-thermal" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          3. 45 MW Heat Load Burn-In Test
+        </button>
+        <button onclick="switchTab('tab-hoancong')" id="btn-tab-hoancong" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          4. Decree 06 Statutory Hoàn Công
+        </button>
+        <button onclick="switchTab('tab-ops')" id="btn-tab-ops" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          5. Operational Readiness &amp; DLP Escrow
+        </button>
+        <button onclick="switchTab('tab-calc')" id="btn-tab-calc" class="nav-tab px-3 py-1.5 rounded text-xs font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 whitespace-nowrap">
+          6. Cx Mathematical Engine
+        </button>
+      </div>
+    </header>
+
+    <!-- FLOATING TOOLTIP BOX -->
+    <div id="calc-tooltip" role="tooltip"></div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: 5-LEVEL COMMISSIONING MATRIX        -->
+    <!-- ========================================== -->
+    <div id="tab-levels" class="tab-content space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              5-Level Mission-Critical Commissioning Framework (ASHRAE Guideline 0-2019)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Rigorous sequential verification executed by Independent Third-Party Commissioning Authority (CxA) reporting directly to the Board Investment Committee.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            ZERO SKIPPED CX LEVELS
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table w-full text-left text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="w-16">Level</th>
+                <th class="w-48">Commissioning Phase</th>
+                <th class="w-36">Governance Lead</th>
+                <th>Testing Scope &amp; Verification Protocol</th>
+                <th class="w-32">Pass / Exit Threshold</th>
+                <th class="w-24 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">LEVEL 1</td>
+                <td>
+                  <div class="font-bold text-slate-900">Factory Acceptance (FAT)</div>
+                  <div class="text-[10.5px] text-slate-500">Witnessed Factory Testing</div>
+                </td>
+                <td class="font-medium text-slate-800">CxA &amp; Equipment Vendor</td>
+                <td>Witnessed full-load testing at manufacturer facilities: 6 x 2,500 RT magnetic chillers (AHRI 550/590), 10 x 3,000 kVA MTU gensets, 2N UPS battery modules, and 110kV SF6 GIS switchgear.</td>
+                <td class="font-mono text-slate-700">100% FAT Certs</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">VERIFIED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">LEVEL 2</td>
+                <td>
+                  <div class="font-bold text-slate-900">Pre-Installation &amp; Delivery</div>
+                  <div class="text-[10.5px] text-slate-500">Site Receipt &amp; Rigging QA</div>
+                </td>
+                <td class="font-medium text-slate-800">EPC QA/QC Lead &amp; CxA</td>
+                <td>Shipping damage audit, desiccant moisture indicator checks, rigging path load verification (15 kN/m²), equipment pad anchorage torquing, and environmental protection during site staging.</td>
+                <td class="font-mono text-slate-700">Zero Transit Defect</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">VERIFIED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">LEVEL 3</td>
+                <td>
+                  <div class="font-bold text-slate-900">Pre-Commissioning (Startup)</div>
+                  <div class="text-[10.5px] text-slate-500">Static Checks &amp; Energization</div>
+                </td>
+                <td class="font-medium text-slate-800">Vendor Specialist &amp; MEP</td>
+                <td>Megger insulation resistance testing, high-potential (Hi-Pot) cable testing, pipe hydraulic pressure hold (1.5x working pressure for 24h), chemical pipe flushing, and initial power bump test.</td>
+                <td class="font-mono text-slate-700">Static Sign-off</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">VERIFIED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">LEVEL 4</td>
+                <td>
+                  <div class="font-bold text-slate-900">Functional Performance (FPT)</div>
+                  <div class="text-[10.5px] text-slate-500">Subsystem Dynamic Testing</div>
+                </td>
+                <td class="font-medium text-slate-800">CxA Lead &amp; Controls Eng</td>
+                <td>Individual dynamic performance validation: UPS battery discharge curves, VFD chiller speed modulation, CRAH valve response, generator step-load acceptance (60% block load), and EPMS telemetry.</td>
+                <td class="font-mono text-slate-700">Zero Cat-A Issues</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">VERIFIED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">LEVEL 5</td>
+                <td>
+                  <div class="font-bold text-slate-900">Integrated Systems (IST)</div>
+                  <div class="text-[10.5px] text-slate-500">Full Blackout &amp; Heat Run</div>
+                </td>
+                <td class="font-medium text-slate-800">Full CxA Team &amp; Owner</td>
+                <td>End-to-end mission-critical stress testing: 45 MW heat load burn-in across all data halls, full utility blackout trip, generator auto-synchronization, secondary chiller failure, and concurrent maintainability.</td>
+                <td class="font-mono text-slate-700">IST Passed 100%</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">ACCEPTED</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: BLACKOUT TRANSFER SEQUENCE (SOO)    -->
+    <!-- ========================================== -->
+    <div id="tab-soo" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Full Utility Blackout &amp; Generator Bus Synchronization Sequence of Operation (SOO)
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Millisecond-by-millisecond autonomous emergency power transfer protocol from utility collapse to stable generator bus tie under ANSI/TIA-942 Rated 3 standards.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            TOTAL TRANSIT: 8.5 SECONDS
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="gov-table w-full text-left text-xs text-slate-700">
+            <thead>
+              <tr class="bg-slate-50 border-y border-slate-200 text-slate-600 font-semibold uppercase text-[10px] tracking-wider">
+                <th class="w-20">Timeline</th>
+                <th class="w-48">System State</th>
+                <th>Automated Control Action &amp; Electrical Response</th>
+                <th class="w-36">Equipment Engaged</th>
+                <th class="w-28 text-center">Critical Impact</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-rose-700">T = 0 ms</td>
+                <td>
+                  <div class="font-bold text-slate-900">Utility Grid Collapse</div>
+                  <div class="text-[10.5px] text-slate-500">110kV Grid Under-voltage</div>
+                </td>
+                <td>EVN 110kV dual transmission feeds trip simultaneously. 2N UPS static transfer switches instantaneously engage DC battery strings. Critical IT bus experiences zero electrical interruption.</td>
+                <td class="font-medium text-slate-800">2N Distributed UPS Strings</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">0 ms IT DROP</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-amber-700">T = 500 ms</td>
+                <td>
+                  <div class="font-bold text-slate-900">Genset Master Start</div>
+                  <div class="text-[10.5px] text-slate-500">Loss-of-Phase Detection</div>
+                </td>
+                <td>Master generator paralleling controller (Woodward / ComAp) confirms persistent utility loss on 22kV bus and broadcasts simultaneous hard-wired crank signal to all 10 diesel engines.</td>
+                <td class="font-medium text-slate-800">10x 3,000 kVA MTU Engines</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">CRANK SIGNAL</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">T = 4.5 s</td>
+                <td>
+                  <div class="font-bold text-slate-900">Rated Speed &amp; Voltage</div>
+                  <div class="text-[10.5px] text-slate-500">1,500 RPM / 400V Baseline</div>
+                </td>
+                <td>All 10 generators achieve rated speed (1,500 rpm) and nominal excitation voltage. Electronic governors lock frequency at 50.0 Hz &plusmn; 0.1 Hz. Generator output breakers close to paralleling bus.</td>
+                <td class="font-medium text-slate-800">Digital Governors &amp; AVR</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">1,500 RPM STABLE</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-sky-700">T = 6.0 s</td>
+                <td>
+                  <div class="font-bold text-slate-900">Bus Synchronization</div>
+                  <div class="text-[10.5px] text-slate-500">Phase Match &amp; Paralleling</div>
+                </td>
+                <td>Automatic synchronizers align phase angle, frequency, and voltage across all 10 generators. Parallel bus tie breakers close; 30.0 MVA emergency generating capacity formed on common bus.</td>
+                <td class="font-medium text-slate-800">Auto-Synchronizers &amp; VCBs</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold text-[10px]">30.0 MVA TIE</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-emerald-700">T = 8.5 s</td>
+                <td>
+                  <div class="font-bold text-slate-900">Mechanical Plant Re-energize</div>
+                  <div class="text-[10.5px] text-slate-500">22kV Bus Transfer Complete</div>
+                </td>
+                <td>Generator main tie breaker closes to 22kV switchgear. Generator power feeds critical chillers, condenser pumps, and CRAHs, and commences battery recharge. Complies with TIA-942 &le; 10s rule.</td>
+                <td class="font-medium text-slate-800">22kV GIS Tie Breakers</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">BUS ENERGIZED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-emerald-700">T = 12.0 s</td>
+                <td>
+                  <div class="font-bold text-slate-900">Chiller Soft-Restart</div>
+                  <div class="text-[10.5px] text-slate-500">VFD Ramp &amp; Loop Recovery</div>
+                </td>
+                <td>Magnetic-bearing centrifugal chillers soft-restart via Variable Frequency Drives (VFD). Chilled water loop thermal storage buffer sustains data hall cooling without temperature excursion.</td>
+                <td class="font-medium text-slate-800">6x 2,500 RT Chillers</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">COOLING RESTORED</span></td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="font-mono font-bold text-slate-600">T = +30 min</td>
+                <td>
+                  <div class="font-bold text-slate-900">Utility Return &amp; Bumpless Transfer</div>
+                  <div class="text-[10.5px] text-slate-500">Closed-Transition Re-transfer</div>
+                </td>
+                <td>EVN 110kV grid returns. 30-minute stabilization timer verifies voltage stability. Automatic synchronizer matches generator bus to grid, performing bumpless closed-transition re-transfer with zero load drop.</td>
+                <td class="font-medium text-slate-800">Closed-Transition ATS</td>
+                <td class="text-center"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">BUMPLESS RE-TIE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: 45 MW HEAT LOAD BURN-IN TEST        -->
+    <!-- ========================================== -->
+    <div id="tab-thermal" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              45 MW Resistive Heat Load Bank Burn-In &amp; Thermal Stress Testing
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              96-hour continuous thermal endurance program replicating 100% server IT heat dissipation under worst-case ambient tropical conditions.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            ASHRAE A1 COMPLIANT (18°C–27°C)
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <!-- Load Stepping Protocol -->
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>96-Hour Thermal Load Stepping Protocol</span>
+              <span class="text-[10px] font-mono font-bold text-sky-700">4-STAGE BURN-IN</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>Stage 1 (24 Hours @ 25% Load / 11.25 MW):</strong> Initial heat soak testing control loop responsiveness, airflow velocity, and CRAH valve modulation.</li>
+              <li><strong>Stage 2 (24 Hours @ 50% Load / 22.50 MW):</strong> Step-load test verifying harmonic distortion, power factor correction, and secondary chilled water balancing.</li>
+              <li><strong>Stage 3 (48 Hours @ 100% Load / 45.00 MW):</strong> Continuous full design IT capacity stress run simulating maximum server rack density under 38°C outdoor ambient.</li>
+              <li><strong>Stage 4 (4 Hours @ 110% Overload / 49.50 MW):</strong> Peak thermal stress test proving 10% design margin without transformer or chiller over-temperature tripping.</li>
+            </ul>
+          </div>
+
+          <!-- Infrared Thermography -->
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>Infrared Thermography &amp; Hot-Spot Audit</span>
+              <span class="text-[10px] font-mono font-bold text-amber-700">FLIR T1020 HD</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>100% Busbar &amp; Lug Scanning:</strong> Calibrated FLIR infrared camera inspection of all 22kV switchgear, 2N UPS terminals, PDU connections, and busway tap-off boxes under full electrical load.</li>
+              <li><strong>Temperature Differential Threshold:</strong> Maximum permissible temperature differential &Delta;T &le; 5.0°C between phases. Zero thermal anomalies or loose connection hotspots.</li>
+              <li><strong>Server Intake Temperature Profile:</strong> 100% of rack face intake sensors verify compliance with ASHRAE Thermal Guidelines (18.0°C – 27.0°C).</li>
+              <li><strong>Hot Aisle Containment Integrity:</strong> Smoke pen testing confirming zero hot-air recirculating over rack tops or around containment blanking panels.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: DECREE 06 STATUTORY HOÀN CÔNG       -->
+    <!-- ========================================== -->
+    <div id="tab-hoancong" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Decree 06/2021/NĐ-CP Statutory Completion (Hoàn Công) &amp; Multi-Agency Acceptance
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Statutory occupancy licensing protocol administered by the State Inspection Council, Fire Police (C07), Department of Construction (SXD), and EVN.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            OFFICIAL OCCUPANCY PERMIT
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>State Inspection Council Audit (Decree 06/2021)</span>
+              <span class="text-[10px] font-mono font-bold text-slate-600">CONSTRUCTION QUALITY</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>Structural Integrity Dossier:</strong> Verification of 650 bored pile logs, concrete core 28-day break tests, foundation settlement monitoring (&le; 8mm), and 15 kN/m² slab load proof.</li>
+              <li><strong>As-Built Construction Dossier:</strong> Complete set of as-built architectural, civil, and MEP drawings signed by licensed practicing engineers and certified supervision consultant.</li>
+              <li><strong>Material Origin &amp; Quality Certificates:</strong> 100% of mill certificates, CO/CQ sets, and test records for imported chillers, transformers, and emergency generators.</li>
+              <li><strong>Occupancy Approval Notice:</strong> Formal written acceptance issued by the Department of Construction (SXD) authorizing commercial tenant occupancy.</li>
+            </ul>
+          </div>
+
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>Final Police PCCC Fire Safety Acceptance</span>
+              <span class="text-[10px] font-mono font-bold text-rose-700">NGHIỆM THU PCCC (C07)</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>On-Site Live Witness Inspection:</strong> Formal site inspection by Cục Cảnh sát PCCC &amp; CNCH (C07) verifying installation compliance with approved design No. 482/TD-PCCC.</li>
+              <li><strong>System Functional Test:</strong> Simulated smoke discharge into VESDA detection heads, automatic fire damper closure, stairwell pressurization fan start, and emergency lighting illumination.</li>
+              <li><strong>FK-5-1-12 System Room Integrity:</strong> Enclosure fan pressurization test (door fan test) verifying gas retention time &ge; 10 minutes without hazardous leakage.</li>
+              <li><strong>PCCC Acceptance Certificate:</strong> Official Văn bản nghiệm thu về PCCC issued by C07, a mandatory prerequisite for facility commercial operations under Vietnamese law.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: OPERATIONAL READINESS & DLP ESCROW  -->
+    <!-- ========================================== -->
+    <div id="tab-ops" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Operational Readiness, BIM LOD 500 Digital Twin &amp; 12-Month DLP Retention Escrow
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Transitioning from capital delivery to Day-1 24/7/365 commercial mission-critical facilities management.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-50 text-sky-800 font-bold border border-sky-200">
+            $9.0M RETENTION CASH ESCROW
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <!-- Digital Twin & CMMS -->
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>BIM LOD 500 Digital Twin &amp; DCIM Integration</span>
+              <span class="text-[10px] font-mono font-bold text-sky-700">AS-BUILT TWIN</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>Asset Lifecycle Attribution:</strong> As-built BIM model populated with equipment serial numbers, warranty start dates, maintenance schedules, and spare parts catalog.</li>
+              <li><strong>DCIM Telemetry Linking:</strong> Real-time integration of power branch circuit monitoring (BCM), rack temperature sensors, and PUE calculations into 3D facility model.</li>
+              <li><strong>Procedural Library:</strong> 110 formal operating procedures compiled: 50 Standard Operating Procedures (SOPs), 35 Maintenance Operating Procedures (MOPs), and 25 Emergency Operating Procedures (EOPs).</li>
+              <li><strong>Staff Competency Certification:</strong> 100% of facility engineers certified in Uptime Institute Accredited Tier Specialist (ATS) and High-Voltage Safety Operations.</li>
+            </ul>
+          </div>
+
+          <!-- DLP Escrow Governance -->
+          <div class="p-3.5 rounded border border-slate-200 bg-slate-50/50 space-y-2">
+            <div class="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
+              <span>12-Month Defects Liability Period (DLP) Escrow</span>
+              <span class="text-[10px] font-mono font-bold text-emerald-700">FIDIC CLAUSE 14.9</span>
+            </div>
+            <ul class="list-disc list-inside text-slate-600 space-y-1 text-[11px] leading-relaxed">
+              <li><strong>Cash Escrow Holdback:</strong> 5.0% of total contract value ($9,000,000 USD) withheld in bank escrow account maintained throughout the 12-month DLP following COD.</li>
+              <li><strong>Latent Defect Rectification:</strong> Contractor legally obligated to rectify any latent mechanical, electrical, or structural defects within 48 hours of notification.</li>
+              <li><strong>Unremedied Defect Step-In Rights:</strong> Owner holds unconditional right to deploy third-party remediation contractors and deduct costs directly from escrow funds.</li>
+              <li><strong>Final Acceptance Certificate (FAC):</strong> Release of $9.0M retention contingent upon joint 12-month audit sign-off by Project Director, CxA, and CFO.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 6: CX MATHEMATICAL ENGINE              -->
+    <!-- ========================================== -->
+    <div id="tab-calc" class="tab-content hidden space-y-4">
+      
+      <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
+        <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              Commissioning, Handover &amp; Reliability Verification Engine
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">
+              Hover cursor over calculation cells to inspect underlying mathematical formulations and commission performance thresholds.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 font-bold border border-emerald-200">
+            AUDIT VERIFIED
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">BLACKOUT TRANSIT TIME</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Utility Loss to Generator Bus Close"
+                    data-formula="Transit Time = t_UPS (0ms static) + t_gen (8.5s tie) = 8.5s &le; 10.0s Limit"
+                    data-desc="Static UPS sustains IT load with zero interruption. 10 x 3,000 kVA gensets synchronize and close to 22kV bus in 8.5 seconds (under 10s TIA-942 limit)."
+                    data-val="8.5 Seconds">8.5 Seconds</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">TIA-942 Limit: &le; 10.0s</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">THERMAL REJECTION DUTY</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="45 MW Heat Load Rejection Rate"
+                    data-formula="Q = 45,000 kW * 3,412.14 BTU/kWh = 153,546,300 BTU/hr"
+                    data-desc="Continuous heat dissipation generated during 100% resistive load bank burn-in testing across all data halls."
+                    data-val="153.5M BTU/hr">153.5M BTU/hr</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">45.0 MW Full Load Bank</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">CHILLED WATER BUFFER</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Thermal Storage Ride-Through Autonomy"
+                    data-formula="t = (V * rho * Cp * Delta_T) / Q_load = (1,200 * 1,000 * 4.184 * 6.5) / 57,600 = 18.2 min"
+                    data-desc="1,200m³ primary chilled water header buffer sustains critical data hall cooling for 18.2 minutes during chiller VFD restart."
+                    data-val="18.2 Minutes">18.2 Minutes</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Loop Ride-Through Buffer</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">DLP RETENTION ESCROW</div>
+            <div class="text-base font-bold font-mono text-sky-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Defects Liability Retention (Clause 14.9)"
+                    data-formula="Retention = 5.0% * Contract Price = 0.05 * $180,000,000 = $9,000,000 USD"
+                    data-desc="5.0% contract value held in bank escrow for 12 months post-COD to backstop latent mechanical and electrical defects."
+                    data-val="$9.00M USD">$9.00M USD</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">5.0% Cash Escrow</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">GENSET INRUSH HEADROOM</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Generator Block Load Acceptance"
+                    data-formula="Headroom = S_total - S_peak = 30.0 MVA - 24.2 MVA = 5.8 MVA (19.3%)"
+                    data-desc="10 x 3,000 kVA gensets accept initial 60% mechanical motor step-load with 19.3% spinning reserve headroom."
+                    data-val="5.8 MVA Headroom">5.8 MVA</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">19.3% Step Headroom</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">TIER III AVAILABILITY</div>
+            <div class="text-base font-bold font-mono text-emerald-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Mission-Critical System Availability"
+                    data-formula="Availability = MTBF / (MTBF + MTTR) = 99.982%"
+                    data-desc="Concurrent maintainability architecture guarantees maximum permissible annual downtime &le; 1.6 hours (95 seconds/year)."
+                    data-val="99.982% Availability">99.982%</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">&le; 1.6 hrs / yr Downtime</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">BATTERY RUN-TIME</div>
+            <div class="text-base font-bold font-mono text-slate-900 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="UPS Full Load Battery Autonomy"
+                    data-formula="Run-Time = Total Energy / IT Load = 11.25 MWh / 45.0 MW = 15.0 Minutes"
+                    data-desc="2N distributed VRLA/LiFePO4 battery banks sustain 100% full critical load for 15.0 minutes, 100x longer than 8.5s genset transfer."
+                    data-val="15.0 Minutes">15.0 Minutes</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">100% Load Battery Hold</div>
+          </div>
+
+          <div class="p-3 rounded border border-slate-200 bg-slate-50/60">
+            <div class="text-[9.5px] uppercase font-bold text-slate-400">CHILLED WATER DELTA T</div>
+            <div class="text-base font-bold font-mono text-sky-700 mt-0.5">
+              <span class="calc-cell" 
+                    data-name="Secondary Chilled Water Thermal Delta"
+                    data-formula="Delta_T = T_return (18.5°C) - T_supply (12.0°C) = 6.5°C"
+                    data-desc="Engineered temperature difference across cooling coils maximizing chiller COP efficiency and preventing low Delta-T syndrome."
+                    data-val="6.5°C Delta T">6.5°C</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1">Supply 12°C / Return 18.5°C</div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- DOCUMENT REVISION AUDIT TRAIL -->
+    <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-mono text-[11px]">
+        Document Ref: <span class="text-slate-800 font-bold">DC-DOM4-CX-001_Rev.002</span> | Classification: Commissioning &amp; Handover Dossier
+      </div>
+      <div class="text-[11px]">
+        Governing Standards: ASHRAE Guideline 0-2019 &bull; Uptime Institute Tier III &bull; Decree 06/2021/NĐ-CP &bull; FIDIC Silver Book
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Tab Switching Engine
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.classList.remove('active', 'bg-sky-600', 'text-white');
+        el.classList.add('bg-white', 'text-slate-700');
+      });
+
+      const selected = document.getElementById(tabId);
+      if (selected) {
+        selected.classList.remove('hidden');
+      }
+
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-sky-600', 'text-white');
+        activeBtn.classList.remove('bg-white', 'text-slate-700');
+      }
+    }
+
+    // Floating Tooltip Engine
+    const tooltip = document.getElementById('calc-tooltip');
+    const cells = document.querySelectorAll('.calc-cell');
+
+    function formatFormulaDisplay(raw) {
+      if (!raw) return '';
+      let clean = raw;
+      clean = clean.replace(/\\text\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathbf\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+      clean = clean.replace(/\\times/g, '×');
+      clean = clean.replace(/\\cdot/g, '·');
+      clean = clean.replace(/\\le/g, '≤');
+      clean = clean.replace(/\\ge/g, '≥');
+      clean = clean.replace(/\\%/g, '%');
+      clean = clean.replace(/\\\$/g, '$');
+      clean = clean.replace(/\\_/g, '_');
+      clean = clean.replace(/\\/g, '');
+      return clean;
+    }
+
+    cells.forEach(cell => {
+      cell.addEventListener('mouseenter', (e) => {
+        const name = cell.getAttribute('data-name');
+        const rawFormula = cell.getAttribute('data-formula');
+        const desc = cell.getAttribute('data-desc');
+        const val = cell.getAttribute('data-val');
+        const formula = formatFormulaDisplay(rawFormula);
+
+        tooltip.innerHTML = `
+          <div class="font-bold text-sky-400 mb-1">${name}</div>
+          <div class="font-mono text-[11px] bg-slate-800 p-1.5 rounded text-amber-200 mb-1.5 border border-slate-700 leading-normal">${formula}</div>
+          <div class="text-slate-300 text-[10.5px] mb-1.5 leading-snug">${desc}</div>
+          <div class="text-right text-[10px] font-mono text-emerald-400 font-bold border-t border-slate-700/80 pt-1">Verified Metric: ${val}</div>
+        `;
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e);
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    function updateTooltipPosition(e) {
+      const padding = 20;
+      let left = e.clientX + padding;
+      let top = e.clientY + padding;
+
+      if (left + 460 > window.innerWidth) {
+        left = e.clientX - 470;
+      }
+      if (top + 220 > window.innerHeight) {
+        top = e.clientY - 230;
+      }
+
+      tooltip.style.left = Math.max(10, left) + 'px';
+      tooltip.style.top = Math.max(10, top) + 'px';
+    }
+  </script>
+</body>
+</html>

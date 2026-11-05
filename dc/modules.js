@@ -1,7 +1,7 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.031 (Domain 5 Board Report & Capital Charter Comprehensive Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.032 (7-Module Master Suite Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
- * Architecture: Executive 6-Module Portfolio Grid
+ * Architecture: Executive 7-Module Portfolio Grid
  */
 window.PORTAL_MODULES = [
   {
@@ -45,14 +45,24 @@ window.PORTAL_MODULES = [
     file: "modules/domain3_capex_cost_contracts_Rev.007.html"
   },
   {
-    id: "domain4_handover",
+    id: "domain4_construction",
     tag: "DOMAIN 4",
+    shortTitle: "Civil & Construction",
+    category: "Physical Delivery",
+    title: "Domain 4: Physical Construction & Civil Infrastructure",
+    description: "1,250 PHC D600/D800 Spun Piles to -38m, 1.8m Mass Raft Slab (25 kN/m²), 12,000 m² White Space, 110kV Substation Yard, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
+    badge: "Construction",
+    file: "modules/domain4_physical_construction_Rev.001.html"
+  },
+  {
+    id: "domain5_handover",
+    tag: "DOMAIN 5",
     shortTitle: "5-Level Cx & Handover",
     category: "Commissioning & Ops",
-    title: "Domain 4: 5-Level Commissioning & Operational Handover",
+    title: "Domain 5: 5-Level Commissioning & Operational Handover",
     description: "ASHRAE Guideline 0-2019 Levels 1-5 Cx, Integrated Systems Testing (IST), Black Building Simulation, Decree 06/2021 Hoàn Công Dossier, MOP/SOP Readiness & Live PUE Calculator.",
     badge: "Commissioning",
-    file: "modules/domain4_commissioning_handover_Rev.002.html"
+    file: "modules/domain5_commissioning_handover_Rev.001.html"
   },
   {
     id: "bod_report",
@@ -60,7 +70,7 @@ window.PORTAL_MODULES = [
     shortTitle: "Board Report",
     category: "Executive Authorization",
     title: "Board Report & Project Charter",
-    description: "Executive Capital Authorization Dossier: 45 MW Hyperscale Sizing, .0M CapEx, 15-Year DCF Returns, Monte Carlo Stress Testing, Enterprise Risk Matrix & Formal Board Resolution.",
+    description: "Executive Capital Authorization Dossier: 45 MW Hyperscale Sizing, $180.0M CapEx, 15-Year DCF Returns, Monte Carlo Stress Testing, Enterprise Risk Matrix & Formal Board Resolution.",
     badge: "Board Report",
     file: "modules/bod_capex_charter_report_Rev.002.html"
   }
