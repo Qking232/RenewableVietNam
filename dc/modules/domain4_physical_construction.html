@@ -77,7 +77,12 @@
       white-space: nowrap !important;
     }
 
-    /* Gantt Chart Custom Grid System */
+    /* Master 14-Month Gantt Grid Specification */
+    .gantt-grid-14 {
+      display: grid !important;
+      grid-template-columns: repeat(14, minmax(0, 1fr)) !important;
+      width: 100% !important;
+    }
     .gantt-grid-col {
       border-right: 1px dashed #e2e8f0;
     }
@@ -112,7 +117,7 @@
               Domain 4: Physical Construction &amp; Civil Infrastructure
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.003 Gantt Milestone Edition
+              Rev.004 Master Gantt Schedule
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
@@ -244,9 +249,9 @@
           <div class="min-w-[860px] text-xs select-none">
             
             <!-- GANTT TIMELINE HEADER -->
-            <div class="grid grid-cols-12 gap-0 border-b border-slate-200 pb-1.5 mb-1.5 font-mono text-[10.5px] font-bold text-slate-600">
+            <div class="grid grid-cols-12 gap-0 border-b border-slate-200 pb-1.5 mb-1.5 font-mono text-[10.5px] font-bold text-slate-600 items-center">
               <div class="col-span-4 px-2 text-slate-500 uppercase tracking-wider text-[9.5px]">Work Package &amp; WBS Scope</div>
-              <div class="col-span-8 grid grid-cols-14 text-center">
+              <div class="col-span-8 gantt-grid-14 text-center">
                 <div class="gantt-grid-col py-0.5">M01</div>
                 <div class="gantt-grid-col py-0.5">M02</div>
                 <div class="gantt-grid-col py-0.5">M03</div>
@@ -254,7 +259,7 @@
                 <div class="gantt-grid-col py-0.5">M05</div>
                 <div class="gantt-grid-col py-0.5">M06</div>
                 <div class="gantt-grid-col py-0.5">M07</div>
-                <div class="gantt-grid-col py-0.5 bg-sky-50 text-sky-800 font-extrabold rounded-t">M08*</div>
+                <div class="gantt-grid-col py-0.5 bg-sky-100/60 text-sky-900 font-extrabold rounded-t border-b-2 border-sky-600">M08*</div>
                 <div class="gantt-grid-col py-0.5">M09</div>
                 <div class="gantt-grid-col py-0.5">M10</div>
                 <div class="gantt-grid-col py-0.5">M11</div>
@@ -268,8 +273,8 @@
             <div class="relative space-y-2 py-1">
               
               <!-- VERTICAL "TODAY / MONTH 08" CURSOR LINE -->
-              <div class="absolute top-0 bottom-0 pointer-events-none z-10" style="left: calc(33.333% + (66.666% * 7.5 / 14)); width: 2px; background-color: #0284c7; opacity: 0.85;">
-                <span class="absolute -top-3 -left-7 px-1.5 py-0.2 rounded bg-sky-600 text-white font-mono text-[9px] font-bold shadow-xs whitespace-nowrap">
+              <div class="absolute top-0 bottom-0 pointer-events-none z-30" style="left: calc(33.3333% + 66.6667% * 7.5 / 14); width: 2px; background-color: #0284c7;">
+                <span class="absolute -top-3.5 -left-8 px-1.5 py-0.5 rounded bg-sky-600 text-white font-mono text-[9px] font-bold shadow-xs whitespace-nowrap">
                   TODAY M08
                 </span>
               </div>
@@ -280,17 +285,36 @@
                   <span class="font-bold text-slate-800 text-[11px] truncate">1. Site Mobilization &amp; Bulk Earthworks</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-1 col-span-2 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M01 - M02 (Duration 2 Months) -->
+                  <div class="absolute h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: 0%; width: calc(100% * 2 / 14);"
                        data-name="Site Mobilization &amp; Bulk Earthworks"
                        data-formula="Phase 1: M01 - M02 (60 Days) &bull; 120,000 m&sup3; Cut &amp; Fill"
                        data-desc="1/500 Master Plan boundary fencing, site offices, concrete batching plant mobilization, wheel wash basins, and temporary 22kV power tie-in."
                        data-val="100% Complete">
-                    M01&ndash;M02
+                    <span class="truncate">M01&ndash;M02</span>
                   </div>
                   <!-- MILESTONE 1 DIAMOND (End of M02) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% * 2 / 14 - 6px);"
+                       style="left: calc(100% * 2 / 14 - 6.5px);"
                        data-name="Key Milestone MS-01: Foundation GPXD Issuance"
                        data-formula="MS-01 &bull; Month 02 Milestone Target &bull; Decree 15/2021"
                        data-desc="Statutory Construction Permit for deep foundations granted by Department of Construction (DOC), officially authorizing commercial piling commencement."
@@ -306,17 +330,36 @@
                   <span class="font-bold text-slate-800 text-[11px] truncate">2. Deep Piling Array (1,250 PHC Piles)</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-2 col-span-3 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M02 - M04 (Duration 3 Months) -->
+                  <div class="absolute h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: calc(100% * 1 / 14); width: calc(100% * 3 / 14);"
                        data-name="PHC Spun Piling Array (-38m Refusal)"
                        data-formula="Phase 2: M02 - M04 (60 Days) &bull; 1,250 Piles x PHC D600/D800"
                        data-desc="6 hydraulic piling rigs driving 1,250 spun concrete piles to -38m refusal. 100% PIT, 5% PDA, and static load tests to 200% design capacity (4,800 kN)."
                        data-val="100% Complete">
-                    M02&ndash;M04
+                    <span class="truncate">M02&ndash;M04</span>
                   </div>
                   <!-- MILESTONE 2 DIAMOND (End of M04) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% * 4 / 14 - 6px);"
+                       style="left: calc(100% * 4 / 14 - 6.5px);"
                        data-name="Key Milestone MS-02: Pile Load Test Certification"
                        data-formula="MS-02 &bull; Month 04 Milestone Target &bull; TCVN 9393"
                        data-desc="All static load tests successfully verified up to 4,800 kN with settlement &le; 15mm; pile head cropping and foundation blinding authorized."
@@ -332,17 +375,36 @@
                   <span class="font-bold text-slate-800 text-[11px] truncate">3. Mass Raft Foundation (1.8m Depth)</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">100%</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-4 col-span-3 h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M04 - M06 (Duration 3 Months) -->
+                  <div class="absolute h-4.5 rounded bg-emerald-600 text-white font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: calc(100% * 3 / 14); width: calc(100% * 3 / 14);"
                        data-name="Monolithic Mass Concrete Raft Foundation"
                        data-formula="Phase 3: M04 - M06 (60 Days) &bull; 21,600 m&sup3; B35 LHPC"
                        data-desc="Continuous monolithic mass pour utilizing low-heat cement with continuous thermocouple logging ensuring core-to-surface &Delta;T &le; 20&deg;C."
                        data-val="100% Complete">
-                    M04&ndash;M06
+                    <span class="truncate">M04&ndash;M06</span>
                   </div>
                   <!-- MILESTONE 3 DIAMOND (End of M06) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% * 6 / 14 - 6px);"
+                       style="left: calc(100% * 6 / 14 - 6.5px);"
                        data-name="Key Milestone MS-03: Substructure Sign-off"
                        data-formula="MS-03 &bull; Month 06 Milestone Target &bull; ACI 207.2R"
                        data-desc="Mass raft foundation 28-day core strength exceeds 35 MPa with zero thermal micro-fissuring; bentonite waterproofing tanking certified 100% water-tight."
@@ -358,14 +420,33 @@
                   <span class="font-bold text-slate-900 text-[11px] truncate">4. Post-Tensioned Superstructure</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-bold shrink-0">75% Active</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-6 col-span-5 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M06 - M10 (Duration 5 Months, 75% active) -->
+                  <div class="absolute h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs gantt-item"
+                       style="left: calc(100% * 5 / 14); width: calc(100% * 5 / 14);"
                        data-name="Post-Tensioned Reinforced Concrete Frame"
                        data-formula="Phase 4: M06 - M10 (120 Days) &bull; 25 kN/m&sup2; Live Load"
                        data-desc="Cast-in-place columns, core shear walls, and post-tensioned slabs designed to TCVN 9386 / IBC Seismic Zone 2A standards. Currently 75% complete."
                        data-val="75% In Progress">
                     <div class="h-full bg-sky-600 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 75%;">
-                      M06&ndash;M10 (75%)
+                      <span class="truncate">M06&ndash;M10 (75%)</span>
                     </div>
                   </div>
                 </div>
@@ -377,19 +458,38 @@
                   <span class="font-bold text-slate-900 text-[11px] truncate">5. Building Envelope &amp; Dry-In</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-bold shrink-0">60% Active</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-7 col-span-4 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M07 - M10 (Duration 4 Months, 60% active) -->
+                  <div class="absolute h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs gantt-item"
+                       style="left: calc(100% * 6 / 14); width: calc(100% * 4 / 14);"
                        data-name="Building Envelope &amp; Weather-Tight Dry-In"
                        data-formula="Phase 4: M07 - M10 (90 Days) &bull; EI 120 Cladding + FM 1-90 Roof"
                        data-desc="150mm insulated mineral wool panels and standing seam metal roof rated for 180 km/h typhoon wind loads. Currently 60% complete."
                        data-val="60% In Progress">
                     <div class="h-full bg-sky-600 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 60%;">
-                      M07&ndash;M10 (60%)
+                      <span class="truncate">M07&ndash;M10 (60%)</span>
                     </div>
                   </div>
                   <!-- MILESTONE 4 DIAMOND (End of M10) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% * 10 / 14 - 6px);"
+                       style="left: calc(100% * 10 / 14 - 6.5px);"
                        data-name="Key Milestone MS-04: Weather-Tight Building Dry-In"
                        data-formula="MS-04 &bull; Month 10 Milestone Target &bull; Critical Path Gate"
                        data-desc="Building envelope completely enclosed and weather-tight; enables internal HVAC energization and clean room white space fit-out."
@@ -405,19 +505,38 @@
                   <span class="font-bold text-slate-800 text-[11px] truncate">6. 110kV GIS Substation Civil Yard</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold shrink-0">50% Active</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-8 col-span-5 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M08 - M12 (Duration 5 Months, 50% active) -->
+                  <div class="absolute h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs gantt-item"
+                       style="left: calc(100% * 7 / 14); width: calc(100% * 5 / 14);"
                        data-name="110kV Substation Civil Compound &amp; Duct Banks"
                        data-formula="Phase 5: M08 - M12 (120 Days) &bull; EI 240 Blast Walls &bull; Parallel Track"
                        data-desc="Dual 40 MVA transformer plinths, EI 240 reinforced blast firewalls, 16-way concrete duct bank encasement, and GIS switchgear building. 50% complete."
                        data-val="50% In Progress">
                     <div class="h-full bg-amber-500 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 50%;">
-                      M08&ndash;M12 (50%)
+                      <span class="truncate">M08&ndash;M12 (50%)</span>
                     </div>
                   </div>
                   <!-- MILESTONE 5 DIAMOND (End of M12) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% * 12 / 14 - 6px);"
+                       style="left: calc(100% * 12 / 14 - 6.5px);"
                        data-name="Key Milestone MS-05: EVN 110kV Dual Energization"
                        data-formula="MS-05 &bull; Month 12 Milestone Target &bull; EVN Interconnection"
                        data-desc="EVN Southern Power Corp completes dual 110kV feeder energization; substation yard civil hand-off cleared for permanent station auxiliary power."
@@ -433,14 +552,33 @@
                   <span class="font-bold text-slate-800 text-[11px] truncate">7. Standby Generator Compound &amp; Fuel Vault</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 font-bold shrink-0">40% Active</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-9 col-span-4 h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs relative gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M09 - M12 (Duration 4 Months, 40% active) -->
+                  <div class="absolute h-4.5 rounded bg-slate-200 overflow-hidden shadow-2xs gantt-item"
+                       style="left: calc(100% * 8 / 14); width: calc(100% * 4 / 14);"
                        data-name="Standby Generator Yard &amp; Fuel Storage"
                        data-formula="Phase 5: M09 - M12 (90 Days) &bull; 10 Plinths &bull; 150kL Vault"
                        data-desc="10 concrete generator plinths with seismic snubbers (&le;65 dBA acoustic louvers) and 150kL double-walled underground fuel tank vault. 40% complete."
                        data-val="40% In Progress">
                     <div class="h-full bg-amber-500 text-white font-mono text-[9px] font-bold flex items-center px-2" style="width: 40%;">
-                      M09&ndash;M12 (40%)
+                      <span class="truncate">M09&ndash;M12 (40%)</span>
                     </div>
                   </div>
                 </div>
@@ -452,13 +590,32 @@
                   <span class="font-bold text-slate-700 text-[11px] truncate">8. White Space Architectural Fit-out</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-10 col-span-5 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M10 - M14 (Duration 5 Months, Scheduled) -->
+                  <div class="absolute h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: calc(100% * 9 / 14); width: calc(100% * 5 / 14);"
                        data-name="White Space Structural Grid &amp; Fit-out"
                        data-formula="Phase 6: M10 - M14 (120 Days) &bull; 12,000 m&sup2; White Space"
                        data-desc="Unistrut overhead ceiling grids, overhead power busway drops (A+B 1,000A), fiber raceways, and perimeter wall partitions across 3 server halls."
                        data-val="Scheduled Month 10">
-                    M10&ndash;M14 (Scheduled)
+                    <span class="truncate">M10&ndash;M14 (Scheduled)</span>
                   </div>
                 </div>
               </div>
@@ -469,13 +626,32 @@
                   <span class="font-bold text-slate-700 text-[11px] truncate">9. Raised Flooring (800mm FFH) &amp; HAC</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-11 col-span-4 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M11 - M14 (Duration 4 Months, Scheduled) -->
+                  <div class="absolute h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: calc(100% * 10 / 14); width: calc(100% * 4 / 14);"
                        data-name="Raised Access Floor &amp; Hot Aisle Containment"
                        data-formula="Phase 6: M11 - M14 (90 Days) &bull; 15 kN Point Load"
                        data-desc="Steel-encapsulated calcium sulphate raised access flooring (800mm FFH) with pressurized underfloor plenum and Hot Aisle Containment doors."
                        data-val="Scheduled Month 11">
-                    M11&ndash;M14 (Scheduled)
+                    <span class="truncate">M11&ndash;M14 (Scheduled)</span>
                   </div>
                 </div>
               </div>
@@ -486,17 +662,36 @@
                   <span class="font-bold text-slate-700 text-[11px] truncate">10. Clean Room ISO Purge &amp; Cx Hand-off</span>
                   <span class="font-mono text-[9.5px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-bold shrink-0">Scheduled</span>
                 </div>
-                <div class="col-span-8 grid grid-cols-14 relative h-6 items-center">
-                  <div class="col-start-13 col-span-2 h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                <div class="col-span-8 relative h-6 flex items-center">
+                  <!-- 14-MONTH BACKGROUND GUIDES -->
+                  <div class="absolute inset-0 gantt-grid-14 pointer-events-none">
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full bg-sky-50/25"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="border-r border-slate-100 h-full"></div>
+                    <div class="h-full"></div>
+                  </div>
+                  <!-- GANTT BAR: M13 - M14 (Duration 2 Months, Scheduled) -->
+                  <div class="absolute h-4.5 rounded border border-dashed border-slate-300 bg-slate-100 text-slate-600 font-mono text-[9px] font-bold flex items-center px-2 shadow-2xs gantt-item"
+                       style="left: calc(100% * 12 / 14); width: calc(100% * 2 / 14);"
                        data-name="ISO Class 8 Clean Room Air Purge"
                        data-formula="Phase 6: M13 - M14 (45 Days) &bull; ISO 14644-1 Standard"
                        data-desc="HEPA positive pressure air purging, particle counter verification, and formal civil turnover to Commissioning Authority (CxA) for Level 3-5 testing."
                        data-val="Scheduled Month 13">
-                    M13&ndash;M14
+                    <span class="truncate">M13&ndash;M14</span>
                   </div>
                   <!-- MILESTONE 6 DIAMOND (End of M14) -->
                   <div class="absolute z-20 gantt-item flex items-center justify-center cursor-pointer"
-                       style="left: calc(100% - 6px);"
+                       style="left: calc(100% - 13px);"
                        data-name="Key Milestone MS-06: Civil Turnover to Level 3-5 Cx"
                        data-formula="MS-06 &bull; Month 14 Target COD &bull; Physical Completion"
                        data-desc="Complete civil, structural, and white space turnover; all punch list Category A items cleared for integrated system load bank testing."
@@ -511,7 +706,8 @@
           </div>
         </div>
 
-        <!-- 6 MILESTONE GATES EXPLANATORY SUMMARY TABLE -->
+
+                <!-- 6 MILESTONE GATES EXPLANATORY SUMMARY TABLE -->
         <div class="pt-2 border-t border-slate-100">
           <div class="text-xs font-bold text-slate-900 mb-1.5 uppercase tracking-wide flex items-center justify-between">
             <span>Key Project Milestone Stage Gates &amp; Critical Verification Criteria</span>
