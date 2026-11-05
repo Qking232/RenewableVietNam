@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.029 (Domain 1 Comprehensive Statutory Dossier Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.030 (Domain 4 5-Level Commissioning & Operational Handover Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 6-Module Portfolio Grid
  */
@@ -50,9 +50,9 @@ window.PORTAL_MODULES = [
     shortTitle: "5-Level Cx & Handover",
     category: "Commissioning & Ops",
     title: "Domain 4: 5-Level Commissioning & Operational Handover",
-    description: "ASHRAE Guideline 0-2019 Levels 1-5 Cx, Integrated Systems Testing (IST), Blackout Transfer, Heat Load Bank Testing, and Uptime Tier III Certification.",
+    description: "ASHRAE Guideline 0-2019 Levels 1-5 Cx, Integrated Systems Testing (IST), Black Building Simulation, Decree 06/2021 Hoàn Công Dossier, MOP/SOP Readiness & Live PUE Calculator.",
     badge: "Commissioning",
-    file: "modules/domain4_commissioning_handover_Rev.001.html"
+    file: "modules/domain4_commissioning_handover_Rev.002.html"
   },
   {
     id: "bod_report",
