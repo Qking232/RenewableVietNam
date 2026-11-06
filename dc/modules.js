@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.043 (CapEx Calsheet Report & Institutional Financial Appraisal Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.044 (Interactive Calsheet Hover Formulas & Granular Financial Derivations Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -40,9 +40,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Cost & Contracts",
     category: "Commercial & Controls",
     title: "Domain 3: Project Cost, EVM & Wholesale Commercials",
-    description: "$180.00M BAC Breakdown (12 WBS Packages), 7-Tab Financial Navigator with Dedicated CapEx Calsheet Report, Executive Scorecard, 15-Year DCF Valuation Model, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
+    description: "$180.00M BAC Breakdown (12 WBS Packages), 7-Tab Financial Navigator, 160+ Interactive Hover Calculation Cells Across 15-Year Financial Statement, Executive Scorecard, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
     badge: "Cost & Contracts",
-    file: "modules/domain3_capex_cost_contracts_Rev.008.html"
+    file: "modules/domain3_capex_cost_contracts_Rev.009.html"
   },
   {
     id: "domain4_construction",
