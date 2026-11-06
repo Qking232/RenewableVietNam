@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
-  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.025</title>
+  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.026</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -129,21 +129,25 @@
       border-color: #0284c7 !important;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
-    .disc-page-content {
+    .sys-tab-content {
       display: none !important;
     }
-    .disc-page-content.active {
+    .sys-tab-content.active {
       display: block !important;
     }
-    .disc-tab-btn.active {
+    .disc-btn.active {
       background-color: #075985 !important;
       color: #ffffff !important;
       font-weight: 700 !important;
       border-color: #075985 !important;
       box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
-    .anchor-pill:hover {
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    .sub-pill-btn.active {
+      background-color: #d97706 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      border-color: #b45309 !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     }
     .sub-tab-pane.hidden {
       display: none !important;
@@ -269,7 +273,7 @@
               Domain 2: Data Center Engineering Systems &amp; Schematics
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.025 Consolidated Engineering Discipline Pages Edition
+              Rev.026 Dedicated Subsystems & Clean Discipline Navigator Edition
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
@@ -320,39 +324,45 @@
 
 
     <!-- STREAMLINED HORIZONTAL PILL NAVIGATION (REV.014) -->
-        <!-- STREAMLINED ENGINEERING DISCIPLINE NAVIGATOR (5 UNIFIED DISCIPLINE PAGES) -->
-    <nav class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs space-y-2">
+        <!-- 2-TIER STREAMLINED ENGINEERING DISCIPLINE NAVIGATOR (REV.026) -->
+    <nav class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-2xs space-y-2 mb-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-1.5 px-0.5">
-        <span class="text-[10px] font-mono font-bold uppercase text-slate-400">ENGINEERING DISCIPLINE NAVIGATOR (45 MW IT LOAD &bull; TIER III CONCURRENT MAINTAINABILITY):</span>
-        <span class="text-[10px] font-mono font-bold text-sky-700">5 UNIFIED DISCIPLINE PAGES</span>
+        <span class="text-[10px] font-mono font-bold uppercase text-slate-400">ENGINEERING DISCIPLINE NAVIGATOR (10 DEDICATED SUBSYSTEM PAGES):</span>
+        <span class="text-[10px] font-mono font-bold text-sky-700">45 MW CRITICAL IT LOAD &bull; TIER III CONCURRENT MAINTAINABILITY</span>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-mono font-semibold">
-        <button type="button" onclick="switchMainPage('page-overview')" id="btn-page-overview" class="disc-tab-btn active px-3 py-2 rounded-lg border border-sky-800 bg-sky-800 text-white font-bold text-center transition-all shadow-xs cursor-pointer text-xs">
+      <!-- TIER 1: PRIMARY DISCIPLINE SELECTOR (5 CLEAN BUTTONS, ZERO HORIZONTAL SCROLL) -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 text-xs font-mono font-semibold">
+        <button type="button" onclick="selectDiscipline('disc-overview')" id="btn-disc-overview" class="disc-btn active px-3 py-2 rounded-lg border border-sky-800 bg-sky-800 text-white font-bold text-center transition-all shadow-xs cursor-pointer text-xs">
           0. Campus Overview
         </button>
 
-        <button type="button" onclick="switchMainPage('page-power')" id="btn-page-power" class="disc-tab-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
-          1. Electrical Power (1-3)
+        <button type="button" onclick="selectDiscipline('disc-power')" id="btn-disc-power" class="disc-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
+          1. Electrical Power
         </button>
 
-        <button type="button" onclick="switchMainPage('page-cooling')" id="btn-page-cooling" class="disc-tab-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
-          2. Thermal &amp; Cooling (4-5)
+        <button type="button" onclick="selectDiscipline('disc-cooling')" id="btn-disc-cooling" class="disc-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
+          2. Thermal &amp; Cooling
         </button>
 
-        <button type="button" onclick="switchMainPage('page-automation')" id="btn-page-automation" class="disc-tab-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
-          3. Telecom, Safety &amp; SCADA (6-8)
+        <button type="button" onclick="selectDiscipline('disc-automation')" id="btn-disc-automation" class="disc-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
+          3. Telecom &amp; SCADA
         </button>
 
-        <button type="button" onclick="switchMainPage('page-equipment')" id="btn-page-equipment" class="disc-tab-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
-          4. Equipment Schedule (BOM)
+        <button type="button" onclick="selectDiscipline('disc-equipment')" id="btn-disc-equipment" class="disc-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs">
+          4. Equipment BOM
         </button>
+      </div>
+
+      <!-- TIER 2: CONTEXTUAL SUBSYSTEM PILLS (DEDICATED INDIVIDUAL PAGE SWITCHERS) -->
+      <div id="subsystem-pill-bar" class="bg-slate-50 p-1.5 rounded-lg border border-slate-200/70 flex flex-wrap items-center justify-center gap-1.5">
+        <button type="button" onclick="switchSysTab('sys-layout')" id="pill-sys-layout" class="sub-pill-btn active px-3 py-1 rounded-md bg-amber-600 text-white font-bold font-mono text-xs shadow-2xs border border-amber-600 cursor-pointer transition-all">0. Systems Overview &amp; Campus Blueprint</button>
       </div>
     </nav>
 
-    <!-- PAGE 0: MASTER CAMPUS OVERVIEW -->
-    <div id="page-overview" class="disc-page-content active space-y-4">
-<div id="sys-layout" class="subsystem-block space-y-4">
+    
+    <!-- TAB 0: MASTER CAMPUS LAYOUT & SPATIAL ENGINEERING -->
+    <div id="sys-layout" class="sys-tab-content active space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -1412,26 +1422,7 @@
     </div>
 
 <!-- TAB 1: 110kV/22kV SUBSTATION & GRID TIE -->
-    
-    </div>
-
-    <!-- PAGE 1: ELECTRICAL POWER INFRASTRUCTURE (1-3) -->
-    <div id="page-power" class="disc-page-content space-y-6">
-
-      <!-- STICKY ANCHOR BAR FOR ELECTRICAL POWER -->
-      <div class="sticky top-2 z-20 bg-slate-900/95 backdrop-blur-md p-2 rounded-lg border border-slate-800 text-xs font-mono text-white flex flex-wrap items-center justify-between gap-2 shadow-lg mb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span class="font-bold text-slate-300 uppercase text-[10.5px]">DISCIPLINE 1: ELECTRICAL POWER INFRASTRUCTURE (45 MW CRITICAL)</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button type="button" onclick="scrollToAnchor('sys-substation')" data-target="sys-substation" class="anchor-pill active px-2.5 py-1 rounded bg-amber-600 text-white font-bold transition-all text-[11px] border border-amber-600 shadow-2xs cursor-pointer">1. Substation (110kV)</button>
-          <button type="button" onclick="scrollToAnchor('sys-genset')" data-target="sys-genset" class="anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer">2. Standby Gensets</button>
-          <button type="button" onclick="scrollToAnchor('sys-ups')" data-target="sys-ups" class="anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer">3. 2N UPS &amp; BESS</button>
-        </div>
-      </div>
-
-<div id="sys-substation" class="subsystem-block space-y-4 pt-2">
+    <div id="sys-substation" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -2510,8 +2501,7 @@
     </div>
 
     <!-- TAB 2: MV STANDBY GENERATORS & BULK FUEL -->
-    
-<div id="sys-genset" class="subsystem-block space-y-4 pt-6 border-t-2 border-slate-200">
+    <div id="sys-genset" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -2887,8 +2877,7 @@
     </div>
 
     <!-- TAB 3: 2N STATIC UPS & LiFePO4 ENERGY STORAGE -->
-    
-<div id="sys-ups" class="subsystem-block space-y-4 pt-6 border-t-2 border-slate-200">
+    <div id="sys-ups" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -3248,25 +3237,7 @@
     </div>
 
     <!-- TAB 4: CHILLERS & FREE COOLING -->
-    
-    </div>
-
-    <!-- PAGE 2: THERMAL & COOLING INFRASTRUCTURE (4-5) -->
-    <div id="page-cooling" class="disc-page-content space-y-6">
-
-      <!-- STICKY ANCHOR BAR FOR THERMAL & COOLING -->
-      <div class="sticky top-2 z-20 bg-slate-900/95 backdrop-blur-md p-2 rounded-lg border border-slate-800 text-xs font-mono text-white flex flex-wrap items-center justify-between gap-2 shadow-lg mb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-          <span class="font-bold text-slate-300 uppercase text-[10.5px]">DISCIPLINE 2: THERMAL &amp; COOLING INFRASTRUCTURE (PUE 1.280 SECURED)</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button type="button" onclick="scrollToAnchor('sys-chiller')" data-target="sys-chiller" class="anchor-pill active px-2.5 py-1 rounded bg-cyan-600 text-white font-bold transition-all text-[11px] border border-cyan-600 shadow-2xs cursor-pointer">4. Chiller Plant &amp; TES</button>
-          <button type="button" onclick="scrollToAnchor('sys-dlc')" data-target="sys-dlc" class="anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer">5. White Space DLC &amp; CRAH</button>
-        </div>
-      </div>
-
-<div id="sys-chiller" class="subsystem-block space-y-4 pt-2">
+    <div id="sys-chiller" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -3624,8 +3595,7 @@
     </div>
 
     <!-- TAB 5: WHITE SPACE CRAH & DIRECT LIQUID COOLING (DLC) -->
-    
-<div id="sys-dlc" class="subsystem-block space-y-4 pt-6 border-t-2 border-slate-200">
+    <div id="sys-dlc" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -3943,26 +3913,7 @@
     </div>
 
     <!-- TAB 6: PCCC & CLEAN AGENT -->
-    
-    </div>
-
-    <!-- PAGE 3: TELECOM, LIFE SAFETY & SCADA (6-8) -->
-    <div id="page-automation" class="disc-page-content space-y-6">
-
-      <!-- STICKY ANCHOR BAR FOR TELECOM, SAFETY & SCADA -->
-      <div class="sticky top-2 z-20 bg-slate-900/95 backdrop-blur-md p-2 rounded-lg border border-slate-800 text-xs font-mono text-white flex flex-wrap items-center justify-between gap-2 shadow-lg mb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
-          <span class="font-bold text-slate-300 uppercase text-[10.5px]">DISCIPLINE 3: TELECOM, LIFE SAFETY &amp; SCADA AUTOMATION (14,820 POINTS)</span>
-        </div>
-        <div class="flex items-center gap-1.5">
-          <button type="button" onclick="scrollToAnchor('sys-fire')" data-target="sys-fire" class="anchor-pill active px-2.5 py-1 rounded bg-teal-600 text-white font-bold transition-all text-[11px] border border-teal-600 shadow-2xs cursor-pointer">6. Fire Safety (PCCC)</button>
-          <button type="button" onclick="scrollToAnchor('sys-telecom')" data-target="sys-telecom" class="anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer">7. Dual MMRs &amp; Fiber</button>
-          <button type="button" onclick="scrollToAnchor('sys-bms')" data-target="sys-bms" class="anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer">8. BMS &amp; Purdue SCADA</button>
-        </div>
-      </div>
-
-<div id="sys-fire" class="subsystem-block space-y-4 pt-2">
+    <div id="sys-fire" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -4280,8 +4231,7 @@
     </div>
 
     <!-- TAB 7: TELECOM DUAL MMRS & OPTICAL BACKBONES -->
-    
-<div id="sys-telecom" class="subsystem-block space-y-4 pt-6 border-t-2 border-slate-200">
+    <div id="sys-telecom" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -4606,8 +4556,7 @@
     </div>
 
     <!-- TAB 8: BMS, DCIM SUPERVISORY & AUTOMATION -->
-    
-<div id="sys-bms" class="subsystem-block space-y-4 pt-6 border-t-2 border-slate-200">
+    <div id="sys-bms" class="sys-tab-content space-y-4">
 
       <!-- INLINE SUB-TAB SELECTOR (FOCUSED VIEWPORT - REV.014) -->
       <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded-lg border border-slate-200 text-xs font-mono">
@@ -5123,12 +5072,7 @@
     </div>
 
 <!-- TAB 9: MASTER EQUIPMENT SCHEDULE & FUNCTIONAL DIRECTORY (REV.014) -->
-    
-    </div>
-
-    <!-- PAGE 4: MASTER EQUIPMENT SCHEDULE & BOM -->
-    <div id="page-equipment" class="disc-page-content space-y-4">
-<div id="sys-equipment" class="subsystem-block space-y-4">
+    <div id="sys-equipment" class="sys-tab-content space-y-4">
       <section class="bg-white rounded-lg border border-slate-200 p-3 sm:p-4 shadow-2xs space-y-3">
         <div class="border-b border-slate-100 pb-2.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-2">
           <div>
@@ -5354,15 +5298,12 @@
         </div>
       </section>
     </div>
-    </div>
-
-
 
 
     <!-- FOOTER AUDIT -->
     <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="font-mono text-[11px]">
-        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.025</span> | Classification: Confidential Technical
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.026</span> | Classification: Confidential Technical
       </div>
       <div class="text-[11px]">
         Engineering Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; IEEE 519 &bull; IEC 62271 &bull; ASHRAE TC 9.9
@@ -5470,79 +5411,116 @@
     }
 
     // Tab Switching Functionality
-    const SYSTEM_TO_PAGE_MAP = {
-      'sys-layout': { page: 'page-overview', anchor: 'sys-layout' },
-      'sys-substation': { page: 'page-power', anchor: 'sys-substation' },
-      'sys-genset': { page: 'page-power', anchor: 'sys-genset' },
-      'sys-ups': { page: 'page-power', anchor: 'sys-ups' },
-      'sys-chiller': { page: 'page-cooling', anchor: 'sys-chiller' },
-      'sys-dlc': { page: 'page-cooling', anchor: 'sys-dlc' },
-      'sys-fire': { page: 'page-automation', anchor: 'sys-fire' },
-      'sys-telecom': { page: 'page-automation', anchor: 'sys-telecom' },
-      'sys-bms': { page: 'page-automation', anchor: 'sys-bms' },
-      'sys-equipment': { page: 'page-equipment', anchor: 'sys-equipment' }
+    const DISCIPLINE_STRUCTURE = {
+      'disc-overview': {
+        defaultSub: 'sys-layout',
+        subsystems: [
+          { id: 'sys-layout', label: '0. Systems Overview & Campus Blueprint' }
+        ]
+      },
+      'disc-power': {
+        defaultSub: 'sys-substation',
+        subsystems: [
+          { id: 'sys-substation', label: '1. Substation (110kV)' },
+          { id: 'sys-genset', label: '2. Standby Gensets' },
+          { id: 'sys-ups', label: '3. 2N UPS & BESS' }
+        ]
+      },
+      'disc-cooling': {
+        defaultSub: 'sys-chiller',
+        subsystems: [
+          { id: 'sys-chiller', label: '4. Chiller Plant & TES' },
+          { id: 'sys-dlc', label: '5. White Space DLC & CRAH' }
+        ]
+      },
+      'disc-automation': {
+        defaultSub: 'sys-fire',
+        subsystems: [
+          { id: 'sys-fire', label: '6. Fire Safety (PCCC)' },
+          { id: 'sys-telecom', label: '7. Dual MMRs & Fiber' },
+          { id: 'sys-bms', label: '8. BMS & Purdue SCADA' }
+        ]
+      },
+      'disc-equipment': {
+        defaultSub: 'sys-equipment',
+        subsystems: [
+          { id: 'sys-equipment', label: '4. Master Equipment Schedule (BOM)' }
+        ]
+      }
     };
 
-    function switchMainPage(pageId, anchorId) {
-      // 1. Hide all discipline pages, show target
-      const pages = document.querySelectorAll('.disc-page-content');
-      pages.forEach(p => p.classList.remove('active'));
+    let currentDiscipline = 'disc-overview';
+    let currentSubsystem = 'sys-layout';
 
-      const targetPage = document.getElementById(pageId);
-      if (targetPage) targetPage.classList.add('active');
+    function selectDiscipline(discId, targetSubsystemId) {
+      currentDiscipline = discId;
+      const disc = DISCIPLINE_STRUCTURE[discId];
+      if (!disc) return;
 
-      // 2. Update discipline button states
-      const btns = document.querySelectorAll('.disc-tab-btn');
-      btns.forEach(b => {
-        b.classList.remove('active');
-        b.className = 'disc-tab-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs';
+      const subId = targetSubsystemId || disc.defaultSub;
+
+      // 1. Update Tier 1 button states
+      const discBtns = document.querySelectorAll('.disc-btn');
+      discBtns.forEach(btn => {
+        btn.classList.remove('active');
+        btn.className = 'disc-btn px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-center transition-all cursor-pointer font-semibold text-xs';
       });
 
-      const activeBtn = document.getElementById('btn-' + pageId);
-      if (activeBtn) {
-        activeBtn.classList.add('active');
-        activeBtn.className = 'disc-tab-btn active px-3 py-2 rounded-lg border border-sky-800 bg-sky-800 text-white font-bold text-center transition-all shadow-xs cursor-pointer text-xs';
+      const activeDiscBtn = document.getElementById('btn-' + discId);
+      if (activeDiscBtn) {
+        activeDiscBtn.classList.add('active');
+        activeDiscBtn.className = 'disc-btn active px-3 py-2 rounded-lg border border-sky-800 bg-sky-800 text-white font-bold text-center transition-all shadow-xs cursor-pointer text-xs';
       }
 
-      // 3. Three.js resize if overview
-      if (pageId === 'page-overview' && typeof onThreeWindowResize === 'function') {
+      // 2. Render Tier 2 pills
+      const pillBar = document.getElementById('subsystem-pill-bar');
+      if (pillBar) {
+        pillBar.innerHTML = disc.subsystems.map(sub => {
+          const isActive = (sub.id === subId);
+          const activeClass = isActive
+            ? 'sub-pill-btn active px-3 py-1.5 rounded-md bg-amber-600 text-white font-bold font-mono text-xs shadow-2xs border border-amber-600 cursor-pointer transition-all'
+            : 'sub-pill-btn px-3 py-1.5 rounded-md bg-white hover:bg-slate-100 text-slate-700 font-medium font-mono text-xs border border-slate-200/80 cursor-pointer transition-all';
+          return `<button type="button" onclick="switchSysTab('${sub.id}')" id="pill-${sub.id}" class="${activeClass}">${sub.label}</button>`;
+        }).join('');
+      }
+
+      // 3. Activate target subsystem ONLY (all other 9 remain hidden)
+      const contents = document.querySelectorAll('.sys-tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const targetContent = document.getElementById(subId);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+
+      currentSubsystem = subId;
+
+      // 4. Three.js window resize if layout
+      if (subId === 'sys-layout' && typeof onThreeWindowResize === 'function') {
         setTimeout(onThreeWindowResize, 60);
       }
 
-      // 4. Smooth scroll to anchor if provided
-      if (anchorId) {
-        setTimeout(() => {
-          scrollToAnchor(anchorId);
-        }, 60);
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function scrollToAnchor(elementId) {
-      const el = document.getElementById(elementId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // Update anchor pills in active page
-        const anchorBtns = document.querySelectorAll('.anchor-pill');
-        anchorBtns.forEach(ab => {
-          if (ab.getAttribute('data-target') === elementId) {
-            ab.className = 'anchor-pill active px-2.5 py-1 rounded bg-amber-600 text-white font-bold transition-all text-[11px] border border-amber-600 shadow-2xs cursor-pointer';
-          } else {
-            ab.className = 'anchor-pill px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium transition-all text-[11px] border border-slate-700 cursor-pointer';
-          }
-        });
-      }
-    }
-
-    // Backward-compatible switchSysTab adapter
+    // Backward-compatible switchSysTab
     function switchSysTab(tabId) {
-      const mapping = SYSTEM_TO_PAGE_MAP[tabId];
-      if (mapping) {
-        switchMainPage(mapping.page, mapping.anchor);
+      // Find which discipline owns tabId
+      let foundDisc = null;
+      for (const [dKey, dVal] of Object.entries(DISCIPLINE_STRUCTURE)) {
+        if (dVal.subsystems.some(s => s.id === tabId)) {
+          foundDisc = dKey;
+          break;
+        }
+      }
+
+      if (foundDisc) {
+        selectDiscipline(foundDisc, tabId);
       } else {
+        const contents = document.querySelectorAll('.sys-tab-content');
+        contents.forEach(content => content.classList.remove('active'));
         const el = document.getElementById(tabId);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (el) el.classList.add('active');
       }
     }
 
@@ -6581,6 +6559,9 @@
       }
     }
 
+
+    // Initialize Discipline Navigator
+    selectDiscipline('disc-overview', 'sys-layout');
 </script>
 </body>
 </html>
