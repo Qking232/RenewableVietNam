@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
-  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.023</title>
+  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.024</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -259,7 +259,7 @@
               Domain 2: Data Center Engineering Systems &amp; Schematics
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.023 Systems Functional Directory & Engineering Architecture Edition
+              Rev.024 Standby Genset Deep Engineering & Parametric Architecture Edition
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
@@ -2036,6 +2036,251 @@
           </div>
         </div>
 
+        
+        <!-- 2A-1. STANDBY GENERATOR FARM DEEP ENGINEERING & SUBSYSTEMS DIRECTORY -->
+        <div class="mt-4 pt-3 border-t border-slate-200 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 font-mono text-[10px] font-bold">DEEP PARAMETRIC ENGINEERING</span>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">2A-1. Standby Generator Farm Deep Engineering &amp; Subsystems Directory</h3>
+              </div>
+              <p class="text-[11px] text-slate-500">ISO 8528-5 Class G3 Step Load Dynamics &bull; Fuel Burn Rates &bull; 150,000L Bulk Storage &bull; Woodward Paralleling &bull; ANSI Protection Matrix</p>
+            </div>
+            <div class="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+              10x 3,000 kVA (24.0 MW Net Continuous) &bull; N+1 / N+2 Resiliency
+            </div>
+          </div>
+
+          <!-- SECTION 1: DETAILED SUBSYSTEM MATRIX -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 font-mono text-[10.5px] uppercase border-y border-slate-200">
+                  <th class="p-2 border-r border-slate-200 w-36">Subsystem &amp; Code</th>
+                  <th class="p-2 border-r border-slate-200 w-56">Technical Architecture &amp; Hardware</th>
+                  <th class="p-2 border-r border-slate-200 w-64">Engineering Function &amp; Operating Principle</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Operational Metrics &amp; Flow Rates</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Failure Mode &amp; Redundancy</th>
+                  <th class="p-2 w-52">Governing Standards &amp; Codes</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px] text-slate-800 bg-white">
+                
+                <!-- 1. Engine & Alternator -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-amber-900 border-r border-slate-100 align-top">
+                    1. Prime Mover &amp; MV Alternator<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">GEN-QSK95-22KV</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Cummins QSK95-G10 (95.3L V16 quad-turbocharged ATAAC, 1,500 RPM) paired with Stamford 22 kV Class H / F temp rise alternator.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Provides prime/standby power generation. High-pressure modular common rail (XPI) ensures rapid transient load response; PMG-excited digital AVR delivers 300% short-circuit current for 10s to clear downstream faults.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    3,000 kVA / 2,400 kWe Standby<br/>
+                    <span class="text-amber-700 font-semibold">22,000 V &bull; 78.7 A / Phase</span><br/>
+                    Displacement: 95.3 Liters
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-amber-800">10x Units (N+1 / N+2):</span> Any 1 or 2 engines can fail to crank or trip without curtailing the 20.0 MW campus demand.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    ISO 8528-5 Class G3 &bull; NFPA 110 Type 10 &bull; EPA Tier 2 / QCVN 19:2009 &bull; THD &le; 3.0%.
+                  </td>
+                </tr>
+
+                <!-- 2. Fast Cranking & Pre-Conditioning -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-emerald-900 border-r border-slate-100 align-top">
+                    2. Fast Start &amp; Pre-Heating<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-START-FAST</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Dual 24V DC electric starter motors + pneumatic compressed air turbine starter backup (30 bar accumulator). Thermostatically controlled jacket water heaters (12 kW) &amp; continuous AC/DC prelube oil pumps.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Maintains cylinder block and oil temperature at 45°C–50°C 24/7. Upon blackout trigger, compressed air or dual electric starters spin crank to 1,500 RPM in &le; 3.5s, stabilizing voltage and frequency by T+8.5s.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    T &le; 8.5s to Synced Bus<br/>
+                    <span class="text-emerald-700 font-semibold">Block Temp: 45°C - 50°C</span><br/>
+                    60% Initial Load Block
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-emerald-800">Redundant Starting Sources:</span> If 24V battery string fails, pneumatic accumulator air starter instantly engages via solenoid dump.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    NFPA 110 Level 1 Type 10 (&le; 10s load pickup requirement) &bull; IEEE 446 Emergency Power.
+                  </td>
+                </tr>
+
+                <!-- 3. Fuel Storage & Day Tanks -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-blue-900 border-r border-slate-100 align-top">
+                    3. Fuel Storage &amp; Day Tanks<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-FUEL-STORE</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    3x 50,000L (150,000L) underground double-wall fiberglass tanks (UL 142/2085) paired with 10x 1,000L individual day tanks per genset with interstitial vacuum leak sensors.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Stores Class II diesel fuel. Duplex pressurized ring headers continuously transfer fuel to day tanks; float switches regulate mechanical level valves; gravity overflow lines return excess fuel safely to bulk tanks.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    150,000 Liters Bulk<br/>
+                    <span class="text-blue-700 font-semibold">48.4 - 72 Hours Autonomy</span><br/>
+                    Day Tank: 1,000L / Unit (2h)
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-blue-800">Dual Ring Supply Loop:</span> Ring header A and B ensure fuel delivery even if a pipe section is valved off for maintenance.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    NFPA 30 Flammable Liquids &bull; NFPA 110 Class 48 &bull; EPA SPCC Spill Prevention.
+                  </td>
+                </tr>
+
+                <!-- 4. Automated Fuel Polishing Skid -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-cyan-900 border-r border-slate-100 align-top">
+                    4. Automated Fuel Polisher<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-FUEL-POLISH</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Duplex Skid-Mounted Filtration Unit: Centrifugal coalescing water separator, 2-micron particulate secondary filter, magnetic ferrous trap, biocide dosing pump, PLC controller.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Continuously recirculates stored diesel from bottom of bulk tanks. Removes &gt;99.5% free/emulsified water and particulates, preventing microbial contamination, wax buildup, and injector fouling during long standby periods.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Flow: 50 L/min (3.0 m³/h)<br/>
+                    <span class="text-cyan-700 font-semibold">Particle Cutoff: &le; 2 &mu;m</span><br/>
+                    Water Separation: &gt; 99.5%
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-cyan-800">Duty / Standby Duplex Pumps:</span> Auto-switchover on high differential pressure (&Delta;P &gt; 1.5 bar) across primary filter canisters.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    ASTM D975 Diesel Fuel Spec &bull; ISO 4406 Cleanliness 18/16/13 &bull; PLC Automated Timer.
+                  </td>
+                </tr>
+
+                <!-- 5. Paralleling Switchgear & Synchronizer -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-purple-900 border-r border-slate-100 align-top">
+                    5. Paralleling Switchgear<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-GEN-PSG</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Woodward easYgen-3500XT / ComAp InteliGen master controllers, vacuum circuit breakers (VCB 22kV 3,150A 50kA), dual high-speed optical CANbus synchronizing links.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Orchestrates dead-bus closing (first unit to voltage closes in 8.5s); parallel remaining 9 units in &lt;15s via automatic phase/frequency matching (&plusmn;0.1 Hz, &plusmn;1.0% V, &le;5° phase). Manages 4-step prioritized load restoration.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    22 kV Paralleling Busbar<br/>
+                    <span class="text-purple-700 font-semibold">10-Gen Total: 30 MVA</span><br/>
+                    Sync Window: &le; 15 Seconds
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-purple-800">Dual Hot-Standby Master Controllers:</span> Master controller A and B maintain mirrored state; bumpless switchover on master CPU trip.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    IEEE 1547 Paralleling Interconnection &bull; IEC 62271-200 MV Switchgear &bull; Closed Transition.
+                  </td>
+                </tr>
+
+                <!-- 6. ANSI Protection Matrix -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-rose-900 border-r border-slate-100 align-top">
+                    6. Protective Relay Matrix<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-GEN-RELAY</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Schweitzer SEL-700G / GE Multilin G60 digital generator protection relays with redundant current transformers (CTs) and voltage transformers (VTs).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Monitors stator and rotor currents, neutral displacement, and reverse power flow. Tripping isolates generator circuit breaker and de-energizes fuel shutoff valve to prevent catastrophic mechanical or stator damage.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    ANSI 87G: 0ms (Stator Diff)<br/>
+                    <span class="text-rose-700 font-semibold">ANSI 32: 2.0s (&lt; 5% Reverse)</span><br/>
+                    ANSI 46: 10s (Neg Sequence)
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-rose-800">Zoned Selective Tripping:</span> Internal generator faults trip 87G lock-out (86); external bus faults are cleared by feeder VCBs, leaving genset online.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    IEEE C37.102 Guide for AC Generator Protection &bull; NGR 22kV 10A 10s ground limitation.
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SECTION 2: FUEL CONSUMPTION & STEP-LOAD DYNAMICS TABLE -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+            
+            <!-- Fuel Burn Profile Card -->
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="font-bold text-amber-900 uppercase text-[10.5px]">Fuel Burn Rate Profile (Per 3,000 kVA Unit @ 50 Hz)</span>
+                <span class="text-[10px] text-slate-500 font-mono">BSFC &approx; 205 g/kWh</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-[10.5px] font-mono text-left">
+                  <thead>
+                    <tr class="text-slate-500 border-b border-slate-200">
+                      <th class="py-1">Load %</th>
+                      <th class="py-1">Electrical kW</th>
+                      <th class="py-1 text-right">Liters / Hour</th>
+                      <th class="py-1 text-right">10-Unit Total (L/h)</th>
+                      <th class="py-1 text-right">Autonomy (150,000L)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-slate-700">
+                    <tr><td class="py-1 font-bold text-amber-800">100% Standby</td><td>2,400 kWe</td><td class="text-right font-bold">592.0 L/h</td><td class="text-right">5,920 L/h</td><td class="text-right text-emerald-700 font-bold">25.3 Hours</td></tr>
+                    <tr class="bg-amber-50/50"><td class="py-1 font-bold text-amber-900">80% Peak Plant</td><td>1,920 kWe</td><td class="text-right font-bold text-amber-900">480.0 L/h</td><td class="text-right font-bold text-amber-900">4,800 L/h</td><td class="text-right text-emerald-800 font-bold">31.2 Hours</td></tr>
+                    <tr><td class="py-1 font-bold">75% Load</td><td>1,800 kWe</td><td class="text-right">448.0 L/h</td><td class="text-right">4,480 L/h</td><td class="text-right text-emerald-700 font-bold">33.5 Hours</td></tr>
+                    <tr><td class="py-1 font-bold">50% Load</td><td>1,200 kWe</td><td class="text-right">312.0 L/h</td><td class="text-right">3,120 L/h</td><td class="text-right text-emerald-700 font-bold">48.1 Hours</td></tr>
+                    <tr><td class="py-1 font-bold">25% Load</td><td>600 kWe</td><td class="text-right">178.0 L/h</td><td class="text-right">1,780 L/h</td><td class="text-right text-emerald-700 font-bold">84.3 Hours</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- ISO 8528 G3 Step Load Envelopes Card -->
+            <div class="p-2.5 rounded bg-slate-50 border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                <span class="font-bold text-sky-900 uppercase text-[10.5px]">ISO 8528-5 Class G3 Step-Load &amp; Recovery Envelopes</span>
+                <span class="text-[10px] text-slate-500 font-mono">Class G3 Mission-Critical</span>
+              </div>
+              <div class="space-y-1.5 text-[11px] font-sans text-slate-700">
+                <div class="flex items-start gap-2">
+                  <span class="px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-mono text-[9.5px] font-bold">STEP 1</span>
+                  <span><strong class="text-slate-900">60% Initial Load Block Acceptance:</strong> Can accept up to 1,440 kWe instantaneous load step in &le; 3.5s with zero engine stall or frequency droop beyond G3 limits.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-mono text-[9.5px] font-bold">VOLTS</span>
+                  <span><strong class="text-slate-900">Voltage Transient Deviation:</strong> &le; 10% maximum transient dip (22 kV down to 19.8 kV min); full recovery back within &plusmn;1% in &le; 1.5 seconds.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-mono text-[9.5px] font-bold">FREQ</span>
+                  <span><strong class="text-slate-900">Frequency Transient Deviation:</strong> &le; 5% maximum transient dip (50.0 Hz down to 47.5 Hz min); full recovery back to 50.0 Hz in &le; 2.0 seconds.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="px-1.5 py-0.2 rounded bg-sky-100 text-sky-800 font-mono text-[9.5px] font-bold">STEPPING</span>
+                  <span><strong class="text-slate-900">4-Tier Load Restoration:</strong> UPS Rectifiers &rarr; Critical Primary Chilled Pumps &rarr; Soft-Started Chillers &rarr; Auxiliary Plant.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
         </section>
 
 
@@ -2458,6 +2703,38 @@
                 <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Dual Redundant Hot</span></td>
                 <td class="text-right">NEMA 4X Cabinet</td>
               </tr>
+              <tr>
+                <td class="font-bold text-amber-700">TANK-DAY-01..10</td>
+                <td class="font-sans font-medium text-slate-900">Individual Daily Service Fuel Tanks</td>
+                <td class="font-sans">Pryco Double-Wall Steel UL 142</td>
+                <td class="text-right font-bold text-slate-800">1,000 L / Genset (10,000L Total)</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Dedicated 2h Run</span></td>
+                <td class="text-right">680 kg / 1.8 m² each</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">SILENCER-EXH-01..10</td>
+                <td class="font-sans font-medium text-slate-900">Critical Residential Grade Exhaust Silencers</td>
+                <td class="font-sans">Silex / Maxim Silencers (35-42 dBA Attenuation)</td>
+                <td class="text-right font-bold text-slate-800">Exhaust Flow: 468 m³/min @ 490°C</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">10 Dedicated Lines</span></td>
+                <td class="text-right">3,200 kg / Stainless 316</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">SKID-POLISH-AUTO</td>
+                <td class="font-sans font-medium text-slate-900">Automated Dual-Stage Fuel Polishing Skid</td>
+                <td class="font-sans">AXI International / Fuel Safe Systems</td>
+                <td class="text-right font-bold text-slate-800">50 L/min &bull; 2&mu;m Filter &bull; Water Coalesce</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Duplex Pumps (1+1)</span></td>
+                <td class="text-right">1,450 kg / 4.5 m²</td>
+              </tr>
+              <tr>
+                <td class="font-bold text-amber-700">NGR-22KV-01..02</td>
+                <td class="font-sans font-medium text-slate-900">Neutral Grounding Resistors (NGR)</td>
+                <td class="font-sans">Post Glover / Cressall Resistors</td>
+                <td class="text-right font-bold text-slate-800">22 kV &bull; 10 A Limit &bull; 10s Thermal Rating</td>
+                <td class="text-center"><span class="px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 font-bold text-[10px]">Bus A + B Isolated</span></td>
+                <td class="text-right">850 kg / Stainless Enclosure</td>
+              </tr>
             </tbody>
           
           </table>
@@ -2478,17 +2755,32 @@
           <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
             <div class="text-[10px] uppercase font-bold text-slate-500">Transient Step Load (ISO 8528 G3)</div>
             <div class="font-mono text-sm font-bold text-slate-900">&le; 10% Voltage Dip / &le; 5% Freq</div>
-            <p class="text-[11px] text-slate-600">Accepts 60% initial step load block within 3.5s with recovery in &lt; 1.5s per ISO 8528-5.</p>
+            <p class="text-[11px] text-slate-600">Accepts 60% initial step load block within 3.5s with recovery in &lt; 1.5s per ISO 8528-5 Class G3 mission-critical standards.</p>
           </div>
           <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
-            <div class="text-[10px] uppercase font-bold text-slate-500">Cranking &amp; Start Duration</div>
+            <div class="text-[10px] uppercase font-bold text-slate-500">Cranking &amp; Fast Blackout Start</div>
             <div class="font-mono text-sm font-bold text-slate-900">T &le; 8.5 Seconds to Synced Bus</div>
-            <p class="text-[11px] text-slate-600">Dual 24V DC electric starter motors + pneumatic air accumulator backup.</p>
+            <p class="text-[11px] text-slate-600">Dual 24V DC electric starter motors + 30 bar pneumatic air turbine accumulator backup. Thermostatically kept at 45°C–50°C.</p>
           </div>
           <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
             <div class="text-[10px] uppercase font-bold text-slate-500">Fuel Consumption &amp; Autonomy</div>
-            <div class="font-mono text-sm font-bold text-slate-900">620 L/hr @ 100% Load per Unit</div>
-            <p class="text-[11px] text-slate-600">150,000L total fuel provides 48.4 hours of continuous full-facility operation (57.6 MW).</p>
+            <div class="font-mono text-sm font-bold text-slate-900">592 L/hr @ 100% &bull; 480 L/hr @ 80%</div>
+            <p class="text-[11px] text-slate-600">150,000L bulk fuel storage provides 48.4 hours continuous operation at design critical facility load (24.0 MW net).</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Automated Fuel Polishing (AXI Skid)</div>
+            <div class="font-mono text-sm font-bold text-slate-900">50 L/min &bull; 2 &mu;m Micro-Filtration</div>
+            <p class="text-[11px] text-slate-600">Centrifugal water separation (&gt;99.5% free water removed), magnetic ferrous trap, and biocide injection preventing microbial bloom.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">Woodward Dead-Bus Synchronization</div>
+            <div class="font-mono text-sm font-bold text-slate-900">&le; 8.5s First Unit &bull; &le; 15s All 10</div>
+            <p class="text-[11px] text-slate-600">easYgen-3500XT master synchronizers match phase angle (&le;5°), frequency (&plusmn;0.1 Hz), and voltage (&plusmn;1%) across high-speed optical CANbus.</p>
+          </div>
+          <div class="p-2.5 rounded bg-slate-50 border border-slate-100 space-y-1">
+            <div class="text-[10px] uppercase font-bold text-slate-500">ANSI Protective Relay Coordination</div>
+            <div class="font-mono text-sm font-bold text-slate-900">87G &bull; 50/51 &bull; 32 &bull; 46 &bull; 27/59</div>
+            <p class="text-[11px] text-slate-600">SEL-700G numerical protection: ANSI 87G differential (0ms), reverse power 32 (&lt;5% in 2.0s), and negative phase sequence 46.</p>
           </div>
         </div>
       </section>
@@ -5001,7 +5293,7 @@
     <!-- FOOTER AUDIT -->
     <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="font-mono text-[11px]">
-        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.023</span> | Classification: Confidential Technical
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.024</span> | Classification: Confidential Technical
       </div>
       <div class="text-[11px]">
         Engineering Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; IEEE 519 &bull; IEC 62271 &bull; ASHRAE TC 9.9
@@ -5282,10 +5574,10 @@
 
     // --- TAB 2: GENSET ---
     function inspectGenNode(title, volts, output, start, sync, notes) {
-      document.getElementById('gen-tel-title').innerText = title;
-      document.getElementById('gen-tel-notes').innerText = notes + ' | ' + start;
-      document.getElementById('gen-tel-power').innerText = output;
-      document.getElementById('gen-tel-status').innerText = sync;
+      if (document.getElementById('gen-tel-title')) document.getElementById('gen-tel-title').innerText = title;
+      if (document.getElementById('gen-tel-notes')) document.getElementById('gen-tel-notes').innerText = notes + ' | ' + volts + ' | ' + start;
+      if (document.getElementById('gen-tel-power')) document.getElementById('gen-tel-power').innerText = output;
+      if (document.getElementById('gen-tel-status')) document.getElementById('gen-tel-status').innerText = sync;
     }
 
     function setGenScenario(mode) {
