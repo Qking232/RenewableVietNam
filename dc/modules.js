@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.040 (Standby Genset Deep Engineering & Parametric Architecture Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.041 (Streamlined Discipline Pages & Consolidated Architecture Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -30,9 +30,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Critical Engineering",
     category: "Core Engineering & ESG",
     title: "Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure",
-    description: "45 MW Critical IT Capacity, Dual 110kV/22kV Substation, 10x 3,000 kVA Gensets, Standby Genset Deep Engineering (Cummins QSK95-G10 24MW, ISO 8528 G3 Step Load, 150,000L Fuel Farm & Automated Polishing, Woodward Paralleling, ANSI Relays), 10-Subsystem Functional Directory, 5-Tier Purdue SCADA, 15,000 RT Magnetic Chillers, 80 kW AI DLC, PUE 1.280.",
+    description: "45 MW Critical IT Capacity, Dual 110kV/22kV Substation, 10x 3,000 kVA Gensets, Consolidated 5-Discipline Architecture (Zero-Scroll Top Navigator, Unified Power/Cooling/SCADA Same-Page Layout, Sticky Quick-Anchors), Standby Gensets (24MW QSK95), 10-Subsystem Functional Directory, 15,000 RT Magnetic Chillers, 80 kW AI DLC, PUE 1.280.",
     badge: "Engineering Systems",
-    file: "modules/domain2_datacenter_engineering_Rev.024.html"
+    file: "modules/domain2_datacenter_engineering_Rev.025.html"
   },
   {
     id: "domain3_capex",
