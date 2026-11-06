@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.045 (Universal Navigation Tab Bar Scroll-Trap Elimination & Multi-Row Flex Wrap Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.046 (Streamlined Single-Line Executive Tab Navigation & Simplified Header Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */

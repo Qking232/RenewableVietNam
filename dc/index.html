@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="./assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="./assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="./assets/images/apple-touch-icon.png">
-  <title>Hyperscale Data Center Executive Portal | 45 MW Tier III/IV Campus - Rev.045</title>
+  <title>Hyperscale Data Center Executive Portal | 45 MW Tier III/IV Campus - Rev.046</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
@@ -69,7 +69,7 @@
               Hyperscale Data Center Executive Portal
             </h1>
             <span class="px-1.5 py-0.2 rounded text-[9.5px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200 shrink-0">
-              Rev.045
+              Rev.046
             </span>
           </div>
           <p class="text-[10px] text-slate-500 font-medium truncate hidden sm:block">
@@ -91,16 +91,14 @@
           <span>DPPA / Green Power</span>
           <span class="text-[10px]">&nearr;</span>
         </a>
-        <span class="text-[11px] font-mono bg-sky-50 text-sky-700 font-semibold px-2.5 py-1 border border-sky-200 rounded-md">
-          Realistic 3D Master Layout Edition
-        </span>
+
       </div>
     </div>
 
     <!-- Executive 6-Segment Grid Navigation (Simultaneous Visibility Across All Screens) -->
     <div class="max-w-7xl mx-auto px-3 sm:px-6 border-t border-slate-100 py-2.5">
       <nav id="module-nav-bar" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-        <!-- Rendered dynamically via modules_Rev.045.js -->
+        <!-- Rendered dynamically via modules_Rev.046.js -->
       </nav>
     </div>
 
@@ -136,7 +134,7 @@
     </div>
   </footer>
 
-  <script src="./modules_Rev.045.js"></script>
+  <script src="./modules_Rev.046.js"></script>
   <script>
     let activeModuleId = null;
 
@@ -222,19 +220,13 @@
         const btn = document.createElement('button');
         btn.id = 'nav-mod-' + mod.id;
         btn.type = 'button';
-        btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ' +
+        btn.title = mod.title;
+        btn.className = 'px-2.5 py-2 sm:py-2.5 rounded-lg border font-mono text-[11px] xl:text-xs font-bold transition-all cursor-pointer text-center truncate ' +
           (index === 2 
             ? 'bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30' 
-            : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300');
+            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 shadow-2xs');
         
-        btn.innerHTML = `
-          <div class="flex items-center justify-between gap-1 mb-0.5">
-            <span class="text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold ${index === 2 ? 'text-sky-200' : 'text-slate-400'}">${mod.tag || 'MODULE'}</span>
-            <span class="text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold ${index === 2 ? 'bg-sky-800 text-sky-100' : 'bg-slate-100 text-slate-500'}">${mod.badge || ''}</span>
-          </div>
-          <div class="text-[11.5px] sm:text-xs font-bold leading-tight truncate">${mod.shortTitle || mod.title}</div>
-        `;
-        
+        btn.textContent = `${index}. ${mod.shortTitle || mod.title}`;
         btn.onclick = () => loadModule(mod.id);
         navBar.appendChild(btn);
       });
@@ -260,16 +252,10 @@
       window.PORTAL_MODULES.forEach(m => {
         const btn = document.getElementById('nav-mod-' + m.id);
         if (btn) {
-          const tagSpan = btn.querySelector('span:nth-child(1)');
-          const badgeSpan = btn.querySelector('span:nth-child(2)');
           if (m.id === moduleId) {
-            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30';
-            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-sky-200';
-            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-sky-800 text-sky-100';
+            btn.className = 'px-2.5 py-2 sm:py-2.5 rounded-lg border font-mono text-[11px] xl:text-xs font-bold transition-all cursor-pointer text-center truncate bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30';
           } else {
-            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300';
-            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-slate-400';
-            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-slate-100 text-slate-500';
+            btn.className = 'px-2.5 py-2 sm:py-2.5 rounded-lg border font-mono text-[11px] xl:text-xs font-bold transition-all cursor-pointer text-center truncate bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900 shadow-2xs';
           }
         }
       });
