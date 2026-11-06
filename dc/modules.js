@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.038 (5-Tier Purdue SCADA & Industrial BMS Architecture Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.039 (Data Center Systems Functional Directory & Architecture Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -30,9 +30,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Critical Engineering",
     category: "Core Engineering & ESG",
     title: "Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure",
-    description: "45 MW Critical IT Capacity, Dual 110kV/22kV Substation, 10x 3,000 kVA Gensets, 5-Tier Purdue SCADA & Industrial BMS (L0-L4, IEC 62443 IDMZ, 14,820 Points, Redundant PLCs), 2N Static UPS Single-Line Architecture, 30 MWh BESS, 15,000 RT Magnetic Chillers, 80 kW AI DLC, PUE 1.280.",
+    description: "45 MW Critical IT Capacity, Dual 110kV/22kV Substation, 10x 3,000 kVA Gensets, 10-Subsystem Functional Directory (Busway vs Breakers, Substation, Gensets, 2N UPS, Chillers, DLC, VESDA, MMR), 5-Tier Purdue SCADA Architecture (L0-L4, IEC 62443 IDMZ, 14,820 Points), 15,000 RT Magnetic Chillers, 80 kW AI DLC, PUE 1.280.",
     badge: "Engineering Systems",
-    file: "modules/domain2_datacenter_engineering_Rev.022.html"
+    file: "modules/domain2_datacenter_engineering_Rev.023.html"
   },
   {
     id: "domain3_capex",

@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
-  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.022</title>
+  <title>Domain 2: Critical Power, Thermal Engineering & Facility Infrastructure | Hyperscale Data Center - Rev.023</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
 
@@ -259,7 +259,7 @@
               Domain 2: Data Center Engineering Systems &amp; Schematics
             </h1>
             <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 text-sky-800 border border-sky-200">
-              Rev.022 Purdue SCADA Multi-Tier Architecture Edition
+              Rev.023 Systems Functional Directory & Engineering Architecture Edition
             </span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5 leading-snug">
@@ -813,7 +813,292 @@
           </div>
 
         </div>
-      </section>
+      
+        <!-- 0A-1. MISSION-CRITICAL DATA CENTER SYSTEMS FUNCTIONAL MATRIX -->
+        <div class="mt-4 pt-3 border-t border-slate-200 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 border border-sky-300 font-mono text-[10px] font-bold">ENGINEERING REFERENCE</span>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">0A-1. Mission-Critical Data Center Systems Functional Matrix</h3>
+              </div>
+              <p class="text-[11px] text-slate-500">Comprehensive Engineering Functions &bull; Working Principles &bull; Redundancy Topology &bull; Overcurrent &amp; Busway Integration</p>
+            </div>
+            <div class="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+              10 Subsystems &bull; Tier III+ Concurrent Maintainability
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 font-mono text-[10.5px] uppercase border-y border-slate-200">
+                  <th class="p-2 border-r border-slate-200 w-36">System &amp; Code</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Primary Engineering Function</th>
+                  <th class="p-2 border-r border-slate-200 w-64">Operational Working Principle</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Topology &amp; Capacity</th>
+                  <th class="p-2 border-r border-slate-200 w-56">Redundancy &amp; Failover Mechanism</th>
+                  <th class="p-2 w-60">Key Protection &amp; Interface Notes</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px] text-slate-800 bg-white">
+                
+                <!-- 1. 110kV/22kV Substation -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-sky-900 border-r border-slate-100 align-top">
+                    1. Utility Substation<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-SUB-110KV</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Transforms high-voltage grid transmission (110 kV) down to campus-wide medium-voltage distribution (22 kV) to supply critical and facility plant power.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Dual dedicated EVN grid underground cable feeds step down through delta-wye oil-immersed ONAN/ONAF power transformers. High-speed digital numerical protection relays (SEL-787 / Micrologic) monitor phase balance, differential current, and gas pressure.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    2x 40 MVA Transformers<br/>
+                    <span class="text-emerald-700 font-semibold">110 kV &rarr; 22 kV</span><br/>
+                    Underground XLPE 630mm² Cu
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-sky-800">2N Dual Utility Feed (N+1 Transformer):</span> Either feeder carries 100% of campus demand. Automated high-speed bus tie breaker transfer triggers upon primary line loss.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    SF6 Gas Insulated Switchgear (GIS). IEC 61850 GOOSE fast messaging inter-trip. 100% concurrent maintainability without facility curtailment.
+                  </td>
+                </tr>
+
+                <!-- 2. Standby Emergency Diesel Generators -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-amber-900 border-r border-slate-100 align-top">
+                    2. Standby Gensets<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-GEN-11KV</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Provides continuous islanded prime electrical generation during total utility grid blackout, severe voltage depression, or catastrophic substation outage.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Automatic Mains Failure (AMF) controllers detect grid voltage loss (&lt;90% for 1.5s). Compressed-air/dual-electric starters crank engines; generators synchronize to paralleling switchgear and pick up full plant load within &le; 10 seconds.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    15x 3,000 kVA (45 MW)<br/>
+                    <span class="text-amber-700 font-semibold">11 kV Medium Voltage</span><br/>
+                    72-Hour On-Site Fuel Storage
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-amber-800">N+2 Active Paralleled Ring:</span> Up to two generator blocks can fail to start or undergo major overhaul while maintaining 100% full campus critical and mechanical load.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Dual redundant fuel supply loops with continuous automated fuel polishing (centrifugal separation &bull; particulate filtration &bull; biocide treatment). Sound attenuated to &le; 75 dBA @ 1m.
+                  </td>
+                </tr>
+
+                <!-- 3. 2N Static UPS Architecture & BESS -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-emerald-900 border-r border-slate-100 align-top">
+                    3. 2N Static UPS &amp; BESS<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-UPS-2N</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Eliminates all utility power disturbances (sags, swells, transients, harmonics) and supplies uninterrupted synthetic AC power (0ms transfer) to white space compute and critical pumps.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Continuous online double conversion: Incoming AC is rectified to 540V DC; high-efficiency IGBT inverters regenerate pure 400V sine-wave AC. During utility loss, LiFePO4 battery strings instantly supply DC bus without breaker actuation or transfer delay.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    15x 2,000 kVA (System A)<br/>
+                    15x 2,000 kVA (System B)<br/>
+                    <span class="text-emerald-700 font-semibold">30 MWh LiFePO4 BESS</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-emerald-800">2N Completely Isolated Power Trains:</span> System A and System B share zero electrical components. If Train A suffers complete failure, Train B seamlessly carries 100% load with 0ms interruption.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Static bypass switch (SCR) transfers to bypass in &lt; 2ms on heavy short circuit. Maintenance bypass isolator (Q3) allows complete de-energization for safe servicing.
+                  </td>
+                </tr>
+
+                <!-- 4. Overhead Track Busway Distribution System -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-teal-900 border-r border-slate-100 align-top">
+                    4. Overhead Track Busway<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-BUSWAY-400V</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Transports low-voltage 3-phase power directly above server rack aisles, providing flexible, hot-swappable drop connections to rack power distribution units (rPDUs).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Continuous extruded copper busbars encased in an aluminum track housing hang overhead. Plug-in tap-off boxes connect mechanically and electrically with twist-and-lock safety interlocks while busway remains energized.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    800A &bull; 400V 3P4W<br/>
+                    <span class="text-teal-700 font-semibold">Dual A+B Overhead Tracks</span><br/>
+                    50kA / 1s Fault Rating
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-teal-800">Dual A+B Overhead Rails:</span> Track A fed from UPS-A, Track B fed from UPS-B. Dual-corded server power supplies (PSUs) receive redundant power feeds at every rack footprint.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Busway vs Circuit Breaker:</span> Busway replaces rigid conduits and floor cable clutter. Overcurrent circuit breakers (63A/32A MCB/MCCB) reside inside each tap-off box to isolate localized rack faults.
+                  </td>
+                </tr>
+
+                <!-- 5. Central Water-Cooled Chiller Plant & TES -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-blue-900 border-r border-slate-100 align-top">
+                    5. Water-Cooled Chillers<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-CHILL-WTR</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Produces centralized chilled water (CHW at 12.0°C supply) to absorb heat dissipated by computing servers, CRAH units, and liquid cooling CDUs across the data hall.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Variable-speed centrifugal chillers compress HFO-1233zd(E) low-GWP refrigerant. Chilled water circulates through plant loops while heat is rejected via condenser water loops to rooftop induced-draft cooling towers.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    6x 1,500 RT Chillers (9,000 RT)<br/>
+                    <span class="text-blue-700 font-semibold">4,500 m³ TES Tank</span><br/>
+                    12.0°C Supply / 18.0°C Return
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-blue-800">N+2 Chiller Plant Redundancy:</span> Four chillers satisfy 100% peak design heat load; two chillers remain on hot standby. Stratified TES tank guarantees 15 minutes of uninterrupted thermal ride-through during generator startup.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Variable primary flow (VPF) with automated differential pressure bypass control valves. Chiller plant controller sequences compressors to maintain optimal coefficient of performance (COP &ge; 6.4).
+                  </td>
+                </tr>
+
+                <!-- 6. CRAH Units & Hot-Aisle Containment -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-cyan-900 border-r border-slate-100 align-top">
+                    6. CRAH Fan Arrays &amp; HAC<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-CRAH-AIR</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Controls white space air temperature, humidity, and airflow velocity, ensuring server intake temperatures conform strictly to ASHRAE A1 specifications (18°C–27°C).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Electronically commutated (EC) fans pull warm air (35°C–40°C) from contained hot aisles through cooling coils fed with chilled water, discharging pressurized cold air (20°C–22°C) under the raised floor or down flooded cold aisles.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    36x 180 kW Downflow Units<br/>
+                    <span class="text-cyan-700 font-semibold">N+3 Redundancy per Hall</span><br/>
+                    EC Fan Arrays (Variable Speed)
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-cyan-800">N+3 Distributed Fan Array:</span> Multiple CRAH units can be offline for servicing or valve replacement without causing hot spots or rack airflow starvation.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Physical Hot-Aisle Containment (HAC) with double-glazed sliding doors eliminates thermal mixing, enabling elevated chilled water supply temperatures and maximizing chiller efficiency.
+                  </td>
+                </tr>
+
+                <!-- 7. Direct Liquid Cooling (DLC) CDUs & Cold Plates -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-indigo-900 border-r border-slate-100 align-top">
+                    7. Direct Liquid Cooling (DLC)<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-DLC-CDU</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Dissipates ultra-dense thermal loads directly at the GPU/CPU silicon die for high-performance AI accelerator compute clusters (&gt; 50 kW to 120 kW per rack).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    A closed-loop Secondary Cooling Circuit (TCS) circulates demineralized water with corrosion inhibitors through microchannel copper cold plates clamped directly to server processors. Heat is transferred across plate heat exchangers into the primary chilled water loop.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    12x 800 kW Floor CDUs<br/>
+                    <span class="text-indigo-700 font-semibold">Supply 32.0°C / Return 45.0°C</span><br/>
+                    Dual Inverter Pumps
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-indigo-800">N+1 Redundant CDUs &amp; Dual Pumps:</span> Each CDU features 100% backup circulating pumps with automatic bumpless transfer upon pump cavitation or pressure differential loss.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Blind-mate quick-disconnect liquid couplings with zero-drip design. Continuous loop pressure, conductivity, and deaeration monitoring with automatic leak barrier isolation.
+                  </td>
+                </tr>
+
+                <!-- 8. Life Safety & Clean Agent Fire Suppression -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-rose-900 border-r border-slate-100 align-top">
+                    8. Fire Safety (PCCC)<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-FIRE-VESDA</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Provides continuous early-stage aspirating air sampling smoke detection and rapid, non-destructive fire extinguishment without damaging sensitive microelectronics.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    VESDA laser air sampling detectors continuously draw white space air through sampling pipe networks to identify incipient pyrolysis. Upon confirmed cross-zone detection, IG-541 (Inergen) gas discharges within 60s, lowering oxygen to 12.5% to quench fire.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Multi-Zone Laser VESDA<br/>
+                    <span class="text-rose-700 font-semibold">IG-541 Total Flooding (300 bar)</span><br/>
+                    Pre-Action Double Interlock Sprinklers
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-rose-800">Dual Cross-Zoned Detection:</span> Gas discharge requires confirmation from two independent detector loops to eliminate false positive discharges while ensuring instantaneous suppression.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    IG-541 (52% N2, 40% Ar, 8% CO2) is electrically non-conductive, leaves zero residue, produces zero ozone depletion, and maintains breathable atmosphere for personnel evacuation.
+                  </td>
+                </tr>
+
+                <!-- 9. Diverse Carrier Meet-Me Rooms (MMR) -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-purple-900 border-r border-slate-100 align-top">
+                    9. Meet-Me Rooms (MMR)<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-TEL-MMR</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Provides physically secure, carrier-neutral termination rooms where external telecommunication network providers interconnect with customer servers.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Telecommunication carriers enter the campus via physically separated underground duct banks (Conduit A and Conduit B) entering distinct building elevations, terminating at high-density optical distribution frames (ODF).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    MMR-A &amp; MMR-B Rooms<br/>
+                    <span class="text-purple-700 font-semibold">Diverse Fiber Feeds (OS2)</span><br/>
+                    Dedicated DC Power Plants (-48V)
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-purple-800">Geographically Separated MMRs:</span> Complete physical fire-rated separation (&ge; 2-hour rating). Fiber pathways to data halls follow non-overlapping overhead yellow fiber trays.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Dedicated -48V DC battery backup plants and biometric access control, video surveillance, and dual independent air conditioning units per MMR.
+                  </td>
+                </tr>
+
+                <!-- 10. 5-Tier BMS, EPMS & Purdue SCADA -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-teal-900 border-r border-slate-100 align-top">
+                    10. 5-Tier Purdue SCADA<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">SYS-BMS-SCADA</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Performs centralized deterministic supervisory control, 1ms sequence of events auditing, thermodynamic PUE optimization, and enterprise facility transparency.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Hierarchical ISA-95 model: Level 0 field sensors feed Level 1 redundant PLCs over industrial PRP rings. Level 2 SCADA provides NOC visibility. IEC 62443 IDMZ isolates control networks from Level 3 DCIM and Level 4 corporate ERP systems.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    14,820 Telemetry Points<br/>
+                    <span class="text-teal-700 font-semibold">5 Tiers (L0 through L4)</span><br/>
+                    1ms GPS SOE Clock
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-teal-800">Dual Hot-Standby PLCs &amp; SCADA Servers:</span> Dedicated optical fiber mirror link ensures &lt; 20ms bumpless controller failover with zero loss of chiller sequencing or generator interlocks.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Closed-loop AI thermodynamic optimizer dynamically resets chilled water temperatures, maintaining design PUE of 1.280 and saving up to 680 kW of electrical power.
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        </section>
 
       <!-- Section 0B: Statutory Campus Spatial & Land Area Schedule -->
       </div>
@@ -1500,7 +1785,258 @@
             <div class="bg-slate-950 p-1.5 rounded border border-slate-800"><span class="text-slate-500 block text-[9.5px]">STATUS:</span><span id="sub-tel-status" class="text-emerald-400 font-bold">ACTIVE ENERGIZED</span></div>
           </div>
         </div>
-      </section>
+      
+        <!-- 8A-1. PURDUE SCADA & INDUSTRIAL BMS SUBSYSTEM FUNCTIONAL DIRECTORY -->
+        <div class="mt-4 pt-3 border-t border-slate-200 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 border border-teal-300 font-mono text-[10px] font-bold">ISA-95 / IEC 62443</span>
+                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">8A-1. Purdue Industrial Automation Subsystem Functional Directory</h3>
+              </div>
+              <p class="text-[11px] text-slate-500">Tier-by-Tier Operational Roles &bull; Input/Output Telemetry &bull; Deterministic Control Logic &bull; Cyber Security Demarcation</p>
+            </div>
+            <div class="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+              5 Automation Tiers &bull; 14,820 Active Supervised Points
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 font-mono text-[10.5px] uppercase border-y border-slate-200">
+                  <th class="p-2 border-r border-slate-200 w-36">Purdue Tier</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Subsystems &amp; Hardware</th>
+                  <th class="p-2 border-r border-slate-200 w-64">Primary Engineering Function</th>
+                  <th class="p-2 border-r border-slate-200 w-56">Sensed Inputs &amp; Actuated Outputs</th>
+                  <th class="p-2 border-r border-slate-200 w-52">Failover &amp; Safety Interlock</th>
+                  <th class="p-2 w-52">Industrial Standards &amp; Security</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-[11px] text-slate-800 bg-white">
+                
+                <!-- Level 0: EPMS -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-amber-900 border-r border-slate-100 align-top">
+                    Level 0: EPMS<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Electrical Field I/O</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Branch Circuit Power Meters (BCPM), Substation Relays, Transformer PT100s, LiFePO4 Cell BMS.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Measures continuous electrical power parameters, transformer thermals, breaker contact status, and battery string health to prevent electrical overloads and fire hazards.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Volts, Amps, kW, kVA, THD, Cell Impedance.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Shunt trip actuation, ATS transfer command.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Trips isolated breaker on overcurrent or arc flash; preserves upstream bus integrity.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Modbus TCP/RTU &bull; IEC 61850 &bull; IEEE 1588 SOE &bull; Scan Cycle: 100ms - 250ms.
+                  </td>
+                </tr>
+
+                <!-- Level 0: BMS -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-cyan-900 border-r border-slate-100 align-top">
+                    Level 0: BMS<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Mechanical Field I/O</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Ultrasonic Flow Meters, &Delta;P Transmitters, Rack Temperature Grids, DLC Flow Probes, VFD Gateways.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Samples chilled water flow rates, differential pressures, and white space rack inlet temperatures, providing real-time feedback for hydraulic and thermal balancing.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> CHW supply/return temp, loop &Delta;P, airflow m³/h.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> 0-10V valve modulation, 4-20mA pump VFD speed.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Spring-return fail-open valves ensure continuous gravity flow during loss of control signal.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    BACnet/IP &bull; Modbus RTU &bull; 4-20 mA &bull; ASHRAE Standard 135 &bull; Scan: 250ms.
+                  </td>
+                </tr>
+
+                <!-- Level 0: Life Safety -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-rose-900 border-r border-slate-100 align-top">
+                    Level 0: Safety<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Life Safety &amp; Environment</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Underfloor Water Leak Sensing Cables, VESDA Aspirating Smoke Detectors, Hydrogen Gas Probes, Door Sensors.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Monitors incipient physical hazards, early particle combustion, water pipe breaches, and battery hydrogen outgassing to protect personnel and critical assets.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Cable resistance (leak), laser obscuration %/m, H2 ppm.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Solenoid gas dump, ventilation exhaust fans.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Supervised end-of-line resistor loops; line break or ground fault triggers immediate trouble alarm.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    Hardwired dry contacts &bull; NFPA 72 &bull; NFPA 75 &bull; Fast priority interrupt (&lt; 50ms).
+                  </td>
+                </tr>
+
+                <!-- Level 1: Deterministic PLCs -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-teal-900 border-r border-slate-100 align-top">
+                    Level 1: PLCs<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Direct Control Tier</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Siemens S7-1500R / Schneider M580 Dual Hot-Standby Processors, Dedicated Optical Sync Link.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Executes hard real-time deterministic logic (&lt; 50ms cycle) for chiller sequencing, generator synchronization, and automatic emergency power transfers.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Field sensor values from L0.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Relay coils, VFD setpoints, circuit breaker trips.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-teal-800">Bumpless Switchover (&lt; 20ms):</span> Hot standby CPU assumes full plant execution without process interruption upon primary failure.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    IEC 62439-3 PRP Dual Ring &bull; IEC 61131-3 logic &bull; Zero dependency on upstream SCADA.
+                  </td>
+                </tr>
+
+                <!-- Level 1: Subsystem DDCs -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-teal-900 border-r border-slate-100 align-top">
+                    Level 1: DDCs<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Subsystem Panels</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Chiller Plant Sequencer DDC, CRAH Fan Array DDC, DLC CDU Coolant DDC, Substation RTU.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Distributed autonomous controllers managing dedicated equipment groups locally even if the main campus PLC ring is severed.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Chiller lift, pump differential pressure, CRAH return air.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> VFD fan speed, two-way modulating valve position.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Autonomous standalone fallback execution preserving last known good setpoint.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    BACnet MS/TP &amp; BACnet/IP &bull; Deterministic PID loops &bull; Flash memory non-volatile storage.
+                  </td>
+                </tr>
+
+                <!-- Level 2: Supervisory SCADA -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-sky-900 border-r border-slate-100 align-top">
+                    Level 2: SCADA<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Supervisory &amp; NOC</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Dual Virtualized SCADA Servers (Ignition/Wonderware), 1ms SOE GPS Master Clock, 24/7 Multi-Screen Consoles.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Provides plant-wide supervisory visualization, historical high-speed data archival, alarm categorization, and precise millisecond sequence-of-events root cause tracking.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Process tags from Level 1 PLCs &amp; DDCs.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Supervisory setpoint adjustments, alarm notifications.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-bold text-sky-800">Master/Replica Mirroring:</span> Server A and Server B mirror transaction logs in real time; automatic IP failover in &lt; 1s.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    ISA-18.2 Alarm Standard &bull; OPC UA &bull; IEEE 1588 PTP &bull; Role-based access control (RBAC).
+                  </td>
+                </tr>
+
+                <!-- Cyber Boundary: IDMZ -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-amber-800 border-r border-slate-100 align-top">
+                    Cyber Boundary<br/>
+                    <span class="text-[9.5px] text-amber-700 font-normal">IEC 62443 IDMZ</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Palo Alto Dual Next-Gen Firewalls, Hardened MFA Jump Host, Unidirectional Historian Mirror.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Establishes an impenetrable security perimeter between OT control systems (Levels 0-2) and enterprise IT networks (Levels 3-4), blocking malware traversal and unauthorized commands.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Replicated historian data, encrypted management sessions.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Dropped untrusted packets, security audit logs.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Active/Passive firewall pair with state synchronization; failover time &lt; 500ms.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    IEC 62443-3-3 Zone 3/4 &bull; Zero Direct Routing to OT &bull; FIPS 140-2 encryption.
+                  </td>
+                </tr>
+
+                <!-- Level 3: DCIM & AI Digital Twin -->
+                <tr class="hover:bg-slate-50/80 transition-colors bg-slate-50/30">
+                  <td class="p-2 font-bold text-emerald-900 border-r border-slate-100 align-top">
+                    Level 3: DCIM &amp; AI<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Operations &amp; Twin</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    Schneider EcoStruxure IT Advisor / Sunbird DCIM, Neural Thermodynamic AI Model.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Performs white space capacity planning, 3D CFD thermal simulations, stranded electrical power recovery, and closed-loop thermodynamic setpoint optimization.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> Aggregated PUE data, rack delta-T, weather forecasts.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Dynamic chilled water supply temperature resets (12°C &rarr; 13.5°C).
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Safety envelope clamped within &plusmn;1.5°C; falls back to static engineering setpoints on AI fault.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    REST API &bull; BACnet/IP &bull; Closed-loop safety bounding &bull; PUE reduction: up to 0.015.
+                  </td>
+                </tr>
+
+                <!-- Level 4: Enterprise ERP & ESG -->
+                <tr class="hover:bg-slate-50/80 transition-colors">
+                  <td class="p-2 font-bold text-indigo-900 border-r border-slate-100 align-top">
+                    Level 4: Cloud &amp; ESG<br/>
+                    <span class="text-[9.5px] text-slate-500 font-normal">Business &amp; C-Suite</span>
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top">
+                    SAP S/4HANA ERP, Corporate ESG Compliance Engine, Board Executive BI Portals.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Computes customer kilowatt-hour billing, monitors power and thermal SLA commitments, aggregates Scope 1 &amp; 2 greenhouse gas emissions, and generates executive investor reports.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    <span class="font-semibold text-slate-900">Inputs:</span> 5-minute utility meter billing snapshots, diesel consumption.<br/>
+                    <span class="font-semibold text-slate-900">Outputs:</span> Tenant utility invoices, statutory carbon emissions filings.
+                  </td>
+                  <td class="p-2 border-r border-slate-100 align-top text-slate-700 font-sans text-[11px]">
+                    Cloud multi-region disaster recovery; RPO &le; 1 minute, RTO &le; 15 minutes.
+                  </td>
+                  <td class="p-2 align-top text-slate-700 font-sans text-[11px]">
+                    HTTPS TLS 1.3 &bull; OAuth 2.0 &bull; GHG Protocol Scope 1 &amp; 2 &bull; SOC 2 Type II certified.
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        </section>
 
 
       
@@ -4465,7 +5001,7 @@
     <!-- FOOTER AUDIT -->
     <footer class="border-t border-slate-200 pt-3 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
       <div class="font-mono text-[11px]">
-        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.022</span> | Classification: Confidential Technical
+        Document Ref: <span class="text-slate-800 font-bold">DC-ENG-DOM2-002_Rev.023</span> | Classification: Confidential Technical
       </div>
       <div class="text-[11px]">
         Engineering Standards: ANSI/TIA-942-B &bull; Uptime Institute Tier III &bull; IEEE 519 &bull; IEC 62271 &bull; ASHRAE TC 9.9
@@ -4950,9 +5486,12 @@
     }
 
     // --- TAB 8: BMS & PURDUE SCADA ---
-    function inspectBmsNode(title, points, protocol, hardware, speed, status) {
+    function inspectBmsNode(title, points, protocol, hardware, speed, status, funcDesc) {
       if (document.getElementById('bms-tel-title')) document.getElementById('bms-tel-title').innerText = title;
-      if (document.getElementById('bms-tel-notes')) document.getElementById('bms-tel-notes').innerText = hardware + ' | ' + protocol + ' | ' + status;
+      if (document.getElementById('bms-tel-notes')) {
+        const desc = funcDesc ? ' • Function: ' + funcDesc : '';
+        document.getElementById('bms-tel-notes').innerText = hardware + ' | ' + protocol + ' | ' + status + desc;
+      }
       if (document.getElementById('bms-tel-pts')) document.getElementById('bms-tel-pts').innerText = points;
     }
 
