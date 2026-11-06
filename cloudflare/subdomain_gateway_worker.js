@@ -17,7 +17,6 @@ const HOST_PATH_MAP = {
   'energy.renewablevietnam.com': '/energy',
   'wind.renewablevietnam.com': '/energy',
   'industrial.renewablevietnam.com': '/industrial',
-  'ev.renewablevietnam.com': '/evcharging',
   'legal.renewablevietnam.com': '/invm',
   'invest.renewablevietnam.com': '/invm',
   'project.renewablevietnam.com': '/project'
@@ -34,6 +33,12 @@ export default {
     // Edge HTTP 301 Permanent Redirect: invest. -> legal.
     if (hostname === 'invest.renewablevietnam.com') {
       const destination = `https://legal.renewablevietnam.com${url.pathname}${url.search}`;
+      return Response.redirect(destination, 301);
+    }
+
+    // Edge HTTP 301 Permanent Redirect: ev. -> /evcharging
+    if (hostname === 'ev.renewablevietnam.com') {
+      const destination = `https://${originHost}/evcharging${url.pathname}${url.search}`;
       return Response.redirect(destination, 301);
     }
 
