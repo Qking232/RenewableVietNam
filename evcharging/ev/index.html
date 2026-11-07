@@ -2806,6 +2806,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   <link rel="preconnect" href="https://nkkwegvplpozirrjcxsn.supabase.co" crossorigin>
   <link rel="dns-prefetch" href="https://nkkwegvplpozirrjcxsn.supabase.co">
   <script src="/assets/js/supabase-client.js"></script>
+  <script src="/assets/wasm/ev_spatial_wasm.js"></script>
+
 </head>
 <body>
 <div id="app">
@@ -2832,7 +2834,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
           <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-medium bg-slate-100 dark:bg-slate-800 transition-colors">EV Tech</a>
+          <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-medium bg-slate-100 dark:bg-slate-800 transition-colors">EV Tech</a>
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
           <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a></nav>
       </div>
@@ -2844,6 +2846,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
           <span>5 Edge Gateways Live</span>
         </div>
 
+                <div id="wasmStatusPill" class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-sky-50 dark:bg-sky-950/60 border border-sky-200/80 dark:border-sky-800 font-mono text-[10px] text-sky-800 dark:text-sky-300 font-bold shrink-0">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="wasmPillText">Rust Wasm Active</span>
+        </div>
         <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
           <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
@@ -2859,7 +2865,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Cockpit</a>
       <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Energy</a>
       <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Industrial</a>
-      <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0">EV Tech</a>
+      <a href="https://ev.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0">EV Tech</a>
       <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Invest &amp; Legal</a></div>
   </header>
   <main>
@@ -3276,6 +3282,39 @@ svg.leaflet-image-layer.leaflet-interactive path {
 </script>
 <script>
 // Ultra-fast Dynamic Station Store powered by Supabase + IndexedDB Cache (rev 0.0.28)
+
+  // ---------------------------------------------------------------------------
+  // RUST WEBASSEMBLY EV SPATIAL & ROUTE CORRIDOR ENGINE INITIALIZATION
+  // ---------------------------------------------------------------------------
+  let wasmSpatialReady = false;
+
+  async function initWasmEngine() {
+    try {
+      if (window.EV_WASM_SPATIAL) {
+        const ok = await window.EV_WASM_SPATIAL.init('/assets/wasm/ev_spatial_wasm.wasm');
+        if (ok) {
+          wasmSpatialReady = true;
+          if (typeof STATIONS !== "undefined" && Array.isArray(STATIONS) && STATIONS.length > 0) {
+            window.EV_WASM_SPATIAL.loadStations(STATIONS);
+          }
+          const pill = document.getElementById("wasmPillText");
+          if (pill) pill.textContent = "Rust Wasm Active";
+        }
+      }
+    } catch(err) {
+      console.warn("[WASM_EV] Initialization error:", err);
+    }
+  }
+
+  function updateWasmStationIndex() {
+    if (window.EV_WASM_SPATIAL && window.EV_WASM_SPATIAL.isReady() && typeof STATIONS !== "undefined" && Array.isArray(STATIONS) && STATIONS.length > 0) {
+      window.EV_WASM_SPATIAL.loadStations(STATIONS);
+      const pill = document.getElementById("wasmPillText");
+      if (pill) pill.textContent = `Rust Wasm (${STATIONS.length.toLocaleString()})`;
+    }
+  }
+  document.addEventListener("DOMContentLoaded", initWasmEngine);
+
 let STATIONS = []; /* Populated asynchronously via Supabase REST API & persistent IndexedDB */
 
 /* ---------------- language (Vietnamese is the default) ---------------- */
@@ -3883,6 +3922,12 @@ function haversine(a,b){
 }
 function nearestStation(){
   if(!myLoc) return null;
+  if (window.EV_WASM_SPATIAL && window.EV_WASM_SPATIAL.isReady()) {
+    const wasmRes = window.EV_WASM_SPATIAL.findNearest(myLoc.lat, myLoc.lng, 0, 0, 100.0);
+    if (wasmRes && wasmRes.station) {
+      return wasmRes.station;
+    }
+  }
   let best=null,bd=Infinity;
   for(const s of state.stations){ if(!isVisible(s)) continue;
     const d=haversine(myLoc,s); if(d<bd){ bd=d; best=s; } }
@@ -5369,44 +5414,44 @@ var NEAR_KM = 40;
       var dcOnly = dcOnlyCb.checked;
 
       // Fetch charging stations along the route corridor
-      statusEl.textContent = "Đang quét các trạm sạc EV dọc hành trình (" + fmtKm(routeData.distance) + ")…";
       var vnOnly = vnOnlyCb ? vnOnlyCb.checked : true;
-      var candidateList = await fetchCorridorStations(coords, vnOnly);
-
       var opt = (evSelect.selectedOptions && evSelect.selectedOptions[0]) || (evSelect.options && evSelect.options[evSelect.selectedIndex]) || null;
       var brand = opt ? (opt.dataset.brand || "vinfast") : "vinfast";
       var isNonVfCar = (brand !== "vinfast" && brand !== "custom");
       var nonVfOnly = nonVfOnlyCb ? nonVfOnlyCb.checked : false;
 
-      // Project candidate stations onto route
       var routeStations = [];
-      candidateList.forEach(s=>{
-        // Strictly filter to Vietnam Border
-        if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
+      var corridorScanTimeMs = 0;
 
-        var proj = projectPoint(s.lat, s.lng, coords, cumDist);
-        if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
-          var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
-          if(isNonVfCar && nonVfOnly && isVF) return; // Prioritize non-VinFast stations for BYD/others
-          var pInfo = parseKw(s);
-          routeStations.push({
-            station: s,
-            distAlongKm: proj.distAlongKm,
-            detourKm: proj.detourKm,
-            kw: pInfo.kw,
-            isDC: pInfo.isDC,
-            isVF: isVF
-          });
+      // 1. High-Performance Rust WebAssembly Route Corridor Projection (< 10 ms)
+      if (window.EV_WASM_SPATIAL && window.EV_WASM_SPATIAL.isReady()) {
+        statusEl.textContent = "Đang quét các trạm sạc EV dọc hành trình (Rust Wasm Engine)…";
+        var wasmCorridor = window.EV_WASM_SPATIAL.projectCorridor(
+          coords,
+          cumDist,
+          4.8,
+          dcOnly ? 1 : 0,
+          (isNonVfCar && nonVfOnly) ? 1 : 0,
+          5.0,
+          totalDistKm - 2.0
+        );
+        if (wasmCorridor && wasmCorridor.stations && wasmCorridor.stations.length > 0) {
+          routeStations = wasmCorridor.stations;
+          corridorScanTimeMs = wasmCorridor.scanTimeMs;
+          console.log(`[RUST_WASM] Polyline corridor projection matched ${routeStations.length} stations in ${corridorScanTimeMs.toFixed(1)} ms!`);
         }
-      });
+      }
 
-      // If user selected non-VinFast car and strict filter resulted in 0 stations, widen to all stations
-      if(isNonVfCar && nonVfOnly && !routeStations.length){
+      // 2. JavaScript Fallback if Wasm returned 0 stations or unready
+      if (routeStations.length === 0) {
+        statusEl.textContent = "Đang quét các trạm sạc EV dọc hành trình (" + fmtKm(totalDistKm) + ")…";
+        var candidateList = await fetchCorridorStations(coords, vnOnly);
         candidateList.forEach(s=>{
           if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
           var proj = projectPoint(s.lat, s.lng, coords, cumDist);
           if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
             var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
+            if(isNonVfCar && nonVfOnly && isVF) return;
             var pInfo = parseKw(s);
             routeStations.push({
               station: s,
@@ -5418,6 +5463,24 @@ var NEAR_KM = 40;
             });
           }
         });
+        if(isNonVfCar && nonVfOnly && !routeStations.length){
+          candidateList.forEach(s=>{
+            if(vnOnly && !isWithinVietnam(s.lat, s.lng, s.addr)) return;
+            var proj = projectPoint(s.lat, s.lng, coords, cumDist);
+            if(proj.detourKm <= 4.8 && proj.distAlongKm >= 5 && proj.distAlongKm <= (totalDistKm - 2)){
+              var isVF = /vinfast/i.test(s.cpo || "") || /vinfast/i.test(s.name || "");
+              var pInfo = parseKw(s);
+              routeStations.push({
+                station: s,
+                distAlongKm: proj.distAlongKm,
+                detourKm: proj.detourKm,
+                kw: pInfo.kw,
+                isDC: pInfo.isDC,
+                isVF: isVF
+              });
+            }
+          });
+        }
       }
       routeStations.sort((a,b)=>a.distAlongKm - b.distAlongKm);
 
@@ -5428,7 +5491,36 @@ var NEAR_KM = 40;
       var currSoC = sSoC;
       var legKmTravelable = maxRange * (currSoC - mSoC);
 
-      if(totalDistKm > legKmTravelable){
+      // 1. Rust WebAssembly Non-Linear Battery Stop Optimization
+      if (window.EV_WASM_SPATIAL && window.EV_WASM_SPATIAL.isReady() && routeStations.length > 0 && totalDistKm > legKmTravelable) {
+        var wasmStopsRes = window.EV_WASM_SPATIAL.simulateEvStops(
+          totalDistKm,
+          batCap,
+          maxRange,
+          startSocVal,
+          minSocVal,
+          80.0,
+          150.0
+        );
+        if (wasmStopsRes && wasmStopsRes.stops && wasmStopsRes.stops.length > 0) {
+          stops = wasmStopsRes.stops.map(ws => {
+            return {
+              station: ws.station,
+              distAlongKm: ws.distAlongKm,
+              arrSoC: ws.arrSocPct / 100.0,
+              depSoC: ws.depSocPct / 100.0,
+              chargeTimeMin: ws.chargeMin,
+              kwhNeeded: ws.kwhAdded,
+              kw: ws.kw,
+              detourKm: ws.detourKm
+            };
+          });
+          console.log(`[RUST_WASM] Simulated ${stops.length} charging stops in ${wasmStopsRes.simTimeMs.toFixed(2)} ms`);
+        }
+      }
+
+      // 2. JavaScript Fallback
+      if(!stops.length && totalDistKm > legKmTravelable){
         var iter = 0;
         while((totalDistKm - currKm) > (maxRange * (currSoC - mSoC)) && iter < 12){
           iter++;
@@ -5928,6 +6020,9 @@ var NEAR_KM = 40;
       }
       if(gmListTitle){
         gmListTitle.textContent = "Danh sách trạm (" + total.toLocaleString() + ")";
+      }
+      if(typeof updateWasmStationIndex === "function") {
+        updateWasmStationIndex();
       }
     }
     window.updateStationCountBadge = updateStationCountBadge;
