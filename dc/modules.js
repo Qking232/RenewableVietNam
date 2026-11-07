@@ -1,5 +1,5 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.046 (Streamlined Single-Line Executive Tab Navigation & Simplified Header Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.047 (Streamlined Single-Line Executive Tab Navigation & Simplified Header Edition)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
  * Architecture: Executive 7-Module Portfolio Grid
  */
@@ -40,9 +40,9 @@ window.PORTAL_MODULES = [
     shortTitle: "Cost & Contracts",
     category: "Commercial & Controls",
     title: "Domain 3: Project Cost, EVM & Wholesale Commercials",
-    description: ".00M BAC Breakdown (12 WBS Packages), 7-Tab Financial Navigator, 160+ Interactive Hover Calculation Cells Across 15-Year Financial Statement, Executive Scorecard, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
+    description: ".00M BAC Breakdown (12 WBS Packages), Rust WebAssembly 50,000-Trial Monte Carlo Engine, Exact Newton-Raphson 15-Year IRR Solver, 7-Tab Financial Navigator, 160+ Hover Calculation Cells, Executive Scorecard, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
     badge: "Cost & Contracts",
-    file: "modules/domain3_capex_cost_contracts_Rev.010.html"
+    file: "modules/domain3_capex_cost_contracts_Rev.011.html"
   },
   {
     id: "domain4_construction",
