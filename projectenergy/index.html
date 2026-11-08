@@ -622,9 +622,6 @@
               <button id="tabPipelineBtn" onclick="switchDossierTab('pipeline')" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
                 PDP8 Priority (<span id="pipelineCount">10</span>)
               </button>
-              <button id="tabGridBtn" onclick="switchDossierTab('grid')" class="flex-1 sm:flex-initial px-3 py-1 rounded-md text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer">
-                National Grid (<span id="totalGridSubstationsCount">1,915</span>)
-              </button>
             </div>
 
             <button id="tableOrCardsToggleBtn" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-teal-600 font-mono text-[10px] cursor-pointer" title="Toggle Cards / Table Layout">
@@ -709,116 +706,6 @@
             </div>
           </div>
 
-          <!-- VIEW 3: NATIONAL ELECTRICAL GRID NETWORK (NSMO 2025 MODEL) -->
-          <div id="viewGridContainer" class="hidden space-y-3">
-            <!-- Grid Navigation Sub-Bar & Voltage Filters -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-xl bg-slate-50/80 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder">
-              <div class="flex items-center gap-1 font-mono text-[11px]">
-                <button id="gridSubViewMapBtn" onclick="switchGridSubView('map')" class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-semibold cursor-pointer">
-                  Topology Map
-                </button>
-                <button id="gridSubViewSubstationsBtn" onclick="switchGridSubView('substations')" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
-                  Substations (1,915)
-                </button>
-                <button id="gridSubViewLinesBtn" onclick="switchGridSubView('lines')" class="px-2.5 py-1 rounded-md bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkMuted dark:text-textDarkMuted hover:text-rose-600 cursor-pointer">
-                  Transmission Lines (2,877)
-                </button>
-              </div>
-
-              <!-- Voltage Selector Pills -->
-              <div class="flex items-center gap-1 font-mono text-[10px] overflow-x-auto no-scrollbar">
-                <span class="text-slate-400 uppercase tracking-wider mr-1 shrink-0">Voltage:</span>
-                <button data-v="ALL" class="grid-v-pill px-2 py-0.5 rounded bg-rose-600 text-white font-semibold cursor-pointer">All</button>
-                <button data-v="500" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-rose-300 dark:border-rose-800 text-rose-600 dark:text-rose-400 cursor-pointer">500 kV (92)</button>
-                <button data-v="220" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-amber-300 dark:border-amber-800 text-amber-600 dark:text-amber-400 cursor-pointer">220 kV (326)</button>
-                <button data-v="110" class="grid-v-pill px-2 py-0.5 rounded bg-white dark:bg-darkSurface border border-sky-300 dark:border-sky-800 text-sky-600 dark:text-sky-400 cursor-pointer">110 kV (1,497)</button>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW A: LEAFLET GIS TOPOLOGY MAP -->
-            <div id="gridSubViewMap" class="space-y-2">
-              <div class="relative w-full h-[540px] rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden shadow-inner bg-slate-900">
-                <div id="gridTopologyMap" class="w-full h-full z-10"></div>
-                <!-- Interactive Floating Legend -->
-                <div class="absolute bottom-3 left-3 z-20 p-2.5 rounded-lg bg-white/90 dark:bg-darkSurface/90 backdrop-blur-md border border-borderSlate dark:border-darkBorder shadow-md font-mono text-[10px] space-y-1">
-                  <div class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider mb-1">Grid Corridors</div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-rose-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">500 kV Supergrid (15,888 km)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-amber-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">220 kV Regional Grid (27,007 km)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-1 rounded-full bg-cyan-500"></span>
-                    <span class="text-inkPrimary dark:text-textDarkPrimary font-semibold">110 kV Interties (22,672 km)</span>
-                  </div>
-                  <div class="pt-1 border-t border-borderSlate/60 dark:border-darkBorder/60 text-[9px] text-slate-400">
-                    Source: NSMO Model Vietnam 2025
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW B: SUBSTATIONS DIRECTORY TABLE -->
-            <div id="gridSubViewSubstations" class="hidden space-y-2.5">
-              <div class="flex items-center gap-2">
-                <input type="text" id="gridSubstationSearchInput" placeholder="Search substations by name, province, or bay code..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
-                <span id="gridSubstationCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
-                  Showing 1,915 Substations
-                </span>
-              </div>
-              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
-                <div class="overflow-x-auto max-h-[500px]">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
-                      <tr>
-                        <th class="p-2.5">Substation Name</th>
-                        <th class="p-2.5 text-center">Voltage Class</th>
-                        <th class="p-2.5 text-right">Transformers</th>
-                        <th class="p-2.5 text-right">Generation</th>
-                        <th class="p-2.5">Location / Province</th>
-                        <th class="p-2.5 text-right">Technical Dossier</th>
-                      </tr>
-                    </thead>
-                    <tbody id="gridSubstationsTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
-                      <!-- Populated dynamically via renderGridSubstationsTable() -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-
-            <!-- SUB-VIEW C: TRANSMISSION LINES DIRECTORY TABLE -->
-            <div id="gridSubViewLines" class="hidden space-y-2.5">
-              <div class="flex items-center gap-2">
-                <input type="text" id="gridLineSearchInput" placeholder="Search transmission lines by corridor, substation, or conductor..." class="flex-1 px-3 py-1.5 rounded-lg bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary text-xs font-mono focus:outline-none focus:border-rose-500" />
-                <span id="gridLineCountBadge" class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder whitespace-nowrap">
-                  Showing 2,877 Circuits
-                </span>
-              </div>
-              <div class="rounded-xl border border-borderSlate dark:border-darkBorder overflow-hidden">
-                <div class="overflow-x-auto max-h-[500px]">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-darkCard font-mono text-[10px] uppercase text-inkMuted dark:text-textDarkMuted border-b border-borderSlate dark:border-darkBorder">
-                      <tr>
-                        <th class="p-2.5">Circuit Corridor (From - To)</th>
-                        <th class="p-2.5 text-center">Voltage</th>
-                        <th class="p-2.5">Conductor</th>
-                        <th class="p-2.5 text-right">R (Ω)</th>
-                        <th class="p-2.5 text-right">X (Ω)</th>
-                        <th class="p-2.5 text-right">Length (km)</th>
-                      </tr>
-                    </thead>
-                    <tbody id="gridLinesTableBody" class="divide-y divide-borderSlate dark:divide-darkBorder font-mono">
-                      <!-- Populated dynamically via renderGridLinesTable() -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Sticky Bottom Pagination Bar -->
@@ -2826,42 +2713,28 @@
       }
     }
 
-    // 13. Tab View Switcher (Assets Dossier, PDP8 Priority & National Grid)
+    // 13. Tab View Switcher (Assets Dossier & PDP8 Priority)
     function switchDossierTab(tabKey) {
       activeTab = tabKey;
       const tabAssets = document.getElementById('tabAssetsBtn');
       const tabPipeline = document.getElementById('tabPipelineBtn');
-      const tabGrid = document.getElementById('tabGridBtn');
       
       const viewAssets = document.getElementById('viewAssetsDossier');
       const viewPipeline = document.getElementById('viewPipelineContainer');
-      const viewGrid = document.getElementById('viewGridContainer');
       const filtersBox = document.getElementById('dossierFiltersContainer');
       const paginationBar = document.getElementById('dossierPaginationBar');
 
-      [tabAssets, tabPipeline, tabGrid].forEach(btn => {
+      [tabAssets, tabPipeline].forEach(btn => {
         if (!btn) return;
-        btn.classList.remove('bg-teal-600', 'bg-rose-600', 'text-white', 'font-semibold');
+        btn.classList.remove('bg-teal-600', 'text-white', 'font-semibold');
         btn.classList.add('text-inkMuted', 'dark:text-textDarkMuted');
       });
 
-      [viewAssets, viewPipeline, viewGrid].forEach(v => {
+      [viewAssets, viewPipeline].forEach(v => {
         if (v) v.classList.add('hidden');
       });
 
-      if (tabKey === 'grid') {
-        if (tabGrid) {
-          tabGrid.classList.add('bg-rose-600', 'text-white', 'font-semibold');
-          tabGrid.classList.remove('text-inkMuted', 'dark:text-textDarkMuted');
-        }
-        if (viewGrid) viewGrid.classList.remove('hidden');
-        if (filtersBox) filtersBox.classList.add('hidden');
-        if (paginationBar) paginationBar.classList.add('hidden');
-        setTimeout(() => {
-          initGridMap();
-          if (gridMapInstance) gridMapInstance.invalidateSize();
-        }, 120);
-      } else if (tabKey === 'pipeline') {
+      if (tabKey === 'pipeline') {
         if (tabPipeline) {
           tabPipeline.classList.add('bg-teal-600', 'text-white', 'font-semibold');
           tabPipeline.classList.remove('text-inkMuted', 'dark:text-textDarkMuted');
@@ -4456,7 +4329,6 @@ function initMainFlowMap() {
       // Tab Listeners
       document.getElementById("tabAssetsBtn")?.addEventListener("click", () => switchDossierTab('assets'));
       document.getElementById("tabPipelineBtn")?.addEventListener("click", () => switchDossierTab('pipeline'));
-      document.getElementById("tabGridBtn")?.addEventListener("click", () => switchDossierTab('grid'));
 
       // Grid Workstation Sub-Views
       window.switchGridSubView = function(mode) {
