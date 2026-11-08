@@ -490,7 +490,56 @@
     <!-- VIEW 1: GRID CARTOGRAPHY & ASSETS DOSSIER WORKSTATION (HERO)         -->
     <!-- ==================================================================== -->
     <div id="energyWorkstationViewMap" class="space-y-6">
-      <!-- ==================================================================== -->
+          <!-- ==================================================================== -->
+    <!-- INTERACTIVE PROVINCIAL CAPACITY & ASSET LIFECYCLE CHARTS -->
+    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-2.5">
+        <div>
+          <h2 class="text-sm sm:text-base font-bold text-inkPrimary dark:text-textDarkPrimary flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            Provincial Capacity Intelligence &amp; Asset Lifecycle Analytics
+          </h2>
+          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
+            960+ utility assets &middot; Multi-fuel analytics &middot; Click to cross-filter.
+          </p>
+        </div>
+        <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20 self-start sm:self-auto">
+          Interactive Cross-Filter Enabled
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Chart 1: Top 10 Energy Provinces (8 cols) -->
+        <div class="lg:col-span-8 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
+          <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
+            <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Top 10 Energy Provinces (MW Capacity)</span>
+            <span class="text-teal-600 dark:text-teal-400">Operational &amp; Pipeline</span>
+          </div>
+          <div class="relative h-56">
+            <canvas id="energyTopProvincesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Asset Status Lifecycle (4 cols) -->
+        <div class="lg:col-span-4 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
+              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Commercial Status</span>
+              <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
+            </div>
+            <div class="relative h-48 flex items-center justify-center">
+              <canvas id="energyStatusDoughnutChart"></canvas>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px] text-slate-400">
+            <span>Operational Baselines</span>
+            <span>PDP8 Quota Target</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
     <!-- INTERACTIVE GIS TRANSMISSION & RENEWABLE POWER FLOW COCKPIT          -->
     <!-- ==================================================================== -->
     <section id="flowCockpitSection" class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
@@ -721,57 +770,7 @@
 
     </section>
 
-  
-      <!-- INTERACTIVE PROVINCIAL CAPACITY & ASSET LIFECYCLE CHARTS -->
-    <section class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-3.5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-2.5">
-        <div>
-          <h2 class="text-sm sm:text-base font-bold text-inkPrimary dark:text-textDarkPrimary flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
-            Provincial Capacity Intelligence &amp; Asset Lifecycle Analytics
-          </h2>
-          <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
-            960+ utility assets &middot; Multi-fuel analytics &middot; Click to cross-filter.
-          </p>
-        </div>
-        <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20 self-start sm:self-auto">
-          Interactive Cross-Filter Enabled
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <!-- Chart 1: Top 10 Energy Provinces (8 cols) -->
-        <div class="lg:col-span-8 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2">
-          <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted">
-            <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Top 10 Energy Provinces (MW Capacity)</span>
-            <span class="text-teal-600 dark:text-teal-400">Operational &amp; Pipeline</span>
-          </div>
-          <div class="relative h-56">
-            <canvas id="energyTopProvincesChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Chart 2: Asset Status Lifecycle (4 cols) -->
-        <div class="lg:col-span-4 p-3 rounded-xl bg-slate-50/70 dark:bg-darkCard/60 border border-borderSlate dark:border-darkBorder space-y-2 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between font-mono text-[10px] text-inkMuted dark:text-textDarkMuted mb-1">
-              <span class="font-bold text-inkPrimary dark:text-textDarkPrimary uppercase tracking-wider">Commercial Status</span>
-              <span class="text-teal-600 dark:text-teal-400">Click &rarr; Filter</span>
-            </div>
-            <div class="relative h-48 flex items-center justify-center">
-              <canvas id="energyStatusDoughnutChart"></canvas>
-            </div>
-          </div>
-          <div class="pt-2 border-t border-borderSlate/60 dark:border-darkBorder/60 flex items-center justify-between font-mono text-[10px] text-slate-400">
-            <span>Operational Baselines</span>
-            <span>PDP8 Quota Target</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-        
-    </div>
+</div>
 
     <!-- ==================================================================== -->
     <!-- VIEW 2: PDP8 STATUTORY QUOTAS & 12 STRATEGIC PILLARS                 -->
