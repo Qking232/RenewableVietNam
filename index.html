@@ -50,10 +50,7 @@
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
   <script src="/assets/wasm/rvn_homepage_wasm.js"></script>
-    <!-- Three.js 3D Engine & OrbitControls Preload -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="/assets/js/rvn_energy_3d.js?v=20261109_rev005"></script>
+  
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -416,137 +413,7 @@
         </div>
       </section>
 
-      <!-- SECTION: 3D GEOSPATIAL ENERGY DIGITAL TWIN & ENGINEERING ASSET SUITE (Rev.046 - 5X DENSITY) -->
-      <section id="energy3dSection" class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-md space-y-2.5 transition-colors">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              <span class="font-mono text-[10px] uppercase font-bold text-cyan-600 dark:text-cyan-400">
-                Cyber Command Digital Twin &middot; 67 Energy Hubs &middot; 15 Plasma Arcs &middot; 2,250 EV Nodes &middot; Rev.046
-              </span>
-            </div>
-            <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <span>National Clean Energy 3D Digital Twin & Asset Studio</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-800">Three.js 3D Cyber</span>
-            </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Cybernetic Command Center digital twin: 67 national generation hubs & substations, luminous 500kV plasma power corridors, 2,250 glowing EV expressway nodes, and automated cinematic flyover.
-            </p>
-          </div>
-
-          <!-- Dual-Mode View Switcher & Toolbars -->
-          <div class="flex flex-wrap items-center gap-2.5 font-mono text-[11px] shrink-0">
-            <!-- Segmented Mode Switcher -->
-            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-2xs">
-              <button id="btn3dModeTwin" type="button" onclick="switch3dMode('twin')" class="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 font-bold shadow-xs transition-all">
-                Bản đồ Không gian 3D
-              </button>
-              <button id="btn3dModeAsset" type="button" onclick="switch3dMode('asset')" class="px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-all">
-                Mô hình Thiết bị 3D
-              </button>
-            </div>
-
-            <!-- Twin Mode Controls -->
-            <div id="energy3dTwinControls" class="flex flex-wrap items-center gap-2">
-              <!-- Camera Presets & Regional Filters -->
-              <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-                <button type="button" onclick="RVN_ENERGY_3D.filterRegion('all', this)" class="btn-3d-preset px-2 py-1 rounded bg-slate-900 text-cyan-300 font-semibold shadow-2xs border border-cyan-500/40 hover:text-cyan-200 transition-colors">Toàn Quốc (67)</button>
-                <button type="button" onclick="RVN_ENERGY_3D.filterRegion('north', this)" class="btn-3d-preset px-2 py-1 rounded text-slate-400 hover:text-white transition-colors">Miền Bắc</button>
-                <button type="button" onclick="RVN_ENERGY_3D.filterRegion('central', this)" class="btn-3d-preset px-2 py-1 rounded text-slate-400 hover:text-white transition-colors">Miền Trung</button>
-                <button type="button" onclick="RVN_ENERGY_3D.filterRegion('south', this)" class="btn-3d-preset px-2 py-1 rounded text-slate-400 hover:text-white transition-colors">Miền Nam</button>
-              </div>
-
-              <!-- Layer Toggles -->
-              <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-[10.5px]">
-                <button id="btn3dLayerGrid" type="button" onclick="toggle3dLayer('grid', this)" class="px-2 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all">500kV Lưới</button>
-                <button id="btn3dLayerGen" type="button" onclick="toggle3dLayer('renewables', this)" class="px-2 py-1 rounded bg-emerald-600 text-white font-semibold shadow-2xs transition-all">Năng Lượng Tái Tạo</button>
-                <button id="btn3dLayerEv" type="button" onclick="toggle3dLayer('ev', this)" class="px-2 py-1 rounded bg-teal-600 text-white font-semibold shadow-2xs transition-all">Trạm Sạc EV</button>
-              </div>
-            </div>
-
-            <!-- Asset Mode Controls -->
-            <div id="energy3dAssetControls" class="items-center gap-2 hidden">
-              <!-- Asset Selectors -->
-              <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-[10.5px]">
-                <button type="button" data-asset="wind_turbine" onclick="select3dAsset('wind_turbine')" class="btn-asset-select px-2.5 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all">Tua bin Gió 6.2MW</button>
-                <button type="button" data-asset="solar_tracker" onclick="select3dAsset('solar_tracker')" class="btn-asset-select px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all">Solar Tracker</button>
-                <button type="button" data-asset="pylon_500kv" onclick="select3dAsset('pylon_500kv')" class="btn-asset-select px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all">Cột Thép 500kV</button>
-                <button type="button" data-asset="transformer_500kv" onclick="select3dAsset('transformer_500kv')" class="btn-asset-select px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all">Máy Biến Áp 500kV</button>
-                <button type="button" data-asset="bess_container" onclick="select3dAsset('bess_container')" class="btn-asset-select px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all">BESS Container</button>
-              </div>
-
-              <!-- Quick Utility Tools -->
-              <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg text-[10.5px]">
-                <button id="btn3dAnimToggle" type="button" onclick="toggle3dAnimation(this)" class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-medium transition-all">Dừng Xoay</button>
-                <button id="btn3dWireframeToggle" type="button" onclick="toggle3dWireframe(this)" class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-medium transition-all">Khung Dây</button>
-                <button type="button" onclick="RVN_ENERGY_3D.resetView()" class="px-2 py-1 rounded bg-slate-800 text-slate-300 font-medium transition-all">Đặt Lại</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3D Canvas Viewport (Cybernetic Command Center Frame) -->
-        <div id="energy3dContainer" class="relative w-full h-[340px] sm:h-[390px] lg:h-[430px] rounded-2xl overflow-hidden bg-[#050a17] border border-cyan-500/30 shadow-2xl">
-          <canvas id="energy3dCanvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
-
-          <!-- Top-Left Tactical HUD Telemetry -->
-          <div class="absolute top-3 left-3 z-20 pointer-events-none flex flex-col gap-1.5 font-mono text-[10.5px]">
-            <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-cyan-500/40 text-cyan-400 shadow-lg">
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-              <span class="font-bold tracking-wider">CYBER COMMAND TWIN &middot; LIVE</span>
-            </div>
-            <div class="px-2.5 py-1.5 rounded-lg bg-slate-950/80 backdrop-blur-md border border-slate-800 text-[10px] text-slate-300 space-y-0.5 shadow-md">
-              <div class="flex items-center justify-between gap-3">
-                <span class="text-slate-400">GRID FREQ:</span>
-                <span class="text-emerald-400 font-bold font-mono">50.01 Hz</span>
-              </div>
-              <div class="flex items-center justify-between gap-3">
-                <span class="text-slate-400">DISPATCH:</span>
-                <span class="text-cyan-400 font-bold font-mono">28,450 MW</span>
-              </div>
-              <div class="flex items-center justify-between gap-3">
-                <span class="text-slate-400">CIRCUIT-3:</span>
-                <span class="text-amber-400 font-bold font-mono">ACTIVE (2,400 MW)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Top-Right Real-Time Coordinates HUD -->
-          <div class="absolute top-3 right-3 z-20 pointer-events-none flex flex-col items-end gap-1.5 font-mono text-[10.5px]">
-            <div id="hudCoordTracker" class="px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-cyan-500/30 text-slate-400 text-[10px] shadow-lg">
-              LAT: <span class="text-cyan-300">16.05°N</span> &bull; LNG: <span class="text-cyan-300">108.20°E</span>
-            </div>
-          </div>
-
-          <!-- Interactive Hover Tooltip Popover -->
-          <div id="energy3dTooltip" class="absolute pointer-events-none hidden z-30 p-3 rounded-xl bg-slate-950/95 backdrop-blur-md border border-cyan-500/40 shadow-2xl max-w-xs transition-opacity duration-150 text-slate-100"></div>
-
-          <!-- Dynamic Engineering Spec Card Overlay (Asset View) -->
-          <div id="energy3dSpecCard" class="absolute top-3 right-3 hidden z-20 p-3.5 rounded-xl bg-slate-950/95 backdrop-blur-md border border-cyan-500/40 shadow-2xl max-w-xs sm:max-w-sm pointer-events-auto transition-all text-slate-100"></div>
-
-          <!-- Bottom-Left Category Legend Overlay -->
-          <div id="energy3dLegend" class="absolute bottom-3 left-3 z-20 flex flex-wrap items-center gap-2.5 px-3 py-1.5 rounded-lg bg-slate-950/85 backdrop-blur-md border border-slate-800 font-mono text-[10px] text-slate-300 shadow-lg">
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span> Solar PV</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span> Wind Power</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8]"></span> Hydro Baseload</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#fbbf24]"></span> LNG Baseload</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc]"></span> 500kV Trạm</span>
-            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#67e8f9]"></span> 500kV Plasma</span>
-          </div>
-
-          <!-- Bottom-Right Cinematic Tour Director & Controls -->
-          <div class="absolute bottom-3 right-3 z-20 flex items-center gap-2 pointer-events-auto font-mono text-[10.5px]">
-            <button id="btn3dCinematicTour" type="button" onclick="RVN_ENERGY_3D.toggleCinematicTour(this)" class="px-2.5 py-1 rounded-lg bg-cyan-950/90 hover:bg-cyan-900 border border-cyan-500/50 text-cyan-300 font-bold backdrop-blur-md shadow-lg transition-all flex items-center gap-1.5 cursor-pointer">
-              <span>▶ Bay Tự Động</span>
-            </button>
-            <button type="button" onclick="RVN_ENERGY_3D.resetView()" class="px-2.5 py-1 rounded-lg bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 backdrop-blur-md shadow-lg transition-all cursor-pointer">
-              Đặt Lại
-            </button>
-          </div>
-        </div>
-      </section>
-
+      
       <!-- SECTION 1: THE 12 STRATEGIC PILLARS OF VIETNAM ENERGY TRANSITION -->
       <section id="homepage12PillarsSection" class="space-y-4 pt-2">
         <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-4 border-b border-slate-200/70 dark:border-slate-800 pb-3">
@@ -2667,71 +2534,6 @@
       }
     }
     initHomepageWasm();
-
-    // 3D Geospatial Energy Digital Twin & Asset Studio Initialization (Rev.046 - 5X DENSITY)
-    function init3dDigitalTwin() {
-      if (window.RVN_ENERGY_3D) {
-        window.RVN_ENERGY_3D.init('energy3dContainer', 'energy3dCanvas', 'energy3dTooltip', 'energy3dSpecCard');
-      }
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init3dDigitalTwin);
-    } else {
-      init3dDigitalTwin();
-    }
-
-    function switch3dMode(mode) {
-      if (window.RVN_ENERGY_3D) {
-        window.RVN_ENERGY_3D.switchViewMode(mode);
-        const btnTwin = document.getElementById('btn3dModeTwin');
-        const btnAsset = document.getElementById('btn3dModeAsset');
-        const legend = document.getElementById('energy3dLegend');
-        if (mode === 'twin') {
-          if (btnTwin) btnTwin.className = 'px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 font-bold shadow-xs transition-all';
-          if (btnAsset) btnAsset.className = 'px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-all';
-          if (legend) legend.style.display = 'flex';
-        } else {
-          if (btnTwin) btnTwin.className = 'px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white transition-all';
-          if (btnAsset) btnAsset.className = 'px-3 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 font-bold shadow-xs transition-all';
-          if (legend) legend.style.display = 'none';
-        }
-      }
-    }
-
-    function select3dAsset(assetId) {
-      if (window.RVN_ENERGY_3D) {
-        window.RVN_ENERGY_3D.loadAsset(assetId);
-      }
-    }
-
-    function toggle3dAnimation(btn) {
-      if (window.RVN_ENERGY_3D) {
-        const isPlaying = window.RVN_ENERGY_3D.toggleAnimation();
-        btn.textContent = isPlaying ? 'Dừng Xoay' : 'Tiếp tục';
-      }
-    }
-
-    function toggle3dWireframe(btn) {
-      if (window.RVN_ENERGY_3D) {
-        const isWire = window.RVN_ENERGY_3D.toggleWireframe();
-        if (isWire) {
-          btn.className = 'px-2 py-1 rounded bg-amber-600 text-white font-semibold transition-all';
-        } else {
-          btn.className = 'px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-all';
-        }
-      }
-    }
-
-    function toggle3dLayer(layer, btn) {
-      if (window.RVN_ENERGY_3D) {
-        const active = window.RVN_ENERGY_3D.toggleLayer(layer);
-        if (active) {
-          btn.className = 'px-2 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all';
-        } else {
-          btn.className = 'px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-normal transition-all';
-        }
-      }
-    }
 
     const wasmPill = document.getElementById('wasmStatusPill');
     if (wasmPill) {
