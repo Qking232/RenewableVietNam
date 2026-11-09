@@ -14,7 +14,7 @@
 
 ## 🌟 Key Pillars & Features
 
-### 1. 🗺️ Energy Projects Map (`/projectenergy/`)
+### 1. 🗺️ Energy Projects Map (`/energy/`)
 * **Interactive Geospatial Registry:** Nationwide interactive map visualizing utility-scale energy projects across Viet Nam.
 * **Multi-Source Generation Tracking:** Solar (rooftop & utility-scale), Onshore & Offshore Wind, Hydro, Biomass, LNG, and Battery Energy Storage Systems (BESS).
 * **Granular Project Data:** Nameplate capacity (MW), operational status (Operating, Under Construction, Planned, Feasibility), commercial operating dates (COD), developers, and regional grid connection points.
@@ -60,8 +60,8 @@ RenewableVietNam/
 ├── assets/              # Static assets (brand SVG logos, favicons, stylesheets)
 ├── datacenter/          # APAC Data Center directory & visualization interface
 ├── evcharging/          # EV charging stations map and revision history
-├── projectenergy/       # Energy projects GIS map interface and database
-├── map/                 # Canonical redirect to /projectenergy/
+├── energy/       # Energy projects GIS map interface and database
+├── map/                 # Canonical redirect to /energy/
 ├── hub/                 # Resource collection and analysis hub
 ├── scripts/             # Data migration and database seeding utilities
 │   └── seed_energy.mjs  # Node.js ETL script to sync database from local fixtures

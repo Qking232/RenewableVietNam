@@ -2,8 +2,8 @@
  * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Migration Director
  * 
  * Maps subdomains to origin application directories on renewablevietnam.com:
- * - energy.renewablevietnam.com     -> /projectenergy/
- * - wind.renewablevietnam.com       -> /projectenergy/ (legacy alias)
+ * - energy.renewablevietnam.com     -> /energy/
+ * - wind.renewablevietnam.com       -> /energy/ (legacy alias)
  * - industrial.renewablevietnam.com -> /industrial/
  * - ev.renewablevietnam.com         -> /evcharging/
  * - invest.renewablevietnam.com     -> /invm/
