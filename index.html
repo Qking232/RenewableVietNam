@@ -187,54 +187,96 @@
   <main class="relative z-10 flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
     <!-- ULTRA-COMPACT UNIFIED COMMAND BAR (38px) -->
-    <div id="homepageWorkstationSwitcher" class="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 sm:px-4 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between gap-3 transition-colors">
-      <!-- Left: Quiet Label -->
-      <span class="text-xs font-semibold tracking-wider text-slate-500 dark:text-slate-400 uppercase font-mono shrink-0">
-        Master Cockpit
-      </span>
+        <!-- REDESIGNED EXECUTIVE COMMAND COCKPIT BAR (Rev.048) -->
+    <div id="homepageWorkstationSwitcher" class="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 sm:px-5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
+      <!-- Left Cluster: Live Status & Institutional Title -->
+      <div class="flex items-center gap-2.5 shrink-0">
+        <span class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          LIVE
+        </span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold tracking-wider text-slate-900 dark:text-slate-100 uppercase font-mono">
+            Master Cockpit
+          </span>
+          <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">&vert;</span>
+          <span id="activeWorkstationStatusLabel" class="hidden sm:inline text-xs font-mono text-slate-500 dark:text-slate-400">
+            Gateways &middot; 5 Production Hubs
+          </span>
+        </div>
+      </div>
 
-      <!-- Center: Workstation Modes & Lens Filters Unified -->
+      <!-- Center Cluster: Precision Tactile Workstation Switcher & Filter Lenses -->
       <div class="flex items-center gap-2">
-        <!-- Workstation Modes -->
-        <div class="flex items-center gap-0.5 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-xs">
-          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer">
-            Gateways
+        <!-- Workstation Modes Track -->
+        <div class="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/70 dark:border-slate-700/70 font-mono text-xs shadow-2xs">
+          <!-- Gateways Button -->
+          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+            </svg>
+            <span>Gateways</span>
+            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-teal-50 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300">5</span>
           </button>
-          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
-            Telemetry
+
+          <!-- Telemetry Button -->
+          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/50 cursor-pointer">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+            <span>Telemetry</span>
+            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300">10</span>
           </button>
-          <button id="hpModeBtnSimulator" type="button" onclick="switchHomepageWorkstation('simulator')" class="hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
-            Simulator
+
+          <!-- Simulator Button -->
+          <button id="hpModeBtnSimulator" type="button" onclick="switchHomepageWorkstation('simulator')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/50 cursor-pointer">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+            </svg>
+            <span>Simulator</span>
+            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300">DPPA</span>
           </button>
         </div>
 
-        <div class="w-px h-3.5 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
-
-        <!-- Telemetry Analytical Lens Filters -->
-        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-xs hidden">
-          <button id="hpTelemetryLensBtnAll" type="button" onclick="switchHomepageTelemetryLens('all')" class="telemetry-lens-btn px-2 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer">
+        <!-- Telemetry Analytical Lens Filters (Inline when Telemetry Active) -->
+        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/70 dark:border-slate-700/70 font-mono text-xs hidden shadow-2xs">
+          <button id="hpTelemetryLensBtnAll" type="button" onclick="switchHomepageTelemetryLens('all')" class="telemetry-lens-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer">
             All (10)
           </button>
-          <button id="hpTelemetryLensBtnGen" type="button" onclick="switchHomepageTelemetryLens('generation')" class="telemetry-lens-btn px-2 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <button id="hpTelemetryLensBtnGen" type="button" onclick="switchHomepageTelemetryLens('generation')" class="telemetry-lens-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
             Generation
           </button>
-          <button id="hpTelemetryLensBtnGrid" type="button" onclick="switchHomepageTelemetryLens('grid')" class="telemetry-lens-btn px-2 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <button id="hpTelemetryLensBtnGrid" type="button" onclick="switchHomepageTelemetryLens('grid')" class="telemetry-lens-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
             Grid
           </button>
-          <button id="hpTelemetryLensBtnMarket" type="button" onclick="switchHomepageTelemetryLens('market')" class="telemetry-lens-btn px-2 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <button id="hpTelemetryLensBtnMarket" type="button" onclick="switchHomepageTelemetryLens('market')" class="telemetry-lens-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
             Market
           </button>
         </div>
       </div>
 
-      <!-- Right: Minimal Rust Wasm Pill -->
+      <!-- Right Cluster: National Metrics & Interactive Rust Wasm Pill -->
       <div class="flex items-center gap-2 shrink-0">
-        <div id="wasmStatusPill" class="flex items-center gap-1.5 px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 border border-teal-200/80 dark:border-teal-800 font-mono text-[10px] text-teal-800 dark:text-teal-300 font-semibold cursor-pointer" title="Rust WebAssembly Spatial Engine">
-          <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span>
-          <span id="wasmPillText">Rust Wasm Active</span>
+        <!-- Metric Chip: Decision 500 Capex -->
+        <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          <span class="text-slate-400 dark:text-slate-500">PDP8:</span>
+          <span class="font-bold text-slate-800 dark:text-slate-200 tabular-nums">.7B</span>
         </div>
-        <!-- Silent Compatibility Anchors -->
-        <span id="activeWorkstationStatusLabel" class="hidden">Mode: 10-Module Telemetry Suite</span>
+
+        <!-- Metric Chip: Circuit-3 Supergrid -->
+        <div class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+          <span class="text-slate-400 dark:text-slate-500">500kV C3:</span>
+          <span class="font-bold text-cyan-700 dark:text-cyan-400 font-mono">Active</span>
+        </div>
+
+        <!-- Rust Wasm Engine Pill -->
+        <div id="wasmStatusPill" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-50/90 dark:bg-teal-950/70 border border-teal-300/80 dark:border-teal-700/80 font-mono text-[11px] text-teal-800 dark:text-teal-300 font-bold shadow-xs hover:bg-teal-100 dark:hover:bg-teal-900/80 hover:border-teal-400 transition-all cursor-pointer" title="Rust WebAssembly Spatial Engine &bull; Click to Benchmark">
+          <span class="w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_6px_#14b8a6]"></span>
+          <span id="wasmPillText">Rust Wasm (0.47μs)</span>
+        </div>
+
+        <!-- Silent Compatibility Anchor -->
         <span id="telemetryStatusBadge" class="hidden">Live</span>
       </div>
     </div>
@@ -2319,12 +2361,26 @@
       const btnSimulator = document.getElementById('hpModeBtnSimulator');
       const statusLabel = document.getElementById('activeWorkstationStatusLabel');
 
-      const activeClasses = 'hp-mode-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer';
-      const inactiveClasses = 'hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+      const activeClasses = 'hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer';
+      const inactiveClasses = 'hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/50 cursor-pointer';
 
       [btnOverview, btnTelemetry, btnSimulator].forEach(btn => {
         if (btn) btn.className = inactiveClasses;
       });
+
+      const updateCountPill = (btn, isActive) => {
+        const pill = btn ? btn.querySelector('.hp-count-pill') : null;
+        if (pill) {
+          if (isActive) {
+            pill.className = 'hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-teal-50 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300';
+          } else {
+            pill.className = 'hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300';
+          }
+        }
+      };
+      updateCountPill(btnOverview, mode === 'overview');
+      updateCountPill(btnTelemetry, mode === 'telemetry');
+      updateCountPill(btnSimulator, mode === 'simulator');
 
       if (viewOverview) viewOverview.classList.add('hidden');
       if (viewTelemetry) viewTelemetry.classList.add('hidden');
@@ -2333,7 +2389,7 @@
       if (mode === 'telemetry') {
         if (viewTelemetry) viewTelemetry.classList.remove('hidden');
         if (btnTelemetry) btnTelemetry.className = activeClasses;
-        if (statusLabel) statusLabel.textContent = 'Mode: 10-Module Telemetry Suite';
+        if (statusLabel) statusLabel.textContent = 'Telemetry &middot; 10 Analytical Modules';
         history.replaceState(null, null, '#telemetry');
 
         // Lazy chart initialization on first activation
@@ -2346,14 +2402,14 @@
       } else if (mode === 'simulator') {
         if (viewSimulator) viewSimulator.classList.remove('hidden');
         if (btnSimulator) btnSimulator.className = activeClasses;
-        if (statusLabel) statusLabel.textContent = 'Mode: Decree 80 DPPA Simulator & Hubs';
+        if (statusLabel) statusLabel.textContent = 'Simulator &middot; Decree 80 DPPA Solver';
         history.replaceState(null, null, '#simulator');
         updateSimulator();
       } else {
         // default overview
         if (viewOverview) viewOverview.classList.remove('hidden');
         if (btnOverview) btnOverview.className = activeClasses;
-        if (statusLabel) statusLabel.textContent = 'Mode: Executive Overview & 12 Pillars';
+        if (statusLabel) statusLabel.textContent = 'Gateways &middot; 5 Production Hubs';
         history.replaceState(null, null, '#overview');
       }
 
@@ -2378,8 +2434,8 @@
       const gGrid = document.getElementById('telemetryLensGroupGrid');
       const gMarket = document.getElementById('telemetryLensGroupMarket');
 
-      const activeBtnClass = 'telemetry-lens-btn px-2 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer';
-      const inactiveBtnClass = 'telemetry-lens-btn px-2 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
+      const activeBtnClass = 'telemetry-lens-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer';
+      const inactiveBtnClass = 'telemetry-lens-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer';
 
       [btnAll, btnGen, btnGrid, btnMarket].forEach(btn => {
         if (btn) btn.className = inactiveBtnClass;
