@@ -1,20 +1,21 @@
 /**
  * Renewable Viet Nam - 3D Geospatial Clean Energy Digital Twin & Engineering Asset Suite
- * Release Rev.002 (Synchronized to Apex Homepage Release Rev.043)
+ * Release Rev.003 (Synchronized to Apex Homepage Release Rev.044)
  * WebGL 3D Engine powered by Three.js (Procedural Buffer Geometries, Zero External 3D Weight)
  * 
- * 5X DENSITY SCALING:
- *  - 60+ National Energy Generation Hubs & 500kV Supergrid Substations (North, Central, South).
- *  - 15 Interconnected 500kV/220kV Transmission Corridors with 210 Dynamic Energy Photon Particles.
- *  - 2,250 Georeferenced EV Charging Highway & Metropolitan Nodes.
- *  - 92-Vertex High-Fidelity Coastal/Border Perimeter with Truong Son Mountain Elevation Topography.
- *  - 8 Strategic Offshore Islands & Marine Concessions (Hoang Sa, Truong Sa, Phu Quoc, Con Dao, etc.).
+ * CYBERNETIC COMMAND CENTER OVERHAUL:
+ *  - Obsidian Deep Space Command Viewport (#040711) with atmospheric exponential fog and dual key/rim lighting.
+ *  - 67 Holographic Energy Beacons with tapered crystal columns, vertical laser scanning beams, rotating status rings, and expanding ground energy shockwaves.
+ *  - 15 Transmission Corridors modeled as luminous 500kV plasma tubes with multi-photon comet tails and substation coronal nodes.
+ *  - 2,250 Georeferenced EV Highway Nodes rendered with procedural radial glow point sprites and breathing luminescence.
+ *  - 92-Vertex Territorial Landmass with glowing cyan neon shoreline rim, Truong Son mountain elevation wireframe, and ocean radar ripple pulses.
  *  - Mode B Engineering Asset Explorer: 5 High-Resolution 3D Models (Wind, Solar, Pylon, Transformer, BESS).
+ *  - Integrated Cinematic Camera Director with automated national flyover tour.
  */
 (function(window) {
   'use strict';
 
-  // 60+ Major Energy Generation Facilities, Storage Hubs & 500kV Substations
+  // 67 Major Energy Generation Facilities, Storage Hubs & 500kV Substations
   const ENERGY_HUBS = [
     // --- NORTHERN GRID (MIEN BAC) ---
     { id: 'son_la', name: 'Sơn La Hydro Complex', category: 'hydro', mw: 2400, lat: 21.49, lng: 103.99, region: 'north', desc: 'Largest hydroelectric plant in SE Asia (6x 400MW Francis units)' },
@@ -84,7 +85,7 @@
     { id: 'ca_mau_gas', name: 'Cà Mau Gas-Power-Fertilizer Hub', category: 'lng', mw: 1500, lat: 8.85, lng: 105.05, region: 'south', desc: 'Southernmost offshore gas pipeline landfall & baseload plant' }
   ];
 
-  // 15 Interconnected 500kV & 220kV Transmission Supergrid Corridors
+  // 15 Interconnected 500kV & 220kV Transmission Corridors
   const SUPERGRID_CORRIDORS = [
     // 500kV Circuit-3 Supergrid Spine
     { id: 'c3_sec1', name: 'Circuit-3 (Quảng Trạch -> Quỳnh Lưu)', from: [17.80, 106.45], mid: [18.45, 106.10], to: [19.15, 105.65], color: 'c3', particles: 15 },
@@ -110,7 +111,64 @@
     { id: 'south_ring_pm_cb', name: '500kV Metropolitan Loop (Phú Mỹ -> Cầu Bông)', from: [10.58, 107.05], mid: [10.75, 106.80], to: [10.92, 106.52], color: 'c12', particles: 15 }
   ];
 
-  // 5 Detailed Engineering Asset Profiles (Mode B)
+  // Visual Category Colors (Electric Cyber Palette)
+  const CATEGORY_COLORS = {
+    wind: 0x00f2fe,        // Electric Cyan
+    solar: 0x10b981,       // High-Luminance Emerald
+    hydro: 0x38bdf8,       // Sky Blue
+    substation: 0xa855f7,  // 500kV High-Voltage Purple
+    lng: 0xf59e0b,         // Golden Amber
+    hybrid: 0xec4899       // Neon Rose
+  };
+
+  // Cybernetic Command Deck Palettes
+  const THEME_PALETTES = {
+    dark: {
+      bg: 0x040711,
+      fog: 0x040711,
+      grid: 0x0b172a,
+      gridAccent: 0x0e2a4a,
+      land: 0x091427,
+      landGlow: 0x00f2fe,
+      mountain: 0x0f2240,
+      mountainLine: 0x00e5ff,
+      ambient: 0x111c33,
+      dirLight: 0x00f2fe,
+      rimLight: 0xf59e0b,
+      arcCircuit3: 0x00f2fe,
+      arcCircuit12: 0x38bdf8,
+      evColor: 0x10b981,
+      steel: 0x475569,
+      steelLight: 0x94a3b8,
+      pvBlue: 0x1d4ed8,
+      copper: 0xf59e0b,
+      accent: 0x00f2fe
+    },
+    light: {
+      // In light mode, canvas retains the deep cyber command deck palette for maximum luminous contrast
+      bg: 0x040711,
+      fog: 0x040711,
+      grid: 0x0b172a,
+      gridAccent: 0x0e2a4a,
+      land: 0x091427,
+      landGlow: 0x00f2fe,
+      mountain: 0x0f2240,
+      mountainLine: 0x00e5ff,
+      ambient: 0x111c33,
+      dirLight: 0x00f2fe,
+      rimLight: 0xf59e0b,
+      arcCircuit3: 0x00f2fe,
+      arcCircuit12: 0x38bdf8,
+      evColor: 0x10b981,
+      steel: 0x475569,
+      steelLight: 0x94a3b8,
+      pvBlue: 0x1d4ed8,
+      copper: 0xf59e0b,
+      accent: 0x00f2fe
+    }
+  };
+
+  // High-Resolution Engineering Model Profiles (Mode B)
   const ASSET_PROFILES = {
     wind_turbine: {
       id: 'wind_turbine',
@@ -189,129 +247,111 @@
     }
   };
 
-  // Color Palettes for WebGL Canvas
-  const THEME_PALETTES = {
-    dark: {
-      bg: 0x070a12,
-      fog: 0x070a12,
-      grid: 0x1e293b,
-      land: 0x0f172a,
-      landBorder: 0x334155,
-      mountain: 0x1e293b,
-      ambient: 0x718096,
-      dirLight: 0xffffff,
-      arcCircuit3: 0x06b6d4, // Cyan
-      arcCircuit12: 0x3b82f6, // Blue
-      evColor: 0x10b981,
-      steel: 0x475569,
-      steelLight: 0x94a3b8,
-      pvBlue: 0x1e3a8a,
-      copper: 0xb45309,
-      accent: 0x0ea5e9
-    },
-    light: {
-      bg: 0xf8fafc,
-      fog: 0xf8fafc,
-      grid: 0xe2e8f0,
-      land: 0xffffff,
-      landBorder: 0xcbd5e1,
-      mountain: 0xf1f5f9,
-      ambient: 0xa0aec0,
-      dirLight: 0xffffff,
-      arcCircuit3: 0x0891b2, // Cyan darker
-      arcCircuit12: 0x2563eb, // Blue darker
-      evColor: 0x059669,
-      steel: 0x64748b,
-      steelLight: 0xcbd5e1,
-      pvBlue: 0x1e40af,
-      copper: 0xd97706,
-      accent: 0x0284c7
-    }
-  };
+  // Engine State Variables
+  let containerEl = null;
+  let canvasEl = null;
+  let tooltipEl = null;
+  let specCardEl = null;
+  let scene = null;
+  let camera = null;
+  let renderer = null;
+  let controls = null;
+  let raycaster = null;
+  let mouse = null;
 
-  const CATEGORY_COLORS = {
-    solar: 0x10b981,     // Emerald
-    wind: 0x06b6d4,      // Cyan
-    hydro: 0x3b82f6,     // Blue
-    lng: 0xf59e0b,       // Amber
-    substation: 0xa855f7,// Purple
-    hybrid: 0x6366f1      // Indigo
-  };
+  // Scene Hierarchy Groups
+  let landGroup = null;
+  let hubsGroup = null;
+  let arcsGroup = null;
+  let evGroup = null;
+  let assetGroup = null;
 
-  // Core Engine Variables
-  let scene, camera, renderer, controls;
-  let containerEl, canvasEl, tooltipEl, specCardEl;
-  let isInitialized = false;
-  let isVisible = false;
-  let animFrameId = null;
-  let isAnimationPlaying = true;
-  let isWireframeActive = false;
+  // Lighting & Helpers
+  let ambientLight = null;
+  let dirLight = null;
+  let rimLight = null;
+  let gridHelper = null;
+  let compassRose = null;
+  let assetGridHelper = null;
 
-  // View Mode: 'twin' | 'asset'
-  let currentViewMode = 'twin';
-  let currentAssetId = 'wind_turbine';
-  let activeRegionFilter = 'all'; // 'all' | 'north' | 'central' | 'south'
-
-  // Scene Object Groups
-  let landGroup, hubsGroup, arcsGroup, evGroup, assetGroup;
-  let gridHelper, assetGridHelper;
-  let dirLight, ambientLight, assetKeyLight;
-  let interactiveObjects = [];
-  let raycaster, mouse;
-  let arcParticles = [];
-
-  // Dynamic Animated Sub-nodes
+  // Animation Registries
+  let arcComets = [];
+  let miniTurbineRotors = [];
+  let rotatingStatusRings = [];
+  let groundShockwaves = [];
+  let oceanRadarRings = [];
+  let coronalNodes = [];
+  let evPointsMesh = null;
   let animatedRotorMesh = null;
   let animatedTrackerMesh = null;
-  let miniTurbineRotors = [];
+  let interactiveObjects = [];
+  let animFrameId = null;
+  let cachedGlowTexture = null;
 
-  // Active Map Filter States
-  const activeLayers = {
-    grid: true,
+  // State Flags
+  let isInitialized = false;
+  let isVisible = true;
+  let isAnimationPlaying = true;
+  let isWireframeActive = false;
+  let currentViewMode = 'twin'; // 'twin' or 'asset'
+  let currentAssetId = 'wind_turbine';
+  let activeRegionFilter = 'all'; // 'all', 'north', 'central', 'south'
+  let activeLayers = {
     renewables: true,
+    grid: true,
     ev: true
   };
 
-  // Coordinate Conversion: (lat, lng) -> 3D Scene (X, Z)
+  // Cinematic Camera Director State
+  let isCinematicTourActive = false;
+  let tourProgress = 0;
+  let tourIndex = 0;
+  const tourWaypoints = [
+    { pos: new THREE.Vector3(0, 32, 42), target: new THREE.Vector3(0, 0, 0), desc: 'Toàn Cảnh Quốc Gia' },
+    { pos: new THREE.Vector3(-4, 14, 18), target: new THREE.Vector3(-1.5, 3, 2), desc: '500kV Mạch 3 Supergrid' },
+    { pos: new THREE.Vector3(5, 12, 8), target: new THREE.Vector3(1.5, 2, 0), desc: 'Tây Nguyên Solar & Wind Hub' },
+    { pos: new THREE.Vector3(-7, 10, 24), target: new THREE.Vector3(-3.5, 1, 15), desc: 'Vành đai Điện gió Tây Nam Bộ' }
+  ];
+
+  // Geodetic to 3D Cartesian Coordinate Transformation
   function geoTo3D(lat, lng) {
-    const scale = 2.4;
-    const x = (lng - 106.0) * scale;
-    const z = -(lat - 16.0) * scale;
+    const minLat = 8.5, maxLat = 23.4;
+    const minLng = 102.1, maxLng = 109.5;
+    const zScale = 38.0;
+    const xScale = 20.0;
+    const z = -((lat - minLat) / (maxLat - minLat) - 0.5) * zScale;
+    const x = ((lng - minLng) / (maxLng - minLng) - 0.5) * xScale;
     return { x, z };
   }
 
-  // Asynchronous Dynamic Dependency Loader
-  async function loadThreeLibraries() {
-    if (window.THREE && window.THREE.OrbitControls) return true;
-
-    const loadScript = (src) => new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src;
-      s.onload = resolve;
-      s.onerror = reject;
-      document.head.appendChild(s);
-    });
-
-    if (!window.THREE) {
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js');
-    }
-    if (!window.THREE.OrbitControls) {
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js');
-    }
-    return true;
+  // Procedural Radial Glow Sprite Generator for EV Nodes
+  function getRadialGlowTexture() {
+    if (cachedGlowTexture) return cachedGlowTexture;
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(52, 211, 153, 1)');
+    grad.addColorStop(0.25, 'rgba(16, 185, 129, 0.85)');
+    grad.addColorStop(0.65, 'rgba(5, 150, 105, 0.25)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 64);
+    cachedGlowTexture = new THREE.CanvasTexture(canvas);
+    return cachedGlowTexture;
   }
 
   // Scene & Renderer Initialization
   function initScene() {
-    const isDark = document.documentElement.classList.contains('dark');
-    const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
+    const p = THEME_PALETTES.dark;
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(p.bg);
     scene.fog = new THREE.FogExp2(p.fog, 0.012);
 
     const aspect = containerEl.clientWidth / containerEl.clientHeight;
-    camera = new THREE.PerspectiveCamera(45, aspect, 1, 500);
+    camera = new THREE.PerspectiveCamera(45, aspect, 1, 600);
     camera.position.set(0, 32, 42);
 
     renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
@@ -320,34 +360,47 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Controls
+    // Orbit Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.maxPolarAngle = Math.PI / 2.1;
+    controls.maxPolarAngle = Math.PI / 2.05;
     controls.minDistance = 6;
-    controls.maxDistance = 85;
+    controls.maxDistance = 95;
     controls.target.set(0, 0, 0);
 
-    // Global Lighting
-    ambientLight = new THREE.AmbientLight(p.ambient, 1.35);
+    // Global Cyber Lighting Rig
+    ambientLight = new THREE.AmbientLight(p.ambient, 1.6);
     scene.add(ambientLight);
 
-    dirLight = new THREE.DirectionalLight(p.dirLight, 1.6);
-    dirLight.position.set(20, 50, 30);
+    dirLight = new THREE.DirectionalLight(p.dirLight, 1.4);
+    dirLight.position.set(-25, 45, 30);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     scene.add(dirLight);
 
-    assetKeyLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    assetKeyLight.position.set(-20, 20, -20);
-    scene.add(assetKeyLight);
+    rimLight = new THREE.DirectionalLight(p.rimLight, 0.9);
+    rimLight.position.set(35, 25, -20);
+    scene.add(rimLight);
 
-    // Grid Helpers
-    gridHelper = new THREE.GridHelper(90, 45, p.grid, p.grid);
+    // Cybernetic Grid Helper
+    gridHelper = new THREE.GridHelper(90, 45, p.gridAccent, p.grid);
     gridHelper.position.y = -0.05;
     scene.add(gridHelper);
+
+    // Compass Rose Concentric Ring
+    const compassGeom = new THREE.RingGeometry(22, 22.18, 64);
+    compassGeom.rotateX(-Math.PI / 2);
+    const compassMat = new THREE.MeshBasicMaterial({
+      color: p.accent,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.35
+    });
+    compassRose = new THREE.Mesh(compassGeom, compassMat);
+    compassRose.position.y = -0.04;
+    scene.add(compassRose);
 
     assetGridHelper = new THREE.PolarGridHelper(16, 16, 8, 32, p.accent, p.grid);
     assetGridHelper.position.y = 0;
@@ -372,7 +425,7 @@
     scene.add(evGroup);
     scene.add(assetGroup);
 
-    // Build 5x Density Geospatial Twin
+    // Build Cybernetic Digital Twin
     buildVietnamTerritory(p);
     buildHubPillarsWithMiniModels(p);
     buildSupergridTransmissionArcs(p);
@@ -386,17 +439,14 @@
     canvasEl.addEventListener('pointermove', onPointerMove);
     canvasEl.addEventListener('pointerdown', onPointerDown);
 
-    const observer = new MutationObserver(updateThemeColors);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
-
     isInitialized = true;
   }
 
-  // 1. 92-VERTEX GEOGRAPHIC TERRITORY & MOUNTAIN SPINES (5X GEOMETRY)
+  // 1. 92-VERTEX GEOGRAPHIC TERRITORY, NEON COASTLINE & MOUNTAIN SPINES
   function buildVietnamTerritory(p) {
     landGroup.clear();
+    oceanRadarRings = [];
 
-    // 92-Point Coastal and Border Perimeter Vertices [Lat, Lng]
     const perimeterCoords = [
       // Northern Border & Northeast Coast
       [23.38, 105.32], [23.10, 105.80], [22.80, 106.50], [22.25, 106.75], [21.80, 107.50],
@@ -430,125 +480,227 @@
     const first = geoTo3D(perimeterCoords[0][0], perimeterCoords[0][1]);
     shape.moveTo(first.x, first.z);
 
+    const perimeterPoints3D = [];
+    perimeterPoints3D.push(new THREE.Vector3(first.x, 0.48, first.z));
+
     for (let i = 1; i < perimeterCoords.length; i++) {
       const pt = geoTo3D(perimeterCoords[i][0], perimeterCoords[i][1]);
       shape.lineTo(pt.x, pt.z);
+      perimeterPoints3D.push(new THREE.Vector3(pt.x, 0.48, pt.z));
     }
     shape.closePath();
 
+    // Extruded Landmass Base
     const extrudeSettings = {
-      steps: 2,
       depth: 0.45,
       bevelEnabled: true,
-      bevelThickness: 0.15,
-      bevelSize: 0.12,
-      bevelSegments: 3
+      bevelSegments: 2,
+      steps: 1,
+      bevelSize: 0.08,
+      bevelThickness: 0.08
     };
 
-    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    geometry.rotateX(Math.PI / 2);
+    const landGeom = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    landGeom.rotateX(Math.PI / 2);
 
-    const material = new THREE.MeshStandardMaterial({
+    const landMat = new THREE.MeshStandardMaterial({
       color: p.land,
-      roughness: 0.55,
-      metalness: 0.15,
+      roughness: 0.50,
+      metalness: 0.70,
       wireframe: isWireframeActive
     });
 
-    const landMesh = new THREE.Mesh(geometry, material);
+    const landMesh = new THREE.Mesh(landGeom, landMat);
     landMesh.receiveShadow = true;
     landGroup.add(landMesh);
 
-    // 3D Truong Son Mountain Ridge Topographic Relief
-    const ridgePoints = [
-      [21.5, 104.0], [20.5, 105.0], [19.5, 105.2], [18.5, 105.4],
-      [17.5, 106.0], [16.5, 107.0], [15.5, 107.8], [14.5, 108.0],
-      [13.5, 108.2], [12.5, 108.0], [11.8, 107.8]
-    ];
-    ridgePoints.forEach(pt => {
-      const pos = geoTo3D(pt[0], pt[1]);
-      const mGeom = new THREE.ConeGeometry(0.85, 0.65, 5);
-      mGeom.translate(0, 0.32, 0);
-      const mMat = new THREE.MeshStandardMaterial({ color: p.mountain, roughness: 0.7 });
-      const mMesh = new THREE.Mesh(mGeom, mMat);
-      mMesh.position.set(pos.x, 0.45, pos.z);
-      landGroup.add(mMesh);
+    // Glowing Neon Shoreline Perimeter Loop
+    const lineGeom = new THREE.BufferGeometry().setFromPoints(perimeterPoints3D);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: p.landGlow,
+      linewidth: 2.5,
+      transparent: true,
+      opacity: 0.95
     });
+    const shorelineLoop = new THREE.LineLoop(lineGeom, lineMat);
+    landGroup.add(shorelineLoop);
 
-    // 8 Strategic Maritime Islands & Archipelagos
-    const maritimeAssets = [
-      { name: 'Quần đảo Hoàng Sa (Paracel Islands)', lat: 16.5, lng: 112.0, r: 0.75, color: 0x0ea5e9 },
-      { name: 'Quần đảo Trường Sa (Spratly Islands)', lat: 10.0, lng: 114.5, r: 0.95, color: 0x0ea5e9 },
-      { name: 'Đảo Phú Quốc Clean Island Hub', lat: 10.28, lng: 103.95, r: 0.65, color: 0x10b981 },
-      { name: 'Côn Đảo Eco-Energy Reserve', lat: 8.68, lng: 106.60, r: 0.45, color: 0x0ea5e9 },
-      { name: 'Đảo Bạch Long Vĩ Wind Radar', lat: 20.13, lng: 107.72, r: 0.35, color: 0x0ea5e9 },
-      { name: 'Đảo Cồn Cỏ Maritime Node', lat: 17.16, lng: 107.33, r: 0.30, color: 0x0ea5e9 },
-      { name: 'Đảo Lý Sơn Marine Hub', lat: 15.38, lng: 109.12, r: 0.40, color: 0x10b981 },
-      { name: 'Đảo Phú Quý Offshore Wind', lat: 10.53, lng: 108.95, r: 0.42, color: 0x06b6d4 }
+    // Truong Son Mountain Elevation Ridgeline (Contour Segments)
+    const ridgeSpines = [
+      [[21.5, 103.0], [20.5, 103.8], [19.5, 104.3], [18.5, 105.3]],
+      [[18.0, 105.6], [17.1, 106.0], [16.3, 106.8], [15.8, 107.2]],
+      [[15.2, 107.4], [14.3, 107.4], [13.2, 107.5], [12.0, 107.2]]
     ];
 
-    maritimeAssets.forEach(isl => {
-      const pos = geoTo3D(isl.lat, isl.lng);
-      const geom = new THREE.CylinderGeometry(isl.r, isl.r * 1.1, 0.3, 12);
-      const mat = new THREE.MeshStandardMaterial({ color: isl.color, roughness: 0.4 });
-      const mesh = new THREE.Mesh(geom, mat);
-      mesh.position.set(pos.x, 0.15, pos.z);
-      mesh.userData = { name: isl.name, category: 'maritime', mw: 150, lat: isl.lat, lng: isl.lng, desc: 'Strategic maritime island & clean energy territory' };
-      landGroup.add(mesh);
-      interactiveObjects.push(mesh);
+    ridgeSpines.forEach((spine) => {
+      const spinePoints = [];
+      spine.forEach((pt, idx) => {
+        const c = geoTo3D(pt[0], pt[1]);
+        const alt = 0.52 + Math.sin((idx / (spine.length - 1)) * Math.PI) * 0.75;
+        spinePoints.push(new THREE.Vector3(c.x, alt, c.z));
+      });
+      const curve = new THREE.CatmullRomCurve3(spinePoints);
+      const tubeGeom = new THREE.TubeGeometry(curve, 20, 0.12, 6, false);
+      const tubeMat = new THREE.MeshStandardMaterial({
+        color: p.mountain,
+        emissive: p.mountainLine,
+        emissiveIntensity: 0.22,
+        roughness: 0.6,
+        wireframe: true
+      });
+      const ridgeMesh = new THREE.Mesh(tubeGeom, tubeMat);
+      landGroup.add(ridgeMesh);
     });
+
+    // 8 Strategic Offshore Islands & Marine Concessions
+    const ISLANDS = [
+      { name: 'Quần đảo Hoàng Sa', lat: 16.50, lng: 112.00, radius: 0.55 },
+      { name: 'Quần đảo Trường Sa', lat: 9.50, lng: 113.00, radius: 0.70 },
+      { name: 'Đảo Phú Quốc', lat: 10.23, lng: 103.96, radius: 0.45 },
+      { name: 'Côn Đảo', lat: 8.68, lng: 106.60, radius: 0.35 },
+      { name: 'Đảo Bạch Long Vĩ', lat: 20.13, lng: 107.72, radius: 0.30 },
+      { name: 'Đảo Lý Sơn', lat: 15.38, lng: 109.12, radius: 0.28 },
+      { name: 'Cù Lao Chàm', lat: 15.95, lng: 108.52, radius: 0.25 },
+      { name: 'Đảo Phú Quý', lat: 10.52, lng: 108.95, radius: 0.28 }
+    ];
+
+    ISLANDS.forEach((isl) => {
+      const c = geoTo3D(isl.lat, isl.lng);
+      const islGroup = new THREE.Group();
+      islGroup.position.set(c.x, 0.40, c.z);
+
+      const islGeom = new THREE.CylinderGeometry(isl.radius, isl.radius * 1.25, 0.20, 6);
+      const islMat = new THREE.MeshStandardMaterial({
+        color: p.mountain,
+        emissive: p.accent,
+        emissiveIntensity: 0.35,
+        metalness: 0.8
+      });
+      const islMesh = new THREE.Mesh(islGeom, islMat);
+      islGroup.add(islMesh);
+
+      // Offshore Beacon Core
+      const beaconGeom = new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8);
+      const beaconMat = new THREE.MeshBasicMaterial({ color: p.accent, transparent: true, opacity: 0.85 });
+      const beacon = new THREE.Mesh(beaconGeom, beaconMat);
+      beacon.position.y = 0.6;
+      islGroup.add(beacon);
+
+      landGroup.add(islGroup);
+    });
+
+    // Concentric Ocean Bathymetric Radar Wave Pulses (East Sea)
+    const centerPoint = geoTo3D(15.2, 110.5);
+    for (let r = 0; r < 3; r++) {
+      const ringGeom = new THREE.RingGeometry(3.5, 3.65, 48);
+      ringGeom.rotateX(-Math.PI / 2);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: p.accent,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.45,
+        blending: THREE.AdditiveBlending
+      });
+      const ringMesh = new THREE.Mesh(ringGeom, ringMat);
+      ringMesh.position.set(centerPoint.x, 0.15, centerPoint.z);
+      landGroup.add(ringMesh);
+      oceanRadarRings.push({ mesh: ringMesh, phase: r * 0.33 });
+    }
   }
 
-  // 2. 60+ REGIONAL GENERATION & SUBSTATION HUBS (5X DENSITY)
+  // 2. 67 HOLOGRAPHIC ENERGY BEACONS WITH GROUND PULSE SHOCKWAVES
   function buildHubPillarsWithMiniModels(p) {
     hubsGroup.clear();
     miniTurbineRotors = [];
+    rotatingStatusRings = [];
+    groundShockwaves = [];
     interactiveObjects = [];
 
     ENERGY_HUBS.forEach((hub) => {
-      // Apply region filter if active
       if (activeRegionFilter !== 'all' && hub.region !== activeRegionFilter) return;
 
       const pos = geoTo3D(hub.lat, hub.lng);
-      const height = Math.max(1.2, (hub.mw / 5000) * 6.5);
+      const height = Math.max(1.3, (hub.mw / 5000) * 6.8);
       const colorHex = CATEGORY_COLORS[hub.category] || 0x10b981;
 
       const hubRoot = new THREE.Group();
       hubRoot.position.set(pos.x, 0.45, pos.z);
 
-      // Base Pillar Geometry
-      const baseGeom = new THREE.CylinderGeometry(0.28, 0.40, height, 6);
-      baseGeom.translate(0, height / 2, 0);
+      // Base Hexagonal Plinth
+      const plinthGeom = new THREE.CylinderGeometry(0.38, 0.48, 0.14, 6);
+      const plinthMat = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        metalness: 0.85,
+        roughness: 0.3
+      });
+      const plinth = new THREE.Mesh(plinthGeom, plinthMat);
+      plinth.position.y = 0.07;
+      hubRoot.add(plinth);
 
-      const baseMat = new THREE.MeshStandardMaterial({
+      // Tapered Holographic Crystal Column
+      const colGeom = new THREE.CylinderGeometry(0.18, 0.32, height, 6);
+      colGeom.translate(0, height / 2, 0);
+
+      const colMat = new THREE.MeshStandardMaterial({
         color: colorHex,
-        roughness: 0.35,
-        metalness: 0.45,
+        roughness: 0.15,
+        metalness: 0.85,
+        transparent: true,
+        opacity: 0.65,
         emissive: colorHex,
-        emissiveIntensity: 0.28,
+        emissiveIntensity: 0.38,
         wireframe: isWireframeActive
       });
 
-      const baseMesh = new THREE.Mesh(baseGeom, baseMat);
-      baseMesh.castShadow = true;
-      baseMesh.userData = hub;
-      hubRoot.add(baseMesh);
-      interactiveObjects.push(baseMesh);
+      const colMesh = new THREE.Mesh(colGeom, colMat);
+      colMesh.castShadow = true;
+      colMesh.userData = hub;
+      hubRoot.add(colMesh);
+      interactiveObjects.push(colMesh);
 
-      // Emissive Halo Cap
-      const haloGeom = new THREE.RingGeometry(0.35, 0.65, 16);
-      haloGeom.rotateX(-Math.PI / 2);
-      const haloMat = new THREE.MeshBasicMaterial({
+      // Vertical Core Scanning Laser Light Beam
+      const beamGeom = new THREE.CylinderGeometry(0.035, 0.035, height + 1.2, 8);
+      beamGeom.translate(0, (height + 1.2) / 2, 0);
+      const beamMat = new THREE.MeshBasicMaterial({
+        color: colorHex,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending
+      });
+      const beamMesh = new THREE.Mesh(beamGeom, beamMat);
+      hubRoot.add(beamMesh);
+
+      // Rotating Holographic Status Ring
+      const ringGeom = new THREE.RingGeometry(0.36, 0.62, 24);
+      ringGeom.rotateX(-Math.PI / 2);
+      const ringMat = new THREE.MeshBasicMaterial({
         color: colorHex,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.75
+        opacity: 0.80,
+        blending: THREE.AdditiveBlending
       });
-      const halo = new THREE.Mesh(haloGeom, haloMat);
-      halo.position.set(0, height + 0.04, 0);
-      hubRoot.add(halo);
+      const ringMesh = new THREE.Mesh(ringGeom, ringMat);
+      ringMesh.position.set(0, height + 0.08, 0);
+      hubRoot.add(ringMesh);
+      rotatingStatusRings.push({ mesh: ringMesh, speed: (Math.random() * 0.012 + 0.008) * (Math.random() > 0.5 ? 1 : -1) });
 
-      // Dedicated Miniature 3D Models
+      // Expanding Ground Energy Shockwave Ripple
+      const shockGeom = new THREE.RingGeometry(0.25, 0.42, 24);
+      shockGeom.rotateX(-Math.PI / 2);
+      const shockMat = new THREE.MeshBasicMaterial({
+        color: colorHex,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+      });
+      const shockMesh = new THREE.Mesh(shockGeom, shockMat);
+      shockMesh.position.set(0, 0.03, 0);
+      hubRoot.add(shockMesh);
+      groundShockwaves.push({ mesh: shockMesh, phase: Math.random() });
+
+      // Miniature 3D Models Atop Beacons
       if (hub.category === 'wind') {
         const miniTurbine = createMiniTurbine(p);
         miniTurbine.position.set(0, height + 0.05, 0);
@@ -578,30 +730,36 @@
   // Miniature Procedural Builders
   function createMiniTurbine(p) {
     const group = new THREE.Group();
-    const towerGeom = new THREE.CylinderGeometry(0.05, 0.10, 1.3, 8);
-    towerGeom.translate(0, 0.65, 0);
-    const towerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 });
-    group.add(new THREE.Mesh(towerGeom, towerMat));
+    const towerGeom = new THREE.CylinderGeometry(0.05, 0.10, 1.4, 8);
+    const towerMat = new THREE.MeshStandardMaterial({ color: p.steelLight, metalness: 0.6, roughness: 0.3 });
+    const tower = new THREE.Mesh(towerGeom, towerMat);
+    tower.position.y = 0.7;
+    group.add(tower);
 
-    const nacelleGeom = new THREE.BoxGeometry(0.16, 0.12, 0.32);
-    nacelleGeom.translate(0, 1.35, 0);
-    group.add(new THREE.Mesh(nacelleGeom, towerMat));
+    const nacelleGeom = new THREE.BoxGeometry(0.18, 0.14, 0.36);
+    const nacelle = new THREE.Mesh(nacelleGeom, towerMat);
+    nacelle.position.set(0, 1.42, 0);
+    group.add(nacelle);
+
+    // Red FAA Obstacle Beacon
+    const beaconGeom = new THREE.SphereGeometry(0.04, 6, 6);
+    const beaconMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
+    const beacon = new THREE.Mesh(beaconGeom, beaconMat);
+    beacon.position.set(0, 1.52, -0.1);
+    group.add(beacon);
 
     const rotorGroup = new THREE.Group();
-    rotorGroup.position.set(0, 1.35, 0.18);
+    rotorGroup.position.set(0, 1.42, 0.20);
 
-    const hubCone = new THREE.ConeGeometry(0.07, 0.12, 8);
-    hubCone.rotateX(Math.PI / 2);
-    rotorGroup.add(new THREE.Mesh(hubCone, towerMat));
+    const bladeGeom = new THREE.BoxGeometry(0.05, 0.85, 0.015);
+    bladeGeom.translate(0, 0.42, 0);
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3 });
 
     for (let i = 0; i < 3; i++) {
-      const bladeGeom = new THREE.BoxGeometry(0.05, 0.70, 0.02);
-      bladeGeom.translate(0, 0.35, 0);
-      const bladeMesh = new THREE.Mesh(bladeGeom, towerMat);
-      bladeMesh.rotation.z = (i * Math.PI * 2) / 3;
-      rotorGroup.add(bladeMesh);
+      const blade = new THREE.Mesh(bladeGeom, bladeMat);
+      blade.rotation.z = (i * Math.PI * 2) / 3;
+      rotorGroup.add(blade);
     }
-
     group.add(rotorGroup);
     miniTurbineRotors.push(rotorGroup);
     return group;
@@ -609,100 +767,147 @@
 
   function createMiniSolar(p) {
     const group = new THREE.Group();
-    const panelGeom = new THREE.BoxGeometry(0.95, 0.03, 0.65);
-    panelGeom.rotateX(-Math.PI / 6);
-    const panelMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.3, metalness: 0.5 });
-    const panel = new THREE.Mesh(panelGeom, panelMat);
-    panel.position.set(0, 0.32, 0);
-    group.add(panel);
+    const standGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 6);
+    const standMat = new THREE.MeshStandardMaterial({ color: p.steel });
+    const stand = new THREE.Mesh(standGeom, standMat);
+    stand.position.y = 0.25;
+    group.add(stand);
 
-    const postGeom = new THREE.CylinderGeometry(0.03, 0.03, 0.32, 6);
-    postGeom.translate(0, 0.16, 0);
-    group.add(new THREE.Mesh(postGeom, new THREE.MeshStandardMaterial({ color: 0x94a3b8 })));
+    const panelGeom = new THREE.BoxGeometry(0.9, 0.04, 0.6);
+    const panelMat = new THREE.MeshStandardMaterial({
+      color: p.pvBlue,
+      metalness: 0.85,
+      roughness: 0.15
+    });
+    const panel = new THREE.Mesh(panelGeom, panelMat);
+    panel.position.set(0, 0.52, 0);
+    panel.rotation.x = 0.38;
+    group.add(panel);
     return group;
   }
 
   function createMiniDam(p) {
     const group = new THREE.Group();
-    const damGeom = new THREE.BoxGeometry(0.75, 0.40, 0.35);
-    const dam = new THREE.Mesh(damGeom, new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.8 }));
-    dam.position.set(0, 0.20, 0);
+    const damGeom = new THREE.CylinderGeometry(0.45, 0.55, 0.6, 8, 1, false, 0, Math.PI);
+    const damMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6 });
+    const dam = new THREE.Mesh(damGeom, damMat);
+    dam.position.y = 0.3;
+    dam.rotation.y = Math.PI / 2;
     group.add(dam);
 
-    const waterGeom = new THREE.BoxGeometry(0.22, 0.12, 0.55);
-    const water = new THREE.Mesh(waterGeom, new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 }));
-    water.position.set(0, 0.20, 0.08);
+    const waterGeom = new THREE.PlaneGeometry(0.5, 0.4);
+    const waterMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
+    const water = new THREE.Mesh(waterGeom, waterMat);
+    water.position.set(0, 0.32, 0.3);
+    water.rotation.x = -Math.PI / 4;
     group.add(water);
     return group;
   }
 
   function createMiniPylon(p) {
     const group = new THREE.Group();
-    const towerGeom = new THREE.ConeGeometry(0.18, 1.1, 4);
-    towerGeom.translate(0, 0.55, 0);
-    group.add(new THREE.Mesh(towerGeom, new THREE.MeshStandardMaterial({ color: 0xa855f7, metalness: 0.7, wireframe: true })));
+    const pylonGeom = new THREE.CylinderGeometry(0.08, 0.22, 1.3, 4);
+    const pylonMat = new THREE.MeshStandardMaterial({ color: p.steelLight, wireframe: true });
+    const pylon = new THREE.Mesh(pylonGeom, pylonMat);
+    pylon.position.y = 0.65;
+    group.add(pylon);
 
-    const armGeom = new THREE.BoxGeometry(0.65, 0.04, 0.04);
-    armGeom.translate(0, 0.85, 0);
-    group.add(new THREE.Mesh(armGeom, new THREE.MeshStandardMaterial({ color: 0xa855f7 })));
+    const armGeom = new THREE.BoxGeometry(0.7, 0.04, 0.04);
+    const arm = new THREE.Mesh(armGeom, pylonMat);
+    arm.position.y = 1.1;
+    group.add(arm);
     return group;
   }
 
   function createMiniLng(p) {
     const group = new THREE.Group();
-    const tankGeom = new THREE.CylinderGeometry(0.35, 0.35, 0.45, 16);
-    tankGeom.translate(0, 0.22, 0);
-    group.add(new THREE.Mesh(tankGeom, new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 })));
+    const tankGeom = new THREE.SphereGeometry(0.28, 12, 12);
+    const tankMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.2 });
+    const tank = new THREE.Mesh(tankGeom, tankMat);
+    tank.position.y = 0.32;
+    group.add(tank);
     return group;
   }
 
-  // 3. 15-CORRIDOR 500kV SUPERGRID NETWORK & 210 PHOTON PARTICLES (5X DENSITY)
+  // 3. 15 INTERCONNECTED 500kV/220kV PLASMA ARCS WITH COMET TAILS
   function buildSupergridTransmissionArcs(p) {
     arcsGroup.clear();
-    arcParticles = [];
+    arcComets = [];
+    coronalNodes = [];
 
     SUPERGRID_CORRIDORS.forEach((corr) => {
       const p1 = geoTo3D(corr.from[0], corr.from[1]);
       const pm = geoTo3D(corr.mid[0], corr.mid[1]);
       const p2 = geoTo3D(corr.to[0], corr.to[1]);
 
-      const v1 = new THREE.Vector3(p1.x, 1.8, p1.z);
-      const vm = new THREE.Vector3(pm.x, 5.8, pm.z);
-      const v2 = new THREE.Vector3(p2.x, 1.8, p2.z);
+      const v1 = new THREE.Vector3(p1.x, 2.0, p1.z);
+      const vm = new THREE.Vector3(pm.x, 6.2, pm.z);
+      const v2 = new THREE.Vector3(p2.x, 2.0, p2.z);
 
       const curve = new THREE.QuadraticBezierCurve3(v1, vm, v2);
-      const points = curve.getPoints(40);
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
+      // Luminous Plasma Tube Corridor Geometry
+      const tubeGeom = new THREE.TubeGeometry(curve, 48, 0.07, 8, false);
       const colorHex = corr.color === 'c3' ? p.arcCircuit3 : p.arcCircuit12;
-      const material = new THREE.LineBasicMaterial({
+      const tubeMat = new THREE.MeshBasicMaterial({
         color: colorHex,
-        linewidth: 2,
         transparent: true,
-        opacity: 0.85
+        opacity: 0.70,
+        blending: THREE.AdditiveBlending
+      });
+      const tube = new THREE.Mesh(tubeGeom, tubeMat);
+      arcsGroup.add(tube);
+
+      // Substation Coronal Sparkle Nodes at Termini
+      [v1, v2].forEach((term) => {
+        const coronaGeom = new THREE.SphereGeometry(0.22, 8, 8);
+        const coronaMat = new THREE.MeshBasicMaterial({
+          color: colorHex,
+          transparent: true,
+          opacity: 0.85,
+          blending: THREE.AdditiveBlending
+        });
+        const corona = new THREE.Mesh(coronaGeom, coronaMat);
+        corona.position.copy(term);
+        arcsGroup.add(corona);
+        coronalNodes.push(corona);
       });
 
-      const line = new THREE.Line(geometry, material);
-      arcsGroup.add(line);
-
-      // Flowing Energy Photons
-      const particleGeom = new THREE.SphereGeometry(0.14, 8, 8);
-      const particleMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      // Multi-Photon Comet Swarm
+      const photonSizes = [0.20, 0.15, 0.11, 0.07];
+      const photonAlphas = [1.0, 0.75, 0.50, 0.25];
+      const photonColors = [0xffffff, colorHex, colorHex, p.accent];
 
       for (let i = 0; i < corr.particles; i++) {
-        const mesh = new THREE.Mesh(particleGeom, particleMat);
-        arcsGroup.add(mesh);
-        arcParticles.push({
-          mesh: mesh,
+        const cometGroup = new THREE.Group();
+        const cometSubMeshes = [];
+
+        for (let s = 0; s < 4; s++) {
+          const geom = new THREE.SphereGeometry(photonSizes[s], 8, 8);
+          const mat = new THREE.MeshBasicMaterial({
+            color: photonColors[s],
+            transparent: true,
+            opacity: photonAlphas[s],
+            blending: THREE.AdditiveBlending
+          });
+          const m = new THREE.Mesh(geom, mat);
+          cometGroup.add(m);
+          cometSubMeshes.push(m);
+        }
+
+        arcsGroup.add(cometGroup);
+        arcComets.push({
+          group: cometGroup,
+          subMeshes: cometSubMeshes,
           curve: curve,
           progress: i / corr.particles,
-          speed: 0.0035 + (i % 3) * 0.0008
+          speed: 0.0038 + (i % 3) * 0.0009
         });
       }
     });
   }
 
-  // 4. 2,250 GEOREFERENCED EV CHARGING NODES (5X DENSITY)
+  // 4. 2,250 GEOREFERENCED EV CHARGING NODES WITH RADIAL GLOW SPRITES
   function buildEvCorridorCloud(p) {
     evGroup.clear();
 
@@ -711,29 +916,26 @@
 
     for (let i = 0; i < totalCount; i++) {
       let lat, lng;
-
-      // Realistic clustering based on national traffic distribution
       if (i < 1200) {
-        // Highway 1A & North-South Expressway Spine
+        // North-South Expressway (CT.01) & Highway 1A
         const t = i / 1200;
         lat = 8.65 + t * (21.5 - 8.65);
-        // S-curve highway routing
         const sOffset = Math.sin(t * Math.PI) * 3.4;
         lng = 105.10 + sOffset + (Math.random() - 0.5) * 0.38;
       } else if (i < 1600) {
-        // Hanoi Capital Metropolitan Cluster (Ring Roads 3, 3.5, 4)
+        // Hanoi Capital Beltways (Ring Roads 3, 3.5, 4)
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * 0.45;
         lat = 21.02 + Math.sin(angle) * radius;
         lng = 105.85 + Math.cos(angle) * radius;
       } else if (i < 2000) {
-        // Ho Chi Minh City Metropolitan Cluster (Beltways 2, 3 & Binh Duong/Dong Nai)
+        // HCMC Metropolitan Cluster (Beltways 2, 3)
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.random() * 0.52;
         lat = 10.82 + Math.sin(angle) * radius;
         lng = 106.68 + Math.cos(angle) * radius;
       } else {
-        // Da Nang & Central Coast Cluster
+        // Da Nang & Central Coast Corridor
         const t = (i - 2000) / 250;
         lat = 15.20 + t * (16.80 - 15.20);
         lng = 108.15 + (Math.random() - 0.5) * 0.25;
@@ -741,7 +943,7 @@
 
       const pt = geoTo3D(lat, lng);
       positions[i * 3 + 0] = pt.x;
-      positions[i * 3 + 1] = 0.48 + (i % 5) * 0.04;
+      positions[i * 3 + 1] = 0.49 + (i % 5) * 0.03;
       positions[i * 3 + 2] = pt.z;
     }
 
@@ -750,13 +952,16 @@
 
     const material = new THREE.PointsMaterial({
       color: p.evColor,
-      size: 0.32,
+      map: getRadialGlowTexture(),
+      size: 0.45,
       transparent: true,
-      opacity: 0.80
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
     });
 
-    const pointCloud = new THREE.Points(geometry, material);
-    evGroup.add(pointCloud);
+    evPointsMesh = new THREE.Points(geometry, material);
+    evGroup.add(evPointsMesh);
   }
 
   // =========================================================================
@@ -1149,6 +1354,7 @@
     assetGroup.add(root);
   }
 
+  
   // =========================================================================
   // ANIMATION LOOP & INTERACTION
   // =========================================================================
@@ -1157,35 +1363,85 @@
     if (!isVisible) return;
     animFrameId = requestAnimationFrame(animate);
 
+    const time = Date.now() * 0.001;
+
     if (controls) controls.update();
 
     if (isAnimationPlaying) {
       if (currentViewMode === 'twin') {
-        // Animate 210 photon particles along 15 corridors
-        arcParticles.forEach((p) => {
-          p.progress += p.speed;
-          if (p.progress > 1.0) p.progress = 0.0;
-          const pos = p.curve.getPoint(p.progress);
-          p.mesh.position.copy(pos);
+        // Animate 500kV Plasma Comet Swarms along 15 corridors
+        arcComets.forEach((c) => {
+          c.progress += c.speed;
+          if (c.progress > 1.0) c.progress = 0.0;
+
+          // Position head and trailing tail nodes
+          for (let s = 0; s < 4; s++) {
+            let prog = c.progress - s * 0.016;
+            if (prog < 0) prog += 1.0;
+            const pt = c.curve.getPoint(prog);
+            c.subMeshes[s].position.copy(pt);
+          }
         });
 
         // Rotate miniature wind turbine rotors
         miniTurbineRotors.forEach((rotor) => {
-          rotor.rotation.z += 0.035;
+          rotor.rotation.z += 0.038;
         });
 
-        // Rotate hub ring halos
-        hubsGroup.children.forEach((hub) => {
-          if (hub.children[1]) {
-            hub.children[1].rotation.z += 0.016;
-          }
+        // Rotate holographic segmented status rings
+        rotatingStatusRings.forEach((r) => {
+          r.mesh.rotation.z += r.speed;
         });
+
+        // Animate expanding ground shockwaves
+        groundShockwaves.forEach((sw) => {
+          sw.phase = (sw.phase + 0.010) % 1.0;
+          const scale = 1.0 + sw.phase * 2.5;
+          sw.mesh.scale.set(scale, scale, 1.0);
+          sw.mesh.material.opacity = Math.max(0, 0.65 * (1.0 - sw.phase));
+        });
+
+        // Animate ocean bathymetric radar rings
+        oceanRadarRings.forEach((or) => {
+          or.phase = (or.phase + 0.006) % 1.0;
+          const scale = 1.0 + or.phase * 3.8;
+          or.mesh.scale.set(scale, scale, 1.0);
+          or.mesh.material.opacity = Math.max(0, 0.45 * (1.0 - or.phase));
+        });
+
+        // Coronal electrical sparkle micro-flicker
+        coronalNodes.forEach((cn, idx) => {
+          const s = 0.85 + Math.sin(time * 6.0 + idx) * 0.25;
+          cn.scale.set(s, s, s);
+        });
+
+        // EV Point Cloud breathing luminescence
+        if (evPointsMesh) {
+          evPointsMesh.material.size = 0.42 + Math.sin(time * 3.0) * 0.08;
+          evPointsMesh.material.opacity = 0.75 + Math.sin(time * 3.0) * 0.20;
+        }
+
+        // Cinematic Flyover Camera Interpolation
+        if (isCinematicTourActive && camera && controls) {
+          tourProgress += 0.0035;
+          if (tourProgress >= 1.0) {
+            tourProgress = 0;
+            tourIndex = (tourIndex + 1) % tourWaypoints.length;
+          }
+          const nextIndex = (tourIndex + 1) % tourWaypoints.length;
+          const curWp = tourWaypoints[tourIndex];
+          const nextWp = tourWaypoints[nextIndex];
+
+          const smoothT = 0.5 - 0.5 * Math.cos(tourProgress * Math.PI);
+          camera.position.lerpVectors(curWp.pos, nextWp.pos, smoothT);
+          controls.target.lerpVectors(curWp.target, nextWp.target, smoothT);
+        }
       } else if (currentViewMode === 'asset') {
         if (animatedRotorMesh) {
           animatedRotorMesh.rotation.z += 0.024;
         }
         if (animatedTrackerMesh) {
-          animatedTrackerMesh.rotation.z = Math.sin(Date.now() * 0.0006) * 0.52;
+          animatedTrackerMesh.rotation.z = Math.sin(time * 0.65) * 0.52;
         }
       }
     }
@@ -1199,24 +1455,31 @@
     mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
+    // Update real-time HUD coordinate readout
+    const coordEl = document.getElementById('hudCoordTracker');
+    if (coordEl && camera) {
+      const lat = (16.05 + mouse.y * 3.5).toFixed(2);
+      const lng = (108.20 + mouse.x * 2.8).toFixed(2);
+      coordEl.innerHTML = `LAT: <span class="text-cyan-300">${lat}°N</span> &bull; LNG: <span class="text-cyan-300">${lng}°E</span>`;
+    }
+
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(interactiveObjects, true);
 
     if (intersects.length > 0) {
-      let targetObj = intersects[0].object;
-      while (targetObj && !targetObj.userData.name && !targetObj.userData.title && targetObj.parent) {
-        targetObj = targetObj.parent;
+      let topObj = intersects[0].object;
+      while (topObj && !topObj.userData.id && topObj.parent) {
+        topObj = topObj.parent;
       }
-
-      if (targetObj && targetObj.userData) {
-        showTooltip(e.clientX, e.clientY, targetObj.userData);
+      if (topObj && topObj.userData && topObj.userData.id) {
         canvasEl.style.cursor = 'pointer';
+        showTooltip(e.clientX, e.clientY, topObj.userData);
         return;
       }
     }
 
-    hideTooltip();
     canvasEl.style.cursor = 'grab';
+    hideTooltip();
   }
 
   function onPointerDown() {
@@ -1225,76 +1488,55 @@
 
   function showTooltip(clientX, clientY, data) {
     if (!tooltipEl) return;
+    const catLabels = {
+      wind: 'Điện Gió',
+      solar: 'Điện Mặt Trời',
+      hydro: 'Thủy Điện',
+      substation: 'Trạm 500kV',
+      lng: 'LNG Baseload',
+      hybrid: 'Tích Hợp'
+    };
 
-    if (currentViewMode === 'twin' && data.category) {
-      const regLabel = data.region ? (data.region === 'north' ? 'MIỀN BẮC' : (data.region === 'central' ? 'MIỀN TRUNG' : 'MIỀN NAM')) : 'TOÀN QUỐC';
-      tooltipEl.innerHTML = `
-        <div class="font-mono text-[9px] uppercase font-bold text-teal-600 dark:text-teal-400 flex items-center justify-between">
-          <span>${(data.category || '').toUpperCase()} HUB &middot; ${(data.mw || 0).toLocaleString()} MW</span>
-          <span class="text-[8.5px] px-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">${regLabel}</span>
+    tooltipEl.innerHTML = `
+      <div class="space-y-1.5 font-mono">
+        <div class="flex items-center justify-between gap-2 border-b border-slate-700/60 pb-1">
+          <span class="font-bold text-xs text-white">${data.name}</span>
+          <span class="px-1.5 py-0.5 rounded text-[9.5px] font-semibold bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+            ${catLabels[data.category] || data.category}
+          </span>
         </div>
-        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 mt-0.5">
-          ${data.name}
+        <div class="text-[11px] text-slate-300">
+          Công suất quy hoạch: <span class="font-bold text-emerald-400 font-mono">${data.mw.toLocaleString()} MW</span>
         </div>
-        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+        <div class="text-[10px] text-slate-400 leading-tight">
           ${data.desc}
         </div>
-        <div class="mt-1.5 pt-1 border-t border-slate-100 dark:border-slate-800 font-mono text-[10px] text-slate-400 flex justify-between">
-          <span>Coords: ${data.lat ? data.lat.toFixed(2) : ''}°N, ${data.lng ? data.lng.toFixed(2) : ''}°E</span>
-          <span class="text-emerald-600 font-semibold">Live Monitored</span>
+        <div class="text-[9.5px] text-cyan-400/80 pt-0.5">
+          Tọa độ: ${data.lat.toFixed(2)}°B, ${data.lng.toFixed(2)}°Đ &bull; Miền: ${data.region.toUpperCase()}
         </div>
-      `;
-    } else if (data.title) {
-      tooltipEl.innerHTML = `
-        <div class="font-mono text-[9px] uppercase font-bold text-cyan-600 dark:text-cyan-400">
-          ENGINEERING COMPONENT &middot; 3D INSPECTION
-        </div>
-        <div class="text-xs font-bold text-slate-900 dark:text-slate-100 mt-0.5">
-          ${data.title}
-        </div>
-        <div class="text-[11px] text-slate-600 dark:text-slate-300 mt-1 leading-snug">
-          ${data.desc}
-        </div>
-      `;
-    } else {
-      return;
-    }
+      </div>
+    `;
 
-    tooltipEl.style.display = 'block';
-    const rect = containerEl.getBoundingClientRect();
-    const x = clientX - rect.left + 15;
-    const y = clientY - rect.top - 20;
+    const containerRect = containerEl.getBoundingClientRect();
+    const x = clientX - containerRect.left + 14;
+    const y = clientY - containerRect.top + 14;
 
-    tooltipEl.style.left = `${Math.min(x, rect.width - 260)}px`;
-    tooltipEl.style.top = `${Math.max(10, y)}px`;
+    tooltipEl.style.left = `${Math.min(x, containerRect.width - 240)}px`;
+    tooltipEl.style.top = `${Math.min(y, containerRect.height - 120)}px`;
+    tooltipEl.classList.remove('hidden');
   }
 
   function hideTooltip() {
-    if (tooltipEl) tooltipEl.style.display = 'none';
+    if (tooltipEl) tooltipEl.classList.add('hidden');
   }
 
   function onWindowResize() {
-    if (!renderer || !camera || !containerEl) return;
-    camera.aspect = containerEl.clientWidth / containerEl.clientHeight;
+    if (!containerEl || !renderer || !camera) return;
+    const w = containerEl.clientWidth;
+    const h = containerEl.clientHeight;
+    camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(containerEl.clientWidth, containerEl.clientHeight);
-  }
-
-  function updateThemeColors() {
-    if (!scene) return;
-    const isDark = document.documentElement.classList.contains('dark');
-    const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
-
-    scene.background.set(p.bg);
-    scene.fog.color.set(p.fog);
-    ambientLight.color.set(p.ambient);
-
-    gridHelper.material.color.set(p.grid);
-    buildVietnamTerritory(p);
-    buildHubPillarsWithMiniModels(p);
-    buildSupergridTransmissionArcs(p);
-    buildEvCorridorCloud(p);
-    buildDetailedAssetModel(currentAssetId, p);
+    renderer.setSize(w, h);
   }
 
   function updateSpecCard(assetId) {
@@ -1305,85 +1547,52 @@
 
     const profile = ASSET_PROFILES[assetId] || ASSET_PROFILES.wind_turbine;
     let specsHtml = profile.specs.map(s => `
-      <div class="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800 text-[11px]">
-        <span class="text-slate-500 dark:text-slate-400">${s.label}</span>
-        <span class="font-mono font-semibold text-slate-900 dark:text-slate-100">${s.value}</span>
+      <div class="flex items-center justify-between py-1 border-b border-slate-800 text-[11px]">
+        <span class="text-slate-400">${s.label}</span>
+        <span class="font-mono font-semibold text-slate-100">${s.value}</span>
       </div>
     `).join('');
 
     specCardEl.innerHTML = `
       <div class="space-y-2">
-        <div class="flex items-center justify-between">
-          <span class="font-mono text-[9px] uppercase font-bold text-cyan-600 dark:text-cyan-400 tracking-wider">
-            ${profile.category}
+        <div class="flex items-start justify-between gap-2 border-b border-slate-700/60 pb-1.5">
+          <div>
+            <div class="text-[10px] font-mono font-bold uppercase text-cyan-400">${profile.category}</div>
+            <h4 class="text-xs sm:text-sm font-bold text-slate-100">${profile.title}</h4>
+          </div>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-950/80 text-cyan-300 border border-cyan-800">
+            Three.js 3D
           </span>
-          <span class="px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 border border-emerald-200/50">
-            IEC Certified
-          </span>
         </div>
-        <div>
-          <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">
-            ${profile.name}
-          </h3>
-          <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-            ${profile.subtitle}
-          </p>
-        </div>
-        <div class="mt-2 pt-1">
-          ${specsHtml}
-        </div>
-        <p class="text-[10.5px] text-slate-600 dark:text-slate-300 leading-relaxed pt-1">
-          ${profile.description}
-        </p>
+        <p class="text-[11px] text-slate-400 leading-snug">${profile.desc}</p>
+        <div class="space-y-0.5 pt-1">${specsHtml}</div>
       </div>
     `;
+    specCardEl.style.display = 'block';
   }
 
-  // =========================================================================
-  // PUBLIC CONTROLLER API
-  // =========================================================================
-
+  // Public Interface
   const RVN_ENERGY_3D = {
-    init: async function(containerId = 'energy3dContainer', canvasId = 'energy3dCanvas', tooltipId = 'energy3dTooltip', specCardId = 'energy3dSpecCard') {
+    init: async function(containerId, canvasId) {
+      if (isInitialized) return;
       containerEl = document.getElementById(containerId);
       canvasEl = document.getElementById(canvasId);
-      tooltipEl = document.getElementById(tooltipId);
-      specCardEl = document.getElementById(specCardId);
+      tooltipEl = document.getElementById('energy3dTooltip');
+      specCardEl = document.getElementById('energy3dSpecCard');
 
-      if (!containerEl || !canvasEl) {
-        console.warn('[RVN_3D] Target elements not found.');
-        return false;
-      }
+      if (!containerEl || !canvasEl) return;
 
-      await loadThreeLibraries();
+      const loaded = await loadThreeJsLibraries();
+      if (!loaded) return;
+
       initScene();
-      updateSpecCard(currentAssetId);
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            isVisible = true;
-            if (!animFrameId) animate();
-          } else {
-            isVisible = false;
-            if (animFrameId) {
-              cancelAnimationFrame(animFrameId);
-              animFrameId = null;
-            }
-          }
-        });
-      }, { threshold: 0.1 });
-
-      observer.observe(containerEl);
-      return true;
+      animate();
     },
 
-    switchViewMode: function(mode) {
-      if (mode !== 'twin' && mode !== 'asset') return;
+    switchMode: function(mode) {
+      if (!isInitialized || mode === currentViewMode) return;
       currentViewMode = mode;
-
-      const isDark = document.documentElement.classList.contains('dark');
-      const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
+      const p = THEME_PALETTES.dark;
 
       if (mode === 'twin') {
         landGroup.visible = true;
@@ -1393,6 +1602,7 @@
         assetGroup.visible = false;
 
         gridHelper.visible = true;
+        if (compassRose) compassRose.visible = true;
         assetGridHelper.visible = false;
 
         this.setCameraPreset('national');
@@ -1406,7 +1616,7 @@
 
         interactiveObjects = [];
         hubsGroup.children.forEach(h => {
-          if (h.children[0]) interactiveObjects.push(h.children[0]);
+          if (h.children[1]) interactiveObjects.push(h.children[1]);
         });
       } else {
         landGroup.visible = false;
@@ -1416,37 +1626,31 @@
         assetGroup.visible = true;
 
         gridHelper.visible = false;
+        if (compassRose) compassRose.visible = false;
         assetGridHelper.visible = true;
-
-        if (camera && controls) {
-          camera.position.set(0, 10, 22);
-          controls.target.set(0, 6, 0);
-          controls.update();
-        }
 
         const twinControls = document.getElementById('energy3dTwinControls');
         const assetControls = document.getElementById('energy3dAssetControls');
-        const specCard = document.getElementById('energy3dSpecCard');
         if (twinControls) twinControls.style.display = 'none';
         if (assetControls) assetControls.style.display = 'flex';
-        if (specCard) specCard.style.display = 'block';
 
         this.loadAsset(currentAssetId);
       }
+
+      hideTooltip();
     },
 
     filterRegion: function(region, btn) {
       activeRegionFilter = region;
-      const isDark = document.documentElement.classList.contains('dark');
-      const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
+      const p = THEME_PALETTES.dark;
       buildHubPillarsWithMiniModels(p);
 
       const btns = document.querySelectorAll('.btn-3d-preset');
       btns.forEach(b => {
-        b.className = 'btn-3d-preset px-2 py-1 rounded text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors';
+        b.className = 'btn-3d-preset px-2 py-1 rounded text-slate-400 hover:text-white transition-colors';
       });
       if (btn) {
-        btn.className = 'btn-3d-preset px-2 py-1 rounded bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold shadow-2xs hover:text-teal-600 transition-colors';
+        btn.className = 'btn-3d-preset px-2 py-1 rounded bg-slate-800 text-cyan-300 font-semibold shadow-2xs hover:text-cyan-200 transition-colors border border-cyan-500/40';
       }
 
       this.setCameraPreset(region);
@@ -1455,9 +1659,7 @@
     loadAsset: function(assetId) {
       if (!ASSET_PROFILES[assetId]) return;
       currentAssetId = assetId;
-
-      const isDark = document.documentElement.classList.contains('dark');
-      const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
+      const p = THEME_PALETTES.dark;
 
       buildDetailedAssetModel(assetId, p);
       updateSpecCard(assetId);
@@ -1483,40 +1685,57 @@
       }
 
       const buttons = document.querySelectorAll('.btn-asset-select');
-      buttons.forEach(b => {
-        if (b.getAttribute('data-asset') === assetId) {
-          b.className = 'btn-asset-select px-2.5 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all';
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-asset') === assetId) {
+          btn.className = 'btn-asset-select px-2.5 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all';
         } else {
-          b.className = 'btn-asset-select px-2.5 py-1 rounded text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+          btn.className = 'btn-asset-select px-2.5 py-1 rounded text-slate-400 hover:text-white transition-all';
         }
       });
     },
 
+    toggleLayer: function(layerName) {
+      if (activeLayers.hasOwnProperty(layerName)) {
+        activeLayers[layerName] = !activeLayers[layerName];
+        if (layerName === 'renewables' && hubsGroup) hubsGroup.visible = activeLayers[layerName];
+        if (layerName === 'grid' && arcsGroup) arcsGroup.visible = activeLayers[layerName];
+        if (layerName === 'ev' && evGroup) evGroup.visible = activeLayers[layerName];
+      }
+      return activeLayers[layerName];
+    },
+
     setCameraPreset: function(preset) {
       if (!camera || !controls) return;
-      const targets = {
-        all: { pos: [0, 32, 42], target: [0, 0, 0] },
-        national: { pos: [0, 32, 42], target: [0, 0, 0] },
-        north: { pos: [-2, 16, -2], target: [-2, 0, -12] },
-        central: { pos: [8, 18, 10], target: [2, 0, 0] },
-        south: { pos: [4, 18, 26], target: [2, 0, 14] }
-      };
+      isCinematicTourActive = false;
+      const tourBtn = document.getElementById('btn3dCinematicTour');
+      if (tourBtn) tourBtn.innerHTML = '<span>▶ Bay Tự Động</span>';
 
-      const t = targets[preset] || targets.all;
-      controls.target.set(t.target[0], t.target[1], t.target[2]);
-      camera.position.set(t.pos[0], t.pos[1], t.pos[2]);
+      if (preset === 'national' || preset === 'all') {
+        camera.position.set(0, 32, 42);
+        controls.target.set(0, 0, 0);
+      } else if (preset === 'north') {
+        camera.position.set(-3, 16, -10);
+        controls.target.set(-2, 1, -12);
+      } else if (preset === 'central') {
+        camera.position.set(16, 15, 8);
+        controls.target.set(2, 1, 2);
+      } else if (preset === 'south') {
+        camera.position.set(-2, 16, 26);
+        controls.target.set(-3, 0, 16);
+      }
       controls.update();
     },
 
-    toggleLayer: function(layerName) {
-      if (activeLayers[layerName] === undefined) return;
-      activeLayers[layerName] = !activeLayers[layerName];
-
-      if (layerName === 'grid' && arcsGroup) arcsGroup.visible = activeLayers.grid;
-      if (layerName === 'renewables' && hubsGroup) hubsGroup.visible = activeLayers.renewables;
-      if (layerName === 'ev' && evGroup) evGroup.visible = activeLayers.ev;
-
-      return activeLayers[layerName];
+    toggleCinematicTour: function(btn) {
+      isCinematicTourActive = !isCinematicTourActive;
+      if (btn) {
+        btn.innerHTML = isCinematicTourActive
+          ? '<span class="text-emerald-400 animate-pulse">⏹ Dừng Bay</span>'
+          : '<span>▶ Bay Tự Động</span>';
+      }
+      if (isCinematicTourActive) {
+        tourProgress = 0;
+      }
     },
 
     toggleAnimation: function() {
@@ -1526,8 +1745,7 @@
 
     toggleWireframe: function() {
       isWireframeActive = !isWireframeActive;
-      const isDark = document.documentElement.classList.contains('dark');
-      const p = isDark ? THEME_PALETTES.dark : THEME_PALETTES.light;
+      const p = THEME_PALETTES.dark;
       if (currentViewMode === 'twin') {
         buildVietnamTerritory(p);
         buildHubPillarsWithMiniModels(p);
@@ -1538,6 +1756,10 @@
     },
 
     resetView: function() {
+      isCinematicTourActive = false;
+      const tourBtn = document.getElementById('btn3dCinematicTour');
+      if (tourBtn) tourBtn.innerHTML = '<span>▶ Bay Tự Động</span>';
+
       if (currentViewMode === 'twin') {
         this.setCameraPreset('national');
       } else {
@@ -1545,6 +1767,40 @@
       }
     }
   };
+
+  // Helper dynamic script loader for Three.js
+  async function loadThreeJsLibraries() {
+    if (window.THREE && window.THREE.OrbitControls) return true;
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+          if (existing.getAttribute('data-loaded') === 'true') return resolve();
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', reject);
+          return;
+        }
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = false;
+        s.onload = () => {
+          s.setAttribute('data-loaded', 'true');
+          resolve();
+        };
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    if (!window.THREE) {
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js');
+    }
+    if (!window.THREE.OrbitControls) {
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js');
+    }
+    return true;
+  }
 
   window.RVN_ENERGY_3D = RVN_ENERGY_3D;
 })(window);
