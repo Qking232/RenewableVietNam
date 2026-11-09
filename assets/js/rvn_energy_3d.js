@@ -1,6 +1,6 @@
 /**
  * Renewable Viet Nam - 3D Geospatial Clean Energy Digital Twin & Engineering Asset Suite
- * Release Rev.003 (Synchronized to Apex Homepage Release Rev.044)
+ * Release Rev.004 (Synchronized to Apex Homepage Release Rev.045)
  * WebGL 3D Engine powered by Three.js (Procedural Buffer Geometries, Zero External 3D Weight)
  * 
  * CYBERNETIC COMMAND CENTER OVERHAUL:
@@ -306,11 +306,12 @@
   let isCinematicTourActive = false;
   let tourProgress = 0;
   let tourIndex = 0;
+  let tourWaypoints3D = [];
   const tourWaypoints = [
-    { pos: new THREE.Vector3(0, 32, 42), target: new THREE.Vector3(0, 0, 0), desc: 'Toàn Cảnh Quốc Gia' },
-    { pos: new THREE.Vector3(-4, 14, 18), target: new THREE.Vector3(-1.5, 3, 2), desc: '500kV Mạch 3 Supergrid' },
-    { pos: new THREE.Vector3(5, 12, 8), target: new THREE.Vector3(1.5, 2, 0), desc: 'Tây Nguyên Solar & Wind Hub' },
-    { pos: new THREE.Vector3(-7, 10, 24), target: new THREE.Vector3(-3.5, 1, 15), desc: 'Vành đai Điện gió Tây Nam Bộ' }
+    { pos: [0, 32, 42], target: [0, 0, 0], desc: 'Toàn Cảnh Quốc Gia' },
+    { pos: [-4, 14, 18], target: [-1.5, 3, 2], desc: '500kV Mạch 3 Supergrid' },
+    { pos: [5, 12, 8], target: [1.5, 2, 0], desc: 'Tây Nguyên Solar & Wind Hub' },
+    { pos: [-7, 10, 24], target: [-3.5, 1, 15], desc: 'Vành đai Điện gió Tây Nam Bộ' }
   ];
 
   // Geodetic to 3D Cartesian Coordinate Transformation
@@ -348,7 +349,7 @@
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(p.bg);
-    scene.fog = new THREE.FogExp2(p.fog, 0.012);
+    scene.fog = new THREE.FogExp2(p.fog, 0.008);
 
     const aspect = containerEl.clientWidth / containerEl.clientHeight;
     camera = new THREE.PerspectiveCamera(45, aspect, 1, 600);
@@ -424,6 +425,13 @@
     scene.add(arcsGroup);
     scene.add(evGroup);
     scene.add(assetGroup);
+
+    // Instantiate 3D Waypoints lazily after THREE loads
+    tourWaypoints3D = tourWaypoints.map(w => ({
+      pos: new THREE.Vector3(w.pos[0], w.pos[1], w.pos[2]),
+      target: new THREE.Vector3(w.target[0], w.target[1], w.target[2]),
+      desc: w.desc
+    }));
 
     // Build Cybernetic Digital Twin
     buildVietnamTerritory(p);
@@ -1426,11 +1434,11 @@
           tourProgress += 0.0035;
           if (tourProgress >= 1.0) {
             tourProgress = 0;
-            tourIndex = (tourIndex + 1) % tourWaypoints.length;
+            tourIndex = (tourIndex + 1) % tourWaypoints3D.length;
           }
-          const nextIndex = (tourIndex + 1) % tourWaypoints.length;
-          const curWp = tourWaypoints[tourIndex];
-          const nextWp = tourWaypoints[nextIndex];
+          const nextIndex = (tourIndex + 1) % tourWaypoints3D.length;
+          const curWp = tourWaypoints3D[tourIndex];
+          const nextWp = tourWaypoints3D[nextIndex];
 
           const smoothT = 0.5 - 0.5 * Math.cos(tourProgress * Math.PI);
           camera.position.lerpVectors(curWp.pos, nextWp.pos, smoothT);
@@ -1587,6 +1595,10 @@
 
       initScene();
       animate();
+    },
+
+    switchViewMode: function(mode) {
+      return this.switchMode(mode);
     },
 
     switchMode: function(mode) {
