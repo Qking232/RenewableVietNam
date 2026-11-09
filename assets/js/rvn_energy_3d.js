@@ -1,6 +1,6 @@
 /**
  * Renewable Viet Nam - 3D Geospatial Clean Energy Digital Twin & Engineering Asset Suite
- * Release Rev.004 (Synchronized to Apex Homepage Release Rev.045)
+ * Release Rev.005 (Synchronized to Apex Homepage Release Rev.046)
  * WebGL 3D Engine powered by Three.js (Procedural Buffer Geometries, Zero External 3D Weight)
  * 
  * CYBERNETIC COMMAND CENTER OVERHAUL:
@@ -124,45 +124,45 @@
   // Cybernetic Command Deck Palettes
   const THEME_PALETTES = {
     dark: {
-      bg: 0x040711,
-      fog: 0x040711,
-      grid: 0x0b172a,
-      gridAccent: 0x0e2a4a,
-      land: 0x091427,
+      bg: 0x050a17,
+      fog: 0x050a17,
+      grid: 0x111e38,
+      gridAccent: 0x0284c7,
+      land: 0x0d223a,
       landGlow: 0x00f2fe,
-      mountain: 0x0f2240,
-      mountainLine: 0x00e5ff,
-      ambient: 0x111c33,
-      dirLight: 0x00f2fe,
-      rimLight: 0xf59e0b,
+      mountain: 0x1e3a5f,
+      mountainLine: 0x38bdf8,
+      ambient: 0x223c60,
+      dirLight: 0xe0f2fe,
+      rimLight: 0xfbbf24,
       arcCircuit3: 0x00f2fe,
       arcCircuit12: 0x38bdf8,
       evColor: 0x10b981,
-      steel: 0x475569,
-      steelLight: 0x94a3b8,
-      pvBlue: 0x1d4ed8,
+      steel: 0x64748b,
+      steelLight: 0xffffff,
+      pvBlue: 0x2563eb,
       copper: 0xf59e0b,
       accent: 0x00f2fe
     },
     light: {
-      // In light mode, canvas retains the deep cyber command deck palette for maximum luminous contrast
-      bg: 0x040711,
-      fog: 0x040711,
-      grid: 0x0b172a,
-      gridAccent: 0x0e2a4a,
-      land: 0x091427,
+      // High-contrast cyber command deck palette for maximum luminous contrast
+      bg: 0x050a17,
+      fog: 0x050a17,
+      grid: 0x111e38,
+      gridAccent: 0x0284c7,
+      land: 0x0d223a,
       landGlow: 0x00f2fe,
-      mountain: 0x0f2240,
-      mountainLine: 0x00e5ff,
-      ambient: 0x111c33,
-      dirLight: 0x00f2fe,
-      rimLight: 0xf59e0b,
+      mountain: 0x1e3a5f,
+      mountainLine: 0x38bdf8,
+      ambient: 0x223c60,
+      dirLight: 0xe0f2fe,
+      rimLight: 0xfbbf24,
       arcCircuit3: 0x00f2fe,
       arcCircuit12: 0x38bdf8,
       evColor: 0x10b981,
-      steel: 0x475569,
-      steelLight: 0x94a3b8,
-      pvBlue: 0x1d4ed8,
+      steel: 0x64748b,
+      steelLight: 0xffffff,
+      pvBlue: 0x2563eb,
       copper: 0xf59e0b,
       accent: 0x00f2fe
     }
@@ -308,10 +308,10 @@
   let tourIndex = 0;
   let tourWaypoints3D = [];
   const tourWaypoints = [
-    { pos: [0, 32, 42], target: [0, 0, 0], desc: 'Toàn Cảnh Quốc Gia' },
-    { pos: [-4, 14, 18], target: [-1.5, 3, 2], desc: '500kV Mạch 3 Supergrid' },
-    { pos: [5, 12, 8], target: [1.5, 2, 0], desc: 'Tây Nguyên Solar & Wind Hub' },
-    { pos: [-7, 10, 24], target: [-3.5, 1, 15], desc: 'Vành đai Điện gió Tây Nam Bộ' }
+    { pos: [1.5, 19, 25], target: [1.5, 0, 0], desc: 'Toàn Cảnh Quốc Gia' },
+    { pos: [-2.5, 10, 12], target: [-1, 2, 2], desc: '500kV Mạch 3 Supergrid' },
+    { pos: [4, 9, 6], target: [1.5, 1.5, 0], desc: 'Tây Nguyên Solar & Wind Hub' },
+    { pos: [-5, 7, 18], target: [-2.5, 0.8, 14], desc: 'Vành đai Điện gió Tây Nam Bộ' }
   ];
 
   // Geodetic to 3D Cartesian Coordinate Transformation
@@ -349,11 +349,11 @@
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(p.bg);
-    scene.fog = new THREE.FogExp2(p.fog, 0.008);
+    scene.fog = new THREE.FogExp2(p.fog, 0.0035);
 
     const aspect = containerEl.clientWidth / containerEl.clientHeight;
-    camera = new THREE.PerspectiveCamera(45, aspect, 1, 600);
-    camera.position.set(0, 32, 42);
+    camera = new THREE.PerspectiveCamera(42, aspect, 1, 600);
+    camera.position.set(1.5, 18.5, 23.5);
 
     renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
     renderer.setSize(containerEl.clientWidth, containerEl.clientHeight);
@@ -366,22 +366,22 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
     controls.maxPolarAngle = Math.PI / 2.05;
-    controls.minDistance = 6;
-    controls.maxDistance = 95;
-    controls.target.set(0, 0, 0);
+    controls.minDistance = 4;
+    controls.maxDistance = 75;
+    controls.target.set(1.5, 0, 0);
 
     // Global Cyber Lighting Rig
-    ambientLight = new THREE.AmbientLight(p.ambient, 1.6);
+    ambientLight = new THREE.AmbientLight(p.ambient, 2.3);
     scene.add(ambientLight);
 
-    dirLight = new THREE.DirectionalLight(p.dirLight, 1.4);
+    dirLight = new THREE.DirectionalLight(p.dirLight, 2.5);
     dirLight.position.set(-25, 45, 30);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
     scene.add(dirLight);
 
-    rimLight = new THREE.DirectionalLight(p.rimLight, 0.9);
+    rimLight = new THREE.DirectionalLight(p.rimLight, 1.8);
     rimLight.position.set(35, 25, -20);
     scene.add(rimLight);
 
@@ -654,9 +654,9 @@
         roughness: 0.15,
         metalness: 0.85,
         transparent: true,
-        opacity: 0.65,
+        opacity: 0.82,
         emissive: colorHex,
-        emissiveIntensity: 0.38,
+        emissiveIntensity: 0.72,
         wireframe: isWireframeActive
       });
 
@@ -672,7 +672,7 @@
       const beamMat = new THREE.MeshBasicMaterial({
         color: colorHex,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.95,
         blending: THREE.AdditiveBlending
       });
       const beamMesh = new THREE.Mesh(beamGeom, beamMat);
@@ -685,7 +685,7 @@
         color: colorHex,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.80,
+        opacity: 0.90,
         blending: THREE.AdditiveBlending
       });
       const ringMesh = new THREE.Mesh(ringGeom, ringMat);
@@ -739,7 +739,7 @@
   function createMiniTurbine(p) {
     const group = new THREE.Group();
     const towerGeom = new THREE.CylinderGeometry(0.05, 0.10, 1.4, 8);
-    const towerMat = new THREE.MeshStandardMaterial({ color: p.steelLight, metalness: 0.6, roughness: 0.3 });
+    const towerMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.4, roughness: 0.2, emissive: 0x38bdf8, emissiveIntensity: 0.25 });
     const tower = new THREE.Mesh(towerGeom, towerMat);
     tower.position.y = 0.7;
     group.add(tower);
@@ -761,7 +761,7 @@
 
     const bladeGeom = new THREE.BoxGeometry(0.05, 0.85, 0.015);
     bladeGeom.translate(0, 0.42, 0);
-    const bladeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3 });
+    const bladeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.2, emissive: 0xffffff, emissiveIntensity: 0.40 });
 
     for (let i = 0; i < 3; i++) {
       const blade = new THREE.Mesh(bladeGeom, bladeMat);
@@ -783,9 +783,11 @@
 
     const panelGeom = new THREE.BoxGeometry(0.9, 0.04, 0.6);
     const panelMat = new THREE.MeshStandardMaterial({
-      color: p.pvBlue,
-      metalness: 0.85,
-      roughness: 0.15
+      color: 0x2563eb,
+      metalness: 0.80,
+      roughness: 0.20,
+      emissive: 0x1d4ed8,
+      emissiveIntensity: 0.65
     });
     const panel = new THREE.Mesh(panelGeom, panelMat);
     panel.position.set(0, 0.52, 0);
@@ -804,7 +806,7 @@
     group.add(dam);
 
     const waterGeom = new THREE.PlaneGeometry(0.5, 0.4);
-    const waterMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
+    const waterMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, side: THREE.DoubleSide, transparent: true, opacity: 0.88 });
     const water = new THREE.Mesh(waterGeom, waterMat);
     water.position.set(0, 0.32, 0.3);
     water.rotation.x = -Math.PI / 4;
@@ -815,7 +817,7 @@
   function createMiniPylon(p) {
     const group = new THREE.Group();
     const pylonGeom = new THREE.CylinderGeometry(0.08, 0.22, 1.3, 4);
-    const pylonMat = new THREE.MeshStandardMaterial({ color: p.steelLight, wireframe: true });
+    const pylonMat = new THREE.MeshStandardMaterial({ color: 0xc084fc, wireframe: true, emissive: 0x9333ea, emissiveIntensity: 0.70 });
     const pylon = new THREE.Mesh(pylonGeom, pylonMat);
     pylon.position.y = 0.65;
     group.add(pylon);
@@ -830,7 +832,7 @@
   function createMiniLng(p) {
     const group = new THREE.Group();
     const tankGeom = new THREE.SphereGeometry(0.28, 12, 12);
-    const tankMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.2 });
+    const tankMat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, metalness: 0.6, roughness: 0.2, emissive: 0xd97706, emissiveIntensity: 0.65 });
     const tank = new THREE.Mesh(tankGeom, tankMat);
     tank.position.y = 0.32;
     group.add(tank);
@@ -1723,17 +1725,17 @@
       if (tourBtn) tourBtn.innerHTML = '<span>▶ Bay Tự Động</span>';
 
       if (preset === 'national' || preset === 'all') {
-        camera.position.set(0, 32, 42);
-        controls.target.set(0, 0, 0);
+        camera.position.set(1.5, 18.5, 23.5);
+        controls.target.set(1.5, 0, 0);
       } else if (preset === 'north') {
-        camera.position.set(-3, 16, -10);
-        controls.target.set(-2, 1, -12);
+        camera.position.set(-1, 10, -5);
+        controls.target.set(-1, 1, -11);
       } else if (preset === 'central') {
-        camera.position.set(16, 15, 8);
+        camera.position.set(10, 9, 5);
         controls.target.set(2, 1, 2);
       } else if (preset === 'south') {
-        camera.position.set(-2, 16, 26);
-        controls.target.set(-3, 0, 16);
+        camera.position.set(-1, 10, 20);
+        controls.target.set(-2, 0.5, 14);
       }
       controls.update();
     },
