@@ -197,11 +197,11 @@
       <div class="flex items-center gap-2">
         <!-- Workstation Modes -->
         <div class="flex items-center gap-0.5 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-xs">
-          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer">
-            Telemetry
-          </button>
-          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer">
             Gateways
+          </button>
+          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            Telemetry
           </button>
           <button id="hpModeBtnSimulator" type="button" onclick="switchHomepageWorkstation('simulator')" class="hp-mode-btn px-2.5 py-1 rounded-md font-medium transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
             Simulator
@@ -211,7 +211,7 @@
         <div class="w-px h-3.5 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
 
         <!-- Telemetry Analytical Lens Filters -->
-        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-xs">
+        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg font-mono text-xs hidden">
           <button id="hpTelemetryLensBtnAll" type="button" onclick="switchHomepageTelemetryLens('all')" class="telemetry-lens-btn px-2 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer">
             All (10)
           </button>
@@ -243,7 +243,7 @@
     <!-- ================================================================== -->
     <!-- WORKSTATION VIEW 1: EXECUTIVE GATEWAYS & 12 PILLARS                -->
     <!-- ================================================================== -->
-    <div id="workstationViewOverview" class="space-y-8 hidden">
+    <div id="workstationViewOverview" class="space-y-8">
       
       <!-- SECTION: 5 CORE EXECUTIVE EDGE GATEWAYS (ASYMMETRIC COMMAND RIBBON) -->
       <section id="executiveHubGatewaySection" class="space-y-3.5">
@@ -413,7 +413,7 @@
         </div>
       </section>
 
-      <!-- SECTION: 3D GEOSPATIAL ENERGY DIGITAL TWIN & ENGINEERING ASSET SUITE (Rev.041) -->
+      <!-- SECTION: 3D GEOSPATIAL ENERGY DIGITAL TWIN & ENGINEERING ASSET SUITE (Rev.042) -->
       <section id="energy3dSection" class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-xs space-y-3.5 transition-colors">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700/50 pb-3">
           <div class="space-y-1">
@@ -811,7 +811,7 @@
     <!-- ================================================================== -->
     <!-- WORKSTATION VIEW 2: 10-MODULE VISUAL TELEMETRY SUITE               -->
     <!-- ================================================================== -->
-    <div id="workstationViewTelemetry" class="space-y-4 pt-1">
+    <div id="workstationViewTelemetry" class="space-y-4 pt-1 hidden">
       <section id="visualTelemetrySuiteSection" class="space-y-4">
 
       <!-- ================================================================ -->
@@ -2402,7 +2402,7 @@
     // ========================================================================
     // WORKSTATION ARCHITECTURE & TELEMETRY LENS CONTROLLERS
     // ========================================================================
-    let activeHomepageWorkstation = 'telemetry';
+    let activeHomepageWorkstation = 'overview';
     let activeHomepageLens = 'all';
     let chartsInitialized = false;
 
@@ -2574,7 +2574,7 @@
       if (['overview', 'telemetry', 'simulator'].includes(initHash)) {
         switchHomepageWorkstation(initHash);
       } else {
-        switchHomepageWorkstation('telemetry');
+        switchHomepageWorkstation('overview');
       }
 
       window.addEventListener('hashchange', () => {
@@ -2634,7 +2634,7 @@
     }
     initHomepageWasm();
 
-    // 3D Geospatial Energy Digital Twin & Asset Studio Initialization (Rev.041)
+    // 3D Geospatial Energy Digital Twin & Asset Studio Initialization (Rev.042)
     function init3dDigitalTwin() {
       if (window.RVN_ENERGY_3D) {
         window.RVN_ENERGY_3D.init('energy3dContainer', 'energy3dCanvas', 'energy3dTooltip', 'energy3dSpecCard');
@@ -2694,10 +2694,6 @@
         if (active) {
           btn.className = 'px-2 py-1 rounded bg-cyan-600 text-white font-semibold shadow-2xs transition-all';
         } else {
-          btn.className = 'px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-normal transition-all';
-        }
-      }
-    } else {
           btn.className = 'px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-normal transition-all';
         }
       }
