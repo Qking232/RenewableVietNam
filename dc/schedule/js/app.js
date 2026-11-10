@@ -89,13 +89,8 @@
         // Setup Keyboard Handlers for FPV Walkthrough
         setupFPVControls();
 
-        // Raycasting for Interactive Equipment Inspection
-        raycaster = new THREE.Raycaster();
-        mouse = new THREE.Vector2();
-
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('click', onClick);
 
         // Wire HUD UI Controls
         setupUI();
@@ -337,64 +332,6 @@
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }
 
-    function onClick() {
-        if (isFPVActive || isDroneTourActive) return;
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects(modelsRef.root.children, true);
-
-        if (intersects.length > 0) {
-            let obj = intersects[0].object;
-            while (obj.parent && obj.parent !== modelsRef.root && (!obj.name || obj.name.startsWith("Mesh"))) {
-                obj = obj.parent;
-            }
-            if (obj && obj.name && !obj.name.startsWith("Mesh")) {
-                showInspectionHUD(obj.name);
-            }
-        }
-    }
-
-    function showInspectionHUD(name) {
-        const hud = document.getElementById('inspection-card');
-        const title = document.getElementById('insp-title');
-        const spec = document.getElementById('insp-spec');
-        const wbs = document.getElementById('insp-wbs');
-        const status = document.getElementById('insp-status');
-        if (!hud) return;
-
-        hud.style.display = 'block';
-        title.innerText = name.replace(/_/g, " ");
-
-        if (name.includes("Transformer")) {
-            spec.innerText = "Rating: 45MVA 110kV/22kV Oil-Immersed Step-Down. Redundancy: 2x 100% Dual Utility Feeds.";
-            wbs.innerText = "WBS 5.1 Substation & HV/MV (Act A5110)";
-            status.innerText = "Commissioned & Energized via 110kV Ring";
-        } else if (name.includes("Genset")) {
-            spec.innerText = "Rating: 2.5MVA Standby Diesel Generator. 16 Units N+2 Topology with Spring Vibration Isolators.";
-            wbs.innerText = "WBS 5.2 Emergency Generator Farm (Act A5220)";
-            status.innerText = "Black-Start Tested (<10s ATS Transfer)";
-        } else if (name.includes("Chiller")) {
-            spec.innerText = "Rating: 1200 RT Centrifugal Water-Cooled Chiller (6 units N+2). Eco-friendly R-1233zd refrigerant.";
-            wbs.innerText = "WBS 5.3 Central Chilled Water Plant (Act A5310)";
-            status.innerText = "Lead-Lag Dynamically Staged";
-        } else if (name.includes("CoolingTower")) {
-            spec.innerText = "Induced-Draft Counter-Flow Fiberglass Cooling Tower with Variable Speed EC Fans.";
-            wbs.innerText = "WBS 5.3 Mechanical (Act A5330)";
-            status.innerText = "Continuous Wet-Bulb Heat Rejection";
-        } else if (name.includes("DataHall")) {
-            spec.innerText = "Capacity: 9MW IT Load per Hall (36MW Campus). 300 Racks @ 12kW-30kW High-Density HAC.";
-            wbs.innerText = "WBS 5.4 White Space Fit-Out (Act A5470)";
-            status.innerText = "IST 36MW Full-Load Soak Passed";
-        } else if (name.includes("LoadBank")) {
-            spec.innerText = "Rating: 4.5MW Mobile Resistive-Reactive 0.8PF Testing Load Bank (36MW Cluster).";
-            wbs.innerText = "WBS 6.4 Integrated Systems Testing (Act A6410)";
-            status.innerText = "IST Cx Level 5 Validation Complete";
-        } else {
-            spec.innerText = "Tier III Hyperscale Engineered BIM LOD 400 Structural/MEP Element.";
-            wbs.innerText = "DC36-T3 Standard Architecture";
-            status.innerText = "Quality Assured / FQC Verified";
-        }
-    }
-
     function handleScheduleJump(timestamp, taskCode) {
         const state = window.DC36_TIMELINE.updateToTime(timestamp);
         updateHUD(state);
@@ -543,13 +480,6 @@
                 tabGantt.classList.remove('active');
                 paneTable.style.display = 'block';
                 paneGantt.style.display = 'none';
-            });
-        }
-
-        const closeInsp = document.getElementById('close-insp');
-        if (closeInsp) {
-            closeInsp.addEventListener('click', () => {
-                document.getElementById('inspection-card').style.display = 'none';
             });
         }
     }
