@@ -15,6 +15,7 @@
       } catch (e) {}
     })();
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- RenewableVietNam Brand Favicon & Touch Icons -->
   <link rel="icon" href="./assets/images/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./assets/images/favicon.ico" sizes="any">
@@ -79,6 +80,48 @@
   </script>
 
   <style>
+    #bg-canvas-home {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Reactive Mouse-Follow Border Glow for Telemetry & Cards */
+    .glow-card {
+      position: relative;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    }
+
+    .glow-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, rgba(13, 148, 136, 0.35)), transparent 60%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .glow-card:hover::before {
+      opacity: 1;
+    }
+
+    .glow-card:hover {
+      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+    }
+    .dark .glow-card:hover {
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 20px -2px rgba(13, 148, 136, 0.2);
+    }
     html, body {
       overflow-x: hidden;
       max-width: 100vw;
@@ -124,6 +167,9 @@
   </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white transition-colors duration-200">
+
+  <!-- Interactive 3D Clean Energy Grid & Particle Matrix Canvas -->
+  <canvas id="bg-canvas-home"></canvas>
 
   <!-- TOP EXECUTIVE NAVIGATION BAR -->
   <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors">
@@ -187,7 +233,7 @@
   <main class="relative z-10 flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
     <!-- ULTRA-COMPACT UNIFIED COMMAND BAR (38px) -->
-        <!-- REDESIGNED EXECUTIVE COMMAND COCKPIT BAR (Rev.048) -->
+        <!-- REDESIGNED EXECUTIVE COMMAND COCKPIT BAR (Rev.049) -->
     <div id="homepageWorkstationSwitcher" class="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 sm:px-5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
       <!-- Left Cluster: Live Status & Institutional Title -->
       <div class="flex items-center gap-2.5 shrink-0">
@@ -211,21 +257,21 @@
         <!-- Workstation Modes Track -->
         <div class="flex items-center gap-1 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/70 dark:border-slate-700/70 font-mono text-xs shadow-2xs">
           <!-- Gateways Button -->
-          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer">
+          <button id="hpModeBtnOverview" type="button" onclick="switchHomepageWorkstation('overview')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/50 cursor-pointer">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
             </svg>
             <span>Gateways</span>
-            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-teal-50 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300">5</span>
+            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300">5</span>
           </button>
 
           <!-- Telemetry Button -->
-          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/60 dark:hover:bg-slate-700/50 cursor-pointer">
+          <button id="hpModeBtnTelemetry" type="button" onclick="switchHomepageWorkstation('telemetry')" class="hp-mode-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer">
             <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
             </svg>
             <span>Telemetry</span>
-            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300">10</span>
+            <span class="hp-count-pill ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-semibold bg-teal-50 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300">10</span>
           </button>
 
           <!-- Simulator Button -->
@@ -239,7 +285,7 @@
         </div>
 
         <!-- Telemetry Analytical Lens Filters (Inline when Telemetry Active) -->
-        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/70 dark:border-slate-700/70 font-mono text-xs hidden shadow-2xs">
+        <div id="telemetryLensBarInline" class="flex items-center gap-0.5 p-1 bg-slate-100/90 dark:bg-slate-800/90 rounded-xl border border-slate-200/70 dark:border-slate-700/70 font-mono text-xs shadow-2xs">
           <button id="hpTelemetryLensBtnAll" type="button" onclick="switchHomepageTelemetryLens('all')" class="telemetry-lens-btn px-2.5 py-1 rounded-md font-semibold transition-all bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-xs border border-slate-200/80 dark:border-slate-700/80 cursor-pointer">
             All (10)
           </button>
@@ -285,7 +331,7 @@
     <!-- ================================================================== -->
     <!-- WORKSTATION VIEW 1: EXECUTIVE GATEWAYS & 12 PILLARS                -->
     <!-- ================================================================== -->
-    <div id="workstationViewOverview" class="space-y-8">
+    <div id="workstationViewOverview" class="space-y-8 hidden">
       
       <!-- SECTION: 5 CORE EXECUTIVE EDGE GATEWAYS (ASYMMETRIC COMMAND RIBBON) -->
       <section id="executiveHubGatewaySection" class="space-y-3.5">
@@ -754,7 +800,7 @@
     <!-- ================================================================== -->
     <!-- WORKSTATION VIEW 2: 10-MODULE VISUAL TELEMETRY SUITE               -->
     <!-- ================================================================== -->
-    <div id="workstationViewTelemetry" class="space-y-4 pt-1 hidden">
+    <div id="workstationViewTelemetry" class="space-y-4 pt-1">
       <section id="visualTelemetrySuiteSection" class="space-y-4">
 
       <!-- ================================================================ -->
@@ -767,7 +813,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
         <!-- Visual 01: 2025-2050 Net Zero Transition Trajectory (7 cols) -->
-        <div class="lg:col-span-7 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div class="lg:col-span-7 glow-card bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between" style="--glow-color: rgba(13, 148, 136, 0.4);">
           <div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100 dark:border-slate-700/50 gap-2">
               <div>
@@ -793,7 +839,7 @@
         </div>
 
         <!-- Visual 02: PDP8 Statutory Capacity Breakdown (5 cols) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div class="lg:col-span-5 glow-card bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between" style="--glow-color: rgba(14, 165, 233, 0.4);">
           <div>
             <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100 dark:border-slate-700/50">
               <div>
@@ -831,7 +877,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
         <!-- Visual 05: National 24-Hour Load Curve & Merit-Order Dispatch (7 cols) -->
-        <div class="lg:col-span-7 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div class="lg:col-span-7 glow-card bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between" style="--glow-color: rgba(13, 148, 136, 0.4);">
           <div>
             <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
               <div>
@@ -855,7 +901,7 @@
         </div>
 
         <!-- Visual 06: PDP8 Statutory Capital Expenditure (CapEx) Allocation (5 cols) -->
-        <div class="lg:col-span-5 bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        <div class="lg:col-span-5 glow-card bg-white dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between" style="--glow-color: rgba(14, 165, 233, 0.4);">
           <div>
             <div class="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-100 dark:border-slate-700/50">
               <div>
@@ -2345,7 +2391,7 @@
     // ========================================================================
     // WORKSTATION ARCHITECTURE & TELEMETRY LENS CONTROLLERS
     // ========================================================================
-    let activeHomepageWorkstation = 'overview';
+    let activeHomepageWorkstation = 'telemetry';
     let activeHomepageLens = 'all';
     let chartsInitialized = false;
 
@@ -2519,6 +2565,7 @@
     themeBtn?.addEventListener('click', () => {
       const isDark = document.documentElement.classList.contains('dark');
       applyTheme(!isDark);
+      if (window.syncThemeToThree) window.syncThemeToThree(!isDark);
     });
 
     window.addEventListener('resize', () => {
@@ -2528,10 +2575,12 @@
     // Workstation Hash Routing & Lazy Chart Init
     function initWorkstationRouting() {
       const initHash = window.location.hash.replace('#', '').toLowerCase();
-      if (['overview', 'telemetry', 'simulator'].includes(initHash)) {
-        switchHomepageWorkstation(initHash);
-      } else {
+      if (initHash === 'overview') {
         switchHomepageWorkstation('overview');
+      } else if (initHash === 'simulator') {
+        switchHomepageWorkstation('simulator');
+      } else {
+        switchHomepageWorkstation('telemetry');
       }
 
       window.addEventListener('hashchange', () => {
@@ -2610,6 +2659,168 @@
               'Status: 100% Solid 60 FPS Peak Performance!');
       });
     }
+
+    // ========================================================================
+    // THREE.JS 3D KINETIC ENERGY FLOW FIELD & 500kV SUPERGRID MESH
+    // ========================================================================
+    (function init3DSupergridMatrix() {
+      const canvas = document.getElementById("bg-canvas-home");
+      if (!canvas || typeof THREE === "undefined") return;
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 28, 80);
+      camera.lookAt(0, 0, 0);
+
+      const particleCountX = 50;
+      const particleCountZ = 36;
+      const totalParticles = particleCountX * particleCountZ;
+
+      const positions = new Float32Array(totalParticles * 3);
+      const originalY = new Float32Array(totalParticles);
+      const colors = new Float32Array(totalParticles * 3);
+
+      const spacingX = 3.6;
+      const spacingZ = 3.2;
+      const offsetX = (particleCountX * spacingX) / 2;
+      const offsetZ = (particleCountZ * spacingZ) / 2;
+
+      let idx = 0;
+      for (let ix = 0; ix < particleCountX; ix++) {
+        for (let iz = 0; iz < particleCountZ; iz++) {
+          const x = ix * spacingX - offsetX;
+          const z = iz * spacingZ - offsetZ;
+          const y = Math.sin(ix * 0.22) * Math.cos(iz * 0.22) * 2.2;
+
+          positions[idx * 3] = x;
+          positions[idx * 3 + 1] = y;
+          positions[idx * 3 + 2] = z;
+          originalY[idx] = y;
+
+          // Default Vietnam Clean Grid Teal
+          colors[idx * 3] = 0.05;
+          colors[idx * 3 + 1] = 0.65;
+          colors[idx * 3 + 2] = 0.60;
+
+          idx++;
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+      // Circular Glow Point Texture
+      const tCanvas = document.createElement("canvas");
+      tCanvas.width = 32;
+      tCanvas.height = 32;
+      const tCtx = tCanvas.getContext("2d");
+      const grad = tCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+      grad.addColorStop(0, "rgba(255,255,255,1)");
+      grad.addColorStop(0.35, "rgba(255,255,255,0.75)");
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      tCtx.fillStyle = grad;
+      tCtx.fillRect(0, 0, 32, 32);
+      const pointTexture = new THREE.CanvasTexture(tCanvas);
+
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      const material = new THREE.PointsMaterial({
+        size: isDarkMode ? 1.9 : 1.3,
+        vertexColors: true,
+        map: pointTexture,
+        transparent: true,
+        opacity: isDarkMode ? 0.65 : 0.35,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const particleSystem = new THREE.Points(geometry, material);
+      scene.add(particleSystem);
+
+      // Color targets
+      let targetColorR = 0.05, targetColorG = 0.65, targetColorB = 0.60;
+      let currentColorR = targetColorR, currentColorG = targetColorG, currentColorB = targetColorB;
+
+      let mouseX = 0, mouseY = 0;
+      let targetCamX = 0, targetCamY = 28;
+
+      window.addEventListener("mousemove", (e) => {
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        targetCamX = mouseX * 10;
+        targetCamY = 28 + mouseY * 6;
+      }, { passive: true });
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }, { passive: true });
+
+      let isVisible = true;
+      document.addEventListener("visibilitychange", () => {
+        isVisible = !document.hidden;
+      });
+
+      const clock = new THREE.Clock();
+      function animateThree() {
+        requestAnimationFrame(animateThree);
+        if (!isVisible) return;
+
+        const time = clock.getElapsedTime();
+        const pos = geometry.attributes.position.array;
+        const col = geometry.attributes.color.array;
+
+        currentColorR += (targetColorR - currentColorR) * 0.04;
+        currentColorG += (targetColorG - currentColorG) * 0.04;
+        currentColorB += (targetColorB - currentColorB) * 0.04;
+
+        let p = 0;
+        for (let ix = 0; ix < particleCountX; ix++) {
+          for (let iz = 0; iz < particleCountZ; iz++) {
+            const w1 = Math.sin(ix * 0.28 + time * 0.85) * 2.8;
+            const w2 = Math.cos(iz * 0.22 + time * 0.65) * 2.2;
+            const w3 = Math.sin((ix + iz) * 0.16 + time * 0.45) * 1.6;
+
+            pos[p * 3 + 1] = originalY[p] + w1 + w2 + w3;
+
+            const elev = Math.max(0.35, (pos[p * 3 + 1] + 4.5) / 9.0);
+            col[p * 3] = currentColorR * elev;
+            col[p * 3 + 1] = currentColorG * elev;
+            col[p * 3 + 2] = currentColorB * elev;
+            p++;
+          }
+        }
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+
+        camera.position.x += (targetCamX - camera.position.x) * 0.035;
+        camera.position.y += (targetCamY - camera.position.y) * 0.035;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+      animateThree();
+
+      window.syncThemeToThree = function(isDark) {
+        material.opacity = isDark ? 0.65 : 0.35;
+        material.size = isDark ? 1.9 : 1.3;
+      };
+    })();
+
+    // Interactive Mouse Tracking for Glow Cards
+    document.querySelectorAll(".glow-card").forEach(card => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+      }, { passive: true });
+    });
   </script>
 </body>
 </html>

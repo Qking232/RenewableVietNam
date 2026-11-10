@@ -10,15 +10,27 @@
   <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
-  <title>Garments Regional Engineering &amp; Capital Projects Portal | Renewable Viet Nam - Rev.001</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
+  <title>Garments Regional Engineering &amp; Capital Projects Portal | Renewable Viet Nam - Rev.002</title>
+    <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {}
       }
     }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem('rvn_theme_v2');
+        if (savedTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
   </script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
@@ -63,7 +75,8 @@
       border: none;
       min-height: 1100px;
       transition: opacity 0.2s ease-in-out;
-      background-color: transparent;
+      background-color: #ffffff !important;
+      border-radius: 12px;
     }
   </style>
 </head>
@@ -148,7 +161,9 @@
 
   <!-- Module Content Container -->
   <main class="flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-2 py-2 sm:px-6 sm:py-4">
-    <iframe id="module-viewport" class="module-frame" src="modules/bod_capex_charter_report.html" title="Engineering Module Viewport"></iframe>
+    <div class="w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs p-1 sm:p-2">
+      <iframe id="module-viewport" class="module-frame" src="modules/bod_capex_charter_report.html" title="Engineering Module Viewport"></iframe>
+    </div>
   </main>
 
   <!-- Master Footer -->
@@ -230,12 +245,12 @@
       }
     }
 
-    const savedTheme = localStorage.getItem('theme');
-    applyTheme(savedTheme === 'dark');
+    const savedTheme = localStorage.getItem('rvn_theme_v2');
+    applyTheme(savedTheme !== 'light');
 
     themeBtn.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      localStorage.setItem('rvn_theme_v2', isDark ? 'dark' : 'light');
       applyTheme(isDark);
     });
 
