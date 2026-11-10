@@ -10,7 +10,7 @@
   <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
-  <title>Capital Projects Directory | Renewable Viet Nam - Rev.016</title>
+  <title>Capital Projects Directory | Renewable Viet Nam - Rev.017</title>
     <script>
     tailwind.config = {
       darkMode: 'class',
@@ -121,6 +121,80 @@
     .dark .glow-card:hover {
       box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7), 0 0 24px -2px var(--glow-shadow, rgba(14, 165, 233, 0.25));
     }
+
+    /* Cybernetic Shimmer Action Button Architecture */
+    @property --beam-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes beam-spin {
+      0% {
+        --beam-angle: 0deg;
+      }
+      100% {
+        --beam-angle: 360deg;
+      }
+    }
+
+    .cyber-btn-wrapper {
+      position: relative;
+      border-radius: 14px;
+      padding: 1.5px;
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      width: 100%;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cyber-btn-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(
+        from var(--beam-angle),
+        transparent 65%,
+        var(--beam-glow-color, #10b981) 82%,
+        var(--beam-core-color, #ffffff) 93%,
+        var(--beam-glow-color, #10b981) 100%
+      );
+      animation: beam-spin 4.5s linear infinite;
+      z-index: 0;
+    }
+
+    .cyber-btn-wrapper:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 28px -4px var(--btn-aura-color, rgba(16, 185, 129, 0.4));
+    }
+
+    .cyber-btn-wrapper:active {
+      transform: scale(0.985);
+    }
+
+    .cyber-btn-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-radius: 12.5px;
+      background: var(--btn-bg, #ffffff);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .dark .cyber-btn-inner {
+      background: var(--btn-bg-dark, rgba(6, 22, 17, 0.94)) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#030712] text-slate-800 dark:text-slate-100 transition-colors relative">
@@ -205,10 +279,10 @@
         <div id="card-garments" data-accent="emerald" class="glow-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between" style="--glow-color: rgba(16, 185, 129, 0.45); --glow-shadow: rgba(16, 185, 129, 0.2);">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-emerald-100/80 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-400 border border-emerald-300/80 dark:border-emerald-500/40 shadow-xs dark:shadow-[0_0_12px_rgba(16,185,129,0.15)]">
                 MANUFACTURING &bull; ESG DECARBONIZATION
               </span>
-              <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">BAC: $14.50M USD</span>
+              <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: <strong class="text-emerald-600 dark:text-emerald-400 font-extrabold">$14.50M USD</strong></span>
             </div>
 
             <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
@@ -221,19 +295,19 @@
 
             <!-- Key Metrics Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-emerald-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Footprint</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">35,000 m²</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-emerald-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Solar / BESS</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">2.8 MWp</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-emerald-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Rating</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">LEED Plat.</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-emerald-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Fire Safety</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">QCVN 06</span>
               </div>
@@ -248,11 +322,33 @@
             </div>
           </div>
 
-          <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center gap-3">
-            <a href="/garments/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm transition-all duration-150 shadow-sm hover:shadow-emerald-500/20 cursor-pointer active:scale-[0.99]">
-              <span>Enter Garments Project Portal</span>
-              <span>&rarr;</span>
-            </a>
+          <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center">
+            <div class="cyber-btn-wrapper" style="--beam-glow-color: #10b981; --beam-core-color: #a7f3d0; --btn-aura-color: rgba(16, 185, 129, 0.45); --btn-bg: #f0fdf4; --btn-bg-dark: rgba(6, 22, 17, 0.94);">
+              <a href="/garments/" class="cyber-btn-inner group">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="relative flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/40 shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
+                    <span class="absolute w-4 h-4 rounded-full bg-emerald-400/40 animate-ping"></span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-1.5 text-[9.5px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-bold leading-tight">
+                      <span>LIVE GATEWAY 01</span>
+                      <span class="text-emerald-400 dark:text-emerald-500/60">&middot;</span>
+                      <span class="text-slate-500 dark:text-slate-400 font-normal">8 DOMAINS ACTIVE</span>
+                    </div>
+                    <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors leading-snug mt-0.5 truncate">
+                      Launch Garments Project Portal
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-400 group-hover:shadow-[0_0_16px_rgba(16,185,129,0.5)] transition-all duration-200 shrink-0 ml-2">
+                  <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -260,10 +356,10 @@
         <div id="card-dc" data-accent="sky" class="glow-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between" style="--glow-color: rgba(14, 165, 233, 0.45); --glow-shadow: rgba(14, 165, 233, 0.2);">
           <div>
             <div class="flex items-center justify-between mb-4">
-              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800">
+              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-sky-100/80 dark:bg-sky-950/80 text-sky-800 dark:text-sky-400 border border-sky-300/80 dark:border-sky-500/40 shadow-xs dark:shadow-[0_0_12px_rgba(14,165,233,0.15)]">
                 DIGITAL INFRASTRUCTURE &bull; HIGH DENSITY COMPUTE
               </span>
-              <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">BAC: $180.00M USD</span>
+              <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: <strong class="text-sky-600 dark:text-sky-400 font-extrabold">$180.00M USD</strong></span>
             </div>
 
             <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
@@ -276,19 +372,19 @@
 
             <!-- Key Metrics Grid -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-sky-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">IT Load</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">45 MW</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-sky-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">PUE Goal</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">1.280</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-sky-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Rating</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">Tier III / IV</span>
               </div>
-              <div class="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80">
+              <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 border-t-2 dark:border-t-sky-500/70 shadow-2xs">
                 <span class="block text-[9px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Substation</span>
                 <span class="text-xs font-extrabold text-slate-900 dark:text-white">110kV EPC</span>
               </div>
@@ -303,11 +399,33 @@
             </div>
           </div>
 
-          <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center gap-3">
-            <a href="https://renewablevietnam.com/dc/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm transition-all duration-150 shadow-sm hover:shadow-sky-500/20 cursor-pointer active:scale-[0.99]">
-              <span>Enter Data Center Portal</span>
-              <span>&rarr;</span>
-            </a>
+          <div class="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center">
+            <div class="cyber-btn-wrapper" style="--beam-glow-color: #0ea5e9; --beam-core-color: #e0f2fe; --btn-aura-color: rgba(14, 165, 233, 0.45); --btn-bg: #f0f9ff; --btn-bg-dark: rgba(8, 25, 45, 0.94);">
+              <a href="https://renewablevietnam.com/dc/" class="cyber-btn-inner group">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="relative flex items-center justify-center w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/40 shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-sky-500 dark:bg-sky-400"></span>
+                    <span class="absolute w-4 h-4 rounded-full bg-sky-400/40 animate-ping"></span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <div class="flex items-center gap-1.5 text-[9.5px] font-mono uppercase tracking-wider text-sky-600 dark:text-sky-400 font-bold leading-tight">
+                      <span>LIVE GATEWAY 02</span>
+                      <span class="text-sky-400 dark:text-sky-500/60">&middot;</span>
+                      <span class="text-slate-500 dark:text-slate-400 font-normal">45 MW IT LOAD</span>
+                    </div>
+                    <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors leading-snug mt-0.5 truncate">
+                      Launch Data Center Portal
+                    </span>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/30 text-sky-600 dark:text-sky-300 group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-400 group-hover:shadow-[0_0_16px_rgba(14,165,233,0.5)] transition-all duration-200 shrink-0 ml-2">
+                  <svg class="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
 
