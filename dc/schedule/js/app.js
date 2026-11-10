@@ -39,8 +39,8 @@
 
         // Scene Setup
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0a0c10);
-        scene.fog = new THREE.FogExp2(0x0a0c10, 0.0035);
+        scene.background = new THREE.Color(0xf8fafc);
+        scene.fog = new THREE.FogExp2(0xf8fafc, 0.0012);
 
         // Camera Setup
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1200);
@@ -137,11 +137,11 @@
     }
 
     function setupLighting() {
-        hemiLight = new THREE.HemisphereLight(0xddeeff, 0x1a202c, 0.75);
+        hemiLight = new THREE.HemisphereLight(0xffffff, 0xcbd5e1, 0.85);
         hemiLight.position.set(0, 100, 0);
         scene.add(hemiLight);
 
-        dirLight = new THREE.DirectionalLight(0xfffaed, 1.55);
+        dirLight = new THREE.DirectionalLight(0xffffff, 1.65);
         dirLight.position.set(100, 140, 80);
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 2048;
@@ -174,20 +174,22 @@
         lightHall1.position.set(5, 16.0, 0);
         scene.add(lightHall1);
 
-        // Initial Sky Dome Gradient (Photorealistic daylight)
-        updateSkyGradient('#0284c7', '#cbd5e1');
+        // Initial Sky Dome Gradient (Photorealistic architectural daylight & white horizon haze)
+        updateSkyGradient('#38bdf8', '#f8fafc');
     }
 
     function setLightingMode(mode) {
         currentLightingMode = mode;
         if (mode === 'day') {
-            updateSkyGradient('#0284c7', '#cbd5e1');
+            updateSkyGradient('#38bdf8', '#f8fafc');
             scene.background = null;
-            scene.fog.color.setHex(0xcbd5e1);
-            dirLight.color.setHex(0xfffaed);
-            dirLight.intensity = 1.55;
+            scene.fog.color.setHex(0xf8fafc);
+            dirLight.color.setHex(0xffffff);
+            dirLight.intensity = 1.65;
             dirLight.position.set(100, 140, 80);
-            hemiLight.intensity = 0.75;
+            hemiLight.color.setHex(0xffffff);
+            hemiLight.groundColor.setHex(0xcbd5e1);
+            hemiLight.intensity = 0.85;
             nightFloodlights.forEach(f => f.intensity = 0.0);
         } else if (mode === 'dusk') {
             updateSkyGradient('#1e1b4b', '#ea580c');
