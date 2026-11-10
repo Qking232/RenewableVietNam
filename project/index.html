@@ -10,19 +10,30 @@
   <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
-  <title>Capital Projects Directory | Renewable Viet Nam - Rev.013</title>
+  <title>Capital Projects Directory | Renewable Viet Nam - Rev.014</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js for 3D Kinetic Particle Energy Wave -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
   <style>
     :root {
       --bg-page: #f8fafc;
-      --bg-card: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.85);
       --border-subtle: #e2e8f0;
       --text-main: #0f172a;
       --text-body: #334155;
       --text-muted: #64748b;
       --primary: #0284c7;
+    }
+
+    .dark {
+      --bg-page: #030712;
+      --bg-card: rgba(15, 23, 42, 0.80);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-body: #cbd5e1;
+      --text-muted: #94a3b8;
     }
 
     * {
@@ -39,290 +50,543 @@
       background-color: var(--bg-page);
       color: var(--text-body);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
     }
 
-    .card-hover {
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
     }
-    .card-hover:hover {
-      transform: translateY(-2px);
+
+    /* Reactive Mouse-Follow Border Glow */
+    .glow-card {
+      position: relative;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    }
+
+    .glow-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, rgba(14, 165, 233, 0.35)), transparent 60%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .glow-card:hover::before {
+      opacity: 1;
+    }
+
+    .glow-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+    }
+    .dark .glow-card:hover {
+      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 0 20px -2px var(--glow-shadow, rgba(14, 165, 233, 0.15));
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors">
+<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#030712] text-slate-800 dark:text-slate-100 transition-colors relative">
 
-  <!-- Master Top Navigation Bar -->
-  <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
-    <div class="w-full max-w-7xl mx-auto flex items-center justify-between py-3">
-      <div class="flex items-center gap-5">
-        <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
-          <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
-          <div class="flex flex-col">
-            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100 font-bold leading-tight">
-              RENEWABLE VIETNAM
-            </span>
-            <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-              Capital Projects Directorate
-            </span>
-          </div>
-        </a>
+  <!-- Background Three.js WebGL Canvas -->
+  <canvas id="bg-canvas"></canvas>
 
-        <!-- Desktop Quick Jump Navigation -->
-        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
-          <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Master Dashboard</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 transition-colors">Project Portals</a>
-        </nav>
-      </div>
+  <!-- Foreground Content Container -->
+  <div class="relative z-10 flex flex-col min-h-screen">
 
-      <!-- Controls & Theme -->
-      <div class="flex items-center gap-2">
-        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span>5 Edge Gateways Live</span>
+    <!-- Master Top Navigation Bar -->
+    <header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
+      <div class="w-full max-w-7xl mx-auto flex items-center justify-between py-3">
+        <div class="flex items-center gap-5">
+          <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
+            <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
+            <div class="flex flex-col">
+              <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100 font-bold leading-tight">
+                RENEWABLE VIETNAM
+              </span>
+              <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+                Capital Projects Directorate
+              </span>
+            </div>
+          </a>
+
+          <!-- Desktop Quick Jump Navigation -->
+          <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+            <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Master Dashboard</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a>
+            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
+            <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 transition-colors">Project Portals</a>
+          </nav>
         </div>
 
-        <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
-          <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-          </svg>
-          <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </header>
+        <!-- Controls & Theme -->
+        <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>3D Interactive Core &middot; 5 Gateways</span>
+          </div>
 
-  <!-- Hero Section -->
-  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-    
-    <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono uppercase tracking-wider mb-3">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        Infrastructure &bull; Digital Compute &bull; Industrial Decarbonization
+          <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
+            <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+            <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          </button>
+        </div>
       </div>
-      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-3">
-        Capital Projects Directory
-      </h1>
-      <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-        Select a project vertical below to explore its dedicated engineering architecture, statutory licensing, CAPEX models, and execution frameworks.
-      </p>
-    </div>
+    </header>
 
-    <!-- Project Selection Cards Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12">
+    <!-- Hero Section -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
       
-      <!-- Card 1: Garments & Light Industry -->
-      <div class="card-hover rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-emerald-500/50 dark:hover:border-emerald-500/50">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
-              MANUFACTURING &bull; ESG DECARBONIZATION
-            </span>
-            <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: $14.50M USD</span>
-          </div>
-
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
-            Garments Regional Capital Projects
-          </h2>
-
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-            Multi-site regional capital governance across Vietnam &amp; Sri Lanka. Features a 35,000 m² high-tech eco-apparel manufacturing campus with 2.80 MWp rooftop solar + 1.2 MWh BESS, 15 TPH biomass steam, and LEED Platinum compliance.
-          </p>
-
-          <!-- Key Metrics Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Footprint</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">35,000 m²</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Solar / BESS</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">2.8 MWp</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Rating</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">LEED Plat.</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Fire Safety</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">QCVN 06</span>
-            </div>
-          </div>
-
-          <!-- Feature Tags -->
-          <div class="flex flex-wrap gap-1.5 mb-6 text-[10px] font-mono text-slate-500 dark:text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; 6-Stage Gate Governance</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; Biomass Steam &amp; VFD Air</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; EVM S-Curve Controls</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; Zero-Harm HSE</span>
-          </div>
+      <div class="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 text-[11px] font-mono uppercase tracking-wider mb-4 shadow-2xs">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Digital Compute &bull; Clean Energy Infrastructure &bull; Decarbonization
         </div>
-
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <a href="/garments/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-colors shadow-sm cursor-pointer">
-            <span>Enter Garments Project Portal</span>
-            <span>&rarr;</span>
-          </a>
-        </div>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4">
+          Capital Projects Directory
+        </h1>
+        <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+          Select a project vertical below to explore its dedicated engineering architecture, statutory licensing, CAPEX models, and execution frameworks.
+        </p>
       </div>
 
-      <!-- Card 2: Hyperscale Data Center -->
-      <div class="card-hover rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-sky-500/50 dark:hover:border-sky-500/50">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80">
-              DIGITAL INFRASTRUCTURE &bull; HIGH DENSITY COMPUTE
-            </span>
-            <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: $180.00M USD</span>
-          </div>
-
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
-            Hyperscale Data Center Campus (45 MW)
-          </h2>
-
-          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-            45 MW Critical IT Capacity Tier III / Tier IV mission-critical campus in Vietnam. Features dual 110kV/22kV substations, 24 MW standby power, 80 kW direct liquid cooling, 1.280 PUE, and Decree 80 DPPA green power integration.
-          </p>
-
-          <!-- Key Metrics Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">IT Load</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">45 MW</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">PUE Goal</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">1.280</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Rating</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Tier III / IV</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-              <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Substation</span>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100">110kV EPC</span>
-            </div>
-          </div>
-
-          <!-- Feature Tags -->
-          <div class="flex flex-wrap gap-1.5 mb-6 text-[10px] font-mono text-slate-500 dark:text-slate-400">
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; ANSI/TIA-942 Rated 3</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; 10x 3,000 kVA Gensets</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; 5-Level Commissioning (L1-L5)</span>
-            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">&bull; Decree 80 DPPA</span>
-          </div>
-        </div>
-
-        <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3">
-          <a href="https://renewablevietnam.com/dc/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs sm:text-sm transition-colors shadow-sm cursor-pointer">
-            <span>Enter Data Center Portal</span>
-            <span>&rarr;</span>
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Pipeline & Extensible Verticals Section -->
-    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 mb-12 shadow-sm">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
-        <div>
-          <span class="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold">
-            Development Pipeline
-          </span>
-          <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
-            Upcoming Capital Project Verticals
-          </h3>
-        </div>
-        <a href="https://invest.renewablevietnam.com/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
-          <span>Investment &amp; Regulatory Portal</span>
-          <span>&rarr;</span>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Project Selection Cards Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12">
         
-        <!-- Pipeline Item 1 -->
-        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
-              OFFSHORE WIND
-            </span>
-            <span class="text-[10px] font-mono text-slate-400">PDP8 Target</span>
+        <!-- Card 1: Garments & Light Industry -->
+        <div id="card-garments" data-accent="emerald" class="glow-card rounded-2xl border border-slate-200/80 dark:border-slate-800/80 p-6 sm:p-8 flex flex-col justify-between" style="--glow-color: rgba(16, 185, 129, 0.45); --glow-shadow: rgba(16, 185, 129, 0.2);">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
+                MANUFACTURING &bull; ESG DECARBONIZATION
+              </span>
+              <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: $14.50M USD</span>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
+              Garments Regional Capital Projects
+            </h2>
+
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+              Multi-site regional capital governance across Vietnam &amp; Sri Lanka. Features a 35,000 m² high-tech eco-apparel manufacturing campus with 2.80 MWp rooftop solar + 1.2 MWh BESS, 15 TPH biomass steam, and LEED Platinum compliance.
+            </p>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Footprint</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">35,000 m²</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Solar / BESS</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">2.8 MWp</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Rating</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">LEED Plat.</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Fire Safety</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">QCVN 06</span>
+              </div>
+            </div>
+
+            <!-- Feature Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-6 text-[10px] font-mono text-slate-500 dark:text-slate-400">
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; 6-Stage Gate Governance</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; Biomass Steam &amp; VFD Air</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; EVM S-Curve Controls</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; Zero-Harm HSE</span>
+            </div>
           </div>
-          <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
-            Offshore Wind &amp; Marine Grid EPC
-          </h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
-            500 MW Phase 1 off Bình Thuận coast &bull; 220kV subsea export cable &bull; $1.20B CAPEX.
-          </p>
-          <span class="text-[10px] font-mono text-slate-400">&bull; Pre-Feasibility Study Stage</span>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-3">
+            <a href="/garments/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm transition-all duration-150 shadow-sm hover:shadow-emerald-500/20 cursor-pointer active:scale-[0.99]">
+              <span>Enter Garments Project Portal</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
         </div>
 
-        <!-- Pipeline Item 2 -->
-        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-              POWER-TO-X
-            </span>
-            <span class="text-[10px] font-mono text-slate-400">Feasibility</span>
-          </div>
-          <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
-            Green Hydrogen &amp; Ammonia Hub
-          </h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
-            100,000 TPY green ammonia synthesizing facility &bull; Dedicated DPPA microgrid &bull; $450M CAPEX.
-          </p>
-          <span class="text-[10px] font-mono text-slate-400">&bull; Techno-Economic Sizing Stage</span>
-        </div>
+        <!-- Card 2: Hyperscale Data Center -->
+        <div id="card-dc" data-accent="sky" class="glow-card rounded-2xl border border-slate-200/80 dark:border-slate-800/80 p-6 sm:p-8 flex flex-col justify-between" style="--glow-color: rgba(14, 165, 233, 0.45); --glow-shadow: rgba(14, 165, 233, 0.2);">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2.5 py-1 rounded-md text-[10.5px] font-mono font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80">
+                DIGITAL INFRASTRUCTURE &bull; HIGH DENSITY COMPUTE
+              </span>
+              <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">BAC: $180.00M USD</span>
+            </div>
 
-        <!-- Pipeline Item 3 -->
-        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-          <div class="flex items-center justify-between mb-2">
-            <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300">
-              MICROGRIDS
-            </span>
-            <span class="text-[10px] font-mono text-slate-400">Active</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-2">
+              Hyperscale Data Center Campus (45 MW)
+            </h2>
+
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+              45 MW Critical IT Capacity Tier III / Tier IV mission-critical campus in Vietnam. Features dual 110kV/22kV substations, 24 MW standby power, 80 kW direct liquid cooling, 1.280 PUE, and Decree 80 DPPA green power integration.
+            </p>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-mono text-center mb-6">
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">IT Load</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">45 MW</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">PUE Goal</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">1.280</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Rating</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Tier III / IV</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                <span class="block text-[9px] uppercase tracking-wider text-slate-400 font-bold">Substation</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">110kV EPC</span>
+              </div>
+            </div>
+
+            <!-- Feature Tags -->
+            <div class="flex flex-wrap gap-1.5 mb-6 text-[10px] font-mono text-slate-500 dark:text-slate-400">
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; ANSI/TIA-942 Rated 3</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; 10x 3,000 kVA Gensets</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; 5-Level Commissioning (L1-L5)</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100/80 dark:bg-slate-800/60">&bull; Decree 80 DPPA</span>
+            </div>
           </div>
-          <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
-            Industrial Solar &amp; BESS Microgrids
-          </h4>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
-            65 MWp distributed rooftop solar + 30 MWh BESS under Decree 80/2024 DPPA &bull; $62M CAPEX.
-          </p>
-          <span class="text-[10px] font-mono text-slate-400">&bull; Corporate EPC Structuring</span>
+
+          <div class="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-3">
+            <a href="https://renewablevietnam.com/dc/" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm transition-all duration-150 shadow-sm hover:shadow-sky-500/20 cursor-pointer active:scale-[0.99]">
+              <span>Enter Data Center Portal</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
         </div>
 
       </div>
-    </div>
 
-  </main>
+      <!-- Pipeline & Extensible Verticals Section -->
+      <div id="card-pipeline" data-accent="amber" class="glow-card rounded-2xl border border-slate-200/80 dark:border-slate-800/80 p-6 sm:p-8 mb-12 shadow-sm" style="--glow-color: rgba(245, 158, 11, 0.45); --glow-shadow: rgba(245, 158, 11, 0.2);">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-amber-600 dark:text-amber-400 font-bold">
+              Development Pipeline
+            </span>
+            <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              Upcoming Capital Project Verticals
+            </h3>
+          </div>
+          <a href="https://invest.renewablevietnam.com/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+            <span>Investment &amp; Regulatory Portal</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
 
-  <!-- Master Footer -->
-  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-6 px-4 text-xs text-slate-500 dark:text-slate-400 transition-colors mt-auto">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-      <div>
-        <span class="font-bold text-slate-700 dark:text-slate-300">Renewable Viet Nam Capital Projects Directorate</span>
-        <span class="text-slate-300 dark:text-slate-700 mx-2">&bull;</span>
-        <span>Multi-Sector Infrastructure Governance</span>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <!-- Pipeline Item 1 -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
+                OFFSHORE WIND
+              </span>
+              <span class="text-[10px] font-mono text-slate-400">PDP8 Target</span>
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
+              Offshore Wind &amp; Marine Grid EPC
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              500 MW Phase 1 off Bình Thuận coast &bull; 220kV subsea export cable &bull; $1.20B CAPEX.
+            </p>
+            <span class="text-[10px] font-mono text-slate-400">&bull; Pre-Feasibility Study Stage</span>
+          </div>
+
+          <!-- Pipeline Item 2 -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
+                POWER-TO-X
+              </span>
+              <span class="text-[10px] font-mono text-slate-400">Feasibility</span>
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
+              Green Hydrogen &amp; Ammonia Hub
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              100,000 TPY green ammonia synthesizing facility &bull; Dedicated DPPA microgrid &bull; $450M CAPEX.
+            </p>
+            <span class="text-[10px] font-mono text-slate-400">&bull; Techno-Economic Sizing Stage</span>
+          </div>
+
+          <!-- Pipeline Item 3 -->
+          <div class="p-4 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300">
+                MICROGRIDS
+              </span>
+              <span class="text-[10px] font-mono text-slate-400">Active</span>
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 mb-1">
+              Industrial Solar &amp; BESS Microgrids
+            </h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+              65 MWp distributed rooftop solar + 30 MWh BESS under Decree 80/2024 DPPA &bull; $62M CAPEX.
+            </p>
+            <span class="text-[10px] font-mono text-slate-400">&bull; Corporate EPC Structuring</span>
+          </div>
+
+        </div>
       </div>
-      <div class="font-mono text-[11px] text-slate-400">
-        Statutory Compliance: QCVN 06:2022/BXD &bull; Decree 15/2021 &bull; Decree 80/2024 (DPPA)
-      </div>
-    </div>
-  </footer>
 
+    </main>
+
+    <!-- Master Footer -->
+    <footer class="bg-white/80 dark:bg-[#090d16]/80 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 py-6 px-4 text-xs text-slate-500 dark:text-slate-400 transition-colors mt-auto">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+        <div>
+          <span class="font-bold text-slate-700 dark:text-slate-300">Renewable Viet Nam Capital Projects Directorate</span>
+          <span class="text-slate-300 dark:text-slate-700 mx-2">&bull;</span>
+          <span>Multi-Sector Infrastructure Governance</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-400">
+          Statutory Compliance: QCVN 06:2022/BXD &bull; Decree 15/2021 &bull; Decree 80/2024 (DPPA)
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive 3D Particle Energy Matrix Engine (Three.js) -->
   <script>
+    (function init3DParticleMatrix() {
+      const canvas = document.getElementById("bg-canvas");
+      if (!canvas || typeof THREE === "undefined") return;
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 30, 75);
+      camera.lookAt(0, 0, 0);
+
+      // Particle Grid Geometry (Flow Field Plane)
+      const particleCountX = 55;
+      const particleCountZ = 40;
+      const totalParticles = particleCountX * particleCountZ;
+
+      const positions = new Float32Array(totalParticles * 3);
+      const originalY = new Float32Array(totalParticles);
+      const colors = new Float32Array(totalParticles * 3);
+
+      const spacingX = 3.2;
+      const spacingZ = 3.0;
+      const offsetX = (particleCountX * spacingX) / 2;
+      const offsetZ = (particleCountZ * spacingZ) / 2;
+
+      let idx = 0;
+      for (let ix = 0; ix < particleCountX; ix++) {
+        for (let iz = 0; iz < particleCountZ; iz++) {
+          const x = ix * spacingX - offsetX;
+          const z = iz * spacingZ - offsetZ;
+          const y = Math.sin(ix * 0.2) * Math.cos(iz * 0.2) * 2;
+
+          positions[idx * 3] = x;
+          positions[idx * 3 + 1] = y;
+          positions[idx * 3 + 2] = z;
+          originalY[idx] = y;
+
+          // Default initial color: Cyan-Teal
+          colors[idx * 3] = 0.05;
+          colors[idx * 3 + 1] = 0.65;
+          colors[idx * 3 + 2] = 0.85;
+
+          idx++;
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+      // Create Circular Particle Texture
+      const textureCanvas = document.createElement("canvas");
+      textureCanvas.width = 32;
+      textureCanvas.height = 32;
+      const tCtx = textureCanvas.getContext("2d");
+      const gradient = tCtx.createRadialGradient(16, 16, 0, 16, 16, 16);
+      gradient.addColorStop(0, "rgba(255,255,255,1)");
+      gradient.addColorStop(0.3, "rgba(255,255,255,0.7)");
+      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      tCtx.fillStyle = gradient;
+      tCtx.fillRect(0, 0, 32, 32);
+      const particleTexture = new THREE.CanvasTexture(textureCanvas);
+
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      const material = new THREE.PointsMaterial({
+        size: isDarkMode ? 1.8 : 1.4,
+        vertexColors: true,
+        map: particleTexture,
+        transparent: true,
+        opacity: isDarkMode ? 0.75 : 0.45,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const particleSystem = new THREE.Points(geometry, material);
+      scene.add(particleSystem);
+
+      // Dynamic Color Target State
+      let targetColorR = 0.05;
+      let targetColorG = 0.65;
+      let targetColorB = 0.85;
+
+      let currentColorR = targetColorR;
+      let currentColorG = targetColorG;
+      let currentColorB = targetColorB;
+
+      // Mouse Coordinates Tracking
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetCamX = 0;
+      let targetCamY = 30;
+
+      window.addEventListener("mousemove", (e) => {
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        targetCamX = mouseX * 12;
+        targetCamY = 30 + mouseY * 8;
+      });
+
+      // Card Hover Color Modulation
+      function setTargetColor(r, g, b) {
+        targetColorR = r;
+        targetColorG = g;
+        targetColorB = b;
+      }
+
+      const cardGarments = document.getElementById("card-garments");
+      const cardDc = document.getElementById("card-dc");
+      const cardPipeline = document.getElementById("card-pipeline");
+
+      if (cardGarments) {
+        cardGarments.addEventListener("mouseenter", () => setTargetColor(0.06, 0.75, 0.45)); // Emerald
+        cardGarments.addEventListener("mouseleave", () => setTargetColor(0.05, 0.65, 0.85)); // Reset
+      }
+      if (cardDc) {
+        cardDc.addEventListener("mouseenter", () => setTargetColor(0.1, 0.55, 0.98)); // Electric Sky
+        cardDc.addEventListener("mouseleave", () => setTargetColor(0.05, 0.65, 0.85)); // Reset
+      }
+      if (cardPipeline) {
+        cardPipeline.addEventListener("mouseenter", () => setTargetColor(0.95, 0.65, 0.1)); // Warm Solar Amber
+        cardPipeline.addEventListener("mouseleave", () => setTargetColor(0.05, 0.65, 0.85)); // Reset
+      }
+
+      // Responsive Resize
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Battery & Performance Safeguard: Pause when tab is inactive
+      let isVisible = true;
+      document.addEventListener("visibilitychange", () => {
+        isVisible = !document.hidden;
+      });
+
+      // Animation Loop
+      let clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        if (!isVisible) return;
+
+        const elapsedTime = clock.getElapsedTime();
+        const pos = geometry.attributes.position.array;
+        const col = geometry.attributes.color.array;
+
+        // Smooth color interpolation
+        currentColorR += (targetColorR - currentColorR) * 0.05;
+        currentColorG += (targetColorG - currentColorG) * 0.05;
+        currentColorB += (targetColorB - currentColorB) * 0.05;
+
+        let pIdx = 0;
+        for (let ix = 0; ix < particleCountX; ix++) {
+          for (let iz = 0; iz < particleCountZ; iz++) {
+            const wave1 = Math.sin(ix * 0.25 + elapsedTime * 0.9) * 3.0;
+            const wave2 = Math.cos(iz * 0.2 + elapsedTime * 0.7) * 2.5;
+            const wave3 = Math.sin((ix + iz) * 0.15 + elapsedTime * 0.5) * 1.8;
+            
+            pos[pIdx * 3 + 1] = originalY[pIdx] + wave1 + wave2 + wave3;
+
+            // Apply smooth vertex color with elevation gradient
+            const elevationFactor = Math.max(0.4, (pos[pIdx * 3 + 1] + 5) / 10);
+            col[pIdx * 3] = currentColorR * elevationFactor;
+            col[pIdx * 3 + 1] = currentColorG * elevationFactor;
+            col[pIdx * 3 + 2] = currentColorB * elevationFactor;
+
+            pIdx++;
+          }
+        }
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.color.needsUpdate = true;
+
+        // Camera gentle drift
+        camera.position.x += (targetCamX - camera.position.x) * 0.04;
+        camera.position.y += (targetCamY - camera.position.y) * 0.04;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      // Theme Change Sync for Three.js Materials
+      window.syncThemeToThree = function(isDark) {
+        material.opacity = isDark ? 0.75 : 0.45;
+        material.size = isDark ? 1.8 : 1.4;
+      };
+    })();
+
+    // Reactive Border Glow Mouse Tracking (Linear/Vercel Pattern)
+    document.querySelectorAll(".glow-card").forEach(card => {
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    });
+
     // Theme Toggle Controller
     const themeBtn = document.getElementById('themeToggleBtn');
     const sunIcon = document.getElementById('sunIcon');
@@ -337,6 +601,9 @@
         document.documentElement.classList.remove('dark');
         sunIcon.classList.add('hidden');
         moonIcon.classList.remove('hidden');
+      }
+      if (window.syncThemeToThree) {
+        window.syncThemeToThree(isDark);
       }
     }
 
