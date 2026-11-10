@@ -230,8 +230,18 @@
     };
 
     window.DC36_TIMELINE.togglePlay = function() {
+        if (!schedule) return false;
+        // Auto-loop to start if user clicks play at or near 100% completion
+        if (currentTimestamp >= schedule.max_timestamp - 100) {
+            currentTimestamp = schedule.min_timestamp;
+            updateState(currentTimestamp);
+        }
         isPlaying = !isPlaying;
         lastAnimTime = performance.now();
+        return isPlaying;
+    };
+
+    window.DC36_TIMELINE.isPlaying = function() {
         return isPlaying;
     };
 
@@ -258,11 +268,15 @@
         const advanceMs = (dt / 50) * totalSpan * playbackSpeed;
         
         currentTimestamp += advanceMs;
+        let finished = false;
         if (currentTimestamp >= schedule.max_timestamp) {
             currentTimestamp = schedule.max_timestamp;
             isPlaying = false;
+            finished = true;
         }
 
-        return updateState(currentTimestamp);
+        const state = updateState(currentTimestamp);
+        if (state) state.playbackFinished = finished;
+        return state;
     };
 })();

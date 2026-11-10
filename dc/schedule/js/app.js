@@ -396,44 +396,59 @@
         const droneTourBtn = document.getElementById('btn-drone-tour');
         const fpvBtn = document.getElementById('btn-fpv');
 
-        playBtn.addEventListener('click', () => {
-            const playing = window.DC36_TIMELINE.togglePlay();
-            playBtn.innerHTML = playing ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-play"></i> Play';
-        });
+        if (playBtn) {
+            playBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const playing = window.DC36_TIMELINE.togglePlay();
+                playBtn.innerHTML = playing ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-play"></i> Play';
+            });
+        }
 
-        slider.addEventListener('input', (e) => {
-            const fraction = parseFloat(e.target.value) / 1000;
-            const state = window.DC36_TIMELINE.updateToProgress(fraction);
-            updateHUD(state);
-            window.DC36_GANTT.updateTime(state.timestamp);
-            window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
-        });
+        if (slider) {
+            slider.addEventListener('input', (e) => {
+                const fraction = parseFloat(e.target.value) / 1000;
+                const state = window.DC36_TIMELINE.updateToProgress(fraction);
+                updateHUD(state);
+                window.DC36_GANTT.updateTime(state.timestamp);
+                window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
+            });
+        }
 
-        speedSel.addEventListener('change', (e) => {
-            window.DC36_TIMELINE.setSpeed(parseFloat(e.target.value));
-        });
+        if (speedSel) {
+            speedSel.addEventListener('change', (e) => {
+                window.DC36_TIMELINE.setSpeed(parseFloat(e.target.value));
+            });
+        }
 
-        cutawayToggle.addEventListener('change', (e) => {
-            window.DC36_TIMELINE.setCutaway(e.target.checked);
-        });
+        if (cutawayToggle) {
+            cutawayToggle.addEventListener('change', (e) => {
+                window.DC36_TIMELINE.setCutaway(e.target.checked);
+            });
+        }
 
-        cfdToggle.addEventListener('change', (e) => {
-            window.DC36_TIMELINE.setCFD(e.target.checked);
-        });
+        if (cfdToggle) {
+            cfdToggle.addEventListener('change', (e) => {
+                window.DC36_TIMELINE.setCFD(e.target.checked);
+            });
+        }
 
-        audioBtn.addEventListener('click', () => {
-            const isMuted = window.DC36_AUDIO.toggleMute();
-            audioBtn.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i> Sound OFF' : '<i class="fas fa-volume-up"></i> Sound ON';
-            audioBtn.classList.toggle('audio-active', !isMuted);
-        });
+        if (audioBtn) {
+            audioBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isMuted = window.DC36_AUDIO.toggleMute();
+                audioBtn.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i> Sound OFF' : '<i class="fas fa-volume-up"></i> Sound ON';
+                audioBtn.classList.toggle('audio-active', !isMuted);
+            });
+        }
 
-        if (blackoutBtn) blackoutBtn.addEventListener('click', runBlackoutDrill);
+        if (blackoutBtn) blackoutBtn.addEventListener('click', (e) => { e.preventDefault(); runBlackoutDrill(); });
         if (lightingSelect) lightingSelect.addEventListener('change', (e) => setLightingMode(e.target.value));
-        if (droneTourBtn) droneTourBtn.addEventListener('click', toggleDroneTour);
-        if (fpvBtn) fpvBtn.addEventListener('click', () => toggleFPVMode());
+        if (droneTourBtn) droneTourBtn.addEventListener('click', (e) => { e.preventDefault(); toggleDroneTour(); });
+        if (fpvBtn) fpvBtn.addEventListener('click', (e) => { e.preventDefault(); toggleFPVMode(); });
 
         document.querySelectorAll('.cam-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 if (isDroneTourActive) toggleDroneTour();
                 if (isFPVActive) toggleFPVMode(false);
                 switchCamera(btn.getAttribute('data-cam'));
@@ -441,13 +456,15 @@
         });
 
         document.querySelectorAll('.mile-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 const code = btn.getAttribute('data-code');
                 const state = window.DC36_TIMELINE.jumpToMilestone(code);
                 updateHUD(state);
                 window.DC36_GANTT.updateTime(state.timestamp);
                 window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
-                slider.value = (state.progressPercent * 10);
+                if (slider) slider.value = (state.progressPercent * 10);
+                if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
             });
         });
 
@@ -646,6 +663,10 @@
             window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
             const slider = document.getElementById('timeline-slider');
             if (slider) slider.value = (state.progressPercent * 10);
+            if (state.playbackFinished) {
+                const playBtn = document.getElementById('btn-play');
+                if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+            }
         }
 
         // Update Particle Systems
