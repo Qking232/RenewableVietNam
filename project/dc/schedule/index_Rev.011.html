@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>DC36-T3 Hyperscale 36MW Datacenter | AAA 4D Three.js Construction Twin</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #f8fafc;
+            --panel-bg: rgba(255, 255, 255, 0.92);
+            --panel-border: rgba(203, 213, 225, 0.85);
+            --panel-shadow: 0 10px 32px rgba(15, 23, 42, 0.08);
+            --accent-cyan: #0284c7;
+            --accent-blue: #2563eb;
+            --accent-amber: #d97706;
+            --accent-green: #059669;
+            --accent-red: #dc2626;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        /* Universal Button Hardening: Zero Child Interception */
+        button, .hud-btn, .play-btn, .cam-btn, .mile-btn, .dock-tab-btn, .dock-toggle-btn, .drawer-close-btn {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            user-select: none !important;
+            touch-action: manipulation !important;
+            position: relative;
+        }
+
+        /* Force all child icons and text spans to ignore pointer events */
+        button *, .hud-btn *, .play-btn *, .cam-btn *, .mile-btn *, .dock-tab-btn *, .dock-toggle-btn *, .drawer-close-btn * {
+            pointer-events: none !important;
+        }
+
+        /* Tactile Active States for All Buttons */
+        button:active, .hud-btn:active, .play-btn:active, .cam-btn:active, .mile-btn:active, .drawer-close-btn:active {
+            transform: scale(0.93) !important;
+            filter: brightness(0.92) !important;
+        }
+
+        /* Global Sleek Light Architectural Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 245, 249, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(2, 132, 199, 0.7);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #webgl-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Panel (Crisp White Frosted Glass) */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            box-shadow: var(--panel-shadow);
+            z-index: 10;
+            position: absolute;
+            color: var(--text-main);
+        }
+
+        /* Top Bar */
+        #top-bar {
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 44px;
+            padding: 0 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            white-space: nowrap;
+            z-index: 50;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            font-size: 18px;
+            color: var(--accent-cyan);
+        }
+
+        .brand-text h1 {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: #0f172a;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .top-center-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(241, 245, 249, 0.9);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-main);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .pill-dot {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .pill-label {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        #hud-date {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        #hud-progress {
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        #hud-phase {
+            color: var(--accent-blue);
+            font-weight: 600;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .top-right-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hud-btn {
+            background: rgba(241, 245, 249, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            color: #0f172a;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .hud-btn:hover {
+            background: rgba(2, 132, 199, 0.12);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .hud-btn.active {
+            background: rgba(2, 132, 199, 0.16);
+            border-color: var(--accent-cyan);
+            color: #0284c7;
+            box-shadow: 0 0 8px rgba(2, 132, 199, 0.25);
+        }
+
+        .hud-btn.audio-active {
+            background: rgba(5, 150, 105, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .blackout-btn {
+            background: rgba(220, 38, 38, 0.12);
+            border-color: rgba(220, 38, 38, 0.4);
+            color: #dc2626;
+        }
+
+        .blackout-btn:hover {
+            background: rgba(220, 38, 38, 0.25);
+            border-color: var(--accent-red);
+            color: #991b1b;
+        }
+
+        .select-dark {
+            background: rgba(241, 245, 249, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            color: #0f172a;
+            padding: 4px 7px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: var(--font-mono);
+            outline: none;
+        }
+
+        /* Blackout Drill Banner */
+        #blackout-banner {
+            display: none;
+            top: 72px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(239, 68, 68, 0.9);
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            z-index: 100;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Left Panel (Slide-over Drawer) */
+        #left-panel {
+            top: 60px;
+            left: 10px;
+            width: 290px;
+            max-height: calc(100vh - 130px);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+            z-index: 45;
+        }
+
+        #left-panel.panel-collapsed {
+            transform: translateX(calc(-100% - 24px));
+            opacity: 0;
+            pointer-events: none !important;
+        }
+
+        .panel-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+            padding-bottom: 6px;
+        }
+
+        .panel-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .drawer-close-btn {
+            background: rgba(241, 245, 249, 0.8);
+            border: 1px solid rgba(203, 213, 225, 0.8);
+            color: var(--text-muted);
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .drawer-close-btn:hover {
+            background: rgba(220, 38, 38, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            max-height: 220px;
+            padding-right: 4px;
+        }
+
+        .task-list::-webkit-scrollbar { width: 4px; }
+        .task-list::-webkit-scrollbar-thumb { background: rgba(203, 213, 225, 0.8); border-radius: 2px; }
+
+        .task-item {
+            background: rgba(241, 245, 249, 0.7);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 10px;
+        }
+
+        .task-item.critical {
+            border-left: 3px solid var(--accent-amber);
+            background: rgba(217, 119, 6, 0.08);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            margin-bottom: 2px;
+        }
+
+        .task-code { color: var(--accent-cyan); font-weight: 700; }
+        .task-wbs { color: var(--text-muted); }
+        .crit-badge {
+            margin-left: auto;
+            background: var(--accent-amber);
+            color: #ffffff;
+            font-size: 8px;
+            font-weight: 800;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .task-name { color: #0f172a; font-weight: 600; line-height: 1.25; }
+        .task-duration { color: var(--text-muted); font-size: 9px; margin-top: 2px; font-family: var(--font-mono); }
+        .task-item.empty { text-align: center; color: var(--text-muted); font-style: italic; padding: 10px; }
+
+        .milestone-matrix {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+
+        .mile-btn {
+            background: rgba(241, 245, 249, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            color: #0f172a;
+            padding: 5px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .mile-btn:hover {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+        }
+
+        /* Right Panel (Slide-over Drawer) */
+        #right-panel {
+            top: 60px;
+            right: 10px;
+            width: 280px;
+            max-height: calc(100vh - 130px);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+            z-index: 45;
+        }
+
+        #right-panel.panel-collapsed {
+            transform: translateX(calc(100% + 24px));
+            opacity: 0;
+            pointer-events: none !important;
+        }
+
+        @media (max-width: 950px) {
+            #hud-phase { max-width: 120px; }
+            .btn-txt { display: none; }
+            .hud-btn { padding: 5px 8px; }
+        }
+
+        @media (max-width: 760px) {
+            .top-center-pill { display: none; }
+            #left-panel, #right-panel {
+                width: calc(100vw - 20px);
+                max-width: 320px;
+            }
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metric-card {
+            background: rgba(241, 245, 249, 0.7);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .metric-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-mono); }
+        .metric-value { font-size: 14px; font-weight: 700; color: #0f172a; font-family: var(--font-mono); }
+        .metric-value.cyan { color: var(--accent-cyan); }
+        .metric-value.amber { color: var(--accent-amber); }
+        .metric-value.green { color: var(--accent-green); }
+
+        .cam-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .cam-btn {
+            background: rgba(241, 245, 249, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            color: #0f172a;
+            padding: 6px;
+            border-radius: 5px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .cam-btn:hover { background: var(--accent-cyan); border-color: var(--accent-cyan); color: #ffffff; }
+
+        .cinematic-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .toggle-group { display: flex; flex-direction: column; gap: 6px; }
+        .toggle-item { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #0f172a; }
+
+        .switch { position: relative; display: inline-block; width: 32px; height: 16px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-switch {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(203, 213, 225, 0.9); transition: .3s; border-radius: 16px;
+        }
+        .slider-switch:before {
+            position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider-switch { background-color: var(--accent-cyan); }
+        input:checked + .slider-switch:before { transform: translateX(16px); }
+
+        /* Real-Time Profiler HUD Widget */
+        .profiler-badge {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(241, 245, 249, 0.7);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+        .profiler-badge span strong { color: var(--accent-cyan); }
+            padding: 5px 8px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+        .profiler-badge span strong { color: var(--accent-cyan); }
+
+        /* FPV Reticle & Prompt */
+        #fpv-crosshair {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0, 229, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 50;
+        }
+        #fpv-crosshair::after {
+            content: "WASD Walk • ESC Exit";
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0,0,0,0.6);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        /* Collapsible Bottom Dock (Gantt & Task Schedule Table) */
+        #bottom-dock {
+            bottom: 76px;
+            left: 14px;
+            right: 14px;
+            height: 310px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(125%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            background: #ffffff;
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+
+        #bottom-dock.dock-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .dock-header-bar {
+            height: 38px;
+            min-height: 38px;
+            background: #f8fafc;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        .dock-tabs { display: flex; align-items: center; gap: 8px; }
+        .dock-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .dock-tab-btn:hover { color: #0f172a; }
+        .dock-tab-btn.active { color: var(--accent-cyan); border-bottom-color: var(--accent-cyan); }
+
+        .dock-actions { display: flex; align-items: center; gap: 10px; }
+        .dock-toggle-btn {
+            background: rgba(241, 245, 249, 0.9);
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+        }
+        .dock-toggle-btn:hover { color: #0f172a; border-color: var(--accent-cyan); }
+
+        .dock-body { flex: 1; overflow: hidden; position: relative; }
+        .dock-pane { width: 100%; height: 100%; overflow: auto; }
+
+        /* Gantt Chart Styling */
+        .gantt-time-header {
+            display: flex;
+            height: 26px;
+            background: #f1f5f9;
+            border-bottom: 1px solid rgba(203, 213, 225, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            margin-left: 260px;
+        }
+        .gantt-q-block {
+            flex: 1;
+            font-size: 9px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            border-right: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gantt-rows-wrapper { position: relative; display: flex; flex-direction: column; }
+        .gantt-playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #dc2626;
+            box-shadow: 0 0 6px rgba(220, 38, 38, 0.6);
+            z-index: 10;
+            pointer-events: none;
+            transition: left 0.1s linear;
+        }
+        .gantt-row { display: flex; height: 24px; border-bottom: 1px solid rgba(226, 232, 240, 0.7); cursor: pointer; transition: background 0.15s; }
+        .gantt-row:hover { background: rgba(2, 132, 199, 0.06); }
+        .gantt-row.critical-row { background: rgba(217, 119, 6, 0.04); }
+
+        .gantt-label {
+            width: 260px; min-width: 260px; display: flex; align-items: center; gap: 8px; padding: 0 8px;
+            background: #f8fafc; position: sticky; left: 0; z-index: 4;
+            border-right: 1px solid rgba(226, 232, 240, 0.9); font-size: 10px;
+        }
+        .gantt-code { color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 700; min-width: 48px; }
+        .gantt-name { color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+
+        .gantt-track { flex: 1; position: relative; background: rgba(248, 250, 252, 0.8); }
+        .gantt-bar { position: absolute; height: 12px; top: 6px; border-radius: 3px; opacity: 0.9; transition: transform 0.1s; }
+        .gantt-bar:hover { transform: scaleY(1.3); filter: brightness(1.1); z-index: 6; }
+        .gantt-bar.crit-bar { border: 1px solid var(--accent-amber); box-shadow: 0 0 4px rgba(217, 119, 6, 0.4); }
+        .gantt-diamond {
+            position: absolute; width: 10px; height: 10px; top: 7px; transform: rotate(45deg);
+            background: #ffffff; border: 2px solid var(--accent-cyan); box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+        }
+
+        /* Task Table Styling */
+        .table-filter-bar {
+            padding: 8px 12px; background: #f8fafc; border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .search-box {
+            display: flex; align-items: center; gap: 6px; background: #ffffff;
+            border: 1px solid rgba(203, 213, 225, 0.9); padding: 4px 8px; border-radius: 4px; width: 260px;
+        }
+        .search-box input { background: none; border: none; color: #0f172a; font-size: 11px; outline: none; width: 100%; }
+
+        .p6-table { width: 100%; border-collapse: collapse; font-size: 10px; text-align: left; }
+        .p6-table thead th {
+            position: sticky; top: 0; background: #f8fafc; padding: 6px 10px;
+            border-bottom: 1px solid rgba(203, 213, 225, 0.8); color: var(--text-muted); font-family: var(--font-mono); font-weight: 600;
+        }
+        .p6-table tbody tr { border-bottom: 1px solid rgba(226, 232, 240, 0.7); transition: background 0.15s; }
+        .p6-table tbody tr:hover { background: rgba(2, 132, 199, 0.05); }
+        .p6-table tbody tr.crit-row { background: rgba(217, 119, 6, 0.03); }
+        .p6-table tbody tr.selected { background: rgba(2, 132, 199, 0.1); }
+
+        .p6-table td { padding: 5px 10px; color: #0f172a; }
+        .cell-code { font-family: var(--font-mono); font-weight: 700; color: var(--accent-cyan); }
+        .cell-wbs { font-family: var(--font-mono); color: var(--text-muted); }
+        .cell-name { color: #0f172a; font-weight: 500; }
+        .cell-dur { font-family: var(--font-mono); }
+        .cell-date { font-family: var(--font-mono); color: var(--text-muted); }
+        .cell-float.crit-val { color: var(--accent-amber); font-weight: 700; font-family: var(--font-mono); }
+
+        .status-pill { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 8px; font-family: var(--font-mono); font-weight: 700; }
+        .status-completed { background: rgba(5, 150, 105, 0.12); color: var(--accent-green); border: 1px solid rgba(5, 150, 105, 0.3); }
+        .status-active { background: rgba(2, 132, 199, 0.12); color: var(--accent-cyan); border: 1px solid rgba(2, 132, 199, 0.3); }
+        .status-pending { background: rgba(241, 245, 249, 0.9); color: var(--text-muted); border: 1px solid rgba(203, 213, 225, 0.6); }
+
+        .tbl-jump-btn {
+            background: rgba(241, 245, 249, 0.85); border: 1px solid rgba(203, 213, 225, 0.85);
+            color: var(--accent-cyan); padding: 2px 6px; border-radius: 3px; font-size: 9px; cursor: pointer; font-family: var(--font-mono);
+        }
+        .tbl-jump-btn:hover { background: var(--accent-cyan); color: #ffffff; }
+
+        /* Bottom Scrubber Bar (Floating Sleek Light Capsule) */
+        #bottom-bar {
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 860px;
+            height: 52px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-radius: 30px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--panel-shadow);
+            z-index: 120;
+            pointer-events: auto !important;
+            color: var(--text-main);
+        }
+        .play-btn {
+            background: var(--accent-cyan); color: #ffffff; border: none; padding: 8px 16px;
+            border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+            pointer-events: auto !important;
+            transition: transform 0.1s, filter 0.15s;
+        }
+        .play-btn:active { transform: scale(0.95); }
+        .hud-btn { pointer-events: auto !important; cursor: pointer; }
+        .drawer-close-btn { pointer-events: auto !important; cursor: pointer; }
+        .cam-btn, .mile-btn { pointer-events: auto !important; cursor: pointer; }
+        .dock-tab-btn, .dock-toggle-btn { pointer-events: auto !important; cursor: pointer; }
+        .play-btn:hover { filter: brightness(1.1); }
+        .speed-box { display: flex; align-items: center; gap: 6px; font-size: 10px; font-family: var(--font-mono); color: var(--text-main); }
+
+        .timeline-slider-container { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .timeline-slider {
+            width: 100%; height: 6px; -webkit-appearance: none; background: rgba(203, 213, 225, 0.85); border-radius: 3px; outline: none; cursor: pointer;
+        }
+        .timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-cyan); cursor: pointer;
+            box-shadow: 0 0 6px rgba(2, 132, 199, 0.4); transition: transform 0.1s;
+        }
+        .timeline-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    </style>
+</head>
+<body>
+
+    <!-- WebGL Three.js Canvas Container -->
+    <div id="webgl-container"></div>
+
+    <!-- FPV Reticle & Prompt -->
+    <div id="fpv-crosshair"></div>
+
+    <!-- Blackout Simulation Alert Banner -->
+    <div id="blackout-banner" class="glass-panel">
+        <i class="fas fa-exclamation-triangle"></i> Grid Blackout Initiated &bull; Simulating ATS Failover to 16 Gensets...
+    </div>
+
+    <!-- Top Navigation HUD (Single-line 44px) -->
+    <div id="top-bar" class="glass-panel">
+        <div class="brand-container">
+            <i class="fas fa-server brand-icon"></i>
+            <div class="brand-text">
+                <h1>DC36-T3 Hyperscale 36MW</h1>
+            </div>
+        </div>
+
+        <div class="top-center-pill">
+            <span id="hud-date">2027-01-04</span>
+            <span class="pill-dot">•</span>
+            <span class="pill-label">EV</span> <span id="hud-progress">0.0%</span>
+            <span class="pill-dot">•</span>
+            <span id="hud-phase">Phase 1: Site Clearing</span>
+            <!-- Hidden DOM elements to maintain zero-null compatibility with existing app.js timers -->
+            <span id="hud-days" style="display:none;">Day 0 of 1001</span>
+            <div class="progress-bar-fill" id="hud-progress-bar" style="display:none;"></div>
+        </div>
+
+        <div class="top-right-controls">
+            <!-- Campus Reality vs 4D Construction Mode Toggle -->
+            <button class="hud-btn active" id="btn-mode-toggle" title="Toggle Operational Campus Reality vs 4D Construction Evolution">
+                <i class="fas fa-city" id="icon-mode-toggle"></i> <span class="btn-txt" id="txt-mode-toggle">Reality</span>
+            </button>
+
+            <!-- Lighting Selector -->
+            <select id="lighting-select" class="select-dark" title="Lighting Environment">
+                <option value="day">☀️ Day</option>
+                <option value="dusk">🌅 Dusk</option>
+                <option value="night">🌙 Night</option>
+            </select>
+
+            <!-- Audio Synthesizer Toggle -->
+            <button class="hud-btn" id="btn-audio" title="Audio Soundscapes">
+                <i class="fas fa-volume-mute"></i> <span class="btn-txt">Sound</span>
+            </button>
+
+            <!-- Blackout Simulation Drill Button -->
+            <button class="hud-btn blackout-btn" id="btn-blackout" title="Trigger Grid Loss & ATS Failover Test">
+                <i class="fas fa-bolt"></i> <span class="btn-txt">Blackout</span>
+            </button>
+
+            <!-- HUD Panels Toggles -->
+            <button class="hud-btn" id="btn-top-tasks" title="Toggle Live Activities Drawer">
+                <i class="fas fa-tasks"></i> <span class="btn-txt">Tasks</span>
+            </button>
+            <button class="hud-btn" id="btn-top-telemetry" title="Toggle Engineering Telemetry Drawer">
+                <i class="fas fa-chart-pie"></i> <span class="btn-txt">Telemetry</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Left Panel: Live P6 Activities (Slide-Over Drawer) -->
+    <div id="left-panel" class="glass-panel panel-collapsed">
+        <div class="panel-header-bar">
+            <div class="panel-title">
+                <i class="fas fa-tasks"></i> Live Activities
+            </div>
+            <button class="drawer-close-btn" id="btn-close-left" onclick="window.toggleLeftPanel && window.toggleLeftPanel(event)" title="Close Tasks Drawer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="task-list" id="active-tasks-list">
+            <!-- Dynamically populated -->
+        </div>
+
+        <div class="panel-title" style="border-top: 1px solid var(--panel-border); padding-top: 8px;">
+            <i class="fas fa-flag-checkered"></i> Milestone Jumps
+        </div>
+        <div class="milestone-matrix">
+            <button class="mile-btn" data-code="M1000">Kickoff</button>
+            <button class="mile-btn" data-code="A4120">Piling 600</button>
+            <button class="mile-btn" data-code="A4140">Raft Slab</button>
+            <button class="mile-btn" data-code="M4350">Weather-Tight</button>
+            <button class="mile-btn" data-code="A5110">Substation</button>
+            <button class="mile-btn" data-code="A5470">Racks & HAC</button>
+            <button class="mile-btn" data-code="A6420">36MW Heat Soak</button>
+            <button class="mile-btn" data-code="M7060">COD Live</button>
+        </div>
+    </div>
+
+    <!-- Right Panel: Telemetry & Controls (Slide-Over Drawer) -->
+    <div id="right-panel" class="glass-panel panel-collapsed">
+        <div class="panel-header-bar">
+            <div class="panel-title">
+                <i class="fas fa-tachometer-alt"></i> Engineering Telemetry
+            </div>
+            <button class="drawer-close-btn" id="btn-close-right" onclick="window.toggleRightPanel && window.toggleRightPanel(event)" title="Close Telemetry Drawer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-label">IT Capacity</span>
+                <span class="metric-value cyan" id="metric-mw">0.0 MW</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Concrete Cast</span>
+                <span class="metric-value" id="metric-concrete">0 m³</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Server Racks</span>
+                <span class="metric-value amber" id="metric-racks">0 / 1,200</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Target PUE</span>
+                <span class="metric-value green" id="metric-pue">--</span>
+            </div>
+        </div>
+
+        <div class="panel-title" style="border-top: 1px solid var(--panel-border); padding-top: 8px;">
+            <i class="fas fa-video"></i> Camera Viewpoints
+        </div>
+        <div class="cam-controls">
+            <button class="cam-btn" data-cam="campus"><i class="fas fa-globe"></i> Campus</button>
+            <button class="cam-btn" data-cam="substation"><i class="fas fa-bolt"></i> Substation</button>
+            <button class="cam-btn" data-cam="generators"><i class="fas fa-cogs"></i> Gensets</button>
+            <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
+            <button class="cam-btn" data-cam="whitespace" style="grid-column: span 2;"><i class="fas fa-server"></i> Data Hall 1</button>
+        </div>
+
+        <!-- Cinematic Drone Tour & FPV Row -->
+        <div class="cinematic-row">
+            <button class="hud-btn" id="btn-drone-tour" style="justify-content: center;">
+                <i class="fas fa-video"></i> Drone Tour
+            </button>
+            <button class="hud-btn" id="btn-fpv" style="justify-content: center;">
+                <i class="fas fa-walking"></i> Data Hall FPV
+            </button>
+        </div>
+
+        <div class="panel-title" style="border-top: 1px solid var(--panel-border); padding-top: 8px;">
+            <i class="fas fa-layer-group"></i> Visual Layers
+        </div>
+        <div class="toggle-group">
+            <div class="toggle-item">
+                <span>X-Ray / Cutaway Facade</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-cutaway">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+            <div class="toggle-item">
+                <span>CFD Airflow (Blue/Red)</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggle-cfd">
+                    <span class="slider-switch"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Real-Time Render Diagnostics Profiler -->
+        <div class="profiler-badge">
+            <span>FPS: <strong id="prof-fps">60 FPS</strong></span>
+            <span>Draws: <strong id="prof-calls">--</strong></span>
+            <span>Geometry: <strong id="prof-tris">--</strong></span>
+        </div>
+    </div>
+
+    <!-- Collapsible Bottom Dock (Gantt & Task Schedule Table) -->
+    <div id="bottom-dock" class="glass-panel">
+        <div class="dock-header-bar">
+            <div class="dock-tabs">
+                <button class="dock-tab-btn active" id="tab-btn-gantt">
+                    <i class="fas fa-stream"></i> Chronological Gantt Timeline
+                </button>
+                <button class="dock-tab-btn" id="tab-btn-table">
+                    <i class="fas fa-table"></i> Primavera P6 Task Schedule (105 Activities)
+                </button>
+            </div>
+            <div class="dock-actions">
+                <button class="dock-toggle-btn" id="dock-close-btn" style="color: var(--accent-red); border-color: rgba(239, 68, 68, 0.4);">
+                    <i class="fas fa-times"></i> Close Drawer
+                </button>
+            </div>
+        </div>
+
+        <div class="dock-body">
+            <!-- Pane 1: Gantt Timeline -->
+            <div class="dock-pane" id="dock-pane-gantt">
+                <div id="gantt-chart-container">
+                    <!-- Rendered by gantt_table.js -->
+                </div>
+            </div>
+
+            <!-- Pane 2: P6 Task Table -->
+            <div class="dock-pane" id="dock-pane-table" style="display: none;">
+                <div class="table-filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search" style="color: var(--text-muted); font-size: 10px;"></i>
+                        <input type="text" id="table-search-input" placeholder="Search Activity ID, Name, or WBS...">
+                    </div>
+                    <select id="table-wbs-filter" class="select-dark">
+                        <option value="all">All WBS Packages</option>
+                        <option value="1.0-PM">1.0 Project Management</option>
+                        <option value="2.0-ENG">2.0 Detailed Engineering</option>
+                        <option value="3.0-PROC">3.0 Procurement & FAT</option>
+                        <option value="4.1-SUB">4.1 Substructure & Piles</option>
+                        <option value="4.2-SUPER">4.2 Superstructure</option>
+                        <option value="4.3-ENVEL">4.3 Building Envelope</option>
+                        <option value="5.1-ELEC">5.1 Substation & HV</option>
+                        <option value="5.2-GEN">5.2 Generator Farm</option>
+                        <option value="5.3-MECH">5.3 Chilled Water Plant</option>
+                        <option value="5.4-WS">5.4 White Space</option>
+                        <option value="5.5-ICT">5.5 BMS & Fire</option>
+                        <option value="6.0-CX">6.0 Commissioning</option>
+                        <option value="7.0-COD">7.0 COD & Handover</option>
+                    </select>
+                    <button class="hud-btn" id="filter-crit-btn">
+                        <i class="fas fa-exclamation-circle"></i> Critical Path Only
+                    </button>
+                </div>
+                <table class="p6-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">Activity ID</th>
+                            <th style="width: 90px;">WBS Code</th>
+                            <th>Activity Name</th>
+                            <th style="width: 55px;">Duration</th>
+                            <th style="width: 85px;">Early Start</th>
+                            <th style="width: 85px;">Early Finish</th>
+                            <th style="width: 65px;">Total Float</th>
+                            <th style="width: 100px;">Status</th>
+                            <th style="width: 75px;">3D Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-table-body">
+                        <!-- Rendered by gantt_table.js -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Master Scrubber Bar -->
+    <div id="bottom-bar" class="glass-panel">
+        <button class="play-btn" id="btn-play">
+            <i class="fas fa-play"></i> Play
+        </button>
+
+        <div class="speed-box">
+            <span>Speed:</span>
+            <select id="speed-select" class="select-dark" style="padding: 3px 6px;">
+                <option value="0.5">0.5x</option>
+                <option value="1.0">1.0x</option>
+                <option value="2.0" selected>2.0x</option>
+                <option value="5.0">5.0x</option>
+                <option value="10.0">10.0x</option>
+            </select>
+        </div>
+
+        <div class="timeline-slider-container">
+            <input type="range" min="0" max="1000" value="0" class="timeline-slider" id="timeline-slider">
+        </div>
+
+        <button class="hud-btn" id="btn-toggle-schedule" style="white-space: nowrap; font-size: 11px; padding: 6px 12px; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35);">
+            <i class="fas fa-calendar-alt"></i> P6 Schedule
+        </button>
+    </div>
+
+    <!-- Three.js Core Library & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- Three.js Post-Processing Pipeline (Bloom + FXAA) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <!-- Application Modules (Cache-Busted with Version Tag) -->
+    <script src="js/datacenter_schedule.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/procedural_textures.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/datacenter_models.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/particles_fx.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/timeline_engine.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/audio_engine.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/gantt_table.js?v=20261110_kinematics_rev011"></script>
+    <script src="js/app.js?v=20261110_kinematics_rev011"></script>
+</body>
+</html>

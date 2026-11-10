@@ -79,6 +79,18 @@
         }
     }
 
+    // Helper: Compute fractional progress [0.0, 1.0] for any target P6 activity
+    function getTaskFrac(code, curTime) {
+        if (!schedule || !schedule.activities) return 0;
+        const act = schedule.activities.find(a => a.code === code);
+        if (!act) return 0;
+        if (curTime < act.startTimestamp) return 0;
+        if (curTime >= act.finishTimestamp) return 1;
+        const span = act.finishTimestamp - act.startTimestamp;
+        if (span <= 0) return 1;
+        return Math.max(0, Math.min(1, (curTime - act.startTimestamp) / span));
+    }
+
     function updateState(timestamp) {
         currentTimestamp = Math.max(schedule.min_timestamp, Math.min(schedule.max_timestamp, timestamp));
         const totalSpan = schedule.max_timestamp - schedule.min_timestamp;
@@ -101,7 +113,6 @@
         for (let i = 0; i < schedule.phases.length; i++) {
             const p = schedule.phases[i];
             const pStart = new Date(p.start_date).getTime();
-            const pFinish = new Date(p.finish_date).getTime();
             if (currentTimestamp >= pStart) {
                 activePhase = p.id;
             }
@@ -145,37 +156,419 @@
         if (activePhase === 7) currentPUE = "1.32";
         else if (activePhase >= 8) currentPUE = "1.22";
 
-        // Update 3D Geometry Visibilities & Transforms
+        // =========================================================================
+        // HIGH-PRECISION 4D CONSTRUCTION SEQUENCE KINEMATICS (PRIMAVERA P6 DCMA-14)
+        // =========================================================================
         if (models) {
-            // Phase 1: Groundwork & Piles
-            models.p1_piling.visible = (activePhase >= 1);
-            if (activePhase >= 4) {
-                // Dim down piling rigs once superstructure is in place
-                const rig = models.p1_piling.children[2];
-                if (rig) rig.visible = false;
-            } else {
-                const rig = models.p1_piling.children[2];
-                if (rig) rig.visible = true;
+            const tau_piling = getTaskFrac('A4120', currentTimestamp);
+            const tau_raft   = getTaskFrac('A4140', currentTimestamp);
+            const tau_cols   = getTaskFrac('A4210', currentTimestamp);
+            const tau_slab1  = getTaskFrac('A4220', currentTimestamp);
+            const tau_slab2  = getTaskFrac('A4230', currentTimestamp);
+            const tau_truss  = getTaskFrac('A4240', currentTimestamp);
+            const tau_facade = getTaskFrac('A4310', currentTimestamp);
+            const tau_roof   = getTaskFrac('A4320', currentTimestamp);
+            const tau_sub    = getTaskFrac('A5110', currentTimestamp);
+            const tau_chw    = getTaskFrac('A5310', currentTimestamp);
+            const tau_gens   = getTaskFrac('A5220', currentTimestamp);
+            const tau_racks  = getTaskFrac('A5470', currentTimestamp);
+            const tau_heat   = getTaskFrac('A6420', currentTimestamp);
+
+            // ---------------------------------------------------------------------
+            // 1. Phase 1: Sequential Bored Piling & Rig Kinematics (A4120)
+            // ---------------------------------------------------------------------
+            const p1 = models.p1_piling;
+            if (p1 && p1.userData) {
+                p1.visible = (activePhase >= 1);
+                const piles = p1.userData.piles || [];
+                const totalPiles = piles.length; // 160 clusters
+                const rig = p1.userData.rig;
+
+                if (tau_piling <= 0) {
+                    piles.forEach(p => { if (p.group) p.group.visible = false; });
+                    if (rig) rig.visible = false;
+                } else if (tau_piling >= 1.0) {
+                    piles.forEach(p => {
+                        if (p.group) {
+                            p.group.visible = true;
+                            p.group.position.y = 0;
+                        }
+                    });
+                    if (rig) {
+                        rig.visible = (activePhase < 4);
+                        rig.position.set(-36, 0, 20);
+                    }
+                } else {
+                    const activeIdx = Math.floor(tau_piling * totalPiles);
+                    const subFrac = (tau_piling * totalPiles) - activeIdx;
+
+                    for (let i = 0; i < totalPiles; i++) {
+                        const p = piles[i];
+                        if (!p || !p.group) continue;
+                        if (i < activeIdx) {
+                            p.group.visible = true;
+                            p.group.position.y = 0;
+                        } else if (i === activeIdx) {
+                            p.group.visible = true;
+                            // Active pile driving downwards into the earth
+                            p.group.position.y = (1.0 - subFrac) * 5.0;
+                        } else {
+                            p.group.visible = false;
+                        }
+                    }
+
+                    if (rig && activeIdx < totalPiles) {
+                        rig.visible = true;
+                        const curP = piles[activeIdx];
+                        rig.position.set(curP.x, 0, curP.z + 3.2);
+                        if (rig.userData && rig.userData.auger) {
+                            rig.userData.auger.rotation.y = (Date.now() * 0.02) % (Math.PI * 2);
+                        }
+                    }
+                }
             }
 
-            // Phase 2: Raft Slab
-            models.p2_foundation.visible = (activePhase >= 2);
+            // ---------------------------------------------------------------------
+            // 2. Phase 2: Directional Raft Slab Pour & Plinths Casting (A4140)
+            // ---------------------------------------------------------------------
+            const p2 = models.p2_foundation;
+            if (p2 && p2.userData) {
+                if (tau_raft <= 0 && activePhase < 2) {
+                    p2.visible = false;
+                } else if (tau_raft >= 1.0 || activePhase > 2) {
+                    p2.visible = true;
+                    if (p2.userData.raft) {
+                        p2.userData.raft.scale.set(1, 1, 1);
+                        p2.userData.raft.position.set(5, 0.9, 0);
+                    }
+                    if (p2.userData.genPlinths) p2.userData.genPlinths.visible = true;
+                    if (p2.userData.subPlinths) p2.userData.subPlinths.forEach(sp => sp.visible = true);
+                } else {
+                    p2.visible = true;
+                    // Directional West-to-East progressive concrete casting
+                    const growthX = Math.max(0.005, tau_raft);
+                    if (p2.userData.raft) {
+                        p2.userData.raft.scale.set(growthX, 1, 1);
+                        p2.userData.raft.position.x = 5 - (90 * (1.0 - growthX)) / 2;
+                    }
+                    if (p2.userData.genPlinths) p2.userData.genPlinths.visible = (tau_raft > 0.35);
+                    if (p2.userData.subPlinths) {
+                        p2.userData.subPlinths.forEach((sp, idx) => {
+                            sp.visible = (tau_raft > 0.55 + idx * 0.2);
+                        });
+                    }
+                }
+            }
 
-            // Phase 3: Superstructure
-            models.p3_superstructure.visible = (activePhase >= 3);
+            // ---------------------------------------------------------------------
+            // 3. Phase 3: Vertical Column Extrusion & Slabs Casting (A4210, A4220, A4230)
+            // ---------------------------------------------------------------------
+            const p3 = models.p3_superstructure;
+            if (p3 && p3.userData) {
+                if (tau_cols <= 0 && activePhase < 3) {
+                    p3.visible = false;
+                } else {
+                    p3.visible = true;
+                    const cols = p3.userData.columns || [];
 
-            // Phase 4: Roof & Envelope
-            models.p4_envelope.visible = (activePhase >= 4);
-            applyCutawayState();
+                    // Columns Vertical Extrusion (A4210)
+                    if (tau_cols >= 1.0 || activePhase > 3) {
+                        cols.forEach(c => {
+                            if (c.mesh) {
+                                c.mesh.visible = true;
+                                c.mesh.scale.set(1, 1, 1);
+                                c.mesh.position.y = c.baseY;
+                            }
+                        });
+                        if (p3.userData.walls) {
+                            p3.userData.walls.forEach(w => {
+                                w.visible = true;
+                                w.scale.set(1, 1, 1);
+                                w.position.y = 7.3;
+                            });
+                        }
+                    } else if (tau_cols > 0) {
+                        const colScaleY = Math.max(0.005, tau_cols);
+                        cols.forEach(c => {
+                            if (c.mesh) {
+                                c.mesh.visible = true;
+                                c.mesh.scale.set(1, colScaleY, 1);
+                                c.mesh.position.y = 1.8 + (10.5 * colScaleY) / 2;
+                            }
+                        });
+                        if (p3.userData.walls) {
+                            p3.userData.walls.forEach(w => {
+                                w.visible = true;
+                                w.scale.set(1, colScaleY, 1);
+                                w.position.y = 1.8 + (11 * colScaleY) / 2;
+                            });
+                        }
+                    }
 
-            // Phase 5: Heavy MEP
-            models.p5_mep.visible = (activePhase >= 5);
+                    // Level 1 Slab Directional Pour (A4220)
+                    if (p3.userData.slabL1) {
+                        if (tau_slab1 <= 0 && activePhase < 3) {
+                            p3.userData.slabL1.visible = false;
+                        } else if (tau_slab1 >= 1.0 || activePhase > 3) {
+                            p3.userData.slabL1.visible = true;
+                            p3.userData.slabL1.scale.set(1, 1, 1);
+                            p3.userData.slabL1.position.x = 5;
+                        } else if (tau_slab1 > 0) {
+                            p3.userData.slabL1.visible = true;
+                            const s1 = Math.max(0.005, tau_slab1);
+                            p3.userData.slabL1.scale.set(s1, 1, 1);
+                            p3.userData.slabL1.position.x = 5 - (89 * (1.0 - s1)) / 2;
+                        }
+                    }
 
-            // Phase 6: White Space Fit-Out
-            models.p6_whitespace.visible = (activePhase >= 6);
+                    // Level 2 Slab Directional Pour (A4230)
+                    if (p3.userData.slabL2) {
+                        if (tau_slab2 <= 0 && activePhase < 3) {
+                            p3.userData.slabL2.visible = false;
+                        } else if (tau_slab2 >= 1.0 || activePhase > 3) {
+                            p3.userData.slabL2.visible = true;
+                            p3.userData.slabL2.scale.set(1, 1, 1);
+                            p3.userData.slabL2.position.x = 5;
+                        } else if (tau_slab2 > 0) {
+                            p3.userData.slabL2.visible = true;
+                            const s2 = Math.max(0.005, tau_slab2);
+                            p3.userData.slabL2.scale.set(s2, 1, 1);
+                            p3.userData.slabL2.position.x = 5 - (89 * (1.0 - s2)) / 2;
+                        }
+                    }
+                }
+            }
 
-            // Phase 7: Load Banks (visible only during testing Phase 7)
-            models.p7_loadbanks.visible = (activePhase === 7);
+            // ---------------------------------------------------------------------
+            // 4. Phase 4: Roof Steel Trusses & Perimeter Envelope (A4240, A4310, A4320)
+            // ---------------------------------------------------------------------
+            const p4 = models.p4_envelope;
+            if (p4 && p4.userData) {
+                if (tau_truss <= 0 && tau_facade <= 0 && tau_roof <= 0 && activePhase < 4) {
+                    p4.visible = false;
+                } else {
+                    p4.visible = true;
+
+                    // Roof Trusses Lowering from Rigging Cable (A4240)
+                    const trusses = p4.userData.trusses || [];
+                    if (p4.userData.roofSteel) {
+                        if (tau_truss <= 0 && activePhase < 4) {
+                            p4.userData.roofSteel.visible = false;
+                            if (p4.userData.gantry) p4.userData.gantry.visible = false;
+                        } else if (tau_truss >= 1.0 || activePhase > 4) {
+                            p4.userData.roofSteel.visible = true;
+                            trusses.forEach(t => {
+                                if (t.mesh) {
+                                    t.mesh.visible = true;
+                                    t.mesh.position.y = t.targetY;
+                                }
+                            });
+                            if (p4.userData.gantry) p4.userData.gantry.visible = true;
+                        } else {
+                            p4.userData.roofSteel.visible = true;
+                            const trussCount = trusses.length; // 9
+                            for (let i = 0; i < trussCount; i++) {
+                                const t = trusses[i];
+                                if (!t || !t.mesh) continue;
+                                const slot = i / trussCount;
+                                const nextSlot = (i + 1) / trussCount;
+                                if (tau_truss >= nextSlot) {
+                                    t.mesh.visible = true;
+                                    t.mesh.position.y = t.targetY;
+                                } else if (tau_truss >= slot) {
+                                    const tFrac = (tau_truss - slot) / (nextSlot - slot);
+                                    t.mesh.visible = true;
+                                    // Smooth descent from sky rigging height
+                                    t.mesh.position.y = t.targetY + (1.0 - tFrac) * 25.0;
+                                } else {
+                                    t.mesh.visible = false;
+                                }
+                            }
+                            if (p4.userData.gantry) p4.userData.gantry.visible = (tau_truss > 0.85);
+                        }
+                    }
+
+                    // Precast Architectural Facade Enclosure (A4310)
+                    if (p4.userData.facadeGroup && p4.userData.facade) {
+                        const f = p4.userData.facade;
+                        if (tau_facade <= 0 && activePhase < 4) {
+                            p4.userData.facadeGroup.visible = false;
+                        } else if (tau_facade >= 1.0 || activePhase > 4) {
+                            p4.userData.facadeGroup.visible = true;
+                            if (f.south) { f.south.visible = true; f.south.position.y = 10.3; }
+                            if (f.west)  { f.west.visible = true; f.west.position.y = 10.3; }
+                            if (f.north) { f.north.visible = true; f.north.position.y = 10.3; }
+                            if (f.east)  { f.east.visible = true; f.east.position.y = 10.3; }
+                            if (f.lobby) f.lobby.visible = true;
+                            if (f.dock)  f.dock.visible = true;
+                            if (f.accent) f.accent.visible = true;
+                        } else {
+                            p4.userData.facadeGroup.visible = true;
+                            // South Wall (0.00 - 0.25)
+                            if (f.south) {
+                                f.south.visible = (tau_facade > 0);
+                                const sFrac = Math.min(1.0, tau_facade / 0.25);
+                                f.south.position.y = 10.3 + (1.0 - sFrac) * 18.0;
+                            }
+                            // West Wall (0.25 - 0.50)
+                            if (f.west) {
+                                f.west.visible = (tau_facade > 0.25);
+                                const wFrac = Math.max(0, Math.min(1.0, (tau_facade - 0.25) / 0.25));
+                                f.west.position.y = 10.3 + (1.0 - wFrac) * 18.0;
+                            }
+                            // North Wall (0.50 - 0.75)
+                            if (f.north) {
+                                f.north.visible = (tau_facade > 0.50);
+                                const nFrac = Math.max(0, Math.min(1.0, (tau_facade - 0.50) / 0.25));
+                                f.north.position.y = 10.3 + (1.0 - nFrac) * 18.0;
+                            }
+                            // East Wall, Corporate Lobby & Loading Dock (0.75 - 1.00)
+                            if (f.east) {
+                                f.east.visible = (tau_facade > 0.75);
+                                const eFrac = Math.max(0, Math.min(1.0, (tau_facade - 0.75) / 0.25));
+                                f.east.position.y = 10.3 + (1.0 - eFrac) * 18.0;
+                            }
+                            if (f.lobby) f.lobby.visible = (tau_facade > 0.85);
+                            if (f.dock)  f.dock.visible = (tau_facade > 0.85);
+                            if (f.accent) f.accent.visible = (tau_facade > 0.92);
+                        }
+                    }
+
+                    // TPO Roof Waterproof Membrane Roll-Out (A4320)
+                    if (p4.userData.roof) {
+                        if (tau_roof <= 0 && activePhase < 4) {
+                            p4.userData.roof.visible = false;
+                        } else if (tau_roof >= 1.0 || activePhase > 4) {
+                            p4.userData.roof.visible = true;
+                            p4.userData.roof.scale.set(1, 1, 1);
+                            p4.userData.roof.position.z = 0;
+                        } else {
+                            p4.userData.roof.visible = true;
+                            const rz = Math.max(0.005, tau_roof);
+                            p4.userData.roof.scale.set(1, 1, rz);
+                            p4.userData.roof.position.z = 0 - (60.5 * (1.0 - rz)) / 2;
+                        }
+                    }
+
+                    applyCutawayState();
+                }
+            }
+
+            // ---------------------------------------------------------------------
+            // 5. Phase 5: Heavy MEP Rigging & Equipment Placement (A5110, A5220, A5310)
+            // ---------------------------------------------------------------------
+            const p5 = models.p5_mep;
+            if (p5 && p5.userData) {
+                if (tau_sub <= 0 && tau_chw <= 0 && tau_gens <= 0 && activePhase < 5) {
+                    p5.visible = false;
+                } else {
+                    p5.visible = true;
+
+                    // 110kV Transformers Placement (A5110)
+                    if (p5.userData.substation) {
+                        p5.userData.substation.visible = (tau_sub > 0 || activePhase >= 5);
+                        const trans = p5.userData.transformers || [];
+                        trans.forEach(tr => {
+                            if (!tr.group) return;
+                            if (tau_sub <= 0 && activePhase < 5) {
+                                tr.group.visible = false;
+                            } else if (tau_sub >= 1.0 || activePhase > 5) {
+                                tr.group.visible = true;
+                                tr.group.position.y = tr.targetY;
+                            } else {
+                                tr.group.visible = true;
+                                tr.group.position.y = tr.targetY + (1.0 - tau_sub) * 16.0;
+                            }
+                        });
+                    }
+
+                    // Standby Generator Farm Sequential Rigging (A5220)
+                    const gensets = p5.userData.gensets || [];
+                    const genCount = gensets.length; // 16
+                    if (tau_gens <= 0 && activePhase < 5) {
+                        gensets.forEach(g => { if (g.group) g.group.visible = false; });
+                    } else if (tau_gens >= 1.0 || activePhase > 5) {
+                        gensets.forEach(g => {
+                            if (g.group) {
+                                g.group.visible = true;
+                                g.group.position.y = g.targetY;
+                            }
+                        });
+                    } else {
+                        for (let i = 0; i < genCount; i++) {
+                            const g = gensets[i];
+                            if (!g || !g.group) continue;
+                            const slot = i / genCount;
+                            const nextSlot = (i + 1) / genCount;
+                            if (tau_gens >= nextSlot) {
+                                g.group.visible = true;
+                                g.group.position.y = g.targetY;
+                            } else if (tau_gens >= slot) {
+                                const gFrac = (tau_gens - slot) / (nextSlot - slot);
+                                g.group.visible = true;
+                                g.group.position.y = g.targetY + (1.0 - gFrac) * 12.0;
+                            } else {
+                                g.group.visible = false;
+                            }
+                        }
+                    }
+
+                    // Centrifugal Chillers & Cooling Towers (A5310, A5330)
+                    const chillers = p5.userData.chillers || [];
+                    chillers.forEach(ch => {
+                        if (!ch.group) return;
+                        if (tau_chw <= 0 && activePhase < 5) {
+                            ch.group.visible = false;
+                        } else if (tau_chw >= 1.0 || activePhase > 5) {
+                            ch.group.visible = true;
+                            ch.group.position.y = ch.targetY;
+                        } else {
+                            ch.group.visible = true;
+                            ch.group.position.y = ch.targetY + (1.0 - tau_chw) * 12.0;
+                        }
+                    });
+                    if (p5.userData.coolingTowers) {
+                        p5.userData.coolingTowers.visible = (tau_chw > 0.4 || activePhase >= 5);
+                    }
+                }
+            }
+
+            // ---------------------------------------------------------------------
+            // 6. Phase 6: White Space Fit-Out & Pod Deployment (A5470)
+            // ---------------------------------------------------------------------
+            const p6 = models.p6_whitespace;
+            if (p6 && p6.userData) {
+                if (activePhase < 6) {
+                    p6.visible = false;
+                } else {
+                    p6.visible = true;
+                    if (p6.userData.raisedFloor) p6.userData.raisedFloor.visible = true;
+                    if (p6.userData.upsRoom) p6.userData.upsRoom.visible = true;
+
+                    // 1,200 High-Density Server Racks Population (336 in model)
+                    const racks = p6.userData.racks || [];
+                    const rackTotal = racks.length;
+                    if (activePhase > 6) {
+                        racks.forEach(r => r.visible = true);
+                    } else {
+                        const activeCount = Math.floor(tau_racks * rackTotal);
+                        for (let i = 0; i < rackTotal; i++) {
+                            racks[i].visible = (i < activeCount);
+                        }
+                    }
+                }
+            }
+
+            // ---------------------------------------------------------------------
+            // 7. Phase 7: Testing & Commissioning Load Banks (A6420)
+            // ---------------------------------------------------------------------
+            const p7 = models.p7_loadbanks;
+            if (p7 && p7.userData) {
+                p7.visible = (activePhase === 7);
+                if (activePhase === 7 && p7.userData.pulseRing) {
+                    p7.userData.pulseRing.rotation.z += 0.015;
+                }
+            }
         }
 
         // Update Particle Systems & VFX

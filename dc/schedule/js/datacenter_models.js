@@ -575,20 +575,25 @@
         const cols = 16, rows = 10;
         const startX = -36 + 5, startZ = -24;
         const spacingX = 72 / (cols - 1), spacingZ = 48 / (rows - 1);
+        const pilesArray = [];
 
         for (let c = 0; c < cols; c++) {
             for (let r = 0; r < rows; r++) {
                 const px = startX + c * spacingX;
                 const pz = startZ + r * spacingZ;
 
-                const pile = new THREE.Mesh(pileGeo, M.concretePiles);
-                pile.position.set(px, 1.2, pz);
-                pile.castShadow = true;
-                pilesGroup.add(pile);
+                const pileCluster = new THREE.Group();
+                pileCluster.position.set(px, 0, pz);
 
+                const pile = new THREE.Mesh(pileGeo, M.concretePiles);
+                pile.position.y = 1.2;
+                pile.castShadow = true;
                 const cage = new THREE.Mesh(rebarGeo, M.rebar);
-                cage.position.set(px, 3.2, pz);
-                pilesGroup.add(cage);
+                cage.position.y = 3.2;
+                pileCluster.add(pile, cage);
+                pilesGroup.add(pileCluster);
+
+                pilesArray.push({ group: pileCluster, x: px, z: pz, targetY: 0 });
             }
         }
         group.add(pilesGroup);
@@ -616,6 +621,11 @@
         rigGroup.add(auger);
 
         group.add(rigGroup);
+
+        group.userData.piles = pilesArray;
+        group.userData.pilesGroup = pilesGroup;
+        group.userData.rig = rigGroup;
+        rigGroup.userData.auger = auger;
         return group;
     }
 
@@ -659,6 +669,11 @@
         subPlinthB.castShadow = true;
 
         group.add(subPlinthA, subPlinthB);
+
+        group.userData.raft = raft;
+        group.userData.earthGrid = earthGrid;
+        group.userData.genPlinths = genPlinthGroup;
+        group.userData.subPlinths = [subPlinthA, subPlinthB];
         return group;
     }
 
@@ -673,14 +688,18 @@
         const cols = 9, rows = 7;
         const startX = -38 + 5, startZ = -26;
         const stepX = 76 / (cols - 1), stepZ = 52 / (rows - 1);
+        const colArray = [];
 
         for (let c = 0; c < cols; c++) {
             for (let r = 0; r < rows; r++) {
                 const col = new THREE.Mesh(colGeo, M.columns);
-                col.position.set(startX + c * stepX, 1.8 + 10.5 / 2, startZ + r * stepZ);
+                const cx = startX + c * stepX;
+                const cz = startZ + r * stepZ;
+                col.position.set(cx, 1.8 + 10.5 / 2, cz);
                 col.castShadow = true;
                 col.receiveShadow = true;
                 colGrid.add(col);
+                colArray.push({ mesh: col, cx, cz, baseY: 1.8 + 10.5 / 2 });
             }
         }
         group.add(colGrid);
@@ -708,6 +727,11 @@
         slabL2.name = "SlabL2";
         group.add(slabL2);
 
+        group.userData.columns = colArray;
+        group.userData.colGrid = colGrid;
+        group.userData.slabL1 = slabL1;
+        group.userData.slabL2 = slabL2;
+        group.userData.walls = [wallA, wallB];
         return group;
     }
 
@@ -718,12 +742,14 @@
         group.userData = { phase: 4, tag: "envelope", wbs: "4.3-ENVEL" };
 
         const roofSteel = new THREE.Group();
+        const trussArray = [];
         for (let i = 0; i < 9; i++) {
             const x = -38 + 5 + i * (76 / 8);
             const trussBeam = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.2, 59), M.steelTruss);
             trussBeam.position.set(x, 18.0, 0);
             trussBeam.castShadow = true;
             roofSteel.add(trussBeam);
+            trussArray.push({ mesh: trussBeam, x, targetY: 18.0 });
         }
         group.add(roofSteel);
 
@@ -853,6 +879,21 @@
         facadeGroup.add(dockGroup);
 
         group.add(facadeGroup);
+
+        group.userData.trusses = trussArray;
+        group.userData.roofSteel = roofSteel;
+        group.userData.gantry = gantry;
+        group.userData.roof = roof;
+        group.userData.facadeGroup = facadeGroup;
+        group.userData.facade = {
+            south: southWall,
+            north: northWall,
+            west: westWall,
+            east: eastWall,
+            lobby: lobbyGroup,
+            dock: dockGroup,
+            accent: accentBand
+        };
         return group;
     }
 
@@ -867,6 +908,7 @@
         subGroup.name = "MainSubstation";
         subGroup.position.set(0, 0, 48);
 
+        const transformerArray = [];
         // 2x 45MVA Power Transformers with Corrugated Radiator Banks & Oil Conservators
         [-20, 10].forEach((tx, idx) => {
             const tr = new THREE.Group();
@@ -905,6 +947,7 @@
             tr.add(cons);
 
             subGroup.add(tr);
+            transformerArray.push({ group: tr, tx, targetY: 0.8 });
         });
 
         // NFPA 850 Reinforced Concrete Blast Separation Firewall
@@ -941,6 +984,7 @@
         genGroup.name = "GeneratorFarm";
         genGroup.position.set(-66, 0, 0);
 
+        const gensetArray = [];
         for (let i = 0; i < 8; i++) {
             const z = -28 + i * 8;
             [-6, 6].forEach((xOff, bankIdx) => {
@@ -972,6 +1016,7 @@
                 }
 
                 genGroup.add(genset);
+                gensetArray.push({ group: genset, xOff, z, targetY: 0.6 });
             });
         }
 
@@ -1007,6 +1052,7 @@
         // 6 Centrifugal Chillers with Flanged Butterfly Valves & Compressor
         const chillersGroup = new THREE.Group();
         chillersGroup.name = "CentrifugalChillers";
+        const chillerArray = [];
         for (let i = 0; i < 6; i++) {
             const ch = new THREE.Group();
             const cz = -20 + i * 8;
@@ -1035,6 +1081,7 @@
             ch.add(valveA);
 
             chillersGroup.add(ch);
+            chillerArray.push({ group: ch, cz, targetY: 7.3 });
         }
         chwPlant.add(chillersGroup);
 
@@ -1087,6 +1134,13 @@
         }
         chwPlant.add(coolingTowers);
         group.add(chwPlant);
+
+        group.userData.substation = subGroup;
+        group.userData.transformers = transformerArray;
+        group.userData.gensets = gensetArray;
+        group.userData.chillers = chillerArray;
+        group.userData.coolingTowers = coolingTowers;
+        group.userData.fuelSkid = fuelSkid;
         return group;
     }
 
@@ -1097,6 +1151,7 @@
         group.userData = { phase: 6, tag: "white_space", wbs: "5.4-WS" };
 
         window.DC36_SERVER_LEDS = [];
+        const rackArray = [];
 
         // 800mm Raised Floor
         const raisedFloor = new THREE.Mesh(new THREE.BoxGeometry(78, 0.1, 48), M.raisedFloor);
@@ -1175,6 +1230,7 @@
                         window.DC36_SERVER_LEDS.push(led);
 
                         hallGroup.add(rack);
+                        rackArray.push(rack);
                     }
                 });
             }
@@ -1206,6 +1262,9 @@
         }
         group.add(upsRoom);
 
+        group.userData.raisedFloor = raisedFloor;
+        group.userData.racks = rackArray;
+        group.userData.upsRoom = upsRoom;
         return group;
     }
 
@@ -1216,6 +1275,7 @@
         group.userData = { phase: 7, tag: "load_banks", wbs: "6.4-L5" };
 
         const lbCount = 8;
+        const lbArray = [];
         for (let i = 0; i < lbCount; i++) {
             const z = -25 + i * 7.2;
             const lb = new THREE.Group();
@@ -1241,6 +1301,7 @@
             lb.add(cable);
 
             group.add(lb);
+            lbArray.push(lb);
         }
 
         const ringGeo = new THREE.RingGeometry(48, 52, 32);
@@ -1251,6 +1312,8 @@
         ring.name = "IST_PulseRing";
         group.add(ring);
 
+        group.userData.loadBanks = lbArray;
+        group.userData.pulseRing = ring;
         return group;
     }
 
