@@ -451,21 +451,66 @@
             });
         });
 
-        // Bottom Dock
-        const dockToggleBtn = document.getElementById('dock-toggle-btn');
+        // Bottom Dock & Drawer Handlers
         const bottomDock = document.getElementById('bottom-dock');
+        const btnToggleSchedule = document.getElementById('btn-toggle-schedule');
+        const dockCloseBtn = document.getElementById('dock-close-btn');
         const tabGantt = document.getElementById('tab-btn-gantt');
         const tabTable = document.getElementById('tab-btn-table');
         const paneGantt = document.getElementById('dock-pane-gantt');
         const paneTable = document.getElementById('dock-pane-table');
 
-        if (dockToggleBtn && bottomDock) {
-            dockToggleBtn.addEventListener('click', () => {
-                bottomDock.classList.toggle('dock-collapsed');
-                const isCollapsed = bottomDock.classList.contains('dock-collapsed');
-                dockToggleBtn.innerHTML = isCollapsed ? '<i class="fas fa-chevron-up"></i> Expand Dock' : '<i class="fas fa-chevron-down"></i> Collapse';
+        if (btnToggleSchedule && bottomDock) {
+            btnToggleSchedule.addEventListener('click', () => {
+                bottomDock.classList.toggle('dock-open');
+                const isOpen = bottomDock.classList.contains('dock-open');
+                btnToggleSchedule.innerHTML = isOpen 
+                    ? '<i class="fas fa-times"></i> Close Schedule' 
+                    : '<i class="fas fa-calendar-alt"></i> P6 Schedule';
             });
         }
+
+        if (dockCloseBtn && bottomDock) {
+            dockCloseBtn.addEventListener('click', () => {
+                bottomDock.classList.remove('dock-open');
+                if (btnToggleSchedule) {
+                    btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+                }
+            });
+        }
+
+        // Left & Right Collapsible Panels Handlers
+        const leftPanel = document.getElementById('left-panel');
+        const btnToggleLeft = document.getElementById('btn-toggle-left');
+        const btnTopTasks = document.getElementById('btn-top-tasks');
+        const iconToggleLeft = document.getElementById('icon-toggle-left');
+
+        function toggleLeftPanel() {
+            if (!leftPanel) return;
+            leftPanel.classList.toggle('panel-collapsed');
+            const isCol = leftPanel.classList.contains('panel-collapsed');
+            if (iconToggleLeft) {
+                iconToggleLeft.className = isCol ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+            }
+        }
+        if (btnToggleLeft) btnToggleLeft.addEventListener('click', toggleLeftPanel);
+        if (btnTopTasks) btnTopTasks.addEventListener('click', toggleLeftPanel);
+
+        const rightPanel = document.getElementById('right-panel');
+        const btnToggleRight = document.getElementById('btn-toggle-right');
+        const btnTopTelemetry = document.getElementById('btn-top-telemetry');
+        const iconToggleRight = document.getElementById('icon-toggle-right');
+
+        function toggleRightPanel() {
+            if (!rightPanel) return;
+            rightPanel.classList.toggle('panel-collapsed');
+            const isCol = rightPanel.classList.contains('panel-collapsed');
+            if (iconToggleRight) {
+                iconToggleRight.className = isCol ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
+            }
+        }
+        if (btnToggleRight) btnToggleRight.addEventListener('click', toggleRightPanel);
+        if (btnTopTelemetry) btnTopTelemetry.addEventListener('click', toggleRightPanel);
 
         if (tabGantt && tabTable) {
             tabGantt.addEventListener('click', () => {

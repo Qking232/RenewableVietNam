@@ -33,6 +33,22 @@
             user-select: none;
         }
 
+        /* Global Sleek Dark-Cyan Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 15, 25, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.35);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 229, 255, 0.7);
+        }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
@@ -243,11 +259,41 @@
             top: 76px;
             left: 14px;
             width: 280px;
-            max-height: calc(100vh - 460px);
+            max-height: calc(100vh - 160px);
             padding: 14px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 25;
+        }
+
+        #left-panel.panel-collapsed {
+            transform: translateX(calc(-100% - 24px));
+        }
+
+        .panel-edge-toggle {
+            position: absolute;
+            top: 14px;
+            right: -28px;
+            width: 26px;
+            height: 38px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: 4px 0 14px rgba(0,0,0,0.45);
+            transition: all 0.2s;
+        }
+        .panel-edge-toggle:hover {
+            background: rgba(0, 229, 255, 0.2);
+            color: #ffffff;
         }
 
         .panel-title {
@@ -343,10 +389,41 @@
             top: 76px;
             right: 14px;
             width: 270px;
+            max-height: calc(100vh - 160px);
             padding: 14px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 25;
+        }
+
+        #right-panel.panel-collapsed {
+            transform: translateX(calc(100% + 24px));
+        }
+
+        .panel-edge-toggle-left {
+            position: absolute;
+            top: 14px;
+            left: -28px;
+            width: 26px;
+            height: 38px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            color: var(--accent-cyan);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: -4px 0 14px rgba(0,0,0,0.45);
+            transition: all 0.2s;
+        }
+        .panel-edge-toggle-left:hover {
+            background: rgba(0, 229, 255, 0.2);
+            color: #ffffff;
         }
 
         .metrics-grid {
@@ -456,17 +533,25 @@
 
         /* Collapsible Bottom Dock (Gantt & Task Schedule Table) */
         #bottom-dock {
-            bottom: 74px;
+            bottom: 76px;
             left: 14px;
             right: 14px;
             height: 310px;
-            transition: height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transform: translateY(125%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
         }
 
-        #bottom-dock.dock-collapsed { height: 38px; }
+        #bottom-dock.dock-open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
 
         .dock-header-bar {
             height: 38px;
@@ -608,10 +693,21 @@
         }
         .tbl-jump-btn:hover { background: var(--accent-cyan); color: #000; }
 
-        /* Bottom Scrubber Bar */
+        /* Bottom Scrubber Bar (Floating Sleek Capsule) */
         #bottom-bar {
-            bottom: 12px; left: 14px; right: 14px; height: 50px; padding: 8px 20px;
-            display: flex; align-items: center; gap: 16px;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 860px;
+            height: 52px;
+            padding: 8px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.65);
+            z-index: 50;
         }
         .play-btn {
             background: var(--accent-cyan); color: #000; border: none; padding: 8px 16px;
@@ -674,27 +770,38 @@
         </div>
 
         <div class="top-right-controls">
+            <!-- HUD Panels Toggles -->
+            <button class="hud-btn" id="btn-top-tasks" title="Toggle Live P6 Tasks Drawer">
+                <i class="fas fa-tasks"></i> Tasks
+            </button>
+            <button class="hud-btn" id="btn-top-telemetry" title="Toggle Telemetry Drawer">
+                <i class="fas fa-chart-pie"></i> Telemetry
+            </button>
+
             <!-- Lighting Selector -->
             <select id="lighting-select" class="select-dark">
-                <option value="day">☀️ Day Lighting</option>
-                <option value="dusk">🌅 Dusk / Golden</option>
-                <option value="night">🌙 Night Ops</option>
+                <option value="day">☀️ Day</option>
+                <option value="dusk">🌅 Dusk</option>
+                <option value="night">🌙 Night</option>
             </select>
 
             <!-- Audio Synthesizer Toggle -->
             <button class="hud-btn" id="btn-audio">
-                <i class="fas fa-volume-mute"></i> Sound OFF
+                <i class="fas fa-volume-mute"></i> Sound
             </button>
 
             <!-- Blackout Simulation Drill Button -->
             <button class="hud-btn blackout-btn" id="btn-blackout" title="Trigger Utility Grid Loss & ATS Black-Start Test">
-                <i class="fas fa-bolt"></i> Blackout Test
+                <i class="fas fa-bolt"></i> Blackout
             </button>
         </div>
     </div>
 
     <!-- Left Panel: Live P6 Activities -->
     <div id="left-panel" class="glass-panel">
+        <button class="panel-edge-toggle" id="btn-toggle-left" title="Toggle Tasks Panel">
+            <i class="fas fa-chevron-left" id="icon-toggle-left"></i>
+        </button>
         <div class="panel-title">
             <i class="fas fa-tasks"></i> Live P6 Activities
         </div>
@@ -719,6 +826,9 @@
 
     <!-- Right Panel: Telemetry & Controls -->
     <div id="right-panel" class="glass-panel">
+        <button class="panel-edge-toggle-left" id="btn-toggle-right" title="Toggle Telemetry Panel">
+            <i class="fas fa-chevron-right" id="icon-toggle-right"></i>
+        </button>
         <div class="panel-title">
             <i class="fas fa-tachometer-alt"></i> Engineering Telemetry
         </div>
@@ -802,8 +912,8 @@
                 </button>
             </div>
             <div class="dock-actions">
-                <button class="dock-toggle-btn" id="dock-toggle-btn">
-                    <i class="fas fa-chevron-down"></i> Collapse
+                <button class="dock-toggle-btn" id="dock-close-btn" style="color: var(--accent-red); border-color: rgba(239, 68, 68, 0.4);">
+                    <i class="fas fa-times"></i> Close Drawer
                 </button>
             </div>
         </div>
@@ -885,6 +995,10 @@
         <div class="timeline-slider-container">
             <input type="range" min="0" max="1000" value="0" class="timeline-slider" id="timeline-slider">
         </div>
+
+        <button class="hud-btn" id="btn-toggle-schedule" style="white-space: nowrap; font-size: 11px; padding: 6px 12px; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35);">
+            <i class="fas fa-calendar-alt"></i> P6 Schedule
+        </button>
     </div>
 
     <!-- Three.js Core Library & OrbitControls -->
