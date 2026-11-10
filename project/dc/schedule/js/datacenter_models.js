@@ -80,6 +80,19 @@
             craneYellow: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35, metalness: 0.7 }),
             craneTreads: new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9, metalness: 0.3 }),
 
+            // AAA Architectural Visualization Materials
+            lightningRod: new THREE.MeshStandardMaterial({ color: 0xb87333, roughness: 0.25, metalness: 0.95 }),
+            copingCap: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.40, metalness: 0.45 }),
+            revealJoint: new THREE.MeshBasicMaterial({ color: 0x090d16 }),
+            substationGravel: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.95, metalness: 0.05 }),
+            insulatorGlass: new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transmission: 0.75, opacity: 0.85, transparent: true, roughness: 0.12 }),
+            silencerLagging: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.42, metalness: 0.75, map: T.brushedMetal }),
+            gaugeBrass: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.22, metalness: 0.92 }),
+            chillerCompressor: new THREE.MeshStandardMaterial({ color: 0x075985, roughness: 0.35, metalness: 0.70, map: T.brushedMetal }),
+            rackChassis: new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.45, metalness: 0.80 }),
+            rackStatusLED: new THREE.MeshStandardMaterial({ color: 0x00e5ff, emissive: 0x00e5ff, emissiveIntensity: 1.5 }),
+            curbStripes: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.60, metalness: 0.10, map: T.hazardStripes }),
+
             // Ancillary Facilities & Realism Materials
             water: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.08, metalness: 0.82, transparent: true, opacity: 0.85 }),
             riprap: new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.95, metalness: 0.05 }),
@@ -141,6 +154,144 @@
         wheelRim.position.y = radius * 2.1;
         group.add(wheelHub, wheelRim);
 
+        return group;
+    }
+
+    // Helper: AAA Copper Lightning Air Terminal Rod
+    function createLightningArrester(M) {
+        const group = new THREE.Group();
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.12, 0.06, 8), M.copperBus);
+        base.position.y = 0.03;
+        const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.02, 1.2, 8), M.lightningRod);
+        rod.position.y = 0.63;
+        const tip = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.2, 8), M.copperBus);
+        tip.position.y = 1.33;
+        group.add(base, rod, tip);
+        return group;
+    }
+
+    // Helper: AAA Extruded Acoustic Louver Assembly
+    function createLouverAssembly(width, height, frameMat, bladeMat, bladeCount = 8) {
+        const group = new THREE.Group();
+        const frameDepth = 0.25;
+        // Outer Channel Frame
+        const topFrame = new THREE.Mesh(new THREE.BoxGeometry(width, 0.08, frameDepth), frameMat);
+        topFrame.position.y = height / 2;
+        const bottomFrame = new THREE.Mesh(new THREE.BoxGeometry(width, 0.08, frameDepth), frameMat);
+        bottomFrame.position.y = -height / 2;
+        const leftFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, height, frameDepth), frameMat);
+        leftFrame.position.x = -width / 2;
+        const rightFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, height, frameDepth), frameMat);
+        rightFrame.position.x = width / 2;
+        group.add(topFrame, bottomFrame, leftFrame, rightFrame);
+
+        // Angled Acoustic Louver Blades
+        const spacing = (height - 0.16) / bladeCount;
+        for (let i = 0; i < bladeCount; i++) {
+            const y = -height / 2 + 0.08 + spacing * (i + 0.5);
+            const blade = new THREE.Mesh(new THREE.BoxGeometry(width - 0.16, 0.02, frameDepth * 0.9), bladeMat);
+            blade.rotation.x = Math.PI / 5; // 36-degree downward shed
+            blade.position.set(0, y, 0);
+            group.add(blade);
+        }
+        return group;
+    }
+
+    // Helper: AAA Exterior Steel Personnel Egress Door with Crash Bar & Sign
+    function createPersonnelDoor(M, isNorthSouth = true) {
+        const group = new THREE.Group();
+        // Frame
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.5, 0.25), M.blastWall);
+        frame.position.y = 1.25;
+        // Leaf
+        const leaf = new THREE.Mesh(new THREE.BoxGeometry(1.3, 2.3, 0.1), M.doors);
+        leaf.position.set(0, 1.25, 0.05);
+        // Stainless Panic Crash Push Bar
+        const pushBar = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.08, 0.08), M.copperBus);
+        pushBar.position.set(0, 1.1, 0.15);
+        // Illuminated Emergency Exit Luminaire
+        const exitSign = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.2, 0.08), M.evGreenGlow);
+        exitSign.position.set(0, 2.65, 0.12);
+        // Protective Overhead Weather Hood
+        const hood = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.08, 0.6), M.facadeDark);
+        hood.position.set(0, 2.8, 0.25);
+        group.add(frame, leaf, pushBar, exitSign, hood);
+        return group;
+    }
+
+    // Helper: AAA Suspension Insulator Disc Stack (110kV)
+    function createSuspensionInsulatorString(M, discCount = 5) {
+        const group = new THREE.Group();
+        const topLink = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.2, 6), M.steelTruss);
+        topLink.position.y = 0.1;
+        group.add(topLink);
+
+        for (let i = 0; i < discCount; i++) {
+            const y = -i * 0.22;
+            const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.06, 8), M.steelTruss);
+            cap.position.y = y;
+            const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.16, 0.08, 14), M.insulatorGlass);
+            disc.position.y = y - 0.05;
+            group.add(cap, disc);
+        }
+        const bottomClamp = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.15, 0.2), M.copperBus);
+        bottomClamp.position.y = -discCount * 0.22;
+        group.add(bottomClamp);
+        return group;
+    }
+
+    // Helper: AAA Industrial Critical-Grade Silencer Muffler
+    function createSilencerMuffler(length, radius, bodyMat, flangeMat) {
+        const group = new THREE.Group();
+        // Cylindrical Silencer Barrel with Thermal Insulation Jacket
+        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 16), bodyMat);
+        barrel.rotation.z = Math.PI / 2;
+        group.add(barrel);
+        // Hemispherical End Bells
+        [-length/2, length/2].forEach((x, idx) => {
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), bodyMat);
+            cap.rotation.z = idx === 0 ? -Math.PI / 2 : Math.PI / 2;
+            cap.position.x = x;
+            group.add(cap);
+        });
+        // Mounting Saddles & Flanged Straps
+        [-length * 0.3, length * 0.3].forEach(x => {
+            const strap = new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.08, radius * 1.08, 0.15, 16), flangeMat);
+            strap.rotation.z = Math.PI / 2;
+            strap.position.x = x;
+            const leg = new THREE.Mesh(new THREE.BoxGeometry(0.15, radius * 1.2, 0.3), flangeMat);
+            leg.position.set(x, -radius * 0.8, 0);
+            group.add(strap, leg);
+        });
+        return group;
+    }
+
+    // Helper: AAA Industrial Dial Pressure Gauge
+    function createDialPressureGauge(M) {
+        const group = new THREE.Group();
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.15, 8), M.gaugeBrass);
+        stem.position.y = 0.075;
+        const caseMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.06, 16), M.steelTruss);
+        caseMesh.rotation.x = Math.PI / 2;
+        caseMesh.position.y = 0.22;
+        const dialFace = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.01, 16), M.roadMarking);
+        dialFace.rotation.x = Math.PI / 2;
+        dialFace.position.set(0, 0.22, 0.035);
+        group.add(stem, caseMesh, dialFace);
+        return group;
+    }
+
+    // Helper: AAA K12 Crash-Rated Anti-Ram Security Bollard
+    function createCrashBollard(M) {
+        const group = new THREE.Group();
+        const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.2, 12), M.k12Yellow);
+        pipe.position.y = 0.6;
+        pipe.castShadow = true;
+        const cap = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), M.k12Yellow);
+        cap.position.y = 1.2;
+        const stripe = new THREE.Mesh(new THREE.CylinderGeometry(0.142, 0.142, 0.2, 12), M.cautionStripe);
+        stripe.position.y = 0.9;
+        group.add(pipe, cap, stripe);
         return group;
     }
 
@@ -764,29 +915,146 @@
         roof.name = "RoofMembrane";
         group.add(roof);
 
-        // Precast Insulated Architectural Facade Panels
+        // Precast Insulated Architectural Facade Panels (Authored AAA Modular Sandwich Panels)
         const facadeGroup = new THREE.Group();
         facadeGroup.name = "BuildingFacade";
 
-        const southWall = new THREE.Mesh(new THREE.BoxGeometry(90.6, 17, 0.4), M.facadeDark);
+        // --- South Facade Assembly (Authored Group) ---
+        const southWall = new THREE.Group();
+        southWall.name = "SouthFacadeGroup";
         southWall.position.set(5, 10.3, 30.2);
-        southWall.castShadow = true;
+        const sBase = new THREE.Mesh(new THREE.BoxGeometry(90.6, 17, 0.4), M.facadeDark);
+        sBase.castShadow = true;
+        sBase.receiveShadow = true;
+        southWall.add(sBase);
+        // Vertical 25mm Modular Shadow Reveal Joints every 3.6m
+        for (let x = -41.4; x <= 41.4; x += 3.6) {
+            const joint = new THREE.Mesh(new THREE.BoxGeometry(0.04, 17.02, 0.44), M.revealJoint);
+            joint.position.set(x, 0, 0);
+            southWall.add(joint);
+        }
+        // Horizontal Floor-Line Reveal Bands
+        [-3.4, 3.4].forEach(y => {
+            const hBand = new THREE.Mesh(new THREE.BoxGeometry(90.62, 0.05, 0.44), M.revealJoint);
+            hBand.position.set(0, y, 0);
+            southWall.add(hBand);
+        });
+        // 4 Acoustic Mechanical Louver Assemblies
+        [-30, -12, 12, 30].forEach(lx => {
+            const louver = createLouverAssembly(6.8, 3.2, M.facadeDark, M.louvers, 10);
+            louver.position.set(lx, 3.4, 0.22);
+            southWall.add(louver);
+        });
+        // 3 Personnel Emergency Egress Doors
+        [-36, 0, 36].forEach(dx => {
+            const door = createPersonnelDoor(M, true);
+            door.position.set(dx, -7.25, 0.2);
+            southWall.add(door);
+        });
         facadeGroup.add(southWall);
 
-        const northWall = new THREE.Mesh(new THREE.BoxGeometry(90.6, 17, 0.4), M.facadeDark);
+        // --- North Facade Assembly (Authored Group) ---
+        const northWall = new THREE.Group();
+        northWall.name = "NorthFacadeGroup";
         northWall.position.set(5, 10.3, -30.2);
-        northWall.castShadow = true;
+        const nBase = new THREE.Mesh(new THREE.BoxGeometry(90.6, 17, 0.4), M.facadeDark);
+        nBase.castShadow = true;
+        nBase.receiveShadow = true;
+        northWall.add(nBase);
+        for (let x = -41.4; x <= 41.4; x += 3.6) {
+            const joint = new THREE.Mesh(new THREE.BoxGeometry(0.04, 17.02, 0.44), M.revealJoint);
+            joint.position.set(x, 0, 0);
+            northWall.add(joint);
+        }
+        [-3.4, 3.4].forEach(y => {
+            const hBand = new THREE.Mesh(new THREE.BoxGeometry(90.62, 0.05, 0.44), M.revealJoint);
+            hBand.position.set(0, y, 0);
+            northWall.add(hBand);
+        });
+        [-30, -12, 12, 30].forEach(lx => {
+            const louver = createLouverAssembly(6.8, 3.2, M.facadeDark, M.louvers, 10);
+            louver.position.set(lx, 3.4, -0.22);
+            louver.rotation.y = Math.PI;
+            northWall.add(louver);
+        });
+        [-36, 0, 36].forEach(dx => {
+            const door = createPersonnelDoor(M, true);
+            door.position.set(dx, -7.25, -0.2);
+            door.rotation.y = Math.PI;
+            northWall.add(door);
+        });
         facadeGroup.add(northWall);
 
-        const westWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 17, 60.4), M.facadeLight);
+        // --- West Facade Assembly (Loading Logistics & Infrastructure) ---
+        const westWall = new THREE.Group();
+        westWall.name = "WestFacadeGroup";
         westWall.position.set(-40.2, 10.3, 0);
-        westWall.castShadow = true;
+        const wBase = new THREE.Mesh(new THREE.BoxGeometry(0.4, 17, 60.4), M.facadeLight);
+        wBase.castShadow = true;
+        wBase.receiveShadow = true;
+        westWall.add(wBase);
+        for (let z = -26; z <= 26; z += 3.7) {
+            const joint = new THREE.Mesh(new THREE.BoxGeometry(0.44, 17.02, 0.04), M.revealJoint);
+            joint.position.set(0, 0, z);
+            westWall.add(joint);
+        }
+        [-3.4, 3.4].forEach(y => {
+            const hBand = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.05, 60.42), M.revealJoint);
+            hBand.position.set(0, y, 0);
+            westWall.add(hBand);
+        });
         facadeGroup.add(westWall);
 
-        const eastWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 17, 60.4), M.facadeLight);
+        // --- East Facade Assembly (Corporate Headquarters Entry) ---
+        const eastWall = new THREE.Group();
+        eastWall.name = "EastFacadeGroup";
         eastWall.position.set(50.2, 10.3, 0);
-        eastWall.castShadow = true;
+        const eBase = new THREE.Mesh(new THREE.BoxGeometry(0.4, 17, 60.4), M.facadeLight);
+        eBase.castShadow = true;
+        eBase.receiveShadow = true;
+        eastWall.add(eBase);
+        for (let z = -26; z <= 26; z += 3.7) {
+            const joint = new THREE.Mesh(new THREE.BoxGeometry(0.44, 17.02, 0.04), M.revealJoint);
+            joint.position.set(0, 0, z);
+            eastWall.add(joint);
+        }
+        [-3.4, 3.4].forEach(y => {
+            const hBand = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.05, 60.42), M.revealJoint);
+            hBand.position.set(0, y, 0);
+            eastWall.add(hBand);
+        });
         facadeGroup.add(eastWall);
+
+        // Continuous Parapet Coping Cap with Drip Edge
+        const copingGroup = new THREE.Group();
+        copingGroup.name = "ParapetCopingCap";
+        copingGroup.position.set(5, 18.85, 0);
+        const sCoping = new THREE.Mesh(new THREE.BoxGeometry(91.2, 0.25, 0.6), M.copingCap);
+        sCoping.position.set(0, 0, 30.3);
+        const nCoping = new THREE.Mesh(new THREE.BoxGeometry(91.2, 0.25, 0.6), M.copingCap);
+        nCoping.position.set(0, 0, -30.3);
+        const wCoping = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.25, 61.2), M.copingCap);
+        wCoping.position.set(-45.3, 0, 0);
+        const eCoping = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.25, 61.2), M.copingCap);
+        eCoping.position.set(45.3, 0, 0);
+        copingGroup.add(sCoping, nCoping, wCoping, eCoping);
+
+        // Rooftop Lightning Protection Grid: 24 Copper Air Terminals
+        for (let i = -40; i <= 40; i += 10) {
+            const rodS = createLightningArrester(M);
+            rodS.position.set(i, 0.12, 30.3);
+            const rodN = createLightningArrester(M);
+            rodN.position.set(i, 0.12, -30.3);
+            copingGroup.add(rodS, rodN);
+        }
+        for (let j = -20; j <= 20; j += 10) {
+            const rodW = createLightningArrester(M);
+            rodW.position.set(-45.3, 0.12, j);
+            const rodE = createLightningArrester(M);
+            rodE.position.set(45.3, 0.12, j);
+            copingGroup.add(rodW, rodE);
+        }
+        facadeGroup.add(copingGroup);
 
         // Radiant Cyan LED Architectural Reveal Ribbon (Post-processing bloom target)
         const accentBand = new THREE.Mesh(new THREE.BoxGeometry(91, 0.35, 61), M.facadeAccent);
@@ -909,42 +1177,76 @@
         subGroup.position.set(0, 0, 48);
 
         const transformerArray = [];
-        // 2x 45MVA Power Transformers with Corrugated Radiator Banks & Oil Conservators
+        // Crushed Gravel Oil Retention Basin with Concrete Curb
+        const gravelBasin = new THREE.Mesh(new THREE.BoxGeometry(42, 0.25, 16), M.substationGravel);
+        gravelBasin.position.set(-5, 0.12, 0);
+        gravelBasin.receiveShadow = true;
+        subGroup.add(gravelBasin);
+        const basinCurb = new THREE.Mesh(new THREE.BoxGeometry(42.6, 0.4, 16.6), M.blastWall);
+        basinCurb.position.set(-5, 0.2, 0);
+        basinCurb.castShadow = true;
+        subGroup.add(basinCurb);
+
+        // K12 Anti-Ram Security Bollards around Substation Perimeter
+        for (let bx = -24; bx <= 16; bx += 4) {
+            const b1 = createCrashBollard(M);
+            b1.position.set(bx, 0, 9);
+            const b2 = createCrashBollard(M);
+            b2.position.set(bx, 0, -9);
+            subGroup.add(b1, b2);
+        }
+
+        // 2x 50MVA Power Transformers with Corrugated Radiator Banks, Buchholz Piping & NGR
         [-20, 10].forEach((tx, idx) => {
             const tr = new THREE.Group();
             tr.position.set(tx, 0.8, 0);
-            tr.name = `Transformer_${idx + 1}_45MVA`;
+            tr.name = `Transformer_${idx + 1}_50MVA`;
 
             const tank = new THREE.Mesh(new THREE.BoxGeometry(5.2, 4.2, 4.0), M.transformerTank);
             tank.position.y = 2.1;
             tank.castShadow = true;
             tr.add(tank);
 
-            // Corrugated Radiator Vanes
+            // Corrugated Radiator Vanes (Dual Bank)
             for (let f = -1.8; f <= 1.8; f += 0.45) {
-                const fin = new THREE.Mesh(new THREE.BoxGeometry(5.4, 3.4, 0.08), M.transformerTank);
+                const fin = new THREE.Mesh(new THREE.BoxGeometry(5.6, 3.4, 0.08), M.transformerTank);
                 fin.position.set(0, 2.1, f);
                 tr.add(fin);
             }
 
-            // High Voltage Multi-Skirt Ceramic Bushings
+            // High Voltage Porcelain Bushings with Terminal Palms
             for (let b = -1.2; b <= 1.2; b += 1.2) {
                 const bushingBase = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.25, 2.2, 8), M.bushingPorcelain);
                 bushingBase.position.set(b, 5.3, 0);
                 tr.add(bushingBase);
-                // Petticoat Skirt Rings
                 for (let k = 0; k < 4; k++) {
                     const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.06, 12), M.bushingPorcelain);
                     skirt.position.set(b, 4.6 + k * 0.4, 0);
                     tr.add(skirt);
                 }
+                // Copper Terminal Palm
+                const palm = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.15, 0.05), M.copperBus);
+                palm.position.set(b, 6.45, 0);
+                tr.add(palm);
             }
 
-            // Conservator Tank
+            // Conservator Tank with Sight Glass & Buchholz Relay Pipe
             const cons = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 4.0, 16), M.transformerTank);
             cons.rotation.z = Math.PI / 2;
             cons.position.set(0, 5.2, 1.5);
-            tr.add(cons);
+            // Oil Sight Glass Tube
+            const sightGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.0, 8), M.insulatorGlass);
+            sightGlass.position.set(2.05, 5.2, 1.5);
+            // Buchholz Gas Relay Pipe
+            const buchholzPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 8), M.exhaustStack);
+            buchholzPipe.position.set(0, 4.6, 0.8);
+            tr.add(cons, sightGlass, buchholzPipe);
+
+            // Neutral Grounding Resistor (NGR) Cubicle
+            const ngrBox = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.8, 1.4), M.switchgear);
+            ngrBox.position.set(-3.2, 0.9, 0);
+            ngrBox.castShadow = true;
+            tr.add(ngrBox);
 
             subGroup.add(tr);
             transformerArray.push({ group: tr, tx, targetY: 0.8 });
@@ -967,11 +1269,17 @@
         crossArm.position.set(0, 13, 0);
         gantryTower.add(postA, postB, crossArm);
 
-        // 3 Braided Overhead Conductors with Catenary Sag
+        // 6 Glass Suspension Insulator Strings & Overhead Conductors with Catenary Sag
+        [-15, -7.5, 0, 7.5, 15].forEach(cx => {
+            const insulator = createSuspensionInsulatorString(M, 5);
+            insulator.position.set(cx, 12.6, 0);
+            gantryTower.add(insulator);
+        });
+
         [-10, 0, 10].forEach(cx => {
-            const p1 = new THREE.Vector3(cx, 13, 0);
-            const pMid = new THREE.Vector3(cx, 9.5, 20); // Sagging belly
-            const p2 = new THREE.Vector3(cx - 5, 6, 40); // Transformer drop
+            const p1 = new THREE.Vector3(cx, 11.5, 0);
+            const pMid = new THREE.Vector3(cx, 9.2, 20); // Sagging catenary belly
+            const p2 = new THREE.Vector3(cx - 5, 6.4, 40); // Transformer drop
             const curve = new THREE.CatmullRomCurve3([p1, pMid, p2]);
             const wireMesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 32, 0.04, 6, false), M.copperBus);
             gantryTower.add(wireMesh);
@@ -1001,10 +1309,29 @@
                 louverEnd.position.set(3.3, 1.4, 0);
                 genset.add(louverEnd);
 
-                const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 6.0, 12), M.exhaustStack);
-                stack.position.set(-2.0, 4.4, 0);
+                // Dual Critical-Grade Silencer Mufflers with Thermal Lagging
+                const muffler1 = createSilencerMuffler(2.8, 0.38, M.silencerLagging, M.exhaustStack);
+                muffler1.position.set(-0.6, 3.2, -0.6);
+                const muffler2 = createSilencerMuffler(2.8, 0.38, M.silencerLagging, M.exhaustStack);
+                muffler2.position.set(-0.6, 3.2, 0.6);
+                genset.add(muffler1, muffler2);
+
+                // Stainless Steel Exhaust Stack with Rain Flap
+                const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 6.2, 12), M.exhaustStack);
+                stack.position.set(-2.0, 4.5, 0);
                 stack.castShadow = true;
-                genset.add(stack);
+                const rainCap = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.04, 12), M.exhaustStack);
+                rainCap.rotation.z = Math.PI / 8; // Tilted counterweighted rain cap
+                rainCap.position.set(-2.0, 7.6, 0);
+                genset.add(stack, rainCap);
+
+                // Exterior Weatherproof E-Stop Station
+                const eStop = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.25, 0.2), M.cautionStripe);
+                eStop.position.set(0, 1.4, 1.35);
+                const eBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.08, 8), M.loadBank);
+                eBtn.rotation.x = Math.PI / 2;
+                eBtn.position.set(0, 1.4, 1.45);
+                genset.add(eStop, eBtn);
 
                 // 4 Real Helical Compression Springs
                 for (let sx of [-2.5, 2.5]) {
