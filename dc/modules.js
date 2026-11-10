@@ -1,7 +1,7 @@
 /**
- * Hyperscale Data Center Executive Portal Module Manifest - Rev.047 (Streamlined Single-Line Executive Tab Navigation & Simplified Header Edition)
+ * Hyperscale Data Center Executive Portal Module Manifest - Rev.048 (Integrated 4D Three.js Digital Twin & P6 CPM Schedule)
  * Target: 45 MW IT Capacity Tier III / Tier IV Mission-Critical Facility Vietnam
- * Architecture: Executive 7-Module Portfolio Grid
+ * Architecture: Executive 8-Module Portfolio Grid
  */
 window.PORTAL_MODULES = [
   {
@@ -10,7 +10,7 @@ window.PORTAL_MODULES = [
     shortTitle: "Project Delivery",
     category: "Executive Governance",
     title: "Project Delivery Framework",
-    description: "The '5+3' Capital Delivery System: 24-Month Master Plan, 6 BOD Submission Stage Gates, 30 Statutory Deliverables & M Capital Tranches.",
+    description: "The '5+3' Capital Delivery System: 24-Month Master Plan, 6 BOD Submission Stage Gates, 30 Statutory Deliverables & $180M Capital Tranches.",
     badge: "Framework",
     file: "modules/master_project_governance_Rev.003.html"
   },
@@ -40,7 +40,7 @@ window.PORTAL_MODULES = [
     shortTitle: "Cost & Contracts",
     category: "Commercial & Controls",
     title: "Domain 3: Project Cost, EVM & Wholesale Commercials",
-    description: ".00M BAC Breakdown (12 WBS Packages), Rust WebAssembly 50,000-Trial Monte Carlo Engine, Exact Newton-Raphson 15-Year IRR Solver, 7-Tab Financial Navigator, 160+ Hover Calculation Cells, Executive Scorecard, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
+    description: "$180.00M BAC Breakdown (12 WBS Packages), Rust WebAssembly 50,000-Trial Monte Carlo Engine, Exact Newton-Raphson 15-Year IRR Solver, 7-Tab Financial Navigator, 160+ Hover Calculation Cells, Executive Scorecard, SHTP CIT Tax Incentives & FIDIC Silver Book SOW.",
     badge: "Cost & Contracts",
     file: "modules/domain3_capex_cost_contracts_Rev.011.html"
   },
@@ -53,6 +53,16 @@ window.PORTAL_MODULES = [
     description: "14-Month Master Gantt Schedule, DC-Exclusive Elements & Components Matrix, Milestone Gates (MS-01 to MS-06), 1,250 PHC Piles to -38m, 1.8m Mass Raft Slab, 12,000 m² White Space, ITP QA/QC Matrix & Zero-Harm HSE Protocol.",
     badge: "Construction",
     file: "modules/domain4_physical_construction_Rev.006.html"
+  },
+  {
+    id: "4d_schedule",
+    tag: "4D BIM & P6",
+    shortTitle: "4D Schedule & 3D",
+    category: "Physical Delivery & BIM",
+    title: "4D Three.js Construction Twin & Primavera P6 Schedule",
+    description: "Interactive 4D Three.js Digital Twin & 105-Activity Primavera P6 Level 4 CPM Schedule: Piling, Raft Slab, Superstructure, 110kV Substation, 16 Gensets, 6 Chillers, White Space & 36MW Load Banks.",
+    badge: "4D BIM LOD 400",
+    file: "schedule/index.html"
   },
   {
     id: "domain5_handover",
@@ -70,7 +80,7 @@ window.PORTAL_MODULES = [
     shortTitle: "Board Report",
     category: "Executive Authorization",
     title: "Board Report & Project Charter",
-    description: "Executive Capital Authorization Dossier: 45 MW Hyperscale Sizing, .0M CapEx, 15-Year DCF Returns, Monte Carlo Stress Testing, Enterprise Risk Matrix & Formal Board Resolution.",
+    description: "Executive Capital Authorization Dossier: 45 MW Hyperscale Sizing, $180.0M CapEx, 15-Year DCF Returns, Monte Carlo Stress Testing, Enterprise Risk Matrix & Formal Board Resolution.",
     badge: "Board Report",
     file: "modules/bod_capex_charter_report_Rev.003.html"
   }

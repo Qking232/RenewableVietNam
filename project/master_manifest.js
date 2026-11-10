@@ -1,5 +1,5 @@
 /**
- * Master Project Directorate & Engineering Registry - Rev.001
+ * Master Project Directorate & Engineering Registry - Rev.002
  * Target: project.renewablevietnam.com
  * Multi-Project Architecture: Garments, Hyperscale Data Center, and Extensible Future Verticals
  */
@@ -172,6 +172,16 @@ window.PROJECTS_REGISTRY = {
         description: "14-Month Master Gantt Schedule, Milestone Gates MS-01 to MS-06, 1,250 PHC Piles to -38m, 1.8m Mass Raft Slab, 12,000 m² White Space, ITP QA/QC.",
         badge: "Construction",
         file: "/dc/modules/domain4_physical_construction_Rev.006.html"
+      },
+      {
+        id: "4d_schedule",
+        tag: "4D BIM & P6",
+        shortTitle: "4D Schedule & 3D",
+        category: "Physical Delivery & BIM",
+        title: "4D Three.js Construction Twin & Primavera P6 Schedule",
+        description: "Interactive 4D Three.js Digital Twin & 105-Activity Primavera P6 Level 4 CPM Schedule: Piling, Raft Slab, Superstructure, 110kV Substation, 16 Gensets, 6 Chillers, White Space & 36MW Load Banks.",
+        badge: "4D BIM LOD 400",
+        file: "/dc/schedule/index.html"
       },
       {
         id: "domain5_handover",
