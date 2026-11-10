@@ -4,22 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://project.renewablevietnam.com/">
-  <script>
-    // Canonical Transition: Route renewablevietnam.com/garments to project.renewablevietnam.com
-    (function() {
-      if (window.location.hostname === 'renewablevietnam.com') {
-        var subpath = window.location.pathname.replace(/^\/project\/?/, '/');
-        window.location.replace('https://project.renewablevietnam.com' + subpath + window.location.search + window.location.hash);
-      }
-    })();
-  </script>
-    <!-- RenewableVietNam Brand Favicon & Touch Icons -->
-    <link rel="icon" href="./assets/images/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="./assets/images/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" href="./assets/images/favicon-32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="./assets/images/favicon.png" sizes="180x180">
-    <link rel="apple-touch-icon" href="./assets/images/apple-touch-icon.png">
-  <title>Project Management Portal</title>
+  <!-- RenewableVietNam Brand Favicon & Touch Icons -->
+  <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/assets/images/favicon-32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
+  <title>Capital Projects &amp; Engineering Directorate | Renewable Viet Nam - Rev.012</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
@@ -50,7 +41,6 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* Seamless Iframe without outer box borders */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -67,28 +57,36 @@
       transition: opacity 0.2s ease-in-out;
       background-color: transparent;
     }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+    }
+    .dark .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased">
+<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors">
 
   <!-- Master Top Navigation Bar -->
-    <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
-    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between py-2.5 sm:py-3">
-      <div class="flex items-center gap-6">
+  <header class="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between py-2.5">
+      <div class="flex items-center gap-5">
         <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
           <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
           <div class="flex flex-col">
-            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-800 dark:text-slate-200 font-semibold leading-tight">
+            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100 font-bold leading-tight">
               RENEWABLE VIETNAM
             </span>
             <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-              Project Management
+              Capital Projects Directorate
             </span>
           </div>
         </a>
 
         <!-- Desktop Quick Jump Navigation -->
-        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
+        <nav class="hidden xl:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
           <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Master Dashboard</a>
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
           <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
@@ -99,14 +97,15 @@
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
           <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a>
           <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 transition-colors">Project Delivery</a></nav>
+          <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 transition-colors">Project Delivery</a>
+        </nav>
       </div>
 
       <!-- Controls & Theme -->
       <div class="flex items-center gap-2">
         <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span>5 Edge Gateways Live</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>5 Edge Gateways Live &middot; Multi-Project Cockpit</span>
         </div>
 
         <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
@@ -119,202 +118,559 @@
         </button>
       </div>
     </div>
-    <!-- Mobile Quick Navigation Ribbon -->
-    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden px-4 pb-2 pt-1 border-t border-slate-100 dark:border-slate-800 font-mono text-[10px]">
-      <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Master Dashboard</a>
-      <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Energy</a>
-      <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Industrial</a>
-      <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">EV Tech</a>
-      <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Invest &amp; Legal</a>
-      <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0">Project Delivery</a></div>
-    <!-- Executive 7-Segment Grid Navigation -->
-    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 border-t border-slate-100 dark:border-slate-800/80 py-2.5">
+
+    <!-- PRIMARY PROJECT SELECTOR BAR (Macro Navigation Across All Verticals) -->
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-8 border-t border-slate-200/70 dark:border-slate-800 py-2 bg-slate-50/70 dark:bg-slate-900/60">
+      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5">
+        
+        <!-- Project Switcher Buttons -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold shrink-0 hidden sm:inline">
+            Project Vertical:
+          </span>
+
+          <!-- Button: Garments Project -->
+          <button id="tab-project-garments" onclick="switchProject('garments')" class="project-tab-btn flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left transition-all duration-150 cursor-pointer text-xs shrink-0 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-2xs hover:border-emerald-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-800 dark:text-slate-100 text-[11px] leading-tight">Garments Capital Projects</span>
+              <span class="text-[9.5px] text-slate-500 font-mono leading-none mt-0.5">$14.50M BAC &middot; Multi-Site</span>
+            </div>
+          </button>
+
+          <!-- Button: Data Center Project -->
+          <button id="tab-project-dc" onclick="switchProject('dc')" class="project-tab-btn flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left transition-all duration-150 cursor-pointer text-xs shrink-0 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-2xs hover:border-sky-400">
+            <span class="w-2 h-2 rounded-full bg-sky-500 shrink-0"></span>
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-800 dark:text-slate-100 text-[11px] leading-tight">Hyperscale Data Center</span>
+              <span class="text-[9.5px] text-slate-500 font-mono leading-none mt-0.5">45 MW Campus &middot; $180M BAC</span>
+            </div>
+          </button>
+
+          <!-- Button: Portfolio Overview & Pipeline -->
+          <button id="tab-project-portfolio" onclick="switchProject('portfolio')" class="project-tab-btn flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left transition-all duration-150 cursor-pointer text-xs shrink-0 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-2xs hover:border-amber-400">
+            <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+            <div class="flex flex-col">
+              <span class="font-bold text-slate-800 dark:text-slate-100 text-[11px] leading-tight">Portfolio &amp; Pipeline</span>
+              <span class="text-[9.5px] text-slate-500 font-mono leading-none mt-0.5">Overview &amp; Future Verticals</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Project Meta & Standalone Link -->
+        <div class="flex items-center justify-between md:justify-end gap-3 text-xs shrink-0">
+          <div id="project-meta-chips" class="flex items-center gap-2 text-[10.5px] font-mono">
+            <!-- Injected dynamically -->
+          </div>
+          <a id="btn-standalone-direct" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium transition-colors shadow-2xs text-[11px] shrink-0">
+            <span id="standalone-link-text">Open Standalone</span>
+            <span class="text-[11px]">&nearr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive 7-Segment Grid Navigation for Active Project -->
+    <div id="nav-bar-container" class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-8 border-t border-slate-200/70 dark:border-slate-800/80 py-2.5">
       <nav id="module-nav-bar" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-        <!-- Rendered dynamically -->
+        <!-- Rendered dynamically based on active project -->
       </nav>
     </div>
 
     <!-- Active Viewport Toolbar -->
-    <div class="bg-slate-50/80 dark:bg-slate-900/60 border-t border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 lg:px-8 xl:px-12 py-2 text-xs">
-      <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-400">
+    <div id="viewport-toolbar" class="bg-slate-100/70 dark:bg-slate-900/80 border-t border-slate-200/80 dark:border-slate-800 px-2 sm:px-4 lg:px-8 py-1.5 text-xs">
+      <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-slate-600 dark:text-slate-400">
         <div class="flex items-center gap-2 min-w-0">
-          <span class="w-2 h-2 rounded-full bg-sky-500 shrink-0"></span>
+          <span id="active-project-dot" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
           <span class="text-slate-400 dark:text-slate-500 uppercase font-semibold text-[9.5px] sm:text-[10px] shrink-0">Active Module:</span>
           <strong id="active-module-title" class="text-slate-900 dark:text-slate-100 font-bold text-xs truncate">Loading...</strong>
         </div>
-        <a id="open-standalone-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sky-700 dark:text-sky-300 font-medium hover:bg-sky-50 dark:hover:bg-slate-700 transition-colors shadow-2xs text-[11px] shrink-0 self-end sm:self-auto">
-          <span>Open Module in New Window</span>
-          <span class="text-[11px]">&nearr;</span>
-        </a>
+        <div class="flex items-center gap-2 self-end sm:self-auto">
+          <button onclick="reloadActiveModule()" title="Reload Module" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 text-[11px] cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <a id="open-standalone-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sky-700 dark:text-sky-300 font-medium hover:bg-sky-50 dark:hover:bg-slate-700 transition-colors shadow-2xs text-[11px] shrink-0">
+            <span>Open Viewport in New Window</span>
+            <span class="text-[11px]">&nearr;</span>
+          </a>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Module Content Container (Completely De-Boxed: No outer container borders) -->
-  <main class="flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-2 py-2 sm:px-6 sm:py-4">
-    <iframe id="module-viewport" class="module-frame" src="modules/bod_capex_charter_report.html" title="Engineering Module Viewport"></iframe>
+  <main class="flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-1 py-1 sm:px-4 sm:py-3">
+    
+    <!-- Main Iframe Viewport for Active Project Modules -->
+    <div id="iframe-viewport-wrapper" class="w-full">
+      <iframe id="module-viewport" class="module-frame" src="about:blank" title="Engineering Module Viewport"></iframe>
+    </div>
+
+    <!-- Portfolio & Pipeline Directory View (Shown when portfolio is selected) -->
+    <div id="portfolio-view-wrapper" class="hidden w-full max-w-7xl mx-auto py-6 px-4">
+      
+      <!-- Portfolio Directorate Banner -->
+      <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-sky-950 text-white shadow-md border border-slate-800 mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono uppercase tracking-wider mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              Multi-Sector Capital Projects Portfolio
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Renewable Viet Nam Projects Directorate</h2>
+            <p class="text-sm text-slate-300 max-w-2xl mt-1 leading-relaxed">
+              Unified governance, statutory permitting, EPC execution, and capital controls across heavy infrastructure, high-density digital compute, and industrial decarbonization assets.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 shrink-0 font-mono text-center">
+            <div class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-lg font-bold text-emerald-400">$250.00M+</div>
+              <div class="text-[9.5px] uppercase tracking-wider text-slate-400">Total Committed BAC</div>
+            </div>
+            <div class="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10">
+              <div class="text-lg font-bold text-sky-400">5 Verticals</div>
+              <div class="text-[9.5px] uppercase tracking-wider text-slate-400">2 Active &middot; 3 Pipeline</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Projects Section -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Operational Capital Projects</h3>
+            <p class="text-xs text-slate-500">Live projects with full executive 7-domain engineering governance systems deployed.</p>
+          </div>
+          <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded border border-emerald-200 dark:border-emerald-800">
+            2 Portals Deployed
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          
+          <!-- Card: Garments Project -->
+          <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs hover:border-emerald-400 dark:hover:border-emerald-600 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  MANUFACTURING &bull; ESG DECARBONIZATION
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">$14.50M USD</span>
+              </div>
+              <h4 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">
+                Garments Regional Capital Projects
+              </h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                Multi-site engineering governance across Vietnam &amp; Sri Lanka. Integrates 2.8 MWp rooftop solar + 1.2 MWh BESS, 15 TPH biomass steam, LEED Platinum certification, and QCVN 06:2022 PCCC fire safety compliance.
+              </p>
+              
+              <div class="grid grid-cols-3 gap-2 font-mono text-[10px] text-slate-600 dark:text-slate-400 mb-4 p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-lg border border-slate-100 dark:border-slate-800">
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">Solar / BESS</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">2.8 MWp</span>
+                </div>
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">Standards</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">LEED Plat.</span>
+                </div>
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">Modules</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">7 Domains</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="switchProject('garments')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs">
+                <span>Access Inside Master Portal</span>
+                <span>&rarr;</span>
+              </button>
+              <a href="/garments/" target="_blank" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700 transition-colors">
+                Standalone &nearr;
+              </a>
+            </div>
+          </div>
+
+          <!-- Card: Data Center Project -->
+          <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs hover:border-sky-400 dark:hover:border-sky-600 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
+                  DIGITAL INFRASTRUCTURE &bull; HIGH DENSITY
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">$180.00M USD</span>
+              </div>
+              <h4 class="text-base font-bold text-slate-900 dark:text-slate-100 mb-1">
+                Hyperscale Data Center Campus (45 MW)
+              </h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 leading-relaxed">
+                45 MW IT Capacity Tier III / ANSI/TIA-942 Rated 3 facility in Vietnam. Features dual 110kV/22kV substations, 24 MW standby power, 80 kW direct liquid cooling, 1.280 PUE, and Decree 80 DPPA green power integration.
+              </p>
+              
+              <div class="grid grid-cols-3 gap-2 font-mono text-[10px] text-slate-600 dark:text-slate-400 mb-4 p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-lg border border-slate-100 dark:border-slate-800">
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">IT Load</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">45 MW</span>
+                </div>
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">PUE Goal</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">1.280</span>
+                </div>
+                <div>
+                  <span class="block text-slate-400 text-[9px] uppercase">Rating</span>
+                  <span class="font-bold text-slate-800 dark:text-slate-200">Tier III / IV</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <button onclick="switchProject('dc')" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-xs">
+                <span>Access Inside Master Portal</span>
+                <span>&rarr;</span>
+              </button>
+              <a href="/dc/" target="_blank" class="px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium border border-slate-200 dark:border-slate-700 transition-colors">
+                Standalone &nearr;
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Pipeline Project Verticals Section (Extensible Architecture) -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">Future Pipeline Project Verticals</h3>
+            <p class="text-xs text-slate-500">Upcoming multi-sector capital programs undergoing pre-feasibility, statutory allocation, and EPC structuring.</p>
+          </div>
+          <span class="text-xs font-mono font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/50 px-2.5 py-1 rounded border border-amber-200 dark:border-amber-800">
+            Modular Architecture
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          
+          <!-- Pipeline Card 1: Offshore Wind -->
+          <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded text-[9.5px] font-mono font-bold bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800">
+                  OFFSHORE WIND &bull; MARINE EPC
+                </span>
+                <span class="text-[10px] font-mono text-slate-500">PDP8 Target</span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
+                Offshore Wind &amp; Marine Grid EPC
+              </h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                500 MW Phase 1 off Bình Thuận &amp; Ninh Thuận coastlines. Includes offshore substation design, 220kV subsea export cable, seabed geotechnical surveys, and DNV-ST-0119 compliance.
+              </p>
+              <div class="text-[10.5px] font-mono text-slate-600 dark:text-slate-400 space-y-1 mb-4">
+                <div><strong class="text-slate-400 uppercase text-[9px]">CAPEX:</strong> $1.20B USD Projected</div>
+                <div><strong class="text-slate-400 uppercase text-[9px]">Stage:</strong> Pre-Feasibility &amp; Wind Resource Audit</div>
+              </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                <span>Engineering Spec in Preparation</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Pipeline Card 2: Green Hydrogen -->
+          <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded text-[9.5px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  GREEN HYDROGEN &bull; POWER-TO-X
+                </span>
+                <span class="text-[10px] font-mono text-slate-500">Feasibility</span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
+                Green Hydrogen &amp; Ammonia Hub
+              </h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                100,000 Tonnes/Year green ammonia synthesizing facility. Powered by dedicated renewable microgrid via Decree 80/2024 DPPA, seawater desalination, and PEM electrolyzer arrays.
+              </p>
+              <div class="text-[10.5px] font-mono text-slate-600 dark:text-slate-400 space-y-1 mb-4">
+                <div><strong class="text-slate-400 uppercase text-[9px]">CAPEX:</strong> $450.00M USD Projected</div>
+                <div><strong class="text-slate-400 uppercase text-[9px]">Stage:</strong> Techno-Economic Modeling</div>
+              </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Feasibility &amp; Off-take Structuring</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Pipeline Card 3: Extensible Slot -->
+          <div class="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/40 p-5 flex flex-col justify-between hover:border-slate-400 transition-colors">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded text-[9.5px] font-mono font-bold bg-purple-50 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                  EXTENSIBLE VERTICAL REGISTRY
+                </span>
+                <span class="text-[10px] font-mono text-slate-400">Ready</span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100 mb-1">
+                + Register Future Project Vertical
+              </h4>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                Architecture dynamically supports onboarding new industry verticals (e.g. Industrial Solar BESS, Port Electrification, Waste-to-Energy) directly via `master_manifest.js`.
+              </p>
+              <div class="text-[10.5px] font-mono text-slate-500 space-y-1 mb-4">
+                <div><strong class="text-slate-400 uppercase text-[9px]">Schema:</strong> window.PROJECTS_REGISTRY</div>
+                <div><strong class="text-slate-400 uppercase text-[9px]">Deployment:</strong> Zero Code Rewrite Needed</div>
+              </div>
+            </div>
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+              <a href="https://invest.renewablevietnam.com/" class="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+                <span>View Investment Pipeline on Legal Portal</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
   </main>
 
   <!-- Master Footer -->
-  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
-    Garments Company Regional Engineering & Capital Projects Architecture | Multi-Site Governance (Vietnam & Sri Lanka)
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-3.5 px-4 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors mt-auto">
+    <div class="max-w-[1920px] 2xl:max-w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-700 dark:text-slate-300">Renewable Viet Nam Capital Projects Directorate</span>
+        <span class="text-slate-300 dark:text-slate-700">&bull;</span>
+        <span>Multi-Sector Infrastructure Governance</span>
+      </div>
+      <div class="font-mono text-[11px] text-slate-400 dark:text-slate-500">
+        Statutory Compliance: QCVN 06:2022/BXD &bull; Decree 15/2021 &bull; Decree 06/2021 &bull; Decree 80/2024 (DPPA)
+      </div>
+    </div>
   </footer>
 
-  <!-- Include External Manifest if present -->
-  <script src="modules_Rev_Final.js?v=20261103.2"></script>
-
-  <!-- Dynamic Shell Controller with Built-in Resilient Fallback -->
+  <!-- Master Portal Controller Script -->
+  <script src="./master_manifest.js"></script>
   <script>
-    if (!window.PORTAL_MODULES || window.PORTAL_MODULES.length === 0) {
-      window.PORTAL_MODULES = [
-  {
-    id: "master_governance",
-    tag: "FRAMEWORK",
-    shortTitle: "Project Delivery",
-    category: "Executive Governance",
-    title: "Project Delivery Framework",
-    description: "The '5+3' Capital Delivery System: 6-Stage Gate Process, 10-Role RACI Matrix, and 8 Integrated Execution Pillars.",
-    badge: "Framework",
-    file: "modules/master_project_governance.html"
-  },
-  {
-    id: "domain1_permitting",
-    tag: "DOMAIN 1",
-    shortTitle: "Permits & Legal",
-    category: "Statutory Compliance",
-    title: "Domain 1: Permits & Legal Approvals",
-    description: "Vietnam Land Use Right (Sổ Đỏ), 1/500 Master Plan, TKCS Basic Design, QCVN 06:2022 Fire Safety, Phased GPXD Móng/Thân, and GPMT Licensing.",
-    badge: "Permits",
-    file: "modules/domain1_pccc_permitting.html"
-  },
-  {
-    id: "domain2_engineering_esg",
-    tag: "DOMAIN 2",
-    shortTitle: "Plant & ESG Tech",
-    category: "Core Engineering & ESG",
-    title: "Domain 2: Plant Engineering, Clean Utilities & ESG Infrastructure",
-    description: "35,000 m² 2.5D Plant Map, 15 TPH Biomass Steam, 1,573 CFM VFD Air, 2.80 MWp Solar + 1.2 MWh BESS, 180 km/h PEB Typhoon, AWS Water & LEED Platinum (84 Pts).",
-    badge: "Engineering & ESG",
-    file: "modules/domain2_utilities_engineering.html"
-  },
-  {
-    id: "domain3_capex",
-    tag: "DOMAIN 3",
-    shortTitle: "Cost & Contracts",
-    category: "Commercial & Controls",
-    title: "Domain 3: Project Cost & Contracts",
-    description: "$14.50M BAC Breakdown, EVM S-Curve Progress Verification, 7-Year Operating DCF Valuation ($1.85M NPV, 15.65% IRR), and FIDIC Risk Allocation.",
-    badge: "Cost & Contracts",
-    file: "modules/domain4_capex_calsheet.html"
-  },
-  {
-    id: "domain4_construction",
-    tag: "DOMAIN 4",
-    shortTitle: "Physical Construction",
-    category: "Civil, PEB & MEP Execution",
-    title: "Domain 4: Physical Construction & Site Execution",
-    description: "Deep Piling Substructure, 180 km/h Typhoon PEB Steel Superstructure, Building Envelope, MEP Rough-in, 3-Tier ITP QA/QC Gates, and Zero-Harm HSE Protocol.",
-    badge: "Construction",
-    file: "modules/domain4_physical_construction.html"
-  },
-  {
-    id: "domain5_handover",
-    tag: "DOMAIN 5",
-    shortTitle: "T&C Handover",
-    category: "Operational Readiness",
-    title: "Domain 5: Testing, Commissioning & Handover",
-    description: "Integrated T&C Protocols (ASHRAE 0-2019), Decree 06/2021 Statutory Hoan Cong, 9.8s Blackout ATS Transfer, FIDIC Clause 10.1 TOC, and $725k DLP Bond.",
-    badge: "T&C Handover",
-    file: "modules/domain5_commissioning_handover.html"
-  },
-  {
-    id: "bod_charter",
-    tag: "BOARD DOSSIER",
-    shortTitle: "Board Report",
-    category: "Executive Authorization",
-    title: "Board Report & Project Charter",
-    description: "Executive Capital Authorization Dossier: Technical Sizing, Financial Sensitivity Stress Testing, and Formal Board Resolution.",
-    badge: "Board Report",
-    file: "modules/bod_capex_charter_report.html"
-  }
-];;
-    }
+    let currentProjectId = "garments";
+    let currentModuleId = null;
 
-    function renderModuleNavigation() {
-      const navBar = document.getElementById('module-nav-bar');
-      navBar.innerHTML = '';
+    function switchProject(projectId, targetModuleId = null) {
+      if (!window.PROJECTS_REGISTRY || !window.PROJECTS_REGISTRY[projectId]) {
+        console.warn("Project not found in registry:", projectId);
+        return;
+      }
 
-      window.PORTAL_MODULES.forEach((mod, index) => {
-        const btn = document.createElement('button');
-        btn.id = 'nav-mod-' + mod.id;
-        btn.type = 'button';
-        btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between ' +
-          (index === 0 
-            ? 'bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30' 
-            : 'bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300');
-        
-        btn.innerHTML = `
-          <div class="flex items-center justify-between gap-1 mb-0.5">
-            <span class="text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold ${index === 0 ? 'text-sky-200' : 'text-slate-400'}">${mod.tag || 'MODULE'}</span>
-            <span class="text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold ${index === 0 ? 'bg-sky-800 text-sky-100' : 'bg-slate-100 text-slate-500'}">${mod.badge || ''}</span>
-          </div>
-          <div class="text-[11.5px] sm:text-xs font-bold leading-tight truncate">${mod.shortTitle || mod.title}</div>
-        `;
-        
-        btn.onclick = () => loadModule(mod.id);
-        navBar.appendChild(btn);
+      currentProjectId = projectId;
+      const proj = window.PROJECTS_REGISTRY[projectId];
+
+      // Update Project Tab Buttons State
+      document.querySelectorAll(".project-tab-btn").forEach(btn => {
+        btn.classList.remove("ring-2", "ring-emerald-500", "ring-sky-500", "ring-amber-500", "bg-emerald-50/50", "bg-sky-50/50", "bg-amber-50/50", "dark:bg-emerald-950/30", "dark:bg-sky-950/30", "dark:bg-amber-950/30");
       });
 
-      if (window.PORTAL_MODULES.length > 0) {
-        loadModule(window.PORTAL_MODULES[0].id);
+      const activeBtn = document.getElementById(`tab-project-${projectId}`);
+      if (activeBtn) {
+        if (projectId === 'garments') {
+          activeBtn.classList.add("ring-2", "ring-emerald-500", "bg-emerald-50/50", "dark:bg-emerald-950/30");
+        } else if (projectId === 'dc') {
+          activeBtn.classList.add("ring-2", "ring-sky-500", "bg-sky-50/50", "dark:bg-sky-950/30");
+        } else {
+          activeBtn.classList.add("ring-2", "ring-amber-500", "bg-amber-50/50", "dark:bg-amber-950/30");
+        }
+      }
+
+      // Update Project Meta Chips
+      const metaContainer = document.getElementById("project-meta-chips");
+      if (metaContainer && proj.metrics) {
+        metaContainer.innerHTML = proj.metrics.map(m => `
+          <span class="px-2 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">
+            <strong class="text-slate-400 uppercase text-[9px] mr-1">${m.label}:</strong>${m.value}
+          </span>
+        `).join("");
+      }
+
+      // Update Standalone Button Link
+      const standaloneBtn = document.getElementById("btn-standalone-direct");
+      const standaloneText = document.getElementById("standalone-link-text");
+      if (standaloneBtn && standaloneText) {
+        standaloneBtn.href = proj.standaloneUrl || "#";
+        standaloneText.textContent = `Open ${proj.shortName} Standalone`;
+      }
+
+      // Handle Portfolio view vs Viewport view
+      const iframeWrapper = document.getElementById("iframe-viewport-wrapper");
+      const portfolioWrapper = document.getElementById("portfolio-view-wrapper");
+      const navBarContainer = document.getElementById("nav-bar-container");
+      const viewportToolbar = document.getElementById("viewport-toolbar");
+
+      if (projectId === "portfolio") {
+        if (iframeWrapper) iframeWrapper.classList.add("hidden");
+        if (portfolioWrapper) portfolioWrapper.classList.remove("hidden");
+        if (navBarContainer) navBarContainer.classList.add("hidden");
+        if (viewportToolbar) viewportToolbar.classList.add("hidden");
+        updateHashState("portfolio");
+        return;
+      }
+
+      if (iframeWrapper) iframeWrapper.classList.remove("hidden");
+      if (portfolioWrapper) portfolioWrapper.classList.add("hidden");
+      if (navBarContainer) navBarContainer.classList.remove("hidden");
+      if (viewportToolbar) viewportToolbar.classList.remove("hidden");
+
+      // Update Project Indicator Dot
+      const projectDot = document.getElementById("active-project-dot");
+      if (projectDot) {
+        projectDot.className = `w-2 h-2 rounded-full shrink-0 ${projectId === 'garments' ? 'bg-emerald-500' : 'bg-sky-500'}`;
+      }
+
+      // Render 7-Segment Navigation Grid for this Project
+      renderProjectModules(proj);
+
+      // Determine initial module to load
+      const modToLoad = targetModuleId || proj.defaultModule || (proj.modules && proj.modules[0] ? proj.modules[0].id : null);
+      if (modToLoad) {
+        loadModule(modToLoad);
       }
     }
 
+    function renderProjectModules(project) {
+      const navBar = document.getElementById("module-nav-bar");
+      if (!navBar || !project.modules) return;
+      navBar.innerHTML = "";
+
+      project.modules.forEach(mod => {
+        const btn = document.createElement("button");
+        btn.id = `mod-btn-${mod.id}`;
+        btn.onclick = () => loadModule(mod.id);
+        btn.className = "flex flex-col items-start p-2 rounded-lg border text-left transition-all duration-150 relative bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-sky-300 hover:shadow-xs group cursor-pointer";
+        
+        btn.innerHTML = `
+          <div class="flex items-center justify-between w-full mb-1">
+            <span class="text-[9px] font-mono font-bold tracking-wider uppercase text-slate-500 dark:text-slate-400 group-hover:text-sky-600 transition-colors">${mod.tag}</span>
+            <span class="text-[8.5px] px-1 py-0.5 rounded font-medium bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 border border-slate-200/60 dark:border-slate-600/50">${mod.badge}</span>
+          </div>
+          <span class="text-[11px] font-bold text-slate-800 dark:text-slate-200 leading-snug line-clamp-1 group-hover:text-sky-600 transition-colors">${mod.shortTitle}</span>
+          <span class="text-[9.5px] text-slate-400 dark:text-slate-500 leading-tight line-clamp-1 mt-0.5">${mod.category}</span>
+        `;
+        navBar.appendChild(btn);
+      });
+    }
+
     function loadModule(moduleId) {
-      const targetMod = window.PORTAL_MODULES.find(m => m.id === moduleId);
-      if (!targetMod) return;
+      const proj = window.PROJECTS_REGISTRY[currentProjectId];
+      if (!proj || !proj.modules) return;
+      const mod = proj.modules.find(m => m.id === moduleId);
+      if (!mod) return;
+      currentModuleId = moduleId;
 
-      activeModuleId = moduleId;
+      document.getElementById("active-module-title").textContent = `${proj.shortName} &bull; ${mod.title}`;
+      document.getElementById("open-standalone-link").href = mod.file;
 
-      document.getElementById('active-module-title').innerText = targetMod.title;
-      const standaloneLink = document.getElementById('open-standalone-link');
-      standaloneLink.href = targetMod.file;
+      const viewport = document.getElementById("module-viewport");
+      viewport.style.opacity = "0.2";
+      viewport.src = mod.file;
+      viewport.onload = () => {
+        viewport.style.opacity = "1";
+      };
 
-      window.PORTAL_MODULES.forEach(m => {
-        const btn = document.getElementById('nav-mod-' + m.id);
-        if (btn) {
-          const tagSpan = btn.querySelector('span:nth-child(1)');
-          const badgeSpan = btn.querySelector('span:nth-child(2)');
-          if (m.id === moduleId) {
-            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-sky-700 text-white border-sky-800 shadow-xs ring-1 ring-sky-600/30';
-            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-sky-200';
-            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-sky-800 text-sky-100';
-          } else {
-            btn.className = 'text-left p-2 sm:p-2.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between bg-white text-slate-800 border-slate-200 hover:bg-slate-50 hover:border-slate-300';
-            if (tagSpan) tagSpan.className = 'text-[9px] sm:text-[9.5px] font-mono uppercase tracking-wider font-bold text-slate-400';
-            if (badgeSpan) badgeSpan.className = 'text-[8.5px] font-mono px-1 py-0.2 rounded font-semibold bg-slate-100 text-slate-500';
-          }
+      proj.modules.forEach(m => {
+        const btn = document.getElementById(`mod-btn-${m.id}`);
+        if (!btn) return;
+        if (m.id === moduleId) {
+          const activeColor = currentProjectId === 'garments' 
+            ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-400 dark:border-emerald-500 ring-1 ring-emerald-400/30' 
+            : 'bg-sky-50/90 dark:bg-sky-950/40 border-sky-400 dark:border-sky-500 ring-1 ring-sky-400/30';
+          btn.className = `flex flex-col items-start p-2 rounded-lg border text-left transition-all duration-150 relative ${activeColor} shadow-xs`;
+        } else {
+          btn.className = "flex flex-col items-start p-2 rounded-lg border text-left transition-all duration-150 relative bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700/80 hover:border-sky-300 hover:shadow-xs group cursor-pointer";
         }
       });
 
-      const viewport = document.getElementById('module-viewport');
-      viewport.style.opacity = '0.3';
-      viewport.src = targetMod.file;
-      viewport.onload = () => {
-        viewport.style.opacity = '1';
-        try {
-          const doc = viewport.contentDocument || viewport.contentWindow.document;
-          if (doc && doc.body) {
-            const contentHeight = Math.max(doc.body.scrollHeight + 40, 1100);
-            viewport.style.minHeight = contentHeight + 'px';
-          }
-        } catch (e) {
-          viewport.style.minHeight = '1200px';
-        }
-      };
+      updateHashState(`${currentProjectId}/${moduleId}`);
     }
 
-    document.addEventListener('DOMContentLoaded', renderModuleNavigation);
+    function reloadActiveModule() {
+      const viewport = document.getElementById("module-viewport");
+      if (viewport && viewport.src) {
+        viewport.src = viewport.src;
+      }
+    }
+
+    function updateHashState(newHash) {
+      if (window.location.hash.slice(1) !== newHash) {
+        history.replaceState(null, null, `#${newHash}`);
+      }
+    }
+
+    function parseInitialHash() {
+      const hash = window.location.hash.slice(1);
+      if (!hash) return { project: "garments", module: null };
+
+      if (hash === "portfolio") return { project: "portfolio", module: null };
+      if (hash === "garments" || hash.startsWith("garments/")) {
+        const parts = hash.split("/");
+        return { project: "garments", module: parts[1] || null };
+      }
+      if (hash === "dc" || hash.startsWith("dc/")) {
+        const parts = hash.split("/");
+        return { project: "dc", module: parts[1] || null };
+      }
+
+      // Check if hash matches a garments module directly (legacy compatibility)
+      if (window.PROJECTS_REGISTRY.garments.modules.some(m => m.id === hash)) {
+        return { project: "garments", module: hash };
+      }
+
+      return { project: "garments", module: null };
+    }
+
+    // Theme Toggle Controller
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    function applyTheme(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        document.documentElement.classList.remove('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    applyTheme(savedTheme === 'dark');
+
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      applyTheme(isDark);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const initial = parseInitialHash();
+      switchProject(initial.project, initial.module);
+    });
+
+    window.addEventListener("hashchange", () => {
+      const next = parseInitialHash();
+      if (next.project !== currentProjectId || next.module !== currentModuleId) {
+        switchProject(next.project, next.module);
+      }
+    });
   </script>
 </body>
 </html>

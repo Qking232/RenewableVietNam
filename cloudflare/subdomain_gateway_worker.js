@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Migration Director
+ * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Migration Director - Rev.010
  * 
  * Maps subdomains to origin application directories on renewablevietnam.com:
  * - energy.renewablevietnam.com     -> /energy/
@@ -7,7 +7,10 @@
  * - industrial.renewablevietnam.com -> /industrial/
  * - ev.renewablevietnam.com         -> /evcharging/
  * - invest.renewablevietnam.com     -> /invm/
- * - project.renewablevietnam.com    -> /garments/
+ * - project.renewablevietnam.com    -> /project/ (Master Capital Projects Portal)
+ *   Subpath routing for project:
+ *   - /garments/*                   -> /garments/* (Garments Engineering Portal)
+ *   - /dc/*                         -> /dc/* (Hyperscale Data Center Portal)
  * 
  * Edge Redirections:
  * - ind.renewablevietnam.com        -> 301 Permanent Redirect to https://industrial.renewablevietnam.com
@@ -60,24 +63,26 @@ export default {
 
     let pathname = url.pathname;
 
-    // Edge HTTP 301 Permanent Redirect: /green -> /industrial
-        // Edge HTTP 301 Permanent Redirect: /projectenergy -> /energy
+    // Edge HTTP 301 Permanent Redirect: /projectenergy -> /energy
     if (pathname.startsWith('/projectenergy')) {
       const remainingPath = pathname.replace(/^\/projectenergy/, '') || '/';
       return Response.redirect(`https://energy.renewablevietnam.com${remainingPath}${url.search}`, 301);
     }
 
+    // Edge HTTP 301 Permanent Redirect: /green -> /industrial
     if (pathname.startsWith('/green')) {
       const remainingPath = pathname.replace(/^\/green/, '') || '/';
       return Response.redirect(`https://industrial.renewablevietnam.com${remainingPath}${url.search}`, 301);
     }
-
 
     // Check if request is for shared static assets at origin root
     const isSharedAsset = SHARED_PREFIXES.some(prefix => pathname.startsWith(prefix));
 
     let originPath;
     if (isSharedAsset) {
+      originPath = pathname;
+    } else if (hostname === 'project.renewablevietnam.com' && (pathname.startsWith('/dc') || pathname.startsWith('/garments'))) {
+      // Subpath direct routing under project.renewablevietnam.com
       originPath = pathname;
     } else {
       // Strip redundant targetSubfolder if client requested it directly
