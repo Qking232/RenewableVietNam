@@ -74,11 +74,17 @@
         // Particle Systems
         particles = window.DC36_PARTICLES.init(scene);
 
-        // 4D Timeline Engine
-        window.DC36_TIMELINE.init(window.DC36_SCHEDULE, modelsRef, particles);
+        // 4D Timeline Engine (Defaults to Completed Campus Reality)
+        const initState = window.DC36_TIMELINE.init(window.DC36_SCHEDULE, modelsRef, particles);
 
         // Gantt Chart & P6 Table
         window.DC36_GANTT.init(window.DC36_SCHEDULE, handleScheduleJump);
+
+        if (initState) {
+            updateHUD(initState);
+            const slider = document.getElementById('timeline-slider');
+            if (slider) slider.value = (initState.progressPercent * 10);
+        }
 
         // Post-Processing Pipeline (EffectComposer + Bloom + FXAA)
         setupPostProcessing();
@@ -99,12 +105,43 @@
         animate();
     }
 
+    let skyMesh = null;
+    function updateSkyGradient(topColor, bottomColor) {
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createLinearGradient(0, 0, 0, 128);
+            grad.addColorStop(0, topColor);
+            grad.addColorStop(1, bottomColor);
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 32, 128);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.magFilter = THREE.LinearFilter;
+            texture.minFilter = THREE.LinearFilter;
+
+            if (!skyMesh) {
+                const skyGeo = new THREE.SphereGeometry(650, 32, 16);
+                const skyMat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide, depthWrite: false });
+                skyMesh = new THREE.Mesh(skyGeo, skyMat);
+                scene.add(skyMesh);
+            } else {
+                skyMesh.material.map.dispose();
+                skyMesh.material.map = texture;
+                skyMesh.material.needsUpdate = true;
+            }
+        } catch(e) {
+            console.warn("Sky dome gradient creation skipped", e);
+        }
+    }
+
     function setupLighting() {
-        hemiLight = new THREE.HemisphereLight(0xddeeff, 0x1a202c, 0.65);
+        hemiLight = new THREE.HemisphereLight(0xddeeff, 0x1a202c, 0.75);
         hemiLight.position.set(0, 100, 0);
         scene.add(hemiLight);
 
-        dirLight = new THREE.DirectionalLight(0xfffaed, 1.45);
+        dirLight = new THREE.DirectionalLight(0xfffaed, 1.55);
         dirLight.position.set(100, 140, 80);
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 2048;
@@ -119,7 +156,7 @@
         dirLight.shadow.bias = -0.0005;
         scene.add(dirLight);
 
-        rimLight = new THREE.DirectionalLight(0x38bdf8, 0.4);
+        rimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
         rimLight.position.set(-100, 80, -90);
         scene.add(rimLight);
 
@@ -136,31 +173,37 @@
         const lightHall1 = new THREE.PointLight(0x00e5ff, 1.4, 45);
         lightHall1.position.set(5, 16.0, 0);
         scene.add(lightHall1);
+
+        // Initial Sky Dome Gradient (Photorealistic daylight)
+        updateSkyGradient('#0284c7', '#cbd5e1');
     }
 
     function setLightingMode(mode) {
         currentLightingMode = mode;
         if (mode === 'day') {
-            scene.background.setHex(0x0a0c10);
-            scene.fog.color.setHex(0x0a0c10);
+            updateSkyGradient('#0284c7', '#cbd5e1');
+            scene.background = null;
+            scene.fog.color.setHex(0xcbd5e1);
             dirLight.color.setHex(0xfffaed);
-            dirLight.intensity = 1.45;
+            dirLight.intensity = 1.55;
             dirLight.position.set(100, 140, 80);
-            hemiLight.intensity = 0.65;
+            hemiLight.intensity = 0.75;
             nightFloodlights.forEach(f => f.intensity = 0.0);
         } else if (mode === 'dusk') {
-            scene.background.setHex(0x1a0f1e);
-            scene.fog.color.setHex(0x1a0f1e);
+            updateSkyGradient('#1e1b4b', '#ea580c');
+            scene.background = null;
+            scene.fog.color.setHex(0x7c2d12);
             dirLight.color.setHex(0xff7733);
             dirLight.intensity = 1.8;
             dirLight.position.set(140, 25, 40);
-            hemiLight.intensity = 0.4;
-            nightFloodlights.forEach(f => f.intensity = 0.45);
+            hemiLight.intensity = 0.45;
+            nightFloodlights.forEach(f => f.intensity = 0.5);
         } else if (mode === 'night') {
-            scene.background.setHex(0x030508);
-            scene.fog.color.setHex(0x030508);
+            updateSkyGradient('#020617', '#0f172a');
+            scene.background = null;
+            scene.fog.color.setHex(0x0a0c10);
             dirLight.intensity = 0.15;
-            hemiLight.intensity = 0.12;
+            hemiLight.intensity = 0.15;
             nightFloodlights.forEach(f => f.intensity = 1.8);
         }
     }
@@ -460,6 +503,40 @@
         if (lightingSelect) lightingSelect.addEventListener('change', (e) => setLightingMode(e.target.value));
         bindAction(droneTourBtn, () => toggleDroneTour());
         bindAction(fpvBtn, () => toggleFPVMode());
+
+        // Campus Reality vs 4D Construction Evolution Mode Handler
+        let isRealityMode = true;
+        const btnModeToggle = document.getElementById('btn-mode-toggle');
+        const txtModeToggle = document.getElementById('txt-mode-toggle');
+        const iconModeToggle = document.getElementById('icon-mode-toggle');
+        if (btnModeToggle) {
+            bindAction(btnModeToggle, () => {
+                isRealityMode = !isRealityMode;
+                if (isRealityMode) {
+                    btnModeToggle.classList.add('active');
+                    if (txtModeToggle) txtModeToggle.innerText = 'Reality';
+                    if (iconModeToggle) iconModeToggle.className = 'fas fa-city';
+                    const state = window.DC36_TIMELINE.setCampusMode('reality');
+                    if (state) {
+                        updateHUD(state);
+                        window.DC36_GANTT.updateTime(state.timestamp);
+                        window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
+                        if (slider) slider.value = (state.progressPercent * 10);
+                    }
+                } else {
+                    btnModeToggle.classList.remove('active');
+                    if (txtModeToggle) txtModeToggle.innerText = '4D Evol.';
+                    if (iconModeToggle) iconModeToggle.className = 'fas fa-hard-hat';
+                    const state = window.DC36_TIMELINE.setCampusMode('construction');
+                    if (state) {
+                        updateHUD(state);
+                        window.DC36_GANTT.updateTime(state.timestamp);
+                        window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
+                        if (slider) slider.value = 0;
+                    }
+                }
+            });
+        }
 
         document.querySelectorAll('.cam-btn').forEach(btn => {
             bindAction(btn, () => {

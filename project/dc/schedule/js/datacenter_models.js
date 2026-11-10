@@ -78,7 +78,23 @@
             cautionStripe: new THREE.MeshStandardMaterial({ color: 0xf59e0b, map: T.hazardStripes }),
             cableOrange: new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.55, metalness: 0.1 }),
             craneYellow: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35, metalness: 0.7 }),
-            craneTreads: new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9, metalness: 0.3 })
+            craneTreads: new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9, metalness: 0.3 }),
+
+            // Ancillary Facilities & Realism Materials
+            water: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.08, metalness: 0.82, transparent: true, opacity: 0.85 }),
+            riprap: new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.95, metalness: 0.05 }),
+            treeFoliage: new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.88, metalness: 0.0 }),
+            treeBark: new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.92, metalness: 0.04 }),
+            k12Yellow: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.32, metalness: 0.65 }),
+            anprCamera: new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.4, metalness: 0.7 }),
+            evGreenGlow: new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981, emissiveIntensity: 0.85 }),
+            solarPanel: new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.18, metalness: 0.88 }),
+            truckCab: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.35, metalness: 0.68 }),
+            truckTrailer: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5, metalness: 0.35 }),
+            manholeCover: new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.82, metalness: 0.55 }),
+            blastWall: new THREE.MeshStandardMaterial({ color: 0x78716c, roughness: 0.82, metalness: 0.12, map: T.concrete }),
+            curbYellow: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.65, metalness: 0.1 }),
+            curtainGlass: new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.88, opacity: 0.6, transparent: true, roughness: 0.05, ior: 1.52 })
         };
     }
 
@@ -128,88 +144,411 @@
         return group;
     }
 
-    // 1. Build Base Campus Terrain & Perimeter
+    // 1. Build Base Campus Terrain, Ancillary Facilities & Infrastructure
     function createCampusSite(M) {
         const group = new THREE.Group();
         group.name = "CampusSite";
 
-        // Outer Ground
-        const groundGeo = new THREE.PlaneGeometry(260, 200);
+        // Outer Regional Terrain Ground (Subdued dark industrial earth)
+        const groundGeo = new THREE.PlaneGeometry(320, 260);
         const groundMesh = new THREE.Mesh(groundGeo, M.ground);
         groundMesh.rotation.x = -Math.PI / 2;
         groundMesh.receiveShadow = true;
         group.add(groundMesh);
 
-        // Asphalt Campus Pad
-        const campusGeo = new THREE.PlaneGeometry(210, 150);
+        // Heavy-Duty Asphalt Campus Site Pad
+        const campusGeo = new THREE.PlaneGeometry(240, 180);
         const campusMesh = new THREE.Mesh(campusGeo, M.asphalt);
         campusMesh.rotation.x = -Math.PI / 2;
-        campusMesh.position.y = 0.05;
+        campusMesh.position.y = 0.04;
         campusMesh.receiveShadow = true;
         group.add(campusMesh);
 
-        // Landscaping Green Strips
-        const lawn1 = new THREE.Mesh(new THREE.PlaneGeometry(200, 10), M.grass);
-        lawn1.rotation.x = -Math.PI / 2;
-        lawn1.position.set(0, 0.08, -70);
-        lawn1.receiveShadow = true;
-        group.add(lawn1);
+        // Perimeter Grass & Landscaping Berms
+        const grassBermN = new THREE.Mesh(new THREE.PlaneGeometry(236, 12), M.grass);
+        grassBermN.rotation.x = -Math.PI / 2;
+        grassBermN.position.set(0, 0.06, -82);
+        grassBermN.receiveShadow = true;
+        group.add(grassBermN);
 
-        const lawn2 = new THREE.Mesh(new THREE.PlaneGeometry(10, 130), M.grass);
-        lawn2.rotation.x = -Math.PI / 2;
-        lawn2.position.set(98, 0.08, 0);
-        lawn2.receiveShadow = true;
-        group.add(lawn2);
+        const grassBermE = new THREE.Mesh(new THREE.PlaneGeometry(12, 172), M.grass);
+        grassBermE.rotation.x = -Math.PI / 2;
+        grassBermE.position.set(112, 0.06, 0);
+        grassBermE.receiveShadow = true;
+        group.add(grassBermE);
 
-        // Roadway Markings
-        const roadLine = new THREE.Mesh(new THREE.PlaneGeometry(190, 0.4), M.roadMarking);
-        roadLine.rotation.x = -Math.PI / 2;
-        roadLine.position.set(0, 0.09, 65);
-        group.add(roadLine);
+        const grassBermW = new THREE.Mesh(new THREE.PlaneGeometry(12, 172), M.grass);
+        grassBermW.rotation.x = -Math.PI / 2;
+        grassBermW.position.set(-112, 0.06, 0);
+        grassBermW.receiveShadow = true;
+        group.add(grassBermW);
 
-        // Security Perimeter Fence
+        // Security Perimeter Anti-Climb Fence with Concrete Curb
         const fenceGroup = new THREE.Group();
-        const fencePoints = [[-102, -72], [102, -72], [102, 72], [-102, 72]];
+        const fencePoints = [[-115, -85], [115, -85], [115, 85], [-115, 85]];
         for (let i = 0; i < 4; i++) {
             const p1 = fencePoints[i];
             const p2 = fencePoints[(i + 1) % 4];
             const len = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
             const angle = Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
 
+            // Continuous concrete security plinth curb
             const curb = new THREE.Mesh(new THREE.BoxGeometry(len, 0.6, 0.4), M.concreteSlab);
             curb.position.set((p1[0] + p2[0]) / 2, 0.3, (p1[1] + p2[1]) / 2);
             curb.rotation.y = -angle;
             fenceGroup.add(curb);
 
+            // Steel fence posts with anti-climb outriggers every 6m
             const postCount = Math.floor(len / 6);
             for (let j = 0; j <= postCount; j++) {
                 const t = j / postCount;
                 const px = p1[0] + (p2[0] - p1[0]) * t;
                 const pz = p1[1] + (p2[1] - p1[1]) * t;
-                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3, 8), M.fencePost);
-                post.position.set(px, 1.8, pz);
+                
+                // Main post
+                const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.2, 8), M.fencePost);
+                post.position.set(px, 1.9, pz);
                 fenceGroup.add(post);
+
+                // Y-crank razor wire outrigger arms
+                const outrigger = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.6, 0.04), M.fencePost);
+                outrigger.rotation.z = Math.PI / 4;
+                outrigger.position.set(px + 0.15, 3.6, pz);
+                fenceGroup.add(outrigger);
             }
         }
         group.add(fenceGroup);
 
-        // Guard House
-        const guardHouse = new THREE.Group();
-        guardHouse.position.set(-85, 0, 65);
-        const ghBase = new THREE.Mesh(new THREE.BoxGeometry(6, 3.2, 4), M.facadeDark);
-        ghBase.position.y = 1.6;
+        // --- SUB-FACILITY 1: Primary Security Gatehouse & Checkpoint ---
+        const gateGroup = new THREE.Group();
+        gateGroup.name = "SecurityGatehouseCheckpoint";
+        gateGroup.position.set(-68, 0, 72);
+
+        // Architectural Guardhouse
+        const ghBase = new THREE.Mesh(new THREE.BoxGeometry(7.5, 3.4, 4.4), M.facadeDark);
+        ghBase.position.set(0, 1.7, 0);
         ghBase.castShadow = true;
-        guardHouse.add(ghBase);
+        gateGroup.add(ghBase);
 
-        const ghGlass = new THREE.Mesh(new THREE.BoxGeometry(5.8, 1.4, 3.8), M.glass);
-        ghGlass.position.y = 2.0;
-        guardHouse.add(ghGlass);
+        // Security Window Glazing Band
+        const ghGlass = new THREE.Mesh(new THREE.BoxGeometry(7.3, 1.5, 4.2), M.glass);
+        ghGlass.position.set(0, 2.2, 0);
+        gateGroup.add(ghGlass);
 
-        const barrierArm = new THREE.Mesh(new THREE.BoxGeometry(6, 0.15, 0.15), M.cautionStripe);
-        barrierArm.position.set(5, 1.0, 0);
-        guardHouse.add(barrierArm);
+        // Overhanging Architectural Roof Canopy
+        const ghCanopy = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.35, 6.2), M.facadeLight);
+        ghCanopy.position.set(0, 3.55, 0);
+        ghCanopy.castShadow = true;
+        gateGroup.add(ghCanopy);
 
-        group.add(guardHouse);
+        // Raised Island Median
+        const median = new THREE.Mesh(new THREE.BoxGeometry(15, 0.25, 1.6), M.curbYellow);
+        median.position.set(11, 0.12, 0);
+        median.receiveShadow = true;
+        gateGroup.add(median);
+
+        // Automated Inbound & Outbound Barrier Arms (Reflective red-white)
+        [-2.8, 2.8].forEach((laneZ, lIdx) => {
+            // Barrier motor pedestal
+            const pedestal = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.1, 0.5), M.k12Yellow);
+            pedestal.position.set(6, 0.55, laneZ > 0 ? 0.6 : -0.6);
+            gateGroup.add(pedestal);
+
+            // Boom arm
+            const arm = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.12, 0.08), M.cautionStripe);
+            arm.position.set(8.6, 1.05, laneZ);
+            gateGroup.add(arm);
+
+            // Directional Tire Spike Plate in roadway
+            const spikePlate = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.05, 0.7), M.transformerTank);
+            spikePlate.position.set(11, 0.06, laneZ);
+            gateGroup.add(spikePlate);
+
+            // ANPR / CCTV Camera Stanchion
+            const camPole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.6, 8), M.fencePost);
+            camPole.position.set(4.5, 1.3, laneZ + (laneZ > 0 ? 1.6 : -1.6));
+            const camHead = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.14, 0.35), M.anprCamera);
+            camHead.position.set(4.5, 2.5, laneZ + (laneZ > 0 ? 1.6 : -1.6));
+            gateGroup.add(camPole, camHead);
+        });
+
+        // 8x K12 Crash-Rated Heavy Safety Bollards
+        for (let b = 0; b < 4; b++) {
+            const bx = 4.5 + b * 4.2;
+            const bollard1 = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 1.05, 12), M.k12Yellow);
+            bollard1.position.set(bx, 0.52, 0);
+            bollard1.castShadow = true;
+            gateGroup.add(bollard1);
+        }
+
+        // Visitor Pedestrian Turnstile Portal Canopy
+        const turnstileCanopy = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.25, 3.8), M.facadeDark);
+        turnstileCanopy.position.set(-6.5, 3.2, 0);
+        const tsLeg1 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 3.2, 8), M.steelTruss);
+        tsLeg1.position.set(-8.8, 1.6, 1.6);
+        const tsLeg2 = tsLeg1.clone();
+        tsLeg2.position.set(-8.8, 1.6, -1.6);
+        gateGroup.add(turnstileCanopy, tsLeg1, tsLeg2);
+
+        // 2x Full-Height Turnstiles
+        [-0.9, 0.9].forEach(tz => {
+            const cage = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 2.4, 8, 1, true), M.fenceWire);
+            cage.position.set(-6.5, 1.2, tz);
+            const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.4, 8), M.fencePost);
+            shaft.position.set(-6.5, 1.2, tz);
+            gateGroup.add(cage, shaft);
+        });
+
+        group.add(gateGroup);
+
+        // --- SUB-FACILITY 2: Commercial Vehicle Inspection Canopy & Logistics Staging ---
+        const inspectGroup = new THREE.Group();
+        inspectGroup.name = "VehicleInspectionCanopy";
+        inspectGroup.position.set(-36, 0, 72);
+
+        // Cantilever Steel Portal Frame
+        const portalRoof = new THREE.Mesh(new THREE.BoxGeometry(11, 0.4, 8), M.facadeDark);
+        portalRoof.position.set(0, 5.4, 0);
+        portalRoof.castShadow = true;
+        inspectGroup.add(portalRoof);
+
+        const pColumn1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 5.4, 0.4), M.steelTruss);
+        pColumn1.position.set(-5, 2.7, -3.6);
+        const pColumn2 = pColumn1.clone();
+        pColumn2.position.set(5, 2.7, -3.6);
+        const pColumn3 = pColumn1.clone();
+        pColumn3.position.set(-5, 2.7, 3.6);
+        const pColumn4 = pColumn1.clone();
+        pColumn4.position.set(5, 2.7, 3.6);
+        inspectGroup.add(pColumn1, pColumn2, pColumn3, pColumn4);
+
+        // Convex Mirror & Inspection Floodlights
+        const mirror = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), M.curtainGlass);
+        mirror.rotation.x = Math.PI / 3;
+        mirror.position.set(-4.5, 4.6, 3.2);
+        inspectGroup.add(mirror);
+
+        group.add(inspectGroup);
+
+        // Waste Management & Recycling Corral
+        const wasteCorral = new THREE.Group();
+        wasteCorral.name = "WasteManagementCorral";
+        wasteCorral.position.set(-92, 0, 36);
+
+        const corralWall = new THREE.Mesh(new THREE.BoxGeometry(8, 2.4, 5), M.blastWall);
+        corralWall.position.set(0, 1.2, 0);
+        wasteCorral.add(corralWall);
+
+        // 3x Color-Coded Commercial Dumpsters (General, Cardboard, E-Waste)
+        const dumpsterColors = [0x15803d, 0x0284c7, 0x475569];
+        dumpsterColors.forEach((col, dIdx) => {
+            const dumpMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.5, metalness: 0.5 });
+            const dump = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.3, 2.4), dumpMat);
+            dump.position.set(-2.2 + dIdx * 2.2, 0.65, 0);
+            wasteCorral.add(dump);
+        });
+        group.add(wasteCorral);
+
+        // Pallet Staging Area with Timber Pallets
+        const palletGroup = new THREE.Group();
+        palletGroup.name = "PalletStaging";
+        palletGroup.position.set(-92, 0, 16);
+        for (let pz = -4; pz <= 4; pz += 2.2) {
+            for (let py = 0; py < 3; py++) {
+                const pallet = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.18, 1.6), M.treeBark);
+                pallet.position.set(0, 0.1 + py * 0.22, pz);
+                palletGroup.add(pallet);
+            }
+        }
+        group.add(palletGroup);
+
+        // --- SUB-FACILITY 3: Diverse Telecommunications Meet-Me-Room (MMR) Vaults ---
+        // Path A Vault (Northwest)
+        const mmrA = new THREE.Group();
+        mmrA.name = "Telecom_MMR_Path_A";
+        mmrA.position.set(-90, 0.05, -55);
+        const mmrManholeA = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.08, 16), M.manholeCover);
+        mmrManholeA.position.y = 0.04;
+        const mmrCollarA = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.06, 2.2), M.concreteCured);
+        mmrA.add(mmrManholeA, mmrCollarA);
+        group.add(mmrA);
+
+        // Path B Vault (Southeast Diverse Feed)
+        const mmrB = new THREE.Group();
+        mmrB.name = "Telecom_MMR_Path_B";
+        mmrB.position.set(90, 0.05, 55);
+        const mmrManholeB = mmrManholeA.clone();
+        const mmrCollarB = mmrCollarA.clone();
+        mmrB.add(mmrManholeB, mmrCollarB);
+        group.add(mmrB);
+
+        // Water Utility & Backflow Preventer Vault
+        const waterVault = new THREE.Group();
+        waterVault.name = "WaterUtilityVault";
+        waterVault.position.set(-82, 0, 72);
+        const wBox = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.2, 2.4), M.blastWall);
+        wBox.position.y = 0.6;
+        const valve1 = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.8, 8), M.valveBlue);
+        valve1.rotation.z = Math.PI / 2;
+        valve1.position.set(0, 1.3, -0.4);
+        waterVault.add(wBox, valve1);
+        group.add(waterVault);
+
+        // --- SUB-FACILITY 4: Parking, EV Charging & Micro-Mobility Shelter ---
+        const parkGroup = new THREE.Group();
+        parkGroup.name = "ParkingAndMobility";
+        parkGroup.position.set(65, 0, 52);
+
+        // 20 Striped Parking Bays (White thermoplastic lines)
+        for (let s = 0; s < 10; s++) {
+            const sz = -18 + s * 3.6;
+            const line = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 0.15), M.roadMarking);
+            line.rotation.x = -Math.PI / 2;
+            line.position.set(0, 0.06, sz);
+            parkGroup.add(line);
+        }
+
+        // 4 Dedicated EV Charging Bays (Green surface painting)
+        for (let e = 0; e < 4; e++) {
+            const ez = 4 + e * 3.6;
+            const evBay = new THREE.Mesh(new THREE.PlaneGeometry(5.0, 3.2), M.evGreenGlow);
+            evBay.rotation.x = -Math.PI / 2;
+            evBay.position.set(0, 0.06, ez);
+            parkGroup.add(evBay);
+
+            // EV Fast Charger Arch Pylon
+            const chargerArch = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.6, 0.6), M.facadeDark);
+            chargerArch.position.set(2.8, 0.8, ez);
+            const chargerLight = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.1, 0.5), M.evGreenGlow);
+            chargerLight.position.set(2.8, 1.55, ez);
+            parkGroup.add(chargerArch, chargerLight);
+        }
+
+        // Covered Bicycle & Scooter Shelter with Solar BIPV Glass
+        const bikeShelter = new THREE.Group();
+        bikeShelter.position.set(-8, 0, 0);
+        const shelterRoof = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.18, 14), M.solarPanel);
+        shelterRoof.position.set(0, 2.6, 0);
+        shelterRoof.rotation.z = -0.12;
+        shelterRoof.castShadow = true;
+        const bPost1 = new THREE.Mesh(new THREE.BoxGeometry(0.15, 2.6, 0.15), M.steelTruss);
+        bPost1.position.set(-1.8, 1.3, -6.5);
+        const bPost2 = bPost1.clone();
+        bPost2.position.set(-1.8, 1.3, 6.5);
+        bikeShelter.add(shelterRoof, bPost1, bPost2);
+        parkGroup.add(bikeShelter);
+
+        group.add(parkGroup);
+
+        // --- SUB-FACILITY 5: Engineered Stormwater Retention Basin & Landscape ---
+        const basinGroup = new THREE.Group();
+        basinGroup.name = "StormwaterRetentionBasin";
+        basinGroup.position.set(78, 0, -42);
+
+        // Excavated Basin Depression with Riprap Slopes
+        const riprapBank = new THREE.Mesh(new THREE.BoxGeometry(42, 1.8, 28), M.riprap);
+        riprapBank.position.y = 0.4;
+        basinGroup.add(riprapBank);
+
+        // Water Surface Reflection Plane
+        const waterMesh = new THREE.Mesh(new THREE.PlaneGeometry(36, 22), M.water);
+        waterMesh.rotation.x = -Math.PI / 2;
+        waterMesh.position.y = 0.75;
+        basinGroup.add(waterMesh);
+
+        // Safety Lifebuoy Ring Post
+        const lifebuoyPost = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 8), M.k12Yellow);
+        lifebuoyPost.position.set(-19, 0.7, 0);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.08, 8, 16), M.valveRed);
+        ring.position.set(-19, 1.1, 0);
+        basinGroup.add(lifebuoyPost, ring);
+
+        group.add(basinGroup);
+
+        // Perimeter Trees & Buffer Vegetation
+        const treePositions = [
+            [-108, -75], [-92, -75], [-76, -75], [-60, -75], [60, -75], [76, -75], [92, -75], [108, -75],
+            [108, -55], [108, -35], [108, -15], [108, 15], [108, 35], [108, 55], [108, 75],
+            [-108, -55], [-108, -35], [-108, -15], [-108, 15], [-108, 35], [-108, 55], [-108, 75]
+        ];
+
+        const foliageGeo = new THREE.ConeGeometry(1.8, 4.5, 8);
+        const trunkGeo = new THREE.CylinderGeometry(0.2, 0.28, 1.8, 8);
+
+        treePositions.forEach(tp => {
+            const tree = new THREE.Group();
+            tree.position.set(tp[0], 0, tp[1]);
+
+            const trunk = new THREE.Mesh(trunkGeo, M.treeBark);
+            trunk.position.y = 0.9;
+            trunk.castShadow = true;
+
+            const foliage = new THREE.Mesh(foliageGeo, M.treeFoliage);
+            foliage.position.y = 3.8;
+            foliage.castShadow = true;
+
+            tree.add(trunk, foliage);
+            group.add(tree);
+        });
+
+        // --- SUB-FACILITY 6: 110kV Steel Lattice Transmission Pylons ---
+        const transmissionGroup = new THREE.Group();
+        transmissionGroup.name = "Transmission110kVPylons";
+
+        [-32, 28].forEach(tx => {
+            const pylon = new THREE.Group();
+            pylon.position.set(tx, 0, 92);
+
+            // 4-Leg Lattice Base Tower
+            const towerLegs = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 2.8, 24, 4), M.steelTruss);
+            towerLegs.position.y = 12;
+            towerLegs.rotation.y = Math.PI / 4;
+            pylon.add(towerLegs);
+
+            // Crossarms for 3-Phase Conductors
+            [-6, 0, 6].forEach((cx, cIdx) => {
+                const arm = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.5, 0.5), M.steelTruss);
+                arm.position.set(cx, 16 + cIdx * 2.8, 0);
+                pylon.add(arm);
+
+                // Hanging Ceramic Insulator Strings
+                const ins = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.8, 8), M.bushingPorcelain);
+                ins.position.set(cx + (cx >= 0 ? 3.0 : -3.0), 15 + cIdx * 2.8, 0);
+                pylon.add(ins);
+            });
+
+            transmissionGroup.add(pylon);
+        });
+
+        // High Voltage Overhead Sagging Transmission Feed Lines into Substation Gantry
+        for (let c = -1; c <= 1; c++) {
+            const pStart = new THREE.Vector3(-32 + c * 3, 20, 92);
+            const pMid = new THREE.Vector3(c * 6, 15, 75);
+            const pEnd = new THREE.Vector3(28 + c * 3, 20, 92);
+            const catCurve = new THREE.CatmullRomCurve3([pStart, pMid, pEnd]);
+            const catMesh = new THREE.Mesh(new THREE.TubeGeometry(catCurve, 32, 0.035, 6, false), M.copperBus);
+            transmissionGroup.add(catMesh);
+        }
+
+        group.add(transmissionGroup);
+
+        // Roadway Thermoplastic Markings Network
+        const roadMarkingsGroup = new THREE.Group();
+        // Inbound lane center line
+        const centerLine1 = new THREE.Mesh(new THREE.PlaneGeometry(160, 0.3), M.roadMarking);
+        centerLine1.rotation.x = -Math.PI / 2;
+        centerLine1.position.set(0, 0.07, 72);
+        roadMarkingsGroup.add(centerLine1);
+
+        // Pedestrian Crosswalk Zebra Stripes
+        for (let z = -4; z <= 4; z += 1.4) {
+            const stripe = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 4.2), M.roadMarking);
+            stripe.rotation.x = -Math.PI / 2;
+            stripe.position.set(-52, 0.07, 72 + z);
+            roadMarkingsGroup.add(stripe);
+        }
+        group.add(roadMarkingsGroup);
+
         return group;
     }
 
@@ -428,15 +767,90 @@
         accentBand.position.set(5, 18.6, 0);
         facadeGroup.add(accentBand);
 
-        for (let l = 0; l < 8; l++) {
-            const louver = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.5, 5), M.louvers);
-            louver.position.set(-40.3, 3.5, -24 + l * 7);
-            facadeGroup.add(louver);
+        // Two-Storey Structural Glass Curtain-Wall Corporate Lobby Entrance (East Facade)
+        const lobbyGroup = new THREE.Group();
+        lobbyGroup.name = "ExecutiveEntranceLobby";
+        lobbyGroup.position.set(50.35, 4.8, 0);
+
+        // Glass Curtain Wall
+        const curtainGlass = new THREE.Mesh(new THREE.BoxGeometry(0.3, 8.5, 18), M.curtainGlass);
+        curtainGlass.position.set(0, 0, 0);
+        lobbyGroup.add(curtainGlass);
+
+        // Structural Aluminum Mullions
+        for (let mz = -8; mz <= 8; mz += 2.0) {
+            const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 8.6, 0.08), M.facadeDark);
+            mullion.position.set(0.05, 0, mz);
+            lobbyGroup.add(mullion);
+        }
+        for (let my = -3.5; my <= 3.5; my += 2.2) {
+            const hMullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.08, 18), M.facadeDark);
+            hMullion.position.set(0.05, my, 0);
+            lobbyGroup.add(hMullion);
         }
 
-        const mainDoor = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.0, 5.0), M.doors);
-        mainDoor.position.set(50.3, 3.8, 0);
-        facadeGroup.add(mainDoor);
+        // Entrance Portal Canopy & Glowing Brand Sign
+        const entranceCanopy = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.3, 8), M.facadeDark);
+        entranceCanopy.position.set(1.6, -0.6, 0);
+        entranceCanopy.castShadow = true;
+        lobbyGroup.add(entranceCanopy);
+
+        // Glowing Datacenter Signage
+        const brandSign = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 7.5), M.facadeAccent);
+        brandSign.position.set(3.4, 0.1, 0);
+        lobbyGroup.add(brandSign);
+
+        facadeGroup.add(lobbyGroup);
+
+        // Logistics Loading Dock & 40ft Semi-Trailer (West Facade)
+        const dockGroup = new THREE.Group();
+        dockGroup.name = "LogisticsLoadingDock";
+        dockGroup.position.set(-40.35, 0, -14);
+
+        // Dual Industrial Sectional Roll-Up Doors
+        [-5.5, 5.5].forEach((dz, idx) => {
+            const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.35, 4.6, 4.2), M.blastWall);
+            doorFrame.position.set(0, 2.3, dz);
+            const doorCurtain = new THREE.Mesh(new THREE.BoxGeometry(0.2, 4.2, 3.8), M.louvers);
+            doorCurtain.position.set(-0.1, 2.3, dz);
+            const bumperL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.25), M.craneTreads);
+            bumperL.position.set(-0.3, 0.8, dz - 1.8);
+            const bumperR = bumperL.clone();
+            bumperR.position.set(-0.3, 0.8, dz + 1.8);
+            dockGroup.add(doorFrame, doorCurtain, bumperL, bumperR);
+        });
+
+        // Docked 40ft Logistics Semi-Trailer Truck at Bay 1
+        const truckGroup = new THREE.Group();
+        truckGroup.name = "LogisticsSemiTrailerTruck";
+        truckGroup.position.set(-9.5, 0, -8.5);
+
+        // 40ft Shipping Container Trailer
+        const trailer = new THREE.Mesh(new THREE.BoxGeometry(12.5, 3.8, 2.6), M.truckTrailer);
+        trailer.position.set(0, 2.4, 0);
+        trailer.castShadow = true;
+        truckGroup.add(trailer);
+
+        // Trailer Wheels (Dual Bogie Tandem)
+        for (let w = -1; w <= 1; w += 2) {
+            const wheel1 = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.4, 12), M.craneTreads);
+            wheel1.rotation.x = Math.PI / 2;
+            wheel1.position.set(4.2, 0.5, w * 1.1);
+            const wheel2 = wheel1.clone();
+            wheel2.position.set(5.5, 0.5, w * 1.1);
+            truckGroup.add(wheel1, wheel2);
+        }
+
+        // Heavy Tractor Truck Cab
+        const cab = new THREE.Mesh(new THREE.BoxGeometry(3.6, 3.4, 2.5), M.truckCab);
+        cab.position.set(-8.2, 2.0, 0);
+        cab.castShadow = true;
+        const cabWindshield = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 2.4), M.glass);
+        cabWindshield.position.set(-9.5, 2.7, 0);
+        truckGroup.add(cab, cabWindshield);
+
+        dockGroup.add(truckGroup);
+        facadeGroup.add(dockGroup);
 
         group.add(facadeGroup);
         return group;
@@ -492,6 +906,12 @@
 
             subGroup.add(tr);
         });
+
+        // NFPA 850 Reinforced Concrete Blast Separation Firewall
+        const blastWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6.5, 7.5), M.blastWall);
+        blastWall.position.set(-5, 3.25, 0);
+        blastWall.castShadow = true;
+        subGroup.add(blastWall);
 
         // Substation High-Voltage Gantry Tower with Sagging Catenary Curves
         const gantryTower = new THREE.Group();
@@ -555,13 +975,26 @@
             });
         }
 
-        // Bulk Fuel Storage Tanks & Manifold
+        // Bulk Fuel Storage Tanks & Reinforced Concrete Spill Bund
         const fuelSkid = new THREE.Group();
         fuelSkid.position.set(0, 0, 36);
-        for (let t = -8; t <= 8; t += 8) {
-            const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 9.0, 16), M.fuelTank);
+
+        // Concrete Retention Spill Bund
+        const bundWall1 = new THREE.Mesh(new THREE.BoxGeometry(16, 1.4, 0.4), M.blastWall);
+        bundWall1.position.set(0, 0.9, -11);
+        const bundWall2 = new THREE.Mesh(new THREE.BoxGeometry(16, 1.4, 0.4), M.blastWall);
+        bundWall2.position.set(0, 0.9, 11);
+        const bundWall3 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.4, 22), M.blastWall);
+        bundWall3.position.set(-8, 0.9, 0);
+        const bundWall4 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.4, 22), M.blastWall);
+        bundWall4.position.set(8, 0.9, 0);
+        fuelSkid.add(bundWall1, bundWall2, bundWall3, bundWall4);
+
+        for (let t = -6; t <= 6; t += 12) {
+            const tank = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.6, 12.0, 16), M.fuelTank);
             tank.rotation.z = Math.PI / 2;
-            tank.position.set(0, 1.8, t);
+            tank.position.set(0, 2.0, t);
+            tank.castShadow = true;
             fuelSkid.add(tank);
         }
         genGroup.add(fuelSkid);

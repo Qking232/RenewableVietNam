@@ -18,8 +18,19 @@
         models = modelRefs;
         particles = particleRefs;
 
-        currentTimestamp = schedule.min_timestamp;
-        updateState(currentTimestamp);
+        // Default to Completed Operational Campus Reality
+        currentTimestamp = schedule.max_timestamp;
+        return updateState(currentTimestamp);
+    };
+
+    window.DC36_TIMELINE.setCampusMode = function(mode) {
+        if (!schedule) return null;
+        if (mode === 'reality') {
+            currentTimestamp = schedule.max_timestamp;
+        } else if (mode === 'construction') {
+            currentTimestamp = schedule.min_timestamp;
+        }
+        return updateState(currentTimestamp);
     };
 
     window.DC36_TIMELINE.setCutaway = function(enabled) {
@@ -43,10 +54,12 @@
             if (roof) roof.visible = false;
             if (facadeGroup) {
                 facadeGroup.traverse(child => {
-                    if (child.isMesh) {
-                        child.material.transparent = true;
-                        child.material.opacity = 0.18;
-                        child.material.depthWrite = false;
+                    if (child.isMesh && child.material) {
+                        if (!child.material.isMeshPhysicalMaterial && !child.userData.isGlass) {
+                            child.material.transparent = true;
+                            child.material.opacity = 0.18;
+                            child.material.depthWrite = false;
+                        }
                     }
                 });
             }
@@ -54,10 +67,12 @@
             if (roof) roof.visible = true;
             if (facadeGroup) {
                 facadeGroup.traverse(child => {
-                    if (child.isMesh) {
-                        child.material.transparent = false;
-                        child.material.opacity = 1.0;
-                        child.material.depthWrite = true;
+                    if (child.isMesh && child.material) {
+                        if (!child.material.isMeshPhysicalMaterial && !child.userData.isGlass) {
+                            child.material.transparent = false;
+                            child.material.opacity = 1.0;
+                            child.material.depthWrite = true;
+                        }
                     }
                 });
             }
