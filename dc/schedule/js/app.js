@@ -513,9 +513,18 @@
             const panel = document.getElementById('left-panel');
             if (!panel) return;
             const isCol = panel.classList.toggle('panel-collapsed');
-            const icon = document.getElementById('icon-toggle-left');
-            if (icon) {
-                icon.className = isCol ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+            const btnTopTasks = document.getElementById('btn-top-tasks');
+            if (btnTopTasks) {
+                btnTopTasks.classList.toggle('active', !isCol);
+            }
+            // Auto-collapse opposite drawer on compact/split screens
+            if (!isCol && window.innerWidth < 1100) {
+                const right = document.getElementById('right-panel');
+                if (right && !right.classList.contains('panel-collapsed')) {
+                    right.classList.add('panel-collapsed');
+                    const btnTopTelemetry = document.getElementById('btn-top-telemetry');
+                    if (btnTopTelemetry) btnTopTelemetry.classList.remove('active');
+                }
             }
         }
         window.toggleLeftPanel = toggleLeftPanel;
@@ -525,22 +534,35 @@
             const panel = document.getElementById('right-panel');
             if (!panel) return;
             const isCol = panel.classList.toggle('panel-collapsed');
-            const icon = document.getElementById('icon-toggle-right');
-            if (icon) {
-                icon.className = isCol ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
+            const btnTopTelemetry = document.getElementById('btn-top-telemetry');
+            if (btnTopTelemetry) {
+                btnTopTelemetry.classList.toggle('active', !isCol);
+            }
+            // Auto-collapse opposite drawer on compact/split screens
+            if (!isCol && window.innerWidth < 1100) {
+                const left = document.getElementById('left-panel');
+                if (left && !left.classList.contains('panel-collapsed')) {
+                    left.classList.add('panel-collapsed');
+                    const btnTopTasks = document.getElementById('btn-top-tasks');
+                    if (btnTopTasks) btnTopTasks.classList.remove('active');
+                }
             }
         }
         window.toggleRightPanel = toggleRightPanel;
 
         const btnToggleLeft = document.getElementById('btn-toggle-left');
         const btnTopTasks = document.getElementById('btn-top-tasks');
-        bindAction(btnToggleLeft, toggleLeftPanel);
-        bindAction(btnTopTasks, toggleLeftPanel);
+        const btnCloseLeft = document.getElementById('btn-close-left');
+        if (btnToggleLeft) bindAction(btnToggleLeft, toggleLeftPanel);
+        if (btnTopTasks) bindAction(btnTopTasks, toggleLeftPanel);
+        if (btnCloseLeft) bindAction(btnCloseLeft, toggleLeftPanel);
 
         const btnToggleRight = document.getElementById('btn-toggle-right');
         const btnTopTelemetry = document.getElementById('btn-top-telemetry');
-        bindAction(btnToggleRight, toggleRightPanel);
-        bindAction(btnTopTelemetry, toggleRightPanel);
+        const btnCloseRight = document.getElementById('btn-close-right');
+        if (btnToggleRight) bindAction(btnToggleRight, toggleRightPanel);
+        if (btnTopTelemetry) bindAction(btnTopTelemetry, toggleRightPanel);
+        if (btnCloseRight) bindAction(btnCloseRight, toggleRightPanel);
 
         if (tabGantt && tabTable) {
             bindAction(tabGantt, () => {
