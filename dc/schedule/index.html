@@ -33,6 +33,26 @@
             user-select: none;
         }
 
+        /* Universal Button Hardening: Zero Child Interception */
+        button, .hud-btn, .play-btn, .cam-btn, .mile-btn, .dock-tab-btn, .dock-toggle-btn, .panel-edge-toggle, .panel-edge-toggle-left {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            user-select: none !important;
+            touch-action: manipulation !important;
+            position: relative;
+        }
+
+        /* Force all child icons and text spans to ignore pointer events */
+        button *, .hud-btn *, .play-btn *, .cam-btn *, .mile-btn *, .dock-tab-btn *, .dock-toggle-btn *, .panel-edge-toggle *, .panel-edge-toggle-left * {
+            pointer-events: none !important;
+        }
+
+        /* Tactile Active States for All Buttons */
+        button:active, .hud-btn:active, .play-btn:active, .cam-btn:active, .mile-btn:active, .panel-edge-toggle:active, .panel-edge-toggle-left:active {
+            transform: scale(0.93) !important;
+            filter: brightness(1.3) !important;
+        }
+
         /* Global Sleek Dark-Cyan Scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
@@ -275,9 +295,9 @@
         .panel-edge-toggle {
             position: absolute;
             top: 14px;
-            right: -28px;
-            width: 26px;
-            height: 38px;
+            right: -34px;
+            width: 32px;
+            height: 44px;
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-left: none;
@@ -287,9 +307,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 13px;
             box-shadow: 4px 0 14px rgba(0,0,0,0.45);
             transition: all 0.2s;
+            z-index: 100;
         }
         .panel-edge-toggle:hover {
             background: rgba(0, 229, 255, 0.2);
@@ -405,9 +426,9 @@
         .panel-edge-toggle-left {
             position: absolute;
             top: 14px;
-            left: -28px;
-            width: 26px;
-            height: 38px;
+            left: -34px;
+            width: 32px;
+            height: 44px;
             background: var(--panel-bg);
             border: 1px solid var(--panel-border);
             border-right: none;
@@ -417,9 +438,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 13px;
             box-shadow: -4px 0 14px rgba(0,0,0,0.45);
             transition: all 0.2s;
+            z-index: 100;
         }
         .panel-edge-toggle-left:hover {
             background: rgba(0, 229, 255, 0.2);
@@ -807,7 +829,7 @@
 
     <!-- Left Panel: Live P6 Activities -->
     <div id="left-panel" class="glass-panel">
-        <button class="panel-edge-toggle" id="btn-toggle-left" title="Toggle Tasks Panel">
+        <button class="panel-edge-toggle" id="btn-toggle-left" onclick="window.toggleLeftPanel && window.toggleLeftPanel(event)" title="Toggle Tasks Panel">
             <i class="fas fa-chevron-left" id="icon-toggle-left"></i>
         </button>
         <div class="panel-title">
@@ -834,7 +856,7 @@
 
     <!-- Right Panel: Telemetry & Controls -->
     <div id="right-panel" class="glass-panel">
-        <button class="panel-edge-toggle-left" id="btn-toggle-right" title="Toggle Telemetry Panel">
+        <button class="panel-edge-toggle-left" id="btn-toggle-right" onclick="window.toggleRightPanel && window.toggleRightPanel(event)" title="Toggle Telemetry Panel">
             <i class="fas fa-chevron-right" id="icon-toggle-right"></i>
         </button>
         <div class="panel-title">

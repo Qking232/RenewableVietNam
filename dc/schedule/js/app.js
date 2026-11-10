@@ -385,6 +385,27 @@
     }
 
     function setupUI() {
+        function bindAction(el, fn) {
+            if (!el) return;
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                fn(e);
+            });
+            el.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // Insulate all UI glass panels from OrbitControls pointer capture
+        ['top-bar', 'left-panel', 'right-panel', 'bottom-bar', 'bottom-dock'].forEach(id => {
+            const p = document.getElementById(id);
+            if (p) {
+                p.addEventListener('pointerdown', (e) => e.stopPropagation());
+                p.addEventListener('mousedown', (e) => e.stopPropagation());
+            }
+        });
+
         const playBtn = document.getElementById('btn-play');
         const slider = document.getElementById('timeline-slider');
         const speedSel = document.getElementById('speed-select');
@@ -396,13 +417,10 @@
         const droneTourBtn = document.getElementById('btn-drone-tour');
         const fpvBtn = document.getElementById('btn-fpv');
 
-        if (playBtn) {
-            playBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const playing = window.DC36_TIMELINE.togglePlay();
-                playBtn.innerHTML = playing ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-play"></i> Play';
-            });
-        }
+        bindAction(playBtn, () => {
+            const playing = window.DC36_TIMELINE.togglePlay();
+            playBtn.innerHTML = playing ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-play"></i> Play';
+        });
 
         if (slider) {
             slider.addEventListener('input', (e) => {
@@ -432,23 +450,19 @@
             });
         }
 
-        if (audioBtn) {
-            audioBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const isMuted = window.DC36_AUDIO.toggleMute();
-                audioBtn.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i> Sound OFF' : '<i class="fas fa-volume-up"></i> Sound ON';
-                audioBtn.classList.toggle('audio-active', !isMuted);
-            });
-        }
+        bindAction(audioBtn, () => {
+            const isMuted = window.DC36_AUDIO.toggleMute();
+            audioBtn.innerHTML = isMuted ? '<i class="fas fa-volume-mute"></i> Sound OFF' : '<i class="fas fa-volume-up"></i> Sound ON';
+            audioBtn.classList.toggle('audio-active', !isMuted);
+        });
 
-        if (blackoutBtn) blackoutBtn.addEventListener('click', (e) => { e.preventDefault(); runBlackoutDrill(); });
+        bindAction(blackoutBtn, () => runBlackoutDrill());
         if (lightingSelect) lightingSelect.addEventListener('change', (e) => setLightingMode(e.target.value));
-        if (droneTourBtn) droneTourBtn.addEventListener('click', (e) => { e.preventDefault(); toggleDroneTour(); });
-        if (fpvBtn) fpvBtn.addEventListener('click', (e) => { e.preventDefault(); toggleFPVMode(); });
+        bindAction(droneTourBtn, () => toggleDroneTour());
+        bindAction(fpvBtn, () => toggleFPVMode());
 
         document.querySelectorAll('.cam-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
+            bindAction(btn, () => {
                 if (isDroneTourActive) toggleDroneTour();
                 if (isFPVActive) toggleFPVMode(false);
                 switchCamera(btn.getAttribute('data-cam'));
@@ -456,8 +470,7 @@
         });
 
         document.querySelectorAll('.mile-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
+            bindAction(btn, () => {
                 const code = btn.getAttribute('data-code');
                 const state = window.DC36_TIMELINE.jumpToMilestone(code);
                 updateHUD(state);
@@ -477,67 +490,67 @@
         const paneGantt = document.getElementById('dock-pane-gantt');
         const paneTable = document.getElementById('dock-pane-table');
 
-        if (btnToggleSchedule && bottomDock) {
-            btnToggleSchedule.addEventListener('click', () => {
-                bottomDock.classList.toggle('dock-open');
-                const isOpen = bottomDock.classList.contains('dock-open');
-                btnToggleSchedule.innerHTML = isOpen 
-                    ? '<i class="fas fa-times"></i> Close Schedule' 
-                    : '<i class="fas fa-calendar-alt"></i> P6 Schedule';
-            });
-        }
+        bindAction(btnToggleSchedule, () => {
+            if (!bottomDock) return;
+            bottomDock.classList.toggle('dock-open');
+            const isOpen = bottomDock.classList.contains('dock-open');
+            btnToggleSchedule.innerHTML = isOpen 
+                ? '<i class="fas fa-times"></i> Close Schedule' 
+                : '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+        });
 
-        if (dockCloseBtn && bottomDock) {
-            dockCloseBtn.addEventListener('click', () => {
-                bottomDock.classList.remove('dock-open');
-                if (btnToggleSchedule) {
-                    btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
-                }
-            });
-        }
+        bindAction(dockCloseBtn, () => {
+            if (!bottomDock) return;
+            bottomDock.classList.remove('dock-open');
+            if (btnToggleSchedule) {
+                btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+            }
+        });
 
         // Left & Right Collapsible Panels Handlers
-        const leftPanel = document.getElementById('left-panel');
+        function toggleLeftPanel(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            const panel = document.getElementById('left-panel');
+            if (!panel) return;
+            const isCol = panel.classList.toggle('panel-collapsed');
+            const icon = document.getElementById('icon-toggle-left');
+            if (icon) {
+                icon.className = isCol ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+            }
+        }
+        window.toggleLeftPanel = toggleLeftPanel;
+
+        function toggleRightPanel(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            const panel = document.getElementById('right-panel');
+            if (!panel) return;
+            const isCol = panel.classList.toggle('panel-collapsed');
+            const icon = document.getElementById('icon-toggle-right');
+            if (icon) {
+                icon.className = isCol ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
+            }
+        }
+        window.toggleRightPanel = toggleRightPanel;
+
         const btnToggleLeft = document.getElementById('btn-toggle-left');
         const btnTopTasks = document.getElementById('btn-top-tasks');
-        const iconToggleLeft = document.getElementById('icon-toggle-left');
+        bindAction(btnToggleLeft, toggleLeftPanel);
+        bindAction(btnTopTasks, toggleLeftPanel);
 
-        function toggleLeftPanel() {
-            if (!leftPanel) return;
-            leftPanel.classList.toggle('panel-collapsed');
-            const isCol = leftPanel.classList.contains('panel-collapsed');
-            if (iconToggleLeft) {
-                iconToggleLeft.className = isCol ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
-            }
-        }
-        if (btnToggleLeft) btnToggleLeft.addEventListener('click', toggleLeftPanel);
-        if (btnTopTasks) btnTopTasks.addEventListener('click', toggleLeftPanel);
-
-        const rightPanel = document.getElementById('right-panel');
         const btnToggleRight = document.getElementById('btn-toggle-right');
         const btnTopTelemetry = document.getElementById('btn-top-telemetry');
-        const iconToggleRight = document.getElementById('icon-toggle-right');
-
-        function toggleRightPanel() {
-            if (!rightPanel) return;
-            rightPanel.classList.toggle('panel-collapsed');
-            const isCol = rightPanel.classList.contains('panel-collapsed');
-            if (iconToggleRight) {
-                iconToggleRight.className = isCol ? 'fas fa-chevron-left' : 'fas fa-chevron-right';
-            }
-        }
-        if (btnToggleRight) btnToggleRight.addEventListener('click', toggleRightPanel);
-        if (btnTopTelemetry) btnTopTelemetry.addEventListener('click', toggleRightPanel);
+        bindAction(btnToggleRight, toggleRightPanel);
+        bindAction(btnTopTelemetry, toggleRightPanel);
 
         if (tabGantt && tabTable) {
-            tabGantt.addEventListener('click', () => {
+            bindAction(tabGantt, () => {
                 tabGantt.classList.add('active');
                 tabTable.classList.remove('active');
                 paneGantt.style.display = 'block';
                 paneTable.style.display = 'none';
             });
 
-            tabTable.addEventListener('click', () => {
+            bindAction(tabTable, () => {
                 tabTable.classList.add('active');
                 tabGantt.classList.remove('active');
                 paneTable.style.display = 'block';
