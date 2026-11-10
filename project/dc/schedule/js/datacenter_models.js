@@ -1,4 +1,4 @@
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter
+﻿// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter
 // AAA Graphics Edition: High-Density Mechanical & Architectural BIM LOD 400 Assets
 
 (function() {
@@ -12,32 +12,32 @@
         }
 
         return {
-            // Site & Terrain
-            ground: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.95, metalness: 0.02 }),
-            asphalt: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.85, metalness: 0.15 }),
+            // Site & Terrain (High-Contrast Architectural Landscaping)
+            ground: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.95, metalness: 0.05 }),
+            asphalt: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85, metalness: 0.15 }),
             roadMarking: new THREE.MeshBasicMaterial({ color: 0xffffff }),
-            grass: new THREE.MeshStandardMaterial({ color: 0x15803d, roughness: 0.92, metalness: 0.0 }),
+            grass: new THREE.MeshStandardMaterial({ color: 0x166534, roughness: 0.92, metalness: 0.0 }),
             fencePost: new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.45, metalness: 0.85 }),
             fenceWire: new THREE.MeshStandardMaterial({ color: 0x94a3b8, wireframe: true }),
             
-            // Concrete & Structural (Applied Procedural Concrete Texture)
+            // Concrete & Structural (Technical Civil Concrete Tones)
             concretePiles: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.9, metalness: 0.1 }),
             rebar: new THREE.MeshStandardMaterial({ color: 0x9a3412, roughness: 0.65, metalness: 0.7 }),
-            concreteSlab: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.75, metalness: 0.1, map: T.concrete }),
-            concreteCured: new THREE.MeshStandardMaterial({ color: 0xd1d5db, roughness: 0.65, metalness: 0.1, map: T.concrete }),
-            columns: new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.7, metalness: 0.15, map: T.concrete }),
-            steelTruss: new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.38, metalness: 0.88 }),
+            concreteSlab: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.75, metalness: 0.1, map: T.concrete }),
+            concreteCured: new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.65, metalness: 0.1, map: T.concrete }),
+            columns: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.7, metalness: 0.15, map: T.concrete }),
+            steelTruss: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.38, metalness: 0.88 }),
             steelGantry: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, metalness: 0.75, map: T.hazardStripes }),
             
-            // Envelope & Architecture (Clean High-Contrast Architectural Panels)
-            facadeDark: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.45, metalness: 0.15 }),
-            facadeLight: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.40, metalness: 0.10 }),
-            facadeAccent: new THREE.MeshStandardMaterial({ color: 0x0284c7, emissive: 0x0284c7, emissiveIntensity: 0.8 }),
-            roofTPO: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.50, metalness: 0.05 }),
-            glass: new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.85, opacity: 0.60, transparent: true, roughness: 0.05, ior: 1.5 }),
+            // Envelope & Architecture (High-Contrast Anthracite & Silver Metal Panels)
+            facadeDark: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.25 }),
+            facadeLight: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.50, metalness: 0.10 }),
+            facadeAccent: new THREE.MeshStandardMaterial({ color: 0x0284c7, emissive: 0x0284c7, emissiveIntensity: 0.4 }),
+            roofTPO: new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.65, metalness: 0.05 }),
+            glass: new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.80, opacity: 0.65, transparent: true, roughness: 0.08, ior: 1.5 }),
             glassHAC: new THREE.MeshPhysicalMaterial({ color: 0x0284c7, transmission: 0.90, opacity: 0.40, transparent: true, roughness: 0.05 }),
-            louvers: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.5, metalness: 0.75 }),
-            doors: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.6, metalness: 0.5 }),
+            louvers: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5, metalness: 0.75 }),
+            doors: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.6, metalness: 0.5 }),
             
             // MEP Electrical
             transformerTank: new THREE.MeshStandardMaterial({ color: 0x243224, roughness: 0.4, metalness: 0.75, map: T.brushedMetal }),

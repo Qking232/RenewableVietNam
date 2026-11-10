@@ -1,4 +1,4 @@
-// Main Application Controller & Three.js WebGL Engine for DC36-T3
+﻿// Main Application Controller & Three.js WebGL Engine for DC36-T3
 // AAA Graphics Edition: Post-Processing, Cinematic Drone Tour & FPV Walkthrough
 
 (function() {
@@ -39,8 +39,8 @@
 
         // Scene Setup
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xe2e8f0);
-        scene.fog = new THREE.Fog(0xe2e8f0, 180, 550);
+        scene.background = null;
+        scene.fog = new THREE.Fog(0xcfd8dc, 380, 950);
 
         // Camera Setup
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1200);
@@ -53,7 +53,7 @@
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
+        renderer.toneMappingExposure = 0.92;
         container.appendChild(renderer.domElement);
 
         // OrbitControls
@@ -122,7 +122,7 @@
             texture.minFilter = THREE.LinearFilter;
 
             if (!skyMesh) {
-                const skyGeo = new THREE.SphereGeometry(650, 32, 16);
+                const skyGeo = new THREE.SphereGeometry(750, 32, 16);
                 const skyMat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide, depthWrite: false, fog: false });
                 skyMesh = new THREE.Mesh(skyGeo, skyMat);
                 scene.add(skyMesh);
@@ -137,11 +137,11 @@
     }
 
     function setupLighting() {
-        hemiLight = new THREE.HemisphereLight(0xffffff, 0x94a3b8, 0.55);
+        hemiLight = new THREE.HemisphereLight(0xbae6fd, 0x334155, 0.40);
         hemiLight.position.set(0, 100, 0);
         scene.add(hemiLight);
 
-        dirLight = new THREE.DirectionalLight(0xffffff, 1.35);
+        dirLight = new THREE.DirectionalLight(0xfffbf0, 1.10);
         dirLight.position.set(100, 140, 80);
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 2048;
@@ -156,7 +156,7 @@
         dirLight.shadow.bias = -0.0005;
         scene.add(dirLight);
 
-        rimLight = new THREE.DirectionalLight(0x7dd3fc, 0.25);
+        rimLight = new THREE.DirectionalLight(0x7dd3fc, 0.20);
         rimLight.position.set(-100, 80, -90);
         scene.add(rimLight);
 
@@ -175,13 +175,13 @@
         scene.add(lightHall1);
 
         // Initial Sky Dome Gradient (Photorealistic architectural daylight & clear horizon contrast)
-        updateSkyGradient('#0284c7', '#e2e8f0');
+        updateSkyGradient('#0284c7', '#cbd5e1');
     }
 
     function setLightingMode(mode) {
         currentLightingMode = mode;
         if (mode === 'day') {
-            updateSkyGradient('#0284c7', '#e2e8f0');
+            updateSkyGradient('#0284c7', '#cbd5e1');
             scene.background = new THREE.Color(0xe2e8f0);
             scene.fog = new THREE.Fog(0xe2e8f0, 180, 550);
             dirLight.color.setHex(0xffffff);
@@ -233,9 +233,9 @@
         if (typeof THREE.UnrealBloomPass !== 'undefined') {
             bloomPass = new THREE.UnrealBloomPass(
                 new THREE.Vector2(window.innerWidth, window.innerHeight),
-                0.08, // strength: subtle in daylight to prevent glare
-                0.40, // radius
-                1.15  // threshold: clamps non-emissive white surfaces
+                0.04, // strength: subtle in daylight to prevent glare
+                0.20, // radius
+                1.20  // threshold: clamps non-emissive white surfaces
             );
             composer.addPass(bloomPass);
         }
