@@ -3,7 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="canonical" href="https://project.renewablevietnam.com/">
+    <script id="rvn-prepaint-theme">
+    (function () {
+      try {
+        var m = document.cookie.match(/(?:^|;\s*)rvn_theme=(dark|light)/);
+        var t = m ? m[1] : localStorage.getItem('rvn_theme_v2');
+        document.documentElement.classList.toggle('dark', t === 'dark');
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=1" />
+<link rel="canonical" href="https://renewablevietnam.com/project/">
   <!-- Brand Favicon & Touch Icons -->
   <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/assets/images/favicon.ico" sizes="any">
@@ -11,7 +21,9 @@
   <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="180x180">
   <link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png">
   <title>Capital Projects Directory | Renewable Viet Nam - Rev.019</title>
-    <script>
+    
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -19,21 +31,8 @@
       }
     }
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-    (function () {
-      try {
-        var savedTheme = localStorage.getItem('rvn_theme_v2');
-        if (savedTheme === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
-          document.documentElement.classList.add('dark');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <!-- Three.js for 3D Kinetic Particle Energy Wave -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Three.js for 3D Kinetic Particle Energy Wave -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <!-- Unified Supabase GZIP & IndexedDB Telemetry Client -->
   <script src="/assets/js/supabase-client.js"></script>
   <style>
@@ -206,55 +205,8 @@
   <div class="relative z-10 flex flex-col min-h-screen">
 
     <!-- Master Top Navigation Bar -->
-    <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-[#090d16]/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-3 sm:px-6 lg:px-8 transition-colors shadow-xs">
-      <div class="w-full max-w-7xl mx-auto flex items-center justify-between py-3">
-        <div class="flex items-center gap-5">
-          <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
-            <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
-            <div class="flex flex-col">
-              <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-900 dark:text-slate-100 font-bold leading-tight">
-                RENEWABLE VIETNAM
-              </span>
-              <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-                Capital Projects Directorate
-              </span>
-            </div>
-          </a>
-
-          <!-- Desktop Quick Jump Navigation -->
-          <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
-            <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Master Dashboard</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a>
-            <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-            <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 transition-colors">Project Portals</a>
-          </nav>
-        </div>
-
-        <!-- Controls & Theme -->
-        <div class="flex items-center gap-2">
-          <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>3D Interactive Core &middot; 5 Gateways</span>
-          </div>
-
-          <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
-            <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-            </svg>
-            <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </header>
+    <header id="rvn-header" data-active="project"></header>
+  <script src="/assets/js/rvn-header.js?v=1"></script>
 
     <!-- Hero Section -->
     <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
@@ -448,7 +400,7 @@
               Upcoming Capital Project Verticals
             </h3>
           </div>
-          <a href="https://invest.renewablevietnam.com/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+          <a href="https://renewablevietnam.com/invm/" class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
             <span>Investment &amp; Regulatory Portal</span>
             <span>&rarr;</span>
           </a>
@@ -530,7 +482,7 @@
 
   <!-- Interactive 3D Particle Energy Matrix Engine (Three.js) -->
   <script>
-    (function init3DParticleMatrix() {
+    function init3DParticleMatrix() {
       const canvas = document.getElementById("bg-canvas");
       if (!canvas || typeof THREE === "undefined") return;
 
@@ -720,7 +672,12 @@
         material.opacity = isDark ? 0.75 : 0.45;
         material.size = isDark ? 1.8 : 1.4;
       };
-    })();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init3DParticleMatrix);
+    } else {
+      init3DParticleMatrix();
+    }
 
     // Reactive Border Glow Mouse Tracking (Linear/Vercel Pattern)
     document.querySelectorAll(".glow-card").forEach(card => {
@@ -733,33 +690,11 @@
       });
     });
 
-    // Theme Toggle Controller
-    const themeBtn = document.getElementById('themeToggleBtn');
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
-
-    function applyTheme(isDark) {
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-      } else {
-        document.documentElement.classList.remove('dark');
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-      }
+    // Theme Change Sync (managed by /assets/js/rvn-header.js)
+    window.addEventListener('rvn:themechange', (e) => {
       if (window.syncThemeToThree) {
-        window.syncThemeToThree(isDark);
+        window.syncThemeToThree(!!(e && e.detail && e.detail.isDark));
       }
-    }
-
-    const savedTheme = localStorage.getItem('rvn_theme_v2');
-    applyTheme(savedTheme !== 'light');
-
-    themeBtn.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('rvn_theme_v2', isDark ? 'dark' : 'light');
-      applyTheme(isDark);
     });
   </script>
 </body>

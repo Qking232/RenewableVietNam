@@ -1,19 +1,17 @@
 /**
- * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Migration Director - Rev.010
- * 
- * Maps subdomains to origin application directories on renewablevietnam.com:
+ * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Transition Director - Rev.011
+ *
+ * Maps active bookmark subdomains to origin directories on renewablevietnam.com:
  * - energy.renewablevietnam.com     -> /energy/
- * - wind.renewablevietnam.com       -> /energy/ (legacy alias)
+ * - wind.renewablevietnam.com       -> /energy/
  * - industrial.renewablevietnam.com -> /industrial/
- * - ev.renewablevietnam.com         -> /evcharging/
- * - invest.renewablevietnam.com     -> /invm/
- * - project.renewablevietnam.com    -> /project/ (Master Capital Projects Portal)
- *   Subpath routing for project:
- *   - /garments/*                   -> /garments/* (Garments Engineering Portal)
- *   - /dc/*                         -> /dc/* (Hyperscale Data Center Portal)
- * 
- * Edge Redirections:
- * - ind.renewablevietnam.com        -> 301 Permanent Redirect to https://industrial.renewablevietnam.com
+ * - legal.renewablevietnam.com      -> /invm/
+ * - project.renewablevietnam.com    -> /project/ (/dc/*, /garments/* subpaths preserved)
+ *
+ * Legacy alias 301 direct-to-origin (single hop, zero bounce):
+ * - invest.renewablevietnam.com     -> https://renewablevietnam.com/invm/...
+ * - ev.renewablevietnam.com         -> https://renewablevietnam.com/evcharging/...
+ * - ind.renewablevietnam.com        -> https://renewablevietnam.com/industrial/...
  */
 
 const HOST_PATH_MAP = {
@@ -21,11 +19,10 @@ const HOST_PATH_MAP = {
   'wind.renewablevietnam.com': '/energy',
   'industrial.renewablevietnam.com': '/industrial',
   'legal.renewablevietnam.com': '/invm',
-  'invest.renewablevietnam.com': '/invm',
   'project.renewablevietnam.com': '/project'
 };
 
-const SHARED_PREFIXES = ['/assets/', '/data/', '/vendor/', '/_includes/', '/_layouts/'];
+const SHARED_PREFIXES = ['/assets/built/', '/assets/', '/data/', '/vendor/', '/_includes/', '/_layouts/'];
 
 export default {
   async fetch(request, env, ctx) {
@@ -33,27 +30,25 @@ export default {
     const originHost = 'renewablevietnam.com';
     const hostname = url.hostname.toLowerCase();
 
-    // Edge HTTP 301 Permanent Redirect: invest. -> legal.
+    // Direct 301 consolidation for deprecated alias subdomains
     if (hostname === 'invest.renewablevietnam.com') {
-      const destination = `https://legal.renewablevietnam.com${url.pathname}${url.search}`;
-      return Response.redirect(destination, 301);
+      const sub = url.pathname.replace(/^\/invm\/?/, '/');
+      return Response.redirect(`https://${originHost}/invm${sub}${url.search}`, 301);
     }
 
-    // Edge HTTP 301 Permanent Redirect: ev. -> /evcharging
     if (hostname === 'ev.renewablevietnam.com') {
-      const destination = `https://${originHost}/evcharging${url.pathname}${url.search}`;
-      return Response.redirect(destination, 301);
+      const sub = url.pathname.replace(/^\/evcharging\/?/, '/');
+      return Response.redirect(`https://${originHost}/evcharging${sub}${url.search}`, 301);
     }
 
-    // Edge HTTP 301 Permanent Redirect: ind. -> industrial.
     if (hostname === 'ind.renewablevietnam.com') {
-      const destination = `https://industrial.renewablevietnam.com${url.pathname}${url.search}`;
-      return Response.redirect(destination, 301);
+      const sub = url.pathname.replace(/^\/industrial\/?/, '/');
+      return Response.redirect(`https://${originHost}/industrial${sub}${url.search}`, 301);
     }
 
     const targetSubfolder = HOST_PATH_MAP[hostname];
 
-    // Fallback: If request hostname is not mapped, pass through to originHost
+    // Fallback passthrough to originHost
     if (!targetSubfolder) {
       const originUrl = new URL(`https://${originHost}${url.pathname}${url.search}`);
       const headers = new Headers(request.headers);
@@ -63,34 +58,30 @@ export default {
 
     let pathname = url.pathname;
 
-    // Edge HTTP 301 Permanent Redirect: /projectenergy -> /energy
+    // Direct 301 for legacy path aliases
     if (pathname.startsWith('/projectenergy')) {
       const remainingPath = pathname.replace(/^\/projectenergy/, '') || '/';
-      return Response.redirect(`https://energy.renewablevietnam.com${remainingPath}${url.search}`, 301);
+      return Response.redirect(`https://${originHost}/energy${remainingPath}${url.search}`, 301);
     }
 
-    // Edge HTTP 301 Permanent Redirect: /green -> /industrial
     if (pathname.startsWith('/green')) {
       const remainingPath = pathname.replace(/^\/green/, '') || '/';
-      return Response.redirect(`https://industrial.renewablevietnam.com${remainingPath}${url.search}`, 301);
+      return Response.redirect(`https://${originHost}/industrial${remainingPath}${url.search}`, 301);
     }
 
-    // Check if request is for shared static assets at origin root
+    // Shared static assets & shell modules from origin root
     const isSharedAsset = SHARED_PREFIXES.some(prefix => pathname.startsWith(prefix));
 
     let originPath;
     if (isSharedAsset) {
       originPath = pathname;
     } else if (hostname === 'project.renewablevietnam.com' && (pathname.startsWith('/dc') || pathname.startsWith('/garments'))) {
-      // Subpath direct routing under project.renewablevietnam.com
       originPath = pathname;
     } else {
-      // Strip redundant targetSubfolder if client requested it directly
       if (pathname.startsWith(targetSubfolder)) {
         pathname = pathname.substring(targetSubfolder.length) || '/';
       }
 
-      // Format path and ensure directory trailing slash for paths without file extensions
       const hasExtension = /\.[a-zA-Z0-9]+$/.test(pathname);
       let subpath = pathname;
       if (!hasExtension && !subpath.endsWith('/')) {
@@ -108,7 +99,6 @@ export default {
     headers.set('X-Forwarded-Proto', 'https');
     headers.set('X-From-Worker', 'subdomain-gateway');
 
-    // Edge cache control for static datasets, scripts and assets
     const isStaticAsset = isSharedAsset || /\.(json|gz|js|css|svg|png|jpg|jpeg|webp|woff2?|ico)(\?.*)?$/i.test(pathname);
 
     const fetchOptions = {
@@ -135,6 +125,8 @@ export default {
 
       if (isStaticAsset && response.status === 200) {
         responseHeaders.set('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800');
+      } else {
+        responseHeaders.append('Link', '<https://renewablevietnam.com>; rel=preconnect');
       }
 
       return new Response(response.body, {

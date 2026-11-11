@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <script>
+    <script id="rvn-prepaint-theme">
     (function () {
       try {
-        var savedTheme = localStorage.getItem('rvn_theme_v2');
-        if (savedTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        var m = document.cookie.match(/(?:^|;\s*)rvn_theme=(dark|light)/);
+        var t = m ? m[1] : localStorage.getItem('rvn_theme_v2');
+        document.documentElement.classList.toggle('dark', t === 'dark');
       } catch (e) {}
     })();
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=1" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <!-- RenewableVietNam Brand Favicon & Touch Icons -->
   <link rel="icon" href="./assets/images/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="./assets/images/favicon.ico" sizes="any">
@@ -172,69 +170,15 @@
   <canvas id="bg-canvas-home"></canvas>
 
   <!-- TOP EXECUTIVE NAVIGATION BAR -->
-  <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/70 dark:border-slate-800 px-3 sm:px-6 lg:px-8 transition-colors">
-    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between py-2.5 sm:py-3">
-      <div class="flex items-center gap-6">
-        <a href="https://renewablevietnam.com/" class="flex items-center gap-2.5 group shrink-0" aria-label="Renewable Vietnam home">
-          <img src="/assets/images/logo.svg" alt="Renewable Viet Nam Mark" width="28" height="28" class="w-7 h-7 rounded-lg shrink-0 opacity-90 group-hover:opacity-100 transition-opacity" />
-          <div class="flex flex-col">
-            <span class="text-[12px] font-mono uppercase tracking-[0.16em] text-slate-800 dark:text-slate-200 font-semibold leading-tight">
-              RENEWABLE VIETNAM
-            </span>
-            <span class="text-[9px] font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-              Master Dashboard
-            </span>
-          </div>
-        </a>
-
-        <!-- Desktop Quick Jump Navigation -->
-        <nav class="hidden md:flex items-center gap-1 font-mono text-[11px] text-slate-600 dark:text-slate-400">
-          <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-medium bg-slate-100 dark:bg-slate-800 transition-colors">Master Dashboard</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Energy</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Industrial</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="/evcharging/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">EV Tech</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Invest &amp; Legal</a>
-          <span class="text-slate-300 dark:text-slate-700">&middot;</span>
-          <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Project Delivery</a></nav>
-      </div>
-
-      <!-- Controls & Theme -->
-      <div class="flex items-center gap-2">
-        <div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/50 font-mono text-[10px] text-slate-600 dark:text-slate-400">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-          <span>5 Edge Gateways Live</span>
-        </div>
-
-        <button id="themeToggleBtn" aria-label="Toggle Theme" class="flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-all cursor-pointer">
-          <svg id="sunIcon" class="hidden w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-          </svg>
-          <svg id="moonIcon" class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <!-- Mobile Quick Navigation Ribbon -->
-    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar md:hidden px-4 pb-2 pt-1 border-t border-slate-100 dark:border-slate-800 font-mono text-[10px]">
-      <a href="https://renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-teal-700 dark:text-teal-300 font-semibold bg-slate-100 dark:bg-slate-800 border border-teal-500/20 shrink-0">Master Dashboard</a>
-      <a href="https://energy.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Energy</a>
-      <a href="https://industrial.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Industrial</a>
-      <a href="/evcharging/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">EV Tech</a>
-      <a href="https://invest.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Invest &amp; Legal</a>
-      <a href="https://project.renewablevietnam.com/" class="px-2.5 py-1 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 shrink-0">Project Delivery</a></div>
-  </header>
+  <header id="rvn-header" data-active="cockpit"></header>
+  <script src="/assets/js/rvn-header.js?v=1"></script>
 
   <!-- MAIN MASTER WORKSPACE -->
   <main class="relative z-10 flex-1 w-full max-w-[1920px] 2xl:max-w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
     <!-- ULTRA-COMPACT UNIFIED COMMAND BAR (38px) -->
         <!-- REDESIGNED EXECUTIVE COMMAND COCKPIT BAR (Rev.049) -->
-    <div id="homepageWorkstationSwitcher" class="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 sm:px-5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
+    <div id="homepageWorkstationSwitcher" class="sticky top-[52px] z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3.5 sm:px-5 py-2 rounded-xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-wrap items-center justify-between gap-3 transition-colors">
       <!-- Left Cluster: Live Status & Institutional Title -->
       <div class="flex items-center gap-2.5 shrink-0">
         <span class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/80 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
@@ -354,7 +298,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-stretch">
           <!-- Primary Flagship Command Hub (lg:col-span-5): PDP8 Energy -->
-          <a href="https://energy.renewablevietnam.com/" class="group lg:col-span-5 p-5 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-teal-500/80 dark:hover:border-teal-400/80 transition-all flex flex-col justify-between shadow-xs">
+          <a href="https://renewablevietnam.com/energy/" class="group lg:col-span-5 p-5 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-teal-500/80 dark:hover:border-teal-400/80 transition-all flex flex-col justify-between shadow-xs">
             <div class="space-y-3">
               <div class="flex items-center justify-between">
                 <span class="font-mono text-[11px] font-semibold text-teal-700 dark:text-teal-400">
@@ -399,7 +343,7 @@
           <!-- 4 Specialized Domain Channels (lg:col-span-7, 2x2 grid) -->
           <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <!-- Gateway 2: Green Industrial -->
-            <a href="https://industrial.renewablevietnam.com/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 transition-all flex flex-col justify-between shadow-xs">
+            <a href="https://renewablevietnam.com/industrial/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-emerald-500/80 dark:hover:border-emerald-400/80 transition-all flex flex-col justify-between shadow-xs">
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between font-mono text-[11px]">
                   <span class="font-semibold text-emerald-700 dark:text-emerald-400">
@@ -449,7 +393,7 @@
             </a>
 
             <!-- Gateway 4: Capital & Legal -->
-            <a href="https://invest.renewablevietnam.com/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-blue-500/80 dark:hover:border-blue-400/80 transition-all flex flex-col justify-between shadow-xs">
+            <a href="https://renewablevietnam.com/invm/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-blue-500/80 dark:hover:border-blue-400/80 transition-all flex flex-col justify-between shadow-xs">
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between font-mono text-[11px]">
                   <span class="font-semibold text-blue-700 dark:text-blue-400">
@@ -461,7 +405,7 @@
                   Invest &amp; Legal Governance
                 </h3>
                 <div class="font-mono text-[10px] text-slate-500 dark:text-slate-400">
-                  invest.renewablevietnam.com
+                  renewablevietnam.com/invm
                 </div>
                 <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-1">
                   Statutory Stages 1–6 Critical Path Method (CPM) permitting scheduling and M&amp;A legal entitlement due diligence.
@@ -474,7 +418,7 @@
             </a>
 
             <!-- Gateway 5: Project Delivery -->
-            <a href="https://project.renewablevietnam.com/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-purple-500/80 dark:hover:border-purple-400/80 transition-all flex flex-col justify-between shadow-xs">
+            <a href="https://renewablevietnam.com/project/" class="group p-4 rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 hover:border-purple-500/80 dark:hover:border-purple-400/80 transition-all flex flex-col justify-between shadow-xs">
               <div class="space-y-1.5">
                 <div class="flex items-center justify-between font-mono text-[11px]">
                   <span class="font-semibold text-purple-700 dark:text-purple-400">
@@ -789,7 +733,7 @@
               <span class="block text-slate-400 text-[10px]">2030 Mandate</span>
               <strong id="inspectorMetric" class="text-slate-900 dark:text-slate-100 text-xs sm:text-sm font-bold tabular-nums">6,000 MW Target ($18.5B)</strong>
             </div>
-            <a id="inspectorLaunchBtn" href="https://energy.renewablevietnam.com/" class="px-3.5 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+            <a id="inspectorLaunchBtn" href="https://renewablevietnam.com/energy/" class="px-3.5 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-mono text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
               <span>Launch Gateway</span>
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
             </a>
@@ -1251,7 +1195,7 @@
                 <span class="text-[10px] text-slate-500 dark:text-slate-400 block">DPPA Mechanism</span>
                 <strong class="text-xs font-semibold text-slate-800 dark:text-slate-200">Decree 80 Direct Line</strong>
               </div>
-              <a href="https://legal.renewablevietnam.com/" class="text-[10px] font-medium text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 mt-1">
+              <a href="https://renewablevietnam.com/invm/" class="text-[10px] font-medium text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1 mt-1">
                 <span>Start Legal Audit &rarr;</span>
               </a>
             </div>
@@ -1282,7 +1226,7 @@
                   energy.renewablevietnam.com
                 </span>
               </div>
-              <a href="https://energy.renewablevietnam.com/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Energy Atlas">
+              <a href="https://renewablevietnam.com/energy/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Energy Atlas">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
               </a>
             </div>
@@ -1317,7 +1261,7 @@
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">Wind/Solar</span>
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">Substations</span>
             </div>
-            <a href="https://energy.renewablevietnam.com/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
+            <a href="https://renewablevietnam.com/energy/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
               Launch Gateway &rarr;
             </a>
           </div>
@@ -1333,7 +1277,7 @@
                   industrial.renewablevietnam.com
                 </span>
               </div>
-              <a href="https://industrial.renewablevietnam.com/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Industrial Siting">
+              <a href="https://renewablevietnam.com/industrial/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Industrial Siting">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
               </a>
             </div>
@@ -1368,7 +1312,7 @@
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">Decree 80</span>
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">ISO 14001</span>
             </div>
-            <a href="https://industrial.renewablevietnam.com/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
+            <a href="https://renewablevietnam.com/industrial/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
               Launch Gateway &rarr;
             </a>
           </div>
@@ -1435,7 +1379,7 @@
                   legal.renewablevietnam.com
                 </span>
               </div>
-              <a href="https://legal.renewablevietnam.com/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Legal Engine">
+              <a href="https://renewablevietnam.com/invm/" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-800 hover:text-white dark:hover:bg-slate-600 flex items-center justify-center text-slate-500 dark:text-slate-300 transition-all" aria-label="Open Legal Engine">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/></svg>
               </a>
             </div>
@@ -1470,7 +1414,7 @@
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">Due Diligence</span>
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/60">Quy Hoach</span>
             </div>
-            <a href="https://legal.renewablevietnam.com/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
+            <a href="https://renewablevietnam.com/invm/" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-slate-700 dark:text-slate-300 hover:underline">
               Launch Gateway &rarr;
             </a>
           </div>
@@ -1491,10 +1435,10 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <a href="https://energy.renewablevietnam.com/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Energy</a>
-        <a href="https://industrial.renewablevietnam.com/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Industrial</a>
+        <a href="https://renewablevietnam.com/energy/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Energy</a>
+        <a href="https://renewablevietnam.com/industrial/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Industrial</a>
         <a href="/evcharging/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">EV Tech</a>
-        <a href="https://legal.renewablevietnam.com/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Legal</a>
+        <a href="https://renewablevietnam.com/invm/" class="hover:text-slate-900 dark:hover:text-slate-100 transition-colors">Legal</a>
       </div>
 
       <div class="text-slate-400">
@@ -1505,10 +1449,6 @@
 
   <!-- SCRIPT: INTERACTIVE FLOW NODES, DYNAMIC CHARTS, & DECREE 80 SIMULATOR -->
   <script>
-    const themeBtn = document.getElementById('themeToggleBtn');
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
-
     // Chart instances
     let trajectoryChartInstance = null;
     let pdp8ChartInstance = null;
@@ -1528,7 +1468,7 @@
         title: "Offshore Wind Supergrid & Marine Spatial Corridors",
         desc: "Deployment of utility-scale marine wind clusters across South Central Vietnam (Bình Thuận, Ninh Thuận) and Northern Gulf of Tonkin to anchor baseload green power.",
         metric: "6,000 MW ($18.5B)",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "02 &middot; Clean Generation",
@@ -1536,7 +1476,7 @@
         title: "Onshore & Nearshore Wind Resource Corridors",
         desc: "Accelerated wind development across Central Highlands (Gia Lai, Đắk Lắk) and Mekong Delta coastline (Bạc Liêu, Sóc Trăng, Bến Tre, Trà Vinh).",
         metric: "21,880 MW ($26.2B)",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "03 &middot; Clean Generation",
@@ -1544,7 +1484,7 @@
         title: "Utility Solar PV & Distributed Rooftop (RTS)",
         desc: "Consolidating centralized solar farms with nationwide self-consumption rooftop solar for 50% of residential and office structures, paired with industrial park net-metering.",
         metric: "12,836 MW + RTS ($14.1B)",
-        url: "https://industrial.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/industrial/"
       },
       {
         badge: "04 &middot; Flexible Storage",
@@ -1552,7 +1492,7 @@
         title: "Flexible Cascade Hydro, Pumped Storage & BESS",
         desc: "Maximizing multi-purpose cascade hydro paired with utility pumped hydro (Bác Ái 1,200 MW, Đơn Dương) and 300 MW grid-scale battery energy storage systems (BESS).",
         metric: "29,346 MW + 2.7 GW ($11.8B)",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "05 &middot; Transition Fuel",
@@ -1560,7 +1500,7 @@
         title: "Domestic Natural Gas & Transition LNG Terminals",
         desc: "Bridging baseload reliability via Block B Ô Môn, Cá Voi Xanh upstream gas, and 13 world-scale LNG receiving terminals including Thị Vải, Sơn Mỹ, Hải Lăng, and Hiệp Phước.",
         metric: "37,330 MW Gas/LNG ($31.4B)",
-        url: "https://legal.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/invm/"
       },
       {
         badge: "06 &middot; Circular Energy",
@@ -1568,7 +1508,7 @@
         title: "Biomass, Waste-to-Energy & Industrial Cogeneration",
         desc: "Converting agricultural residues (rice husk, wood pellets, bagasse) and municipal solid waste into continuous, low-carbon baseload power for industrial decarbonization.",
         metric: "2,270 MW ($3.6B)",
-        url: "https://industrial.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/industrial/"
       },
       {
         badge: "07 &middot; 500kV Supergrid",
@@ -1576,7 +1516,7 @@
         title: "500kV Supergrid Backbone Spine & Wheeling",
         desc: "Tripling North-South transfer capacity via 500kV Circuit-3 (Quảng Trạch – Phố Nối 519 km across 4 projects), relieving Central-to-North transmission bottlenecks.",
         metric: "15,888 km (5,000 MW Wheel)",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "08 &middot; ASEAN Interties",
@@ -1584,7 +1524,7 @@
         title: "Cross-Border ASEAN Power Grid Interconnections",
         desc: "Integrating Lao PDR cross-border clean energy imports (Monsoon Wind 600 MW via 500kV Thạnh Mỹ) and planned subsea HVDC power export interconnection to Singapore.",
         metric: "5,000 - 8,000 MW Import",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "09 &middot; Smart Automation",
@@ -1592,7 +1532,7 @@
         title: "Smart Grid Automation, SCADA/EMS & Digital Substations",
         desc: "Digitalizing all 1,915 substations to IEC 61850 standards, enabling Dynamic Line Rating (DLR), automated AGC dispatch, and 2,000 MW Demand-Side Response (DSM).",
         metric: "100% Unmanned TBA ($3.8B)",
-        url: "https://energy.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/energy/"
       },
       {
         badge: "10 &middot; DPPA Mechanism",
@@ -1600,7 +1540,7 @@
         title: "Direct Power Purchase Agreement (DPPA Mechanism)",
         desc: "Statutory private power wheeling allowing multinational industrial clients (RE100) to contract clean electricity directly via private wire or national grid CfD wheeling.",
         metric: "Decree 80 Direct Wheeling",
-        url: "https://industrial.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/industrial/"
       },
       {
         badge: "11 &middot; Wholesale Market",
@@ -1608,7 +1548,7 @@
         title: "Competitive Wholesale & Retail Electricity Market (VWEM/VREM)",
         desc: "Maturation of the Vietnam Wholesale Electricity Market (VWEM) with nodal spot market clearing prices (SMP + CAN) and roadmap toward full retail choice (VREM).",
         metric: "SMP + CAN (~$0.073/kWh)",
-        url: "https://legal.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/invm/"
       },
       {
         badge: "12 &middot; Green Hydrogen &amp; PtX",
@@ -1616,7 +1556,7 @@
         title: "Green Hydrogen, Ammonia & Power-to-X Infrastructure",
         desc: "Establishing green hydrogen & green ammonia production hubs in South Central Vietnam to decarbonize coal co-firing, green steel, and international marine transport.",
         metric: "100k - 500k tons/yr ($6.2B)",
-        url: "https://legal.renewablevietnam.com/"
+        url: "https://renewablevietnam.com/invm/"
       }
     ];
 
@@ -2543,29 +2483,10 @@
       }
     }
 
-    // Theme Switcher Logic
-    function applyTheme(isDark) {
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        sunIcon?.classList.remove('hidden');
-        moonIcon?.classList.add('hidden');
-        localStorage.setItem('rvn_theme_v2', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        sunIcon?.classList.add('hidden');
-        moonIcon?.classList.remove('hidden');
-        localStorage.setItem('rvn_theme_v2', 'light');
-      }
+    // Theme Switcher Listener (managed by /assets/js/rvn-header.js)
+    window.addEventListener('rvn:themechange', (e) => {
       safeInitCharts();
-    }
-
-    const savedTheme = localStorage.getItem('rvn_theme_v2');
-    applyTheme(savedTheme === 'dark');
-
-    themeBtn?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      applyTheme(!isDark);
-      if (window.syncThemeToThree) window.syncThemeToThree(!isDark);
+      if (window.syncThemeToThree) window.syncThemeToThree(!!(e && e.detail && e.detail.isDark));
     });
 
     window.addEventListener('resize', () => {
@@ -2663,7 +2584,7 @@
     // ========================================================================
     // THREE.JS 3D KINETIC ENERGY FLOW FIELD & 500kV SUPERGRID MESH
     // ========================================================================
-    (function init3DSupergridMatrix() {
+    function init3DSupergridMatrix() {
       const canvas = document.getElementById("bg-canvas-home");
       if (!canvas || typeof THREE === "undefined") return;
 
@@ -2811,7 +2732,12 @@
         material.opacity = isDark ? 0.65 : 0.35;
         material.size = isDark ? 1.9 : 1.3;
       };
-    })();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init3DSupergridMatrix);
+    } else {
+      init3DSupergridMatrix();
+    }
 
     // Interactive Mouse Tracking for Glow Cards
     document.querySelectorAll(".glow-card").forEach(card => {

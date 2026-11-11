@@ -1,0 +1,257 @@
+/* Renewable Viet Nam Unified Sleek Header & Cross-Page Shell - Rev.001 */
+#rvn-header {
+  --rvn-bg: rgba(255, 255, 255, 0.90);
+  --rvn-border: rgba(226, 232, 240, 0.85);
+  --rvn-ink: #0f172a;
+  --rvn-muted: #475569;
+  --rvn-hover-bg: rgba(241, 245, 249, 0.95);
+  --rvn-active-bg: rgba(13, 148, 136, 0.10);
+  --rvn-active-ink: #0f766e;
+  --rvn-active-ring: rgba(13, 148, 136, 0.24);
+  --rvn-btn-bg: rgba(255, 255, 255, 0.95);
+  --rvn-btn-border: rgba(203, 213, 225, 0.9);
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  width: 100%;
+  min-height: 52px;
+  height: 52px;
+  box-sizing: border-box;
+  background: var(--rvn-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rvn-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  view-transition-name: rvn-site-header;
+}
+
+html.dark #rvn-header {
+  --rvn-bg: rgba(15, 23, 42, 0.88);
+  --rvn-border: rgba(51, 65, 85, 0.7);
+  --rvn-ink: #f1f5f9;
+  --rvn-muted: #94a3b8;
+  --rvn-hover-bg: rgba(30, 41, 59, 0.9);
+  --rvn-active-bg: rgba(45, 212, 191, 0.14);
+  --rvn-active-ink: #5eead4;
+  --rvn-active-ring: rgba(45, 212, 191, 0.28);
+  --rvn-btn-bg: rgba(30, 41, 59, 0.92);
+  --rvn-btn-border: rgba(71, 85, 105, 0.78);
+}
+
+#rvn-header .rvn-inner {
+  max-width: 1920px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  #rvn-header .rvn-inner {
+    padding: 0 24px;
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  #rvn-header .rvn-inner {
+    padding: 0 32px;
+  }
+}
+
+#rvn-header .rvn-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#rvn-header .rvn-brand:hover .rvn-logo {
+  opacity: 1;
+}
+
+#rvn-header .rvn-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: block;
+  flex-shrink: 0;
+  opacity: 0.94;
+  transition: opacity 0.15s ease;
+}
+
+#rvn-header .rvn-wordmark {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rvn-ink);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+@media (max-width: 479px) {
+  #rvn-header .rvn-wordmark-ext {
+    display: none;
+  }
+  #rvn-header .rvn-wordmark {
+    letter-spacing: 0.1em;
+  }
+}
+
+#rvn-header .rvn-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+#rvn-header .rvn-nav::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  #rvn-header .rvn-nav {
+    gap: 6px;
+    padding-left: 8px;
+  }
+}
+
+#rvn-header .rvn-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 7px;
+  color: var(--rvn-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-weight: 500;
+  border: 1px solid transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+#rvn-header .rvn-link:hover {
+  color: var(--rvn-ink);
+  background: var(--rvn-hover-bg);
+  text-decoration: none;
+}
+
+#rvn-header .rvn-link.is-active {
+  color: var(--rvn-active-ink);
+  background: var(--rvn-active-bg);
+  border-color: var(--rvn-active-ring);
+  font-weight: 600;
+}
+
+#rvn-header .rvn-link:focus-visible,
+#rvn-header .rvn-brand:focus-visible,
+#rvn-header .rvn-toggle:focus-visible {
+  outline: 2px solid var(--rvn-active-ink);
+  outline-offset: 2px;
+}
+
+#rvn-header .rvn-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--rvn-btn-bg);
+  border: 1px solid var(--rvn-btn-border);
+  color: var(--rvn-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+#rvn-header .rvn-toggle:hover {
+  color: var(--rvn-ink);
+  background: var(--rvn-hover-bg);
+}
+
+#rvn-header .rvn-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+#rvn-header #sunIcon {
+  display: none !important;
+  color: #f59e0b;
+}
+
+#rvn-header #moonIcon {
+  display: block !important;
+}
+
+html.dark #rvn-header #sunIcon {
+  display: block !important;
+}
+
+html.dark #rvn-header #moonIcon {
+  display: none !important;
+}
+
+/* Native Cross-Document Smooth View Transitions */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(rvn-site-header),
+::view-transition-new(rvn-site-header) {
+  animation: none;
+}
+
+::view-transition-old(root) {
+  animation: rvnFadeOut 110ms ease-out both;
+}
+
+::view-transition-new(root) {
+  animation: rvnFadeIn 130ms ease-in both;
+}
+
+@keyframes rvnFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0.92; }
+}
+
+@keyframes rvnFadeIn {
+  from { opacity: 0.92; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
+
+@media print {
+  #rvn-header {
+    display: none !important;
+  }
+}
