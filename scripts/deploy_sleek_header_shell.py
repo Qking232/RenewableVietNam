@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Deploy Unified Sleek 52px Glass Header Shell, Light-Default Cross-Domain Theme Cookie,
-and Smooth Same-Origin Transitions across RenewableVietNam & Qking232.github.io - Rev.002.
+and Smooth Same-Origin Transitions across RenewableVietNam & Qking232.github.io - Rev.003.
 
 Safety:
 - Inspects highest existing index_Rev.xxx.html in each target folder first.
@@ -44,7 +44,7 @@ PREPAINT_AND_CSS = """  <script id="rvn-prepaint-theme">
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=1" />"""
+  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=2" />"""
 
 HEAD_THEME_PATTERNS = [
     re.compile(r'<script id="rvn-prepaint-theme">[\s\S]*?</script>\s*', re.IGNORECASE),
@@ -116,7 +116,7 @@ def transform_dc_header(header_html):
     sec = re.sub(r'^<header\b[^>]*>', '<section class="bg-white border-b border-slate-200 shadow-2xs">', header_html.strip())
     sec = re.sub(r'</header>$', '</section>', sec)
     sec = sec.replace("https://invest.renewablevietnam.com/", "https://renewablevietnam.com/invm/")
-    return f'<header id="rvn-header" data-active="project"></header>\n  <script src="/assets/js/rvn-header.js?v=1"></script>\n  {sec}'
+    return f'<header id="rvn-header" data-active="project"></header>\n  <script src="/assets/js/rvn-header.js?v=2"></script>\n  {sec}'
 
 
 def transform_garments_header(header_html):
@@ -135,7 +135,7 @@ def transform_garments_header(header_html):
       <a href="https://renewablevietnam.com/project/" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 text-[11px] font-semibold transition-colors shadow-2xs shrink-0">&larr; Projects Home</a>
     </div>"""
     sec = f"""<header id="rvn-header" data-active="project"></header>
-  <script src="/assets/js/rvn-header.js?v=1"></script>
+  <script src="/assets/js/rvn-header.js?v=2"></script>
   <section class="bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/80 dark:border-slate-800 shadow-xs">
   {sub_strip}
     {m_grid.group(1).strip()}
@@ -147,7 +147,7 @@ def transform_garments_header(header_html):
 def transform_quyhoach_header(header_html):
     sec = re.sub(r'^<header\b[^>]*>', '<section class="bg-white border-b border-slate-200 shadow-xs">', header_html.strip())
     sec = re.sub(r'</header>$', '</section>', sec)
-    return f'<header id="rvn-header" data-active="legal"></header>\n  <script src="/assets/js/rvn-header.js?v=1"></script>\n  {sec}'
+    return f'<header id="rvn-header" data-active="legal"></header>\n  <script src="/assets/js/rvn-header.js?v=2"></script>\n  {sec}'
 
 
 def patch_body_scripts(rel, text):
@@ -397,7 +397,7 @@ def process_file(repo_path, cfg, dry_run=False):
         # Handle Qking232.github.io older project/index.html containing Garments module toolbar inside <header>
         new_hdr = transform_garments_header(old_hdr)
     elif mode == "standard":
-        new_hdr = f'<header id="rvn-header" data-active="{cfg["active"]}"></header>\n  <script src="/assets/js/rvn-header.js?v=1"></script>'
+        new_hdr = f'<header id="rvn-header" data-active="{cfg["active"]}"></header>\n  <script src="/assets/js/rvn-header.js?v=2"></script>'
     elif mode == "dc":
         new_hdr = transform_dc_header(old_hdr)
     elif mode == "garments":
@@ -434,8 +434,10 @@ def sync_shared_shell_to_repo2():
     files_to_copy = [
         ("assets/built/rvn-shell.css", "assets/built/rvn-shell.css"),
         ("assets/built/rvn-shell_Rev.001.css", "assets/built/rvn-shell_Rev.001.css"),
+        ("assets/built/rvn-shell_Rev.002.css", "assets/built/rvn-shell_Rev.002.css"),
         ("assets/js/rvn-header.js", "assets/js/rvn-header.js"),
         ("assets/js/rvn-header_Rev.001.js", "assets/js/rvn-header_Rev.001.js"),
+        ("assets/js/rvn-header_Rev.002.js", "assets/js/rvn-header_Rev.002.js"),
     ]
     for src_rel, dst_rel in files_to_copy:
         shutil.copyfile(os.path.join(REPO1, src_rel), os.path.join(REPO2, dst_rel))

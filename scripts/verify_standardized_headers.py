@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Verify Unified Sleek 52px Glass Header Shell, Light-Default Theme Cookie,
-and Pre-Paint Head Optimization across RenewableVietNam & Qking232.github.io - Rev.002.
+and Pre-Paint Head Optimization across RenewableVietNam & Qking232.github.io - Rev.003.
 """
 
 import hashlib
@@ -77,8 +77,8 @@ def audit_file(repo_path, rel):
         errs.append("Missing #rvn-prepaint-theme in <head>")
     if "t === 'dark'" not in head:
         errs.append("Missing light-default cookie guard (t === 'dark') in #rvn-prepaint-theme")
-    if '/assets/built/rvn-shell.css?v=1' not in head:
-        errs.append("Missing /assets/built/rvn-shell.css?v=1 in <head>")
+    if '/assets/built/rvn-shell.css?v=2' not in head:
+        errs.append("Missing /assets/built/rvn-shell.css?v=2 in <head>")
 
     html_m = re.search(r'<html\b[^>]*>', head, re.IGNORECASE)
     if html_m and re.search(r'\bdark\b', html_m.group(0)):
@@ -96,8 +96,8 @@ def audit_file(repo_path, rel):
     if len(headers) != 1 or 'id="rvn-header"' not in headers[0]:
         errs.append(f"Expected single <header id=\"rvn-header\">, found: {headers}")
 
-    if '<script src="/assets/js/rvn-header.js?v=1"></script>' not in body:
-        errs.append("Missing /assets/js/rvn-header.js?v=1")
+    if '<script src="/assets/js/rvn-header.js?v=2"></script>' not in body:
+        errs.append("Missing /assets/js/rvn-header.js?v=2")
 
     if "Edge Gateways Live" in body:
         errs.append("Legacy Edge Gateways Live badge still in body")

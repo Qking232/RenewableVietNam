@@ -1,4 +1,4 @@
-/* Renewable Viet Nam Unified Sleek Header & Theme Controller - Rev.001 */
+/* Renewable Viet Nam Unified Sleek Header & Theme Controller - Rev.002 */
 (function (window, document) {
   'use strict';
 
@@ -124,10 +124,24 @@
       btn.addEventListener('click', toggleTheme);
     }
 
-    var nav = header.querySelector('.rvn-nav');
-    var activeEl = nav ? nav.querySelector('.rvn-link.is-active') : null;
-    if (nav && activeEl && nav.scrollWidth > nav.clientWidth) {
-      nav.scrollLeft = Math.max(0, activeEl.offsetLeft - (nav.clientWidth - activeEl.offsetWidth) / 2);
+    function centerActiveNav() {
+      var nav = header.querySelector('.rvn-nav');
+      var activeEl = nav ? nav.querySelector('.rvn-link.is-active') : null;
+      if (!nav || !activeEl) return;
+      if (nav.scrollWidth <= nav.clientWidth || activeEl === nav.firstElementChild) {
+        nav.scrollLeft = 0;
+        return;
+      }
+      var maxScroll = Math.max(0, nav.scrollWidth - nav.clientWidth);
+      var navRect = nav.getBoundingClientRect();
+      var elRect = activeEl.getBoundingClientRect();
+      var leftInNav = (elRect.left - navRect.left) + nav.scrollLeft;
+      var target = leftInNav - (nav.clientWidth - activeEl.offsetWidth) / 2;
+      nav.scrollLeft = Math.max(0, Math.min(maxScroll, target));
+    }
+    centerActiveNav();
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(centerActiveNav);
     }
   }
 
