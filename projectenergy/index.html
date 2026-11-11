@@ -47,7 +47,7 @@
 
   <!-- Tailwind CSS Play CDN & Institutional Color Palette Configuration -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="/assets/js/chart.umd.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js'"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -2277,39 +2277,44 @@
     }
 
     async function loadProjectsData() {
-      try {
-        if (window.RV_Supabase) {
-          const raw = await window.RV_Supabase.getWithFallback('energy_projects', '/data/vietnam_clean_energy_projects.json', {
+      let raw = null;
+      if (window.RV_Supabase) {
+        try {
+          const sbRaw = await window.RV_Supabase.getWithFallback('energy_projects', '/data/vietnam_clean_energy_projects.json', {
             cacheKey: 'energy_projects',
             order: 'name.asc'
           });
-          if (Array.isArray(raw) && raw.length > 0) {
-            ALL_PROJECTS = normalizeProjects(raw);
-            if (window.RVN_WASM_ENERGY_MAP && window.RVN_WASM_ENERGY_MAP.isReady()) {
-              window.RVN_WASM_ENERGY_MAP.loadPlants(ALL_PROJECTS);
+          if (Array.isArray(sbRaw) && sbRaw.length > 0) {
+            raw = sbRaw;
+          }
+        } catch (e) {
+          console.warn("Supabase energy_projects fetch failed, falling back to static JSON:", e);
+        }
+      }
+
+      if (!Array.isArray(raw) || raw.length === 0) {
+        try {
+          const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
+          if (res.ok) {
+            const jsonRaw = await res.json();
+            if (Array.isArray(jsonRaw) && jsonRaw.length > 0) {
+              raw = jsonRaw;
             }
-            initDirectory();
-            initEnergyCharts();
-            initMainFlowMap();
-            renderMainFlowVectors();
-            return;
           }
+        } catch (e) {
+          console.warn("Could not fetch external json, attempting inline projects", e);
         }
-        const res = await fetch("/data/vietnam_clean_energy_projects.json?v=" + Date.now());
-        if (res.ok) {
-          const jsonRaw = await res.json();
-          ALL_PROJECTS = normalizeProjects(jsonRaw);
-          if (window.RVN_WASM_ENERGY_MAP && window.RVN_WASM_ENERGY_MAP.isReady()) {
-            window.RVN_WASM_ENERGY_MAP.loadPlants(ALL_PROJECTS);
-          }
-          initDirectory();
-          initEnergyCharts();
-          initMainFlowMap();
-          renderMainFlowVectors();
-          return;
+      }
+
+      if (Array.isArray(raw) && raw.length > 0) {
+        ALL_PROJECTS = normalizeProjects(raw);
+        if (window.RVN_WASM_ENERGY_MAP && window.RVN_WASM_ENERGY_MAP.isReady()) {
+          window.RVN_WASM_ENERGY_MAP.loadPlants(ALL_PROJECTS);
         }
-      } catch (e) {
-        console.warn("Could not fetch external json, attempting inline projects", e);
+        initDirectory();
+        initEnergyCharts();
+        initMainFlowMap();
+        renderMainFlowVectors();
       }
     }
 
@@ -3188,10 +3193,17 @@
       if (viewPdp8) viewPdp8.classList.toggle('hidden', mode !== 'pdp8');
       if (viewMarket) viewMarket.classList.toggle('hidden', mode !== 'market');
 
-      if (mode === 'map' && mainFlowMapInstance) {
-        setTimeout(() => {
-          mainFlowMapInstance.invalidateSize();
-        }, 80);
+      if (mode === 'map') {
+        if (mainFlowMapInstance) {
+          setTimeout(() => {
+            mainFlowMapInstance.invalidateSize();
+          }, 80);
+        }
+        if (typeof initEnergyCharts === 'function') {
+          setTimeout(() => {
+            initEnergyCharts();
+          }, 60);
+        }
       }
     }
 
@@ -4231,6 +4243,185 @@ function initMainFlowMap() {
       document.getElementById("facilityModalOverlay").classList.remove("hidden");
     }
 
+    // =========================================================================
+    // 17B. INTERACTIVE CHARTS: PROVINCIAL CAPACITY & ASSET LIFECYCLE
+    // =========================================================================
+    let energyTopProvChartInstance = null;
+    let energyStatusChartInstance = null;
+    let energyChartsRetryCount = 0;
+
+    function initEnergyCharts() {
+      if (!ALL_PROJECTS || ALL_PROJECTS.length === 0) return;
+      if (typeof Chart === 'undefined') {
+        if (energyChartsRetryCount < 15) {
+          energyChartsRetryCount++;
+          setTimeout(initEnergyCharts, 150);
+        }
+        return;
+      }
+      energyChartsRetryCount = 0;
+
+      const viewMap = document.getElementById('energyWorkstationViewMap');
+      if (viewMap && viewMap.classList.contains('hidden')) return;
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94A3B8' : '#64748B';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+      const tooltipBg = isDark ? '#141D32' : '#FFFFFF';
+      const tooltipText = isDark ? '#F8FAFC' : '#0F172A';
+      const tooltipBorder = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.10)';
+
+      // Aggregate capacity by province
+      const provMap = {};
+      const statusMap = { 'Operational (COD)': 0, 'Under Construction': 0, 'In Development': 0, 'Planned': 0 };
+
+      ALL_PROJECTS.forEach(p => {
+        const prov = p.province || p.location || 'Unknown';
+        if (!provMap[prov]) {
+          provMap[prov] = { total: 0, wind: 0, solar: 0, hydro: 0, lng: 0, other: 0 };
+        }
+        const cap = parseFloat(p.capacity_mw) || parseFloat(p.capacity) || 0;
+        provMap[prov].total += cap;
+        const fuel = (p.type || p.fuel || '').toLowerCase();
+        if (fuel.includes('wind')) provMap[prov].wind += cap;
+        else if (fuel.includes('solar')) provMap[prov].solar += cap;
+        else if (fuel.includes('hydro')) provMap[prov].hydro += cap;
+        else if (fuel.includes('gas') || fuel.includes('lng')) provMap[prov].lng += cap;
+        else provMap[prov].other += cap;
+
+        const stat = (p.status || p.cod_status || 'Operational (COD)').toLowerCase();
+        if (stat.includes('operat') || stat.includes('cod') || stat.includes('active')) {
+          statusMap['Operational (COD)'] += cap;
+        } else if (stat.includes('construct')) {
+          statusMap['Under Construction'] += cap;
+        } else if (stat.includes('permit') || stat.includes('develop') || stat.includes('approv')) {
+          statusMap['In Development'] += cap;
+        } else {
+          statusMap['Planned'] += cap;
+        }
+      });
+
+      // Top 10 Provinces by Total Clean Energy Capacity
+      const sortedProvs = Object.keys(provMap)
+        .filter(pr => pr !== 'Unknown' && provMap[pr].total > 0)
+        .sort((a, b) => provMap[b].total - provMap[a].total)
+        .slice(0, 10);
+
+      const provLabels = sortedProvs;
+      const windData = sortedProvs.map(pr => Math.round(provMap[pr].wind));
+      const solarData = sortedProvs.map(pr => Math.round(provMap[pr].solar));
+      const hydroData = sortedProvs.map(pr => Math.round(provMap[pr].hydro));
+      const lngData = sortedProvs.map(pr => Math.round(provMap[pr].lng));
+      const otherData = sortedProvs.map(pr => Math.round(provMap[pr].other));
+
+      // Chart 1: Top 10 Provinces Horizontal Stacked Bar
+      const canvasProv = document.getElementById('energyTopProvincesChart');
+      if (canvasProv) {
+        if (energyTopProvChartInstance) energyTopProvChartInstance.destroy();
+        energyTopProvChartInstance = new Chart(canvasProv.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: provLabels,
+            datasets: [
+              { label: 'Wind', data: windData, backgroundColor: '#10B981', stack: 'stack1' },
+              { label: 'Solar', data: solarData, backgroundColor: '#F59E0B', stack: 'stack1' },
+              { label: 'Hydro', data: hydroData, backgroundColor: '#06B6D4', stack: 'stack1' },
+              { label: 'LNG / Gas', data: lngData, backgroundColor: '#3B82F6', stack: 'stack1' },
+              { label: 'Biomass/Other', data: otherData, backgroundColor: '#8B5CF6', stack: 'stack1' }
+            ]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (e, elements) => {
+              if (elements && elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedProv = provLabels[idx];
+                const provSel = document.getElementById('provinceSelect');
+                if (provSel) {
+                  provSel.value = clickedProv;
+                  selectedProvince = clickedProv;
+                  applyFilters();
+                  document.getElementById('cockpitContainer')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: textColor, font: { size: 10, family: 'monospace' }, boxWidth: 10 }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                callbacks: {
+                  afterLabel: () => 'Click bar to filter directory'
+                }
+              }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { size: 9, family: 'monospace' }, callback: v => v.toLocaleString() + ' MW' }
+              },
+              y: {
+                stacked: true,
+                grid: { display: false },
+                ticks: { color: textColor, font: { size: 10, family: 'monospace', weight: 'bold' } }
+              }
+            }
+          }
+        });
+      }
+
+      // Chart 2: Asset Status Lifecycle Doughnut
+      const canvasStatus = document.getElementById('energyStatusDoughnutChart');
+      if (canvasStatus) {
+        if (energyStatusChartInstance) energyStatusChartInstance.destroy();
+        const statusLabels = Object.keys(statusMap);
+        const statusValues = Object.values(statusMap).map(v => Math.round(v));
+
+        energyStatusChartInstance = new Chart(canvasStatus.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: statusLabels,
+            datasets: [{
+              data: statusValues,
+              backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#64748B'],
+              borderWidth: 2,
+              borderColor: isDark ? '#0D1322' : '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 8, padding: 8 }
+              },
+              tooltip: {
+                backgroundColor: tooltipBg,
+                titleColor: tooltipText,
+                bodyColor: tooltipText,
+                borderColor: tooltipBorder,
+                borderWidth: 1,
+                callbacks: {
+                  label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()} MW`
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
     // 18. Event Listeners Setup
     document.addEventListener("DOMContentLoaded", () => {
       const initHash = window.location.hash.replace('#', '');
@@ -4415,174 +4606,6 @@ function initMainFlowMap() {
           document.getElementById("dossierContainer")?.scrollIntoView({ behavior: 'smooth' });
         });
       }
-
-      
-    // =========================================================================
-    // INTERACTIVE CHARTS: PROVINCIAL CAPACITY & ASSET LIFECYCLE
-    // =========================================================================
-    let energyTopProvChartInstance = null;
-    let energyStatusChartInstance = null;
-
-    function initEnergyCharts() {
-      if (!ALL_PROJECTS || ALL_PROJECTS.length === 0) return;
-      if (typeof Chart === 'undefined') return;
-
-      const isDark = document.documentElement.classList.contains('dark');
-      const textColor = isDark ? '#94A3B8' : '#64748B';
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-      const tooltipBg = isDark ? '#141D32' : '#FFFFFF';
-      const tooltipText = isDark ? '#F8FAFC' : '#0F172A';
-
-      // Aggregate capacity by province
-      const provMap = {};
-      const statusMap = { 'Operational (COD)': 0, 'Under Construction': 0, 'In Development': 0, 'Planned': 0 };
-
-      ALL_PROJECTS.forEach(p => {
-        const prov = p.province || p.location || 'Unknown';
-        if (!provMap[prov]) {
-          provMap[prov] = { total: 0, wind: 0, solar: 0, hydro: 0, lng: 0, other: 0 };
-        }
-        const cap = parseFloat(p.capacity_mw) || parseFloat(p.capacity) || 0;
-        provMap[prov].total += cap;
-        const fuel = (p.type || p.fuel || '').toLowerCase();
-        if (fuel.includes('wind')) provMap[prov].wind += cap;
-        else if (fuel.includes('solar')) provMap[prov].solar += cap;
-        else if (fuel.includes('hydro')) provMap[prov].hydro += cap;
-        else if (fuel.includes('gas') || fuel.includes('lng')) provMap[prov].lng += cap;
-        else provMap[prov].other += cap;
-
-        const stat = (p.status || p.cod_status || 'Operational (COD)').toLowerCase();
-        if (stat.includes('operat') || stat.includes('cod') || stat.includes('active')) {
-          statusMap['Operational (COD)'] += cap;
-        } else if (stat.includes('construct')) {
-          statusMap['Under Construction'] += cap;
-        } else if (stat.includes('permit') || stat.includes('develop') || stat.includes('approv')) {
-          statusMap['In Development'] += cap;
-        } else {
-          statusMap['Planned'] += cap;
-        }
-      });
-
-      // Top 10 Provinces by Total Clean Energy Capacity
-      const sortedProvs = Object.keys(provMap)
-        .filter(pr => pr !== 'Unknown' && provMap[pr].total > 0)
-        .sort((a, b) => provMap[b].total - provMap[a].total)
-        .slice(0, 10);
-
-      const provLabels = sortedProvs;
-      const windData = sortedProvs.map(pr => Math.round(provMap[pr].wind));
-      const solarData = sortedProvs.map(pr => Math.round(provMap[pr].solar));
-      const hydroData = sortedProvs.map(pr => Math.round(provMap[pr].hydro));
-      const lngData = sortedProvs.map(pr => Math.round(provMap[pr].lng));
-      const otherData = sortedProvs.map(pr => Math.round(provMap[pr].other));
-
-      // Chart 1: Top 10 Provinces Horizontal Stacked Bar
-      const canvasProv = document.getElementById('energyTopProvincesChart');
-      if (canvasProv) {
-        if (energyTopProvChartInstance) energyTopProvChartInstance.destroy();
-        energyTopProvChartInstance = new Chart(canvasProv.getContext('2d'), {
-          type: 'bar',
-          data: {
-            labels: provLabels,
-            datasets: [
-              { label: 'Wind', data: windData, backgroundColor: '#10B981', stack: 'stack1' },
-              { label: 'Solar', data: solarData, backgroundColor: '#F59E0B', stack: 'stack1' },
-              { label: 'Hydro', data: hydroData, backgroundColor: '#06B6D4', stack: 'stack1' },
-              { label: 'LNG / Gas', data: lngData, backgroundColor: '#3B82F6', stack: 'stack1' },
-              { label: 'Biomass/Other', data: otherData, backgroundColor: '#8B5CF6', stack: 'stack1' }
-            ]
-          },
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            onClick: (e, elements) => {
-              if (elements && elements.length > 0) {
-                const idx = elements[0].index;
-                const clickedProv = provLabels[idx];
-                const provSel = document.getElementById('provinceSelect');
-                if (provSel) {
-                  provSel.value = clickedProv;
-                  selectedProvince = clickedProv;
-                  applyFilters();
-                  document.getElementById('cockpitContainer')?.scrollIntoView({ behavior: 'smooth' });
-                }
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'top',
-                labels: { color: textColor, font: { size: 10, family: 'monospace' }, boxWidth: 10 }
-              },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipText,
-                bodyColor: tooltipText,
-                borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1,
-                callbacks: {
-                  afterLabel: () => 'Click bar to filter directory'
-                }
-              }
-            },
-            scales: {
-              x: {
-                stacked: true,
-                grid: { color: gridColor },
-                ticks: { color: textColor, font: { size: 9, family: 'monospace' }, callback: v => v.toLocaleString() + ' MW' }
-              },
-              y: {
-                stacked: true,
-                grid: { display: false },
-                ticks: { color: textColor, font: { size: 10, family: 'monospace', weight: 'bold' } }
-              }
-            }
-          }
-        });
-      }
-
-      // Chart 2: Asset Status Lifecycle Doughnut
-      const canvasStatus = document.getElementById('energyStatusDoughnutChart');
-      if (canvasStatus) {
-        if (energyStatusChartInstance) energyStatusChartInstance.destroy();
-        const statusLabels = Object.keys(statusMap);
-        const statusValues = Object.values(statusMap).map(v => Math.round(v));
-
-        energyStatusChartInstance = new Chart(canvasStatus.getContext('2d'), {
-          type: 'doughnut',
-          data: {
-            labels: statusLabels,
-            datasets: [{
-              data: statusValues,
-              backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#64748B'],
-              borderWidth: 2,
-              borderColor: isDark ? '#0D1322' : '#FFFFFF'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '72%',
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: { color: textColor, font: { size: 9, family: 'monospace' }, boxWidth: 8, padding: 8 }
-              },
-              tooltip: {
-                backgroundColor: tooltipBg,
-                titleColor: tooltipText,
-                bodyColor: tooltipText,
-                borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1,
-                callbacks: {
-                  label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()} MW`
-                }
-              }
-            }
-          }
-        });
-      }
-    }
 
       // Initialize High-Performance Rust WebAssembly Engine
       if (window.RVN_WASM_ENERGY_MAP) {
