@@ -350,7 +350,7 @@
     <div class="sticky top-[52px] z-30 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md p-2.5 rounded-2xl border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
       <!-- 3-Segmented Mode Switcher -->
       <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto">
-        <button id="modeBtnDirectory" type="button" onclick="switchWorkstationMode('directory')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+        <button id="modeBtnDirectory" type="button" onclick="switchWorkstationMode('directory')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
           <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
           </svg>
@@ -358,7 +358,7 @@
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold" id="badgeDirectoryCount">168</span>
         </button>
 
-        <button id="modeBtnTelemetry" type="button" onclick="switchWorkstationMode('telemetry')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+        <button id="modeBtnTelemetry" type="button" onclick="switchWorkstationMode('telemetry')" class="workstation-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
           <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
@@ -760,7 +760,7 @@
     <!-- ==================================================================== -->
     <!-- INTERACTIVE 10-CHART MASTER TELEMETRY & GRID SITING COCKPIT          -->
     <!-- ==================================================================== -->
-    <section id="telemetrySection" class="hidden p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
+    <section id="telemetrySection" class="p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
       <!-- Section Master Header -->
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-4">
         <div>
@@ -963,7 +963,7 @@
       </div>
     </section>
 
-    <section id="hubs" class="space-y-5">
+    <section id="hubs" class="hidden space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div class="space-y-0.5">
           <div class="flex items-center gap-2">
@@ -1208,8 +1208,15 @@
   <!-- ==================================================================== -->
   <script>
     // 1. Theme Sync Listener (state & icons managed by /assets/js/rvn-header.js)
+    let chartsRenderedThemeDark = null;
     window.addEventListener("rvn:themechange", () => {
       if (typeof initIndustrialCharts === "function") initIndustrialCharts();
+    });
+    window.addEventListener("hashchange", () => {
+      const h = window.location.hash.replace('#', '');
+      if ((h === 'directory' || h === 'telemetry' || h === 'sizer') && h !== activeWorkstationMode) {
+        switchWorkstationMode(h);
+      }
     });
 
     let industrialRegionalChartInstance = null;
@@ -1227,7 +1234,7 @@
     // =========================================================================
     // WORKSTATION ARCHITECTURE & TELEMETRY LENS CONTROLLERS
     // =========================================================================
-    let activeWorkstationMode = 'directory';
+    let activeWorkstationMode = 'telemetry';
     let chartsInitialized = false;
 
     function switchWorkstationMode(mode, scrollToTable = false) {
@@ -1258,9 +1265,9 @@
       if (secSiz) secSiz.classList.toggle('hidden', mode !== 'sizer');
 
       if (mode === 'telemetry') {
-        if (!chartsInitialized) {
+        const isDarkNow = document.documentElement.classList.contains('dark');
+        if (!chartsInitialized || chartsRenderedThemeDark !== isDarkNow) {
           initIndustrialCharts();
-          chartsInitialized = true;
         } else {
           resizeIndustrialCharts();
         }
@@ -1273,12 +1280,14 @@
     }
 
     function resizeIndustrialCharts() {
+      const secTel = document.getElementById('telemetrySection');
+      if (secTel && secTel.classList.contains('hidden')) return;
       setTimeout(() => {
         const instances = [
           industrialRegionalChartInstance,
           industrialSubstationChartInstance,
           industrialDppaChartInstance,
-          industrialGridHostingChartInstance,
+          industrialHostingChartInstance,
           industrialCleanShareChartInstance,
           industrialTransmissionChartInstance,
           industrialTopHubsChartInstance,
@@ -1372,9 +1381,13 @@
       if (searchInput) searchInput.value = '';
       const provSelect = document.getElementById('filterProvinceSelect');
       if (provSelect) provSelect.value = 'all';
+      const dppaSelect = document.getElementById('filterDppaSelect');
+      if (dppaSelect) dppaSelect.value = 'all';
+      const subSelect = document.getElementById('filterSubstationSelect');
+      if (subSelect) subSelect.value = 'all';
 
       document.querySelectorAll('.filter-pill-region').forEach(b => {
-        const r = b.getAttribute('data-region') || 'all';
+        const r = b.dataset.filterRegion || b.getAttribute('data-filter-region') || 'all';
         b.className = r === 'all' ? 'filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer'
                                   : 'filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer';
       });
@@ -1383,6 +1396,8 @@
     }
 
 function initIndustrialCharts(attempts = 0) {
+      const secTel = document.getElementById('telemetrySection');
+      if (secTel && secTel.classList.contains('hidden')) return;
       if (typeof Chart === 'undefined') {
         if (attempts < 30) {
           setTimeout(() => initIndustrialCharts(attempts + 1), 100);
@@ -1392,6 +1407,8 @@ function initIndustrialCharts(attempts = 0) {
       if (!HUBS || !HUBS.length) return;
 
       const isDark = document.documentElement.classList.contains('dark');
+      chartsInitialized = true;
+      chartsRenderedThemeDark = isDark;
       const textColor = isDark ? '#94A3B8' : '#64748B';
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
       const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
@@ -1455,9 +1472,9 @@ function initIndustrialCharts(attempts = 0) {
                 currentFilter.region = currentFilter.region === clickedRegion ? 'all' : clickedRegion;
                 currentPage = 1;
                 document.querySelectorAll('.filter-pill-region').forEach((b) => {
-                  const r = b.getAttribute('data-region') || 'all';
-                  b.className = r === currentFilter.region ? 'filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors'
-                                                          : 'filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors';
+                  const r = b.dataset.filterRegion || b.getAttribute('data-filter-region') || 'all';
+                  b.className = r === currentFilter.region ? 'filter-pill-region px-2.5 py-1 rounded-md bg-teal-600 text-white font-medium transition-colors cursor-pointer'
+                                                          : 'filter-pill-region px-2.5 py-1 rounded-md bg-slate-100 dark:bg-darkCard text-inkPrimary dark:text-textDarkMuted hover:bg-slate-200 dark:hover:bg-darkCard/80 transition-colors cursor-pointer';
                 });
                 renderTable();
               }
@@ -2542,7 +2559,7 @@ function initIndustrialCharts(attempts = 0) {
       populateProvinceDropdown();
       renderTable();
       updateCalculator();
-      if (activeWorkstationMode === "telemetry") { initIndustrialCharts(); chartsInitialized = true; }
+      if (activeWorkstationMode === "telemetry") { initIndustrialCharts(); }
     }
 
     function renderTable() {
@@ -3126,10 +3143,10 @@ function initIndustrialCharts(attempts = 0) {
 
     document.addEventListener("DOMContentLoaded", () => {
       const initHash = window.location.hash.replace('#', '');
-      if (initHash === 'telemetry' || initHash === 'sizer') {
+      if (initHash === 'directory' || initHash === 'sizer') {
         switchWorkstationMode(initHash);
       } else {
-        switchWorkstationMode('directory');
+        switchWorkstationMode('telemetry');
       }
 
       selectPowerArchetype("fab");
@@ -3388,7 +3405,13 @@ function initIndustrialCharts(attempts = 0) {
       });
 
       window.addEventListener("resize", () => {
-        if (typeof initIndustrialCharts === "function") initIndustrialCharts();
+        if (activeWorkstationMode === 'telemetry') {
+          if (chartsInitialized) {
+            resizeIndustrialCharts();
+          } else if (typeof initIndustrialCharts === "function") {
+            initIndustrialCharts();
+          }
+        }
       });
 
       });
