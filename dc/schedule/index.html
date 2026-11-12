@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -619,7 +619,7 @@
             position: sticky;
             top: 0;
             z-index: 5;
-            margin-left: 260px;
+            margin-left: var(--gantt-label-w, 260px);
         }
         .gantt-q-block {
             flex: 1;
@@ -648,7 +648,7 @@
         .gantt-row.critical-row { background: rgba(217, 119, 6, 0.04); }
 
         .gantt-label {
-            width: 260px; min-width: 260px; display: flex; align-items: center; gap: 8px; padding: 0 8px;
+            width: var(--gantt-label-w, 260px); min-width: var(--gantt-label-w, 260px); display: flex; align-items: center; gap: 8px; padding: 0 8px;
             background: #f8fafc; position: sticky; left: 0; z-index: 4;
             border-right: 1px solid rgba(226, 232, 240, 0.9); font-size: 10px;
         }
@@ -747,6 +747,376 @@
             box-shadow: 0 0 6px rgba(2, 132, 199, 0.4); transition: transform 0.1s;
         }
         .timeline-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        :root {
+            --gantt-label-w: 260px;
+        }
+
+        html, body {
+            height: 100dvh;
+            touch-action: none;
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #webgl-container, #webgl-container canvas {
+            touch-action: none !important;
+        }
+
+        .cam-btn.cam-active {
+            background: var(--accent-cyan) !important;
+            border-color: var(--accent-cyan) !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28);
+        }
+
+        /* Mobile Backdrop Scrim */
+        #mobile-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.24);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 42;
+        }
+        #mobile-backdrop.visible {
+            display: block;
+        }
+
+        /* 1-Tap Mobile Camera Quick-Jump Strip (hidden on desktop) */
+        #mobile-cam-strip {
+            display: none;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: calc(96px + env(safe-area-inset-bottom));
+            max-width: calc(100vw - 16px);
+            padding: 5px 7px;
+            gap: 6px;
+            align-items: center;
+            overflow-x: auto;
+            scrollbar-width: none;
+            border-radius: 999px;
+            z-index: 46;
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+        }
+        #mobile-cam-strip::-webkit-scrollbar { display: none; }
+        #mobile-cam-strip .mob-fpv-btn {
+            background: rgba(241, 245, 249, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        #mobile-cam-strip .mob-fpv-btn.cam-active {
+            background: var(--accent-cyan) !important;
+            border-color: var(--accent-cyan) !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28);
+        }
+        #mobile-cam-strip .cam-btn, #mobile-cam-strip .mob-fpv-btn {
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 999px;
+            min-height: 32px;
+        }
+
+        /* Mobile Touch FPV Directional Pad */
+        #mobile-fpv-pad {
+            display: none;
+            position: fixed;
+            left: 10px;
+            bottom: calc(146px + env(safe-area-inset-bottom));
+            padding: 8px;
+            border-radius: 12px;
+            z-index: 65;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .fpv-pad-row {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .fpv-pad-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            background: rgba(241, 245, 249, 0.92);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            touch-action: none !important;
+        }
+        .fpv-pad-btn.pressed {
+            background: var(--accent-cyan);
+            color: #ffffff;
+            border-color: var(--accent-cyan);
+        }
+        .fpv-exit-btn {
+            width: 100%;
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            background: rgba(220, 38, 38, 0.12);
+            color: #dc2626;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 900px), (pointer: coarse) {
+            body.fpv-active #mobile-fpv-pad {
+                display: flex;
+            }
+            body.fpv-active #fpv-crosshair::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            :root {
+                --gantt-label-w: 130px;
+            }
+
+            #top-bar {
+                top: calc(8px + env(safe-area-inset-top));
+                left: 8px;
+                right: 8px;
+                height: 42px;
+                padding: 0 10px;
+                z-index: 55;
+            }
+
+            .brand-container { gap: 6px; }
+            .brand-icon { font-size: 15px; }
+            .brand-text h1 { font-size: 11px; letter-spacing: 0.4px; }
+
+            .top-right-controls { gap: 4px; }
+            .btn-txt { display: none; }
+            .hud-btn {
+                padding: 6px 9px;
+                min-height: 32px;
+                font-size: 11px;
+            }
+            .select-dark {
+                padding: 5px 6px;
+                min-height: 32px;
+                font-size: 10px;
+            }
+
+            /* Keep Date, EV%, and Phase always visible on mobile in dedicated 2nd tier */
+            .top-center-pill {
+                display: flex !important;
+                position: fixed;
+                top: calc(55px + env(safe-area-inset-top));
+                left: 8px;
+                right: 8px;
+                z-index: 44;
+                justify-content: space-between;
+                padding: 4px 12px;
+                font-size: 10px;
+                gap: 6px;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            #hud-phase {
+                flex: 1;
+                text-align: right;
+                max-width: none;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            #blackout-banner {
+                top: calc(90px + env(safe-area-inset-top));
+                width: calc(100vw - 24px);
+                font-size: 10px;
+                padding: 7px 12px;
+                text-align: center;
+                justify-content: center;
+            }
+
+            #left-panel, #right-panel {
+                top: calc(90px + env(safe-area-inset-top));
+                left: 8px;
+                right: 8px;
+                width: auto;
+                max-width: none;
+                max-height: calc(100dvh - 208px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+                overflow-y: auto;
+                touch-action: pan-y;
+                -webkit-overflow-scrolling: touch;
+                z-index: 52;
+            }
+
+            #left-panel.panel-collapsed, #right-panel.panel-collapsed {
+                transform: translateY(-14px);
+                opacity: 0;
+            }
+
+            #mobile-cam-strip {
+                display: flex;
+            }
+
+            #bottom-bar {
+                bottom: calc(8px + env(safe-area-inset-bottom));
+                left: 8px;
+                right: 8px;
+                width: auto;
+                max-width: none;
+                transform: none;
+                height: auto;
+                padding: 8px 12px;
+                border-radius: 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+                z-index: 55;
+            }
+            .timeline-slider-container {
+                order: 1;
+                flex: 1 0 100%;
+                width: 100%;
+            }
+            .timeline-slider {
+                height: 8px;
+            }
+            .timeline-slider::-webkit-slider-thumb {
+                width: 22px;
+                height: 22px;
+            }
+            #btn-play {
+                order: 2;
+                padding: 7px 14px;
+                min-height: 36px;
+            }
+            .speed-box {
+                order: 3;
+                font-size: 10px;
+            }
+            #btn-toggle-schedule {
+                order: 4;
+                margin-left: auto;
+                padding: 7px 11px !important;
+                min-height: 36px;
+            }
+
+            #bottom-dock {
+                bottom: calc(96px + env(safe-area-inset-bottom));
+                left: 8px;
+                right: 8px;
+                height: 52dvh;
+                max-height: 430px;
+                z-index: 95;
+            }
+            .dock-header-bar {
+                padding: 0 8px;
+                gap: 6px;
+                height: 40px;
+                min-height: 40px;
+            }
+            .dock-tabs {
+                flex: 1;
+                min-width: 0;
+                overflow-x: auto;
+                scrollbar-width: none;
+                gap: 4px;
+            }
+            .dock-tabs::-webkit-scrollbar { display: none; }
+            .dock-tab-btn {
+                padding: 6px 8px;
+                font-size: 10px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .dock-toggle-btn {
+                white-space: nowrap;
+                padding: 4px 8px;
+                font-size: 9px;
+                flex-shrink: 0;
+            }
+            .dock-pane {
+                touch-action: pan-x pan-y;
+                -webkit-overflow-scrolling: touch;
+            }
+            .gantt-time-header, .gantt-rows-wrapper {
+                min-width: 680px;
+            }
+            .gantt-code {
+                min-width: 40px;
+                font-size: 9px;
+            }
+            .gantt-name {
+                font-size: 9px;
+            }
+            .table-filter-bar {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .search-box {
+                width: 100%;
+            }
+            /* Keep core P6 table columns readable on small phones */
+            .p6-table th:nth-child(2), .p6-table td:nth-child(2),
+            .p6-table th:nth-child(4), .p6-table td:nth-child(4),
+            .p6-table th:nth-child(5), .p6-table td:nth-child(5),
+            .p6-table th:nth-child(6), .p6-table td:nth-child(6),
+            .p6-table th:nth-child(7), .p6-table td:nth-child(7) {
+                display: none;
+            }
+            .p6-table td, .p6-table th {
+                padding: 6px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .brand-text h1 {
+                max-width: 82px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        @media (max-height: 480px) and (orientation: landscape) {
+            .top-center-pill {
+                top: calc(48px + env(safe-area-inset-top));
+                padding: 2px 10px;
+            }
+            #mobile-cam-strip {
+                bottom: calc(64px + env(safe-area-inset-bottom));
+            }
+            #bottom-bar {
+                flex-wrap: nowrap;
+                padding: 5px 10px;
+                gap: 8px;
+            }
+            .timeline-slider-container {
+                order: 0;
+                flex: 1;
+            }
+            #btn-play, .speed-box, #btn-toggle-schedule {
+                order: 0;
+                min-height: 30px;
+                padding: 4px 10px !important;
+            }
+            #bottom-dock {
+                bottom: calc(62px + env(safe-area-inset-bottom));
+                height: 62dvh;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -995,6 +1365,32 @@
                 </table>
             </div>
         </div>
+    </div>
+
+    <!-- Mobile Modal Backdrop -->
+    <div id="mobile-backdrop"></div>
+
+    <!-- Mobile 1-Tap Camera Viewpoints & FPV Quick Strip -->
+    <div id="mobile-cam-strip" class="glass-panel">
+        <button class="cam-btn" data-cam="campus"><i class="fas fa-globe"></i> Campus</button>
+        <button class="cam-btn" data-cam="substation"><i class="fas fa-bolt"></i> Substation</button>
+        <button class="cam-btn" data-cam="generators"><i class="fas fa-cogs"></i> Gensets</button>
+        <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
+        <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Hall 1</button>
+        <button class="mob-fpv-btn" id="btn-mobile-fpv"><i class="fas fa-walking"></i> FPV</button>
+    </div>
+
+    <!-- Mobile Touch FPV Movement Pad -->
+    <div id="mobile-fpv-pad" class="glass-panel">
+        <div class="fpv-pad-row">
+            <button class="fpv-pad-btn" id="fpv-btn-fwd" aria-label="Walk Forward"><i class="fas fa-chevron-up"></i></button>
+        </div>
+        <div class="fpv-pad-row">
+            <button class="fpv-pad-btn" id="fpv-btn-left" aria-label="Strafe Left"><i class="fas fa-chevron-left"></i></button>
+            <button class="fpv-pad-btn" id="fpv-btn-back" aria-label="Walk Backward"><i class="fas fa-chevron-down"></i></button>
+            <button class="fpv-pad-btn" id="fpv-btn-right" aria-label="Strafe Right"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <button class="fpv-exit-btn" id="mobile-fpv-exit">EXIT FPV</button>
     </div>
 
     <!-- Bottom Master Scrubber Bar -->
@@ -4342,7 +4738,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: procedural_textures.js (v17 Executive Digital Twin) ===
+    // === MODULE: procedural_textures.js (v18 Executive Digital Twin) ===
 // Procedural PBR Texture Synthesizer for DC36-T3 Hyperscale Datacenter
 // Zero External Image Assets - 100% Procedural HTML5 Canvas Generation
 
@@ -4739,7 +5135,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v17 Executive Digital Twin) ===
+    // === MODULE: datacenter_models.js (v18 Executive Digital Twin) ===
 // Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter
 // Executive Digital Twin Edition: Procedural BIM Geometry, InstancedMesh Batching & 4D Wireframe Support
 
@@ -6830,7 +7226,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: particles_fx.js (v17 Executive Digital Twin) ===
+    // === MODULE: particles_fx.js (v18 Executive Digital Twin) ===
 // Visual Effects, CFD Airflow Simulation & Particle Systems for DC36-T3
 (function() {
     window.DC36_PARTICLES = {};
@@ -7050,7 +7446,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: timeline_engine.js (v17 4D Wireframe + NaN Guard) ===
+    // === MODULE: timeline_engine.js (v18 4D Wireframe + NaN Guard) ===
 // 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter
 // Preserves all Primavera P6 Scrubber Logic + Adds 1%-99% Glowing Amber Wireframe Progress States
 
@@ -8060,7 +8456,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: gantt_table.js ===
+    // === MODULE: gantt_table.js (v18 Responsive Playhead) ===
 // Interactive Chronological Gantt Timeline & P6 Task Schedule Table for DC36-T3
 // Institutional Primavera P6 CPM Visualizer
 
@@ -8325,7 +8721,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v17 PCFSoftShadowMap + FogExp2 + HallLight) ===
+    // === MODULE: app.js (v18 Mobile Navigation + Portrait FOV + Touch FPV) ===
 // Main Application Controller & Three.js WebGL Engine for DC36-T3
 // Executive Digital Twin: PCFSoftShadowMap (2048x2048), FogExp2, Bloom + FXAA, Drone Tour & FPV
 
@@ -8365,6 +8761,23 @@ window.DC36_SCHEDULE = {
         whitespace: { pos: [-12, 16.5, -7], target: [-12, 14.5, -14] }
     };
 
+    function isMobileViewport() {
+        return window.innerWidth <= 900;
+    }
+
+    function updateResponsiveCamera() {
+        if (!camera) return;
+        const aspect = window.innerWidth / Math.max(1, window.innerHeight);
+        camera.aspect = aspect;
+        if (!isFPVActive) {
+            camera.fov = aspect < 1.0 ? Math.min(64, 45 / Math.pow(aspect, 0.30)) : 45;
+            if (controls) {
+                controls.maxDistance = aspect < 1.0 ? 560 : 450;
+            }
+        }
+        camera.updateProjectionMatrix();
+    }
+
     function init() {
         const container = document.getElementById('webgl-container');
 
@@ -8372,25 +8785,33 @@ window.DC36_SCHEDULE = {
         scene.background = new THREE.Color(0xdbeafe);
         scene.fog = new THREE.FogExp2(0xdbeafe, 0.0016);
 
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1200);
+        const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / Math.max(1, window.innerHeight), 0.5, 1200);
         camera.position.set(130, 105, 150);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isCoarsePointer ? 1.5 : 2));
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 0.95;
+        renderer.domElement.style.touchAction = 'none';
         container.appendChild(renderer.domElement);
 
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
+        controls.dampingFactor = isCoarsePointer ? 0.08 : 0.05;
+        controls.rotateSpeed = isCoarsePointer ? 0.78 : 1.0;
+        controls.panSpeed = isCoarsePointer ? 0.85 : 1.0;
         controls.maxPolarAngle = Math.PI / 2 - 0.02;
         controls.minDistance = 2;
         controls.maxDistance = 450;
+        if (typeof THREE.TOUCH !== 'undefined') {
+            controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+        }
         controls.target.set(0, 10, 0);
+        updateResponsiveCamera();
 
         setupLighting();
 
@@ -8639,15 +9060,45 @@ window.DC36_SCHEDULE = {
                 case 'KeyD': case 'ArrowRight': fpvKeys.right = false; break;
             }
         });
+
+        const fpvPadMap = [
+            ['fpv-btn-fwd', 'forward'],
+            ['fpv-btn-back', 'backward'],
+            ['fpv-btn-left', 'left'],
+            ['fpv-btn-right', 'right']
+        ];
+        fpvPadMap.forEach(([id, key]) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const start = (ev) => { ev.preventDefault(); ev.stopPropagation(); fpvKeys[key] = true; el.classList.add('pressed'); };
+            const end = (ev) => { if (ev) { ev.stopPropagation(); } fpvKeys[key] = false; el.classList.remove('pressed'); };
+            el.addEventListener('pointerdown', start);
+            el.addEventListener('pointerup', end);
+            el.addEventListener('pointercancel', end);
+            el.addEventListener('pointerleave', end);
+        });
+        const mobileFpvExit = document.getElementById('mobile-fpv-exit');
+        if (mobileFpvExit) {
+            mobileFpvExit.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFPVMode(false);
+            });
+        }
     }
 
     function toggleFPVMode(forceState) {
         isFPVActive = (typeof forceState !== 'undefined') ? forceState : !isFPVActive;
+        document.body.classList.toggle('fpv-active', isFPVActive);
         const btn = document.getElementById('btn-fpv');
+        const mobileBtn = document.getElementById('btn-mobile-fpv');
         const crosshair = document.getElementById('fpv-crosshair');
         if (btn) {
             btn.innerHTML = isFPVActive ? '<i class="fas fa-walking"></i> Exit FPV' : '<i class="fas fa-walking"></i> Data Hall FPV';
             btn.classList.toggle('audio-active', isFPVActive);
+        }
+        if (mobileBtn) {
+            mobileBtn.classList.toggle('cam-active', isFPVActive);
         }
         if (crosshair) crosshair.style.display = isFPVActive ? 'block' : 'none';
 
@@ -8657,13 +9108,20 @@ window.DC36_SCHEDULE = {
             const cutawayToggle = document.getElementById('toggle-cutaway');
             if (cutawayToggle) cutawayToggle.checked = true;
 
+            camera.fov = 55;
+            camera.updateProjectionMatrix();
             camera.position.set(-10, 14.2, -10);
             controls.target.set(-10, 14.2, -18);
             controls.minDistance = 0.5;
             controls.maxDistance = 60;
+            if (isMobileViewport()) {
+                const right = document.getElementById('right-panel');
+                if (right && !right.classList.contains('panel-collapsed')) window.toggleRightPanel();
+            }
         } else {
+            fpvKeys.forward = fpvKeys.backward = fpvKeys.left = fpvKeys.right = false;
             controls.minDistance = 5;
-            controls.maxDistance = 450;
+            updateResponsiveCamera();
             switchCamera('campus');
         }
     }
@@ -8697,8 +9155,7 @@ window.DC36_SCHEDULE = {
     }
 
     function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+        updateResponsiveCamera();
         renderer.setSize(window.innerWidth, window.innerHeight);
         if (composer) composer.setSize(window.innerWidth, window.innerHeight);
         if (fxaaPass && fxaaPass.material && fxaaPass.material.uniforms['resolution']) {
@@ -8778,11 +9235,12 @@ window.DC36_SCHEDULE = {
             });
         }
 
-        ['top-bar', 'left-panel', 'right-panel', 'bottom-bar', 'bottom-dock'].forEach(id => {
+        ['top-bar', 'left-panel', 'right-panel', 'bottom-bar', 'bottom-dock', 'mobile-cam-strip', 'mobile-fpv-pad'].forEach(id => {
             const p = document.getElementById(id);
             if (p) {
                 p.addEventListener('pointerdown', (e) => e.stopPropagation());
                 p.addEventListener('mousedown', (e) => e.stopPropagation());
+                p.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
             }
         });
 
@@ -8843,6 +9301,8 @@ window.DC36_SCHEDULE = {
         if (lightingSelect) lightingSelect.addEventListener('change', (e) => setLightingMode(e.target.value));
         bindAction(droneTourBtn, () => toggleDroneTour());
         bindAction(fpvBtn, () => toggleFPVMode());
+        bindAction(document.getElementById('btn-mobile-fpv'), () => toggleFPVMode());
+        document.querySelectorAll('.cam-btn[data-cam="campus"]').forEach(b => b.classList.add('cam-active'));
 
         let isRealityMode = true;
         const btnModeToggle = document.getElementById('btn-mode-toggle');
@@ -8904,14 +9364,59 @@ window.DC36_SCHEDULE = {
         const tabTable = document.getElementById('tab-btn-table');
         const paneGantt = document.getElementById('dock-pane-gantt');
         const paneTable = document.getElementById('dock-pane-table');
+        const backdrop = document.getElementById('mobile-backdrop');
+
+        function syncMobileBackdrop() {
+            if (!backdrop) return;
+            const leftOpen = !document.getElementById('left-panel')?.classList.contains('panel-collapsed');
+            const rightOpen = !document.getElementById('right-panel')?.classList.contains('panel-collapsed');
+            const dockOpen = bottomDock?.classList.contains('dock-open');
+            backdrop.classList.toggle('visible', isMobileViewport() && (leftOpen || rightOpen || dockOpen));
+        }
+
+        function closeAllMobileDrawers() {
+            const left = document.getElementById('left-panel');
+            const right = document.getElementById('right-panel');
+            if (left && !left.classList.contains('panel-collapsed')) {
+                left.classList.add('panel-collapsed');
+                document.getElementById('btn-top-tasks')?.classList.remove('active');
+            }
+            if (right && !right.classList.contains('panel-collapsed')) {
+                right.classList.add('panel-collapsed');
+                document.getElementById('btn-top-telemetry')?.classList.remove('active');
+            }
+            if (bottomDock && bottomDock.classList.contains('dock-open')) {
+                bottomDock.classList.remove('dock-open');
+                if (btnToggleSchedule) btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+            }
+            syncMobileBackdrop();
+        }
+
+        if (backdrop) {
+            bindAction(backdrop, closeAllMobileDrawers);
+        }
 
         bindAction(btnToggleSchedule, () => {
             if (!bottomDock) return;
+            const willOpen = !bottomDock.classList.contains('dock-open');
+            if (willOpen && isMobileViewport()) {
+                const left = document.getElementById('left-panel');
+                const right = document.getElementById('right-panel');
+                if (left && !left.classList.contains('panel-collapsed')) {
+                    left.classList.add('panel-collapsed');
+                    document.getElementById('btn-top-tasks')?.classList.remove('active');
+                }
+                if (right && !right.classList.contains('panel-collapsed')) {
+                    right.classList.add('panel-collapsed');
+                    document.getElementById('btn-top-telemetry')?.classList.remove('active');
+                }
+            }
             bottomDock.classList.toggle('dock-open');
             const isOpen = bottomDock.classList.contains('dock-open');
             btnToggleSchedule.innerHTML = isOpen
                 ? '<i class="fas fa-times"></i> Close Schedule'
                 : '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+            syncMobileBackdrop();
         });
 
         bindAction(dockCloseBtn, () => {
@@ -8920,6 +9425,7 @@ window.DC36_SCHEDULE = {
             if (btnToggleSchedule) {
                 btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
             }
+            syncMobileBackdrop();
         });
 
         function toggleLeftPanel(e) {
@@ -8936,7 +9442,12 @@ window.DC36_SCHEDULE = {
                     const btnTopTelemetry = document.getElementById('btn-top-telemetry');
                     if (btnTopTelemetry) btnTopTelemetry.classList.remove('active');
                 }
+                if (bottomDock && bottomDock.classList.contains('dock-open')) {
+                    bottomDock.classList.remove('dock-open');
+                    if (btnToggleSchedule) btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+                }
             }
+            syncMobileBackdrop();
         }
         window.toggleLeftPanel = toggleLeftPanel;
 
@@ -8954,7 +9465,12 @@ window.DC36_SCHEDULE = {
                     const btnTopTasks = document.getElementById('btn-top-tasks');
                     if (btnTopTasks) btnTopTasks.classList.remove('active');
                 }
+                if (bottomDock && bottomDock.classList.contains('dock-open')) {
+                    bottomDock.classList.remove('dock-open');
+                    if (btnToggleSchedule) btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
+                }
             }
+            syncMobileBackdrop();
         }
         window.toggleRightPanel = toggleRightPanel;
 
@@ -8988,6 +9504,10 @@ window.DC36_SCHEDULE = {
     function switchCamera(presetKey) {
         const preset = cameraPresets[presetKey];
         if (!preset) return;
+
+        document.querySelectorAll('.cam-btn').forEach(b => {
+            b.classList.toggle('cam-active', b.getAttribute('data-cam') === presetKey);
+        });
 
         if (camAnimId !== null) {
             cancelAnimationFrame(camAnimId);
