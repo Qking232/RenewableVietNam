@@ -1117,6 +1117,7 @@
             <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
             <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Data Hall 1</button>
             <button class="cam-btn" data-cam="offices"><i class="fas fa-briefcase"></i> Offices</button>
+            <button class="cam-btn" data-cam="ground" style="grid-column: span 2;"><i class="fas fa-door-open"></i> Ground Floor</button>
         </div>
 
         <!-- Cinematic Drone Tour & FPV Row -->
@@ -1250,6 +1251,7 @@
         <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
         <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Hall 1</button>
         <button class="cam-btn" data-cam="offices"><i class="fas fa-briefcase"></i> Offices</button>
+        <button class="cam-btn" data-cam="ground"><i class="fas fa-door-open"></i> Ground</button>
         <button class="mob-fpv-btn" id="btn-mobile-fpv"><i class="fas fa-walking"></i> FPV</button>
     </div>
 
@@ -4615,8 +4617,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: procedural_textures.js (v22 Raised Floor + Office Carpets/Ceilings + Concrete Road + NOC Wall) ===
-// Procedural PBR Texture Synthesizer for DC36-T3 Hyperscale Datacenter (Rev.022)
+    // === MODULE: procedural_textures.js (v24 Raised Floor + Office Carpets/Ceilings + Concrete Road + NOC Wall) ===
+// Procedural PBR Texture Synthesizer for DC36-T3 Hyperscale Datacenter (Rev.023)
 // Zero External Image Assets - 100% Procedural HTML5 Canvas Generation
 
 (function() {
@@ -4987,11 +4989,10 @@ window.DC36_SCHEDULE = {
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
 
-        // Anti-static light technical grey laminate surface
         ctx.fillStyle = '#cbd5e1';
         ctx.fillRect(0, 0, 512, 512);
 
-        const cell = 128; // 512 / 4 => each square = 600x600mm tile
+        const cell = 128;
         for (let r = 0; r < 4; r++) {
             for (let c = 0; c < 4; c++) {
                 const x = c * cell;
@@ -5000,7 +5001,6 @@ window.DC36_SCHEDULE = {
                 ctx.fillStyle = isAlt ? '#d6dfe9' : '#c6d0dd';
                 ctx.fillRect(x + 3, y + 3, cell - 6, cell - 6);
 
-                // Subtle anti-static terrazzo flecks
                 ctx.fillStyle = 'rgba(71, 85, 105, 0.22)';
                 for (let k = 0; k < 24; k++) {
                     const fx = x + 8 + ((k * 37 + r * 19) % (cell - 16));
@@ -5008,18 +5008,15 @@ window.DC36_SCHEDULE = {
                     ctx.fillRect(fx, fy, 2, 2);
                 }
 
-                // Steel perimeter stringer seam
                 ctx.strokeStyle = '#64748b';
                 ctx.lineWidth = 3;
                 ctx.strokeRect(x + 1.5, y + 1.5, cell - 3, cell - 3);
 
-                // Corner screw/pedestal lock dimples
                 ctx.fillStyle = '#475569';
                 [[8, 8], [cell - 10, 8], [8, cell - 10], [cell - 10, cell - 10]].forEach(([dx, dy]) => {
                     ctx.fillRect(x + dx, y + dy, 3, 3);
                 });
 
-                // Cold-aisle perforated airflow diffuser tile accent (col 1 & 3)
                 if (c % 2 === 1) {
                     ctx.fillStyle = 'rgba(30, 41, 59, 0.25)';
                     for (let py = 20; py < cell - 18; py += 12) {
@@ -5034,7 +5031,6 @@ window.DC36_SCHEDULE = {
         const tex = new THREE.CanvasTexture(canvas);
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.RepeatWrapping;
-        // 54m x 58m white-space / interior deck -> 2.4m per 512px repeat
         tex.repeat.set(22.5, 24);
         return tex;
     }
@@ -5059,7 +5055,6 @@ window.DC36_SCHEDULE = {
         }
         ctx.putImageData(imgData, 0, 0);
 
-        // Expansion/control joint grid (2x2 slabs per tile)
         ctx.strokeStyle = '#334155';
         ctx.lineWidth = 4;
         ctx.strokeRect(0, 0, 512, 512);
@@ -5068,7 +5063,6 @@ window.DC36_SCHEDULE = {
         ctx.moveTo(0, 256); ctx.lineTo(512, 256);
         ctx.stroke();
 
-        // Chamfered bright joint highlight
         ctx.strokeStyle = 'rgba(226, 232, 240, 0.35)';
         ctx.lineWidth = 1.5;
         ctx.beginPath();
@@ -5114,7 +5108,6 @@ window.DC36_SCHEDULE = {
         ctx.fillStyle = '#091526';
         ctx.fillRect(0, 0, 512, 256);
 
-        // Panel bezel dividers (4x2 video tiles)
         ctx.strokeStyle = '#1e293b';
         ctx.lineWidth = 3;
         for (let x = 128; x < 512; x += 128) {
@@ -5122,7 +5115,6 @@ window.DC36_SCHEDULE = {
         }
         ctx.beginPath(); ctx.moveTo(0, 128); ctx.lineTo(512, 128); ctx.stroke();
 
-        // Top-left SCADA Bus Bar Graph
         ctx.fillStyle = '#0284c7';
         ctx.fillRect(14, 16, 100, 12);
         for (let b = 0; b < 6; b++) {
@@ -5131,7 +5123,6 @@ window.DC36_SCHEDULE = {
             ctx.fillRect(16 + b * 16, 114 - h, 11, h);
         }
 
-        // Top-center-left Thermal Sine Wave
         ctx.strokeStyle = '#22d3ee';
         ctx.lineWidth = 2.5;
         ctx.beginPath();
@@ -5142,13 +5133,11 @@ window.DC36_SCHEDULE = {
         }
         ctx.stroke();
 
-        // Top-right Power PUE Status Blocks
         ctx.fillStyle = '#10b981';
         ctx.fillRect(272, 22, 96, 36);
         ctx.fillStyle = '#0ea5e9';
         ctx.fillRect(272, 68, 96, 40);
 
-        // Rack Thermal Matrix
         for (let r = 0; r < 4; r++) {
             for (let c = 0; c < 6; c++) {
                 ctx.fillStyle = ((r + c) % 5 === 0) ? '#f59e0b' : '#10b981';
@@ -5156,7 +5145,6 @@ window.DC36_SCHEDULE = {
             }
         }
 
-        // Bottom row NOC system status bars
         for (let p = 0; p < 4; p++) {
             const bx = p * 128 + 14;
             ctx.fillStyle = '#0f2942';
@@ -5196,7 +5184,6 @@ window.DC36_SCHEDULE = {
         tex.repeat.set(10, 4);
         return tex;
     }
-
 
     // 17. Modular Commercial Office Carpet Tiles (500x500mm Dark Slate Weave)
     function generateOfficeCarpetTexture() {
@@ -5277,7 +5264,7 @@ window.DC36_SCHEDULE = {
         ctx.fillStyle = '#e2e8f0';
         ctx.fillRect(0, 0, 512, 512);
 
-        const cell = 128; // 4x4 grid = 2.4m x 2.4m repeat
+        const cell = 128;
         for (let r = 0; r < 4; r++) {
             for (let c = 0; c < 4; c++) {
                 const x = c * cell, y = r * cell;
@@ -5299,6 +5286,128 @@ window.DC36_SCHEDULE = {
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.RepeatWrapping;
         tex.repeat.set(6, 12);
+        return tex;
+    }
+
+    // 20. Ground Floor Executive Atrium Architectural Terrazzo Stone Floor
+    function generateTerrazzoTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#e6e8ec';
+        ctx.fillRect(0, 0, 512, 512);
+
+        const chips = ['#cbd5e1', '#94a3b8', '#b8a99a', '#64748b', '#f8fafc'];
+        for (let i = 0; i < 1800; i++) {
+            ctx.fillStyle = chips[i % chips.length];
+            const x = (i * 73) % 512;
+            const y = (i * 137) % 512;
+            const sz = 2 + (i % 4);
+            ctx.fillRect(x, y, sz, sz);
+        }
+
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 3;
+        for (let g = 0; g <= 512; g += 128) {
+            ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, 512); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(512, g); ctx.stroke();
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(6, 8);
+        return tex;
+    }
+
+    // 21. Porcelain Restroom & Bistro Wet-Area Floor Tile
+    function generateRestroomTileTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#d1d5db';
+        ctx.fillRect(0, 0, 256, 256);
+
+        for (let y = 0; y < 256; y += 64) {
+            for (let x = 0; x < 256; x += 64) {
+                ctx.fillStyle = ((x + y) / 64) % 2 === 0 ? '#e5e7eb' : '#d8dce2';
+                ctx.fillRect(x + 2, y + 2, 60, 60);
+            }
+        }
+        ctx.strokeStyle = '#6b7280';
+        ctx.lineWidth = 2;
+        for (let g = 0; g <= 256; g += 64) {
+            ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, 256); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, g); ctx.lineTo(256, g); ctx.stroke();
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(5, 5);
+        return tex;
+    }
+
+    // 22. Sealed Epoxy Industrial Logistics Floor with Yellow Safety Walkways
+    function generateStagingFloorTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#6b7280';
+        ctx.fillRect(0, 0, 512, 512);
+
+        const imgData = ctx.getImageData(0, 0, 512, 512);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            const n = (Math.random() - 0.5) * 14;
+            data[i] = Math.min(255, Math.max(0, data[i] + n));
+            data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + n));
+            data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + n));
+        }
+        ctx.putImageData(imgData, 0, 0);
+
+        ctx.fillStyle = '#eab308';
+        ctx.fillRect(14, 0, 12, 512);
+        ctx.fillRect(486, 0, 12, 512);
+        ctx.strokeStyle = 'rgba(30, 41, 59, 0.35)';
+        ctx.lineWidth = 2;
+        for (let y = 0; y < 512; y += 128) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(3, 8);
+        return tex;
+    }
+
+    // 23. Architectural Linear Wood/Aluminum Ceiling Baffle Texture (Lobby Atrium)
+    function generateAcousticBaffleTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, 256, 256);
+        for (let y = 0; y < 256; y += 24) {
+            ctx.fillStyle = '#b47b4e';
+            ctx.fillRect(0, y, 256, 13);
+            ctx.fillStyle = '#d49a6a';
+            ctx.fillRect(0, y, 256, 3);
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(6, 6);
         return tex;
     }
 
@@ -5327,15 +5436,19 @@ window.DC36_SCHEDULE = {
             grassBerm: generateGrassTexture(),
             officeCarpet: generateOfficeCarpetTexture(),
             woodFinish: generateWoodFinishTexture(),
-            ceilingGrid: generateCeilingGridTexture()
+            ceilingGrid: generateCeilingGridTexture(),
+            groundTerrazzo: generateTerrazzoTexture(),
+            groundRestroomTile: generateRestroomTileTexture(),
+            groundStagingFloor: generateStagingFloorTexture(),
+            groundBaffleCeil: generateAcousticBaffleTexture()
         };
     };
 })();
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v22 4-Zone BIM + Office Walls/Ceilings + Civil Campus) ===
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.022)
+    // === MODULE: datacenter_models.js (v24 4-Zone BIM + Office Walls/Ceilings + Civil Campus) ===
+// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.023)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
 (function() {
@@ -5408,6 +5521,16 @@ window.DC36_SCHEDULE = {
             officeDeskTop: new THREE.MeshStandardMaterial({ color: 0xc29368, roughness: 0.42, metalness: 0.06, map: T.woodFinish }),
             officeChairMesh: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.25 }),
             loungeLeather: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.55, metalness: 0.12 }),
+            groundTerrazzo: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.34, metalness: 0.12, map: T.groundTerrazzo }),
+            groundRestroomTile: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.38, metalness: 0.08, map: T.groundRestroomTile }),
+            groundStagingFloor: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.50, metalness: 0.10, map: T.groundStagingFloor }),
+            groundBaffleCeil: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.55, metalness: 0.18, map: T.groundBaffleCeil, side: THREE.DoubleSide }),
+            novecRed: new THREE.MeshStandardMaterial({ color: 0xb91c1c, roughness: 0.28, metalness: 0.72 }),
+            porcelainWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.16, metalness: 0.05 }),
+            cageWireframe: new THREE.MeshStandardMaterial({ color: 0x475569, wireframe: true }),
+            cardboardBox: new THREE.MeshStandardMaterial({ color: 0xb08968, roughness: 0.85, metalness: 0.02 }),
+            palletWood: new THREE.MeshStandardMaterial({ color: 0x9c6644, roughness: 0.88, metalness: 0.02, map: T.woodFinish }),
+            stainlessSteel: new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.24, metalness: 0.88, map: T.brushedMetal }),
 
             // MEP Electrical
             transformerTank: new THREE.MeshStandardMaterial({ color: 0x36413b, roughness: 0.42, metalness: 0.72, map: T.brushedMetal }),
@@ -6693,29 +6816,34 @@ window.DC36_SCHEDULE = {
         [-20.6, 20.6].forEach(wingZ => {
             const wingLen = 19.2;
             const wingSign = wingZ > 0 ? 1 : -1;
-            const spandrelLow = new THREE.Mesh(new THREE.BoxGeometry(0.40, 6.2, wingLen), M.facadeLight);
-            spandrelLow.position.set(0, -5.4, wingZ);
+            const spandrelPlinthL0 = new THREE.Mesh(new THREE.BoxGeometry(0.40, 1.0, wingLen), M.facadeLight);
+            spandrelPlinthL0.position.set(0, -8.0, wingZ);
+            const spandrelBand01 = new THREE.Mesh(new THREE.BoxGeometry(0.40, 2.8, wingLen), M.facadeLight);
+            spandrelBand01.position.set(0, -3.7, wingZ);
             const spandrelMid = new THREE.Mesh(new THREE.BoxGeometry(0.40, 3.4, wingLen), M.facadeLight);
             spandrelMid.position.set(0, 1.7, wingZ);
             const spandrelTop = new THREE.Mesh(new THREE.BoxGeometry(0.40, 2.7, wingLen), M.facadeDark);
             spandrelTop.position.set(0, 7.15, wingZ);
 
-            // Corner End Piers framing glazed office bays
+            // Corner End Piers framing glazed office & Level 0 amenity bays
             const outerPier = new THREE.Mesh(new THREE.BoxGeometry(0.42, 17.0, 2.2), M.facadeLight);
             outerPier.position.set(0, 0, wingSign * 29.1);
             const innerPier = new THREE.Mesh(new THREE.BoxGeometry(0.42, 17.0, 1.6), M.facadeLight);
             innerPier.position.set(0, 0, wingSign * 11.8);
 
-            // Level 1 (local y = -1.15) & Level 2 (local y = +4.60) Glazed Office Window Ribbons
+            // Level 0 (local y = -6.30), Level 1 (local y = -1.15) & Level 2 (local y = +4.60) Glazed Ribbon Windows
             const winLen = 15.4;
             const winCenterZ = wingSign * 20.3;
+            const winL0 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, winLen), M.curtainGlass);
+            winL0.position.set(0, -6.3, winCenterZ);
+            winL0.userData.isGlass = true;
             const winL1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.3, winLen), M.curtainGlass);
             winL1.position.set(0, -1.15, winCenterZ);
             winL1.userData.isGlass = true;
             const winL2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, winLen), M.curtainGlass);
             winL2.position.set(0, 4.6, winCenterZ);
             winL2.userData.isGlass = true;
-            eastWall.add(spandrelLow, spandrelMid, spandrelTop, outerPier, innerPier, winL1, winL2);
+            eastWall.add(spandrelPlinthL0, spandrelBand01, spandrelMid, spandrelTop, outerPier, innerPier, winL0, winL1, winL2);
 
             for (let mz = 12.8; mz <= 28.0; mz += 2.5) {
                 const mull = new THREE.Mesh(new THREE.BoxGeometry(0.24, 17.0, 0.08), M.copingCap);
@@ -7712,6 +7840,636 @@ window.DC36_SCHEDULE = {
         return { officeWalls, officeCeilingsL1, officeCeilingsL2, officeFurniture };
     }
 
+    // Complete Ground Floor (Level 0: y = 1.80 -> 6.70) 4-Zone Architectural, Furniture, Ceiling & MEP BIM
+    function createGroundFloorBIM(M) {
+        const groundWalls = new THREE.Group();
+        groundWalls.name = "GroundFloorPartitionWallsAndCores";
+        const groundCeilings = new THREE.Group();
+        groundCeilings.name = "GroundFloorSuspendedCeilingsAndHighBays";
+        const groundElecPlant = new THREE.Group();
+        groundElecPlant.name = "GroundFloorMain22kVSwitchgearAndTransformers";
+        const groundMechFirePlant = new THREE.Group();
+        groundMechFirePlant.name = "GroundFloorNovecFirePumpAndWaterPlant";
+        const groundFitout = new THREE.Group();
+        groundFitout.name = "GroundFloorFurnitureLogisticsAndVerticalCores";
+
+        const gY = 1.80;      // Raft top surface
+        const soffitY = 6.70; // SlabL1 soffit
+        const wallH = 3.65;   // Standard interior acoustic wall height (to L0 ceiling y = 5.45)
+        const slabWallH = 4.86; // Full-height fire separation wall (1.80 -> 6.66)
+        const ceilY = 5.45;   // Suspended acoustic tile ceiling height
+
+        // =====================================================================
+        // FLOOR FINISHES ACROSS ALL GROUND FLOOR ZONES (y = 1.82)
+        // =====================================================================
+        // Zone G1: East Executive Atrium Terrazzo, North/South Wing Tiles & Carpets
+        const atriumTerrazzo = new THREE.Mesh(new THREE.BoxGeometry(26.2, 0.04, 22.0), M.groundTerrazzo);
+        atriumTerrazzo.position.set(36.3, gY + 0.02, 0);
+        const trainingCarpet = new THREE.Mesh(new THREE.BoxGeometry(13.2, 0.04, 7.8), M.officeCarpet);
+        trainingCarpet.position.set(42.6, gY + 0.02, -15.1);
+        const bistroTile = new THREE.Mesh(new THREE.BoxGeometry(13.2, 0.04, 9.6), M.groundRestroomTile);
+        bistroTile.position.set(42.6, gY + 0.02, -23.9);
+        const lockerEpoxy = new THREE.Mesh(new THREE.BoxGeometry(12.6, 0.04, 17.6), M.epoxyFloorTech);
+        lockerEpoxy.position.set(29.6, gY + 0.02, -20.0);
+        const theaterCarpet = new THREE.Mesh(new THREE.BoxGeometry(15.2, 0.04, 17.6), M.officeCarpet);
+        theaterCarpet.position.set(41.6, gY + 0.02, 20.0);
+        const socCarpet = new THREE.Mesh(new THREE.BoxGeometry(10.6, 0.04, 9.4), M.officeCarpet);
+        socCarpet.position.set(28.6, gY + 0.02, 15.9);
+        const wcTile = new THREE.Mesh(new THREE.BoxGeometry(10.6, 0.04, 8.0), M.groundRestroomTile);
+        wcTile.position.set(28.6, gY + 0.02, 24.9);
+
+        // Zones G2 & G3: Sealed Plant Deck & MDF Floor
+        const plantDeck = new THREE.Mesh(new THREE.BoxGeometry(42.5, 0.04, 57.8), M.epoxyFloorTech);
+        plantDeck.position.set(1.5, gY + 0.02, 0);
+
+        // Zone G4: West Logistics & Loading Dock Safety Staging Slab
+        const westStagingDeck = new THREE.Mesh(new THREE.BoxGeometry(19.0, 0.04, 57.8), M.groundStagingFloor);
+        westStagingDeck.position.set(-30.0, gY + 0.02, 0);
+        groundFitout.add(atriumTerrazzo, trainingCarpet, bistroTile, lockerEpoxy, theaterCarpet, socCarpet, wcTile, plantDeck, westStagingDeck);
+
+        // Helper for L-shaped or rectilinear industrial concrete block wall with plinth & header
+        function buildFireWall(length, height, thick, hasDoubleDoor, M) {
+            const seg = new THREE.Group();
+            if (!hasDoubleDoor) {
+                return buildPartitionWallSegment(length, height, thick, false, M);
+            }
+            const doorW = 2.4;
+            const doorH = 2.6;
+            const sideW = Math.max(0.3, (length - doorW) / 2);
+            [-1, 1].forEach(dir => {
+                const wSide = new THREE.Mesh(new THREE.BoxGeometry(sideW, height, thick), M.partitionWall);
+                wSide.position.set(dir * (doorW / 2 + sideW / 2), height / 2, 0);
+                const trim = new THREE.Mesh(new THREE.BoxGeometry(sideW, 0.16, thick + 0.04), M.partitionTrim);
+                trim.position.set(dir * (doorW / 2 + sideW / 2), 0.08, 0);
+                seg.add(wSide, trim);
+            });
+            const head = new THREE.Mesh(new THREE.BoxGeometry(doorW, height - doorH, thick), M.partitionWall);
+            head.position.set(0, doorH + (height - doorH) / 2, 0);
+            const frameTop = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.1, 0.09, thick + 0.06), M.partitionTrim);
+            frameTop.position.set(0, doorH + 0.045, 0);
+            [-0.58, 0.58].forEach(dx => {
+                const leaf = new THREE.Mesh(new THREE.BoxGeometry(1.12, doorH - 0.04, 0.07), M.doors);
+                leaf.position.set(dx, doorH / 2, 0);
+                const vision = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.9, 0.085), M.officeGlass);
+                vision.position.set(dx + (dx < 0 ? 0.18 : -0.18), 1.55, 0);
+                vision.userData.isGlass = true;
+                seg.add(leaf, vision);
+            });
+            seg.add(head, frameTop);
+            return seg;
+        }
+
+        // =====================================================================
+        // PART 1: ZONE G1 PARTITIONS, DOORS & ROOMS (x: +23.0 .. +49.5)
+        // =====================================================================
+        // Full-height Fire Separation Spine at x = +23.0 separating Atrium from Electrical Vaults
+        const fireSpineN = buildFireWall(18.0, slabWallH, 0.28, true, M);
+        fireSpineN.rotation.y = Math.PI / 2;
+        fireSpineN.position.set(23.0, gY, -20.0);
+        const fireSpineC = buildFireWall(21.6, slabWallH, 0.28, true, M);
+        fireSpineC.rotation.y = Math.PI / 2;
+        fireSpineC.position.set(23.0, gY, 0);
+        const fireSpineS = buildFireWall(18.0, slabWallH, 0.28, true, M);
+        fireSpineS.rotation.y = Math.PI / 2;
+        fireSpineS.position.set(23.0, gY, 20.0);
+        groundWalls.add(fireSpineN, fireSpineC, fireSpineS);
+
+        // Air-Lock Sliding Glass Entry Vestibule (x: 47.0..49.5, z: -4.2..+4.2)
+        const vestN = buildOfficeWallSegment(2.6, 3.8, 0.14, 'glazed_full', M);
+        vestN.position.set(48.3, gY, -4.2);
+        const vestS = buildOfficeWallSegment(2.6, 3.8, 0.14, 'glazed_full', M);
+        vestS.position.set(48.3, gY, 4.2);
+        const vestInnerN = buildOfficeWallSegment(2.6, 3.8, 0.14, 'glazed_full', M);
+        vestInnerN.rotation.y = Math.PI / 2;
+        vestInnerN.position.set(47.0, gY, -2.9);
+        const vestInnerS = buildOfficeWallSegment(2.6, 3.8, 0.14, 'glazed_full', M);
+        vestInnerS.rotation.y = Math.PI / 2;
+        vestInnerS.position.set(47.0, gY, 2.9);
+        const vestHeader = new THREE.Mesh(new THREE.BoxGeometry(0.18, 1.0, 3.4), M.officePlinth);
+        vestHeader.position.set(47.0, gY + 3.3, 0);
+        groundWalls.add(vestN, vestS, vestInnerN, vestInnerS, vestHeader);
+
+        // North & South Wing Corridor Spine Walls (z = -11.0 and z = +11.0, x: 23.2..49.4)
+        const gSpineN1 = buildOfficeWallSegment(12.6, wallH, 0.18, 'door', M);
+        gSpineN1.position.set(29.6, gY, -11.0);
+        const gSpineN2 = buildOfficeWallSegment(13.4, wallH, 0.18, 'glazed_full', M);
+        gSpineN2.position.set(42.7, gY, -11.0);
+        const gSpineS1 = buildOfficeWallSegment(10.6, wallH, 0.18, 'glazed_full', M);
+        gSpineS1.position.set(28.6, gY, 11.0);
+        const gSpineS2 = buildOfficeWallSegment(15.4, wallH, 0.18, 'door', M);
+        gSpineS2.position.set(41.7, gY, 11.0);
+        groundWalls.add(gSpineN1, gSpineN2, gSpineS1, gSpineS2);
+
+        // North Wing Internal Dividers: Locker Room | Training Room | Bistro Cafe
+        const northCrossX = buildOfficeWallSegment(17.8, wallH, 0.18, 'door', M);
+        northCrossX.rotation.y = Math.PI / 2;
+        northCrossX.position.set(36.0, gY, -20.0);
+        const northCafeWall = buildOfficeWallSegment(13.4, wallH, 0.18, 'door', M);
+        northCafeWall.position.set(42.7, gY, -19.0);
+        groundWalls.add(northCrossX, northCafeWall);
+
+        // South Wing Internal Dividers: 24/7 SOC | Men/Women/ADA Restrooms | Briefing Theater
+        const southCrossX = buildOfficeWallSegment(17.8, wallH, 0.18, 'door', M);
+        southCrossX.rotation.y = Math.PI / 2;
+        southCrossX.position.set(34.0, gY, 20.0);
+        const socSouthWall = buildOfficeWallSegment(10.6, wallH, 0.18, 'solid', M);
+        socSouthWall.position.set(28.6, gY, 20.8);
+        const wcCenterWall = buildOfficeWallSegment(10.6, wallH, 0.16, 'solid', M);
+        wcCenterWall.position.set(28.6, gY, 24.9);
+        const wcDoorN = buildOfficeWallSegment(4.0, wallH, 0.16, 'door', M);
+        wcDoorN.rotation.y = Math.PI / 2;
+        wcDoorN.position.set(34.0, gY, 22.8);
+        const wcDoorS = buildOfficeWallSegment(4.0, wallH, 0.16, 'door', M);
+        wcDoorS.rotation.y = Math.PI / 2;
+        wcDoorS.position.set(34.0, gY, 27.0);
+        groundWalls.add(southCrossX, socSouthWall, wcCenterWall, wcDoorN, wcDoorS);
+
+        // Restroom Stall Cubicle Partitions, Porcelain WCs, Vanities, Mirrors & Hand Dryers
+        [22.4, 26.5].forEach((rowZ, idx) => {
+            const isNorthWC = idx === 0;
+            // 3 Toilet Cubicles on West side of each restroom
+            [24.2, 25.6, 27.0, 28.4].forEach(cx => {
+                const div = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.0, 1.55), M.officePlinth);
+                div.position.set(cx, gY + 1.0, rowZ + (isNorthWC ? 0.6 : -0.6));
+                groundWalls.add(div);
+            });
+            [24.9, 26.3, 27.7].forEach(tx => {
+                const door = new THREE.Mesh(new THREE.BoxGeometry(1.15, 1.85, 0.05), M.officePlinth);
+                door.position.set(tx, gY + 0.98, rowZ + (isNorthWC ? -0.15 : 0.15));
+                const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.18, 0.42, 12), M.porcelainWhite);
+                bowl.position.set(tx, gY + 0.21, rowZ + (isNorthWC ? 0.8 : -0.8));
+                const tank = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.48, 0.20), M.porcelainWhite);
+                tank.position.set(tx, gY + 0.56, rowZ + (isNorthWC ? 1.15 : -1.15));
+                groundFitout.add(door, bowl, tank);
+            });
+            // Vanity Countertop + Sinks + Illuminated Mirror along East/Side Wall (x = 30.8..33.2)
+            const vanityZ = rowZ + (isNorthWC ? 1.65 : -1.65);
+            const vanity = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.85, 0.62), M.officeWall);
+            vanity.position.set(31.2, gY + 0.425, vanityZ);
+            const vanityTop = new THREE.Mesh(new THREE.BoxGeometry(3.25, 0.05, 0.66), M.groundTerrazzo);
+            vanityTop.position.set(31.2, gY + 0.87, vanityZ);
+            const mirror = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.1, 0.04), M.stainlessSteel);
+            mirror.position.set(31.2, gY + 1.65, vanityZ + (isNorthWC ? 0.28 : -0.28));
+            groundFitout.add(vanity, vanityTop, mirror);
+            [30.3, 31.2, 32.1].forEach(sx => {
+                const basin = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.16, 0.08, 12), M.porcelainWhite);
+                basin.position.set(sx, gY + 0.90, vanityZ);
+                groundFitout.add(basin);
+            });
+        });
+
+        // Twin Glass-Backed Passenger Elevators (L0 -> L1 -> L2, x = 25.0, z = -3.8 & +3.8)
+        [-3.8, 3.8].forEach(ez => {
+            const shaftGlass = new THREE.Mesh(new THREE.BoxGeometry(2.6, 15.6, 2.8), M.officeGlass);
+            shaftGlass.position.set(25.2, gY + 7.8, ez);
+            shaftGlass.userData.isGlass = true;
+            groundWalls.add(shaftGlass);
+            [[-1.3, -1.4], [-1.3, 1.4], [1.3, -1.4], [1.3, 1.4]].forEach(([px, pz]) => {
+                const post = new THREE.Mesh(new THREE.BoxGeometry(0.14, 15.6, 0.14), M.partitionTrim);
+                post.position.set(25.2 + px, gY + 7.8, ez + pz);
+                groundWalls.add(post);
+            });
+            // Ground & L1 Stainless Elevator Portal Frames + Cab at Ground Floor
+            [gY, 7.30, 13.15].forEach(ly => {
+                const portal = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.4, 1.6), M.stainlessSteel);
+                portal.position.set(26.55, ly + 1.2, ez);
+                groundFitout.add(portal);
+            });
+            const cab = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.5, 2.4), M.officeDoorWood);
+            cab.position.set(25.2, gY + 1.35, ez);
+            const cabLight = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.08, 2.0), M.ceilingTroffer);
+            cabLight.position.set(25.2, gY + 2.62, ez);
+            groundFitout.add(cab, cabLight);
+        });
+
+        // Ground-to-Level-1 Monumental Feature Staircase (y = 1.80 -> 7.30 at x: 33.8..40.8, z = -6.8)
+        const gStair = new THREE.Group();
+        gStair.name = "GroundToLevel1Staircase";
+        const gSteps = 18;
+        for (let s = 0; s < gSteps; s++) {
+            const t = (s + 0.5) / gSteps;
+            const tread = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.09, 2.5), M.officeDeskTop);
+            tread.position.set(33.8 + t * 6.8, gY + t * (7.30 - gY), -6.8);
+            gStair.add(tread);
+        }
+        const gStrLen = Math.hypot(7.0, 7.30 - gY);
+        const gStrAng = Math.atan2(7.30 - gY, 7.0);
+        [-8.1, -5.5].forEach(sz => {
+            const stringer = new THREE.Mesh(new THREE.BoxGeometry(gStrLen, 0.30, 0.09), M.officePlinth);
+            stringer.position.set(37.2, (gY + 7.30) / 2 - 0.14, sz);
+            stringer.rotation.z = gStrAng;
+            const bal = new THREE.Mesh(new THREE.BoxGeometry(gStrLen, 1.0, 0.05), M.officeGlass);
+            bal.position.set(37.2, (gY + 7.30) / 2 + 0.52, sz);
+            bal.rotation.z = gStrAng;
+            bal.userData.isGlass = true;
+            gStair.add(stringer, bal);
+        });
+        groundFitout.add(gStair);
+
+        // Reception Desk (L-Shaped Architectural Counter at x = 42.2, z = 0) + Workstations
+        const recMain = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.12, 6.2), M.officeWall);
+        recMain.position.set(42.2, gY + 0.56, 0);
+        const recTop = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.07, 6.35), M.officeDeskTop);
+        recTop.position.set(42.2, gY + 1.15, 0);
+        const recLogoWall = new THREE.Mesh(new THREE.BoxGeometry(0.22, 3.6, 5.4), M.nocDesk);
+        recLogoWall.position.set(39.4, gY + 1.8, 0);
+        const recLogoBadge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.75, 4.0), M.facadeAccent);
+        recLogoBadge.position.set(39.55, gY + 2.25, 0);
+        groundFitout.add(recMain, recTop, recLogoWall, recLogoBadge);
+        [-1.6, 1.6].forEach(rz => {
+            const ws = buildWorkstationUnit(-Math.PI / 2, M);
+            ws.position.set(41.2, gY, rz);
+            groundFitout.add(ws);
+        });
+
+        // 4x Biometric Speed-Gate Turnstiles, Baggage X-Ray Scanner & Magnetometer (x = 37.2)
+        [-2.4, -0.8, 0.8, 2.4].forEach(tz => {
+            const ped = new THREE.Mesh(new THREE.BoxGeometry(1.9, 1.0, 0.24), M.stainlessSteel);
+            ped.position.set(36.8, gY + 0.5, tz);
+            const led = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.16), M.evGreenGlow);
+            led.position.set(37.65, gY + 1.02, tz);
+            groundFitout.add(ped, led);
+        });
+        const xrayTunnel = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.35, 1.25), M.switchgearGrey);
+        xrayTunnel.position.set(36.8, gY + 0.675, -4.1);
+        const xrayBelt = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.72, 0.85), M.craneTreads);
+        xrayBelt.position.set(36.8, gY + 0.36, -4.1);
+        const magPostL = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.25, 0.14), M.switchgearGrey);
+        magPostL.position.set(36.8, gY + 1.125, 3.6);
+        const magPostR = magPostL.clone();
+        magPostR.position.z = 4.6;
+        const magHead = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.24, 1.14), M.nocDesk);
+        magHead.position.set(36.8, gY + 2.2, 4.1);
+        groundFitout.add(xrayTunnel, xrayBelt, magPostL, magPostR, magHead);
+
+        // Visitor Lounge (Sofas, Coffee Table, Armchairs & Potted Ficus Planters)
+        const sofaA = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.82, 3.2), M.loungeLeather);
+        sofaA.position.set(45.2, gY + 0.41, 7.2);
+        const sofaB = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.82, 0.95), M.loungeLeather);
+        sofaB.position.set(43.9, gY + 0.41, 8.9);
+        const coffeeTbl = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.42, 1.4), M.officeDeskTop);
+        coffeeTbl.position.set(43.7, gY + 0.21, 7.0);
+        groundFitout.add(sofaA, sofaB, coffeeTbl);
+
+        const planterPositions = [[46.4, -3.5], [46.4, 3.5], [46.4, 9.5], [41.5, -9.8], [41.5, 9.8], [28.0, -9.8]];
+        groundFitout.add(buildInstanced(new THREE.CylinderGeometry(0.42, 0.34, 0.65, 12), M.officePlinth, planterPositions.map(([x, z]) => ({ pos: [x, gY + 0.325, z] })), "GroundLobbyPlanterPots"));
+        groundFitout.add(buildInstanced(new THREE.DodecahedronGeometry(0.55, 1), M.treeFoliageLight, planterPositions.map(([x, z]) => ({ pos: [x, gY + 1.15, z] })), "GroundLobbyPlanterFoliage"));
+
+        // Executive Customer Briefing Theater (x: 34.0..49.2, z: +11.2..+28.8)
+        const theatreLed = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.2, 4.8), M.nocScreen);
+        theatreLed.position.set(34.3, gY + 1.95, 20.0);
+        const theatreTable = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.08, 3.2), M.officeDeskTop);
+        theatreTable.position.set(41.8, gY + 0.76, 20.0);
+        const theatreBase = new THREE.Mesh(new THREE.BoxGeometry(4.4, 0.72, 1.6), M.officePlinth);
+        theatreBase.position.set(41.8, gY + 0.36, 20.0);
+        const theaterCredenza = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.90, 5.0), M.officeWall);
+        theaterCredenza.position.set(48.6, gY + 0.45, 20.0);
+        groundFitout.add(theatreLed, theatreTable, theatreBase, theaterCredenza);
+        for (let sx = 39.2; sx <= 44.4; sx += 1.3) {
+            [17.8, 22.2].forEach(sz => {
+                const c = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.92, 0.54), M.loungeLeather);
+                c.position.set(sx, gY + 0.48, sz);
+                groundFitout.add(c);
+            });
+        }
+
+        // 24/7 Main Physical Security Operations Center (SOC) (x: 23.2..34.0, z: +11.2..+20.6)
+        const socDesk = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.85, 1.1), M.nocDesk);
+        socDesk.position.set(28.6, gY + 0.425, 14.2);
+        const socVideoWall = new THREE.Mesh(new THREE.BoxGeometry(4.4, 1.6, 0.12), M.nocScreen);
+        socVideoWall.position.set(28.6, gY + 1.9, 19.9);
+        const socSafe = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.9, 0.85), M.switchgearGrey);
+        socSafe.position.set(24.2, gY + 0.95, 19.6);
+        groundFitout.add(socDesk, socVideoWall, socSafe);
+        for (let mx = 26.4; mx <= 30.8; mx += 1.1) {
+            const mon = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.44, 0.06), M.nocScreen);
+            mon.position.set(mx, gY + 1.08, 13.95);
+            const ch = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.92, 0.52), M.officeChairMesh);
+            ch.position.set(mx, gY + 0.48, 15.1);
+            groundFitout.add(mon, ch);
+        }
+
+        // Staff Bistro & Cafe (x: 36.0..49.2, z: -28.8..-19.0)
+        const bistroCounter = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.94, 0.85), M.officeWall);
+        bistroCounter.position.set(42.5, gY + 0.47, -28.2);
+        const bistroTop = new THREE.Mesh(new THREE.BoxGeometry(7.3, 0.06, 0.92), M.groundTerrazzo);
+        bistroTop.position.set(42.5, gY + 0.97, -28.2);
+        const fridge1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.1, 0.85), M.stainlessSteel);
+        fridge1.position.set(37.5, gY + 1.05, -28.2);
+        const fridge2 = fridge1.clone();
+        fridge2.position.x = 47.4;
+        groundFitout.add(bistroCounter, bistroTop, fridge1, fridge2);
+        [38.5, 42.5, 46.5].forEach(bx => {
+            [-24.8, -21.5].forEach(bz => {
+                const cTbl = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.66, 0.05, 16), M.officeDeskTop);
+                cTbl.position.set(bx, gY + 0.75, bz);
+                const cLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.30, 0.72, 10), M.officePlinth);
+                cLeg.position.set(bx, gY + 0.36, bz);
+                groundFitout.add(cTbl, cLeg);
+                [[-0.85, 0], [0.85, 0], [0, -0.85], [0, 0.85]].forEach(([dx, dz]) => {
+                    const ch = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.78, 0.42), M.officeChairMesh);
+                    ch.position.set(bx + dx, gY + 0.40, bz + dz);
+                    groundFitout.add(ch);
+                });
+            });
+        });
+
+        // Technician Training Room (x: 36.0..49.2, z: -19.0..-11.2)
+        const trainScreen = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.8, 3.8), M.nocScreen);
+        trainScreen.position.set(48.8, gY + 1.9, -15.1);
+        groundFitout.add(trainScreen);
+        [38.2, 41.0, 43.8, 46.4].forEach(tx => {
+            [-16.8, -13.4].forEach(tz => {
+                const tDesk = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.74, 2.4), M.officeDeskTop);
+                tDesk.position.set(tx, gY + 0.37, tz);
+                groundFitout.add(tDesk);
+                [-0.65, 0.65].forEach(cz => {
+                    const ch = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.82, 0.46), M.officeChairMesh);
+                    ch.position.set(tx - 0.65, gY + 0.42, tz + cz);
+                    groundFitout.add(ch);
+                });
+            });
+        });
+
+        // Contractor Induction & PPE Locker Room (x: 23.2..36.0, z: -28.8..-11.2)
+        for (let lx = 24.8; lx <= 33.8; lx += 1.5) {
+            [-26.5, -21.0].forEach(lz => {
+                const lockerBank = new THREE.Mesh(new THREE.BoxGeometry(1.35, 2.05, 0.95), M.switchgearGrey);
+                lockerBank.position.set(lx, gY + 1.025, lz);
+                const bench = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.46, 0.45), M.officeDeskTop);
+                bench.position.set(lx, gY + 0.23, lz + 1.15);
+                groundFitout.add(lockerBank, bench);
+            });
+        }
+        const indCounter = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.95, 0.8), M.nocDesk);
+        indCounter.position.set(29.5, gY + 0.475, -13.5);
+        groundFitout.add(indCounter);
+
+        // Ground Floor Executive Ceilings (_xrayControlled): Atrium Slatted Wood Baffles + T-Bar Ceilings in Wings
+        const atriumBaffleN = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.08, 21.0), M.groundBaffleCeil);
+        atriumBaffleN.position.set(43.8, 5.95, 0);
+        const atriumBaffleS = new THREE.Mesh(new THREE.BoxGeometry(14.0, 0.08, 11.5), M.groundBaffleCeil);
+        atriumBaffleS.position.set(30.6, 5.95, 4.8);
+        groundCeilings.add(atriumBaffleN, atriumBaffleS);
+        buildOfficeCeilingBay(25.6, 17.4, 36.2, -20.0, ceilY, soffitY, groundCeilings, M);
+        buildOfficeCeilingBay(25.6, 17.4, 36.2, 20.0, ceilY, soffitY, groundCeilings, M);
+
+        // =====================================================================
+        // PART 2: ZONE G2 CENTRAL 22kV GIS SWITCHGEAR, TRANSFORMERS & BMS MDF (x: -2.0 .. +22.0)
+        // =====================================================================
+        const elecWallN = buildFireWall(23.8, slabWallH, 0.30, true, M);
+        elecWallN.position.set(10.0, gY, -8.2);
+        const elecWallS = buildFireWall(23.8, slabWallH, 0.30, true, M);
+        elecWallS.position.set(10.0, gY, 8.2);
+        const mdfWallW = buildOfficeWallSegment(15.8, slabWallH, 0.22, 'door', M);
+        mdfWallW.rotation.y = Math.PI / 2;
+        mdfWallW.position.set(13.2, gY, 0);
+        groundWalls.add(elecWallN, elecWallS, mdfWallW);
+
+        // Dual 8-Panel 22kV Metal-Clad GIS Switchgear Lineups (North & South Vaults, A5120)
+        [-24.2, 24.2].forEach(sz => {
+            for (let gx = 0.5; gx <= 18.0; gx += 2.2) {
+                const sw = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.55, 1.8), M.switchgearGrey);
+                sw.position.set(gx, gY + 1.275, sz);
+                const band = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.25, 1.84), M.cautionStripe);
+                band.position.set(gx, gY + 2.25, sz);
+                groundElecPlant.add(sw, band);
+            }
+        });
+
+        // 6x Cast-Resin 22kV/415V Distribution Transformers inside Safety Guardrails (A5150)
+        const trRailPosts = [];
+        [-15.2, 15.2].forEach(tz => {
+            [1.8, 9.6, 17.4].forEach(tx => {
+                const plinth = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.22, 2.8), M.concreteSlab);
+                plinth.position.set(tx, gY + 0.11, tz);
+                const cage = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.4, 2.4), M.cageWireframe);
+                cage.position.set(tx, gY + 1.42, tz);
+                groundElecPlant.add(plinth, cage);
+                [-0.95, 0, 0.95].forEach(cx => {
+                    const coil = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.75, 14), M.copperBus);
+                    coil.position.set(tx + cx, gY + 1.15, tz);
+                    groundElecPlant.add(coil);
+                });
+                [[-1.9, -1.5], [1.9, -1.5], [-1.9, 1.5], [1.9, 1.5]].forEach(([bx, bz]) => {
+                    trRailPosts.push({ pos: [tx + bx, gY + 0.55, tz + bz] });
+                });
+            });
+        });
+        groundElecPlant.add(buildInstanced(new THREE.CylinderGeometry(0.08, 0.08, 1.1, 8), M.k12Yellow, trRailPosts, "GroundTransformerBollards"));
+
+        // Overhead Galvanized Ladder Cable Trays (y = 5.75) & Vertical Bus Risers
+        [-20.5, 0, 20.5].forEach(tz => {
+            const tray = new THREE.Mesh(new THREE.BoxGeometry(21.0, 0.12, 0.95), M.stainlessSteel);
+            tray.position.set(10.0, gY + 3.95, tz);
+            groundElecPlant.add(tray);
+        });
+        const spineTray = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 50.0), M.stainlessSteel);
+        spineTray.position.set(20.6, gY + 3.95, 0);
+        groundElecPlant.add(spineTray);
+
+        // BMS / IDF Patch Room (x: 13.5..21.5, z: -7..+7): 8x 42U MDF Racks + Operator Desk
+        for (let rz = -5.0; rz <= 5.0; rz += 1.4) {
+            if (Math.abs(rz) < 0.8) continue;
+            const mdfRack = new THREE.Mesh(new THREE.BoxGeometry(1.0, 2.25, 0.85), M.serverRackBody);
+            mdfRack.position.set(19.5, gY + 1.125, rz);
+            const led = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.7, 0.12), M.serverLedBlue);
+            led.position.set(18.98, gY + 1.15, rz);
+            groundFitout.add(mdfRack, led);
+        }
+        const bmsDesk = buildWorkstationUnit(-Math.PI / 2, M);
+        bmsDesk.position.set(15.2, gY, 3.8);
+        groundFitout.add(bmsDesk);
+
+        // =====================================================================
+        // PART 3: ZONE G3 NOVEC-1230 SUPPRESSION, FIRE PUMPS & WATER PLANT (x: -20.0 .. -2.0)
+        // =====================================================================
+        const mechFireWallW = buildFireWall(58.0, slabWallH, 0.34, true, M);
+        mechFireWallW.rotation.y = Math.PI / 2;
+        mechFireWallW.position.set(-20.0, gY, 0);
+        const mechFireWallE = buildFireWall(58.0, slabWallH, 0.32, true, M);
+        mechFireWallE.rotation.y = Math.PI / 2;
+        mechFireWallE.position.set(-2.0, gY, 0);
+        const novecDiv = buildFireWall(17.6, slabWallH, 0.28, true, M);
+        novecDiv.position.set(-11.0, gY, -10.0);
+        const fireDiv = buildFireWall(17.6, slabWallH, 0.28, true, M);
+        fireDiv.position.set(-11.0, gY, 10.0);
+        groundWalls.add(mechFireWallW, mechFireWallE, novecDiv, fireDiv);
+
+        // 24x Novec-1230 High-Pressure Red Clean Agent Cylinders + Manifolds (z: -27..-12, A5540)
+        const cylItems = [];
+        [-24.0, -16.5].forEach(nz => {
+            const rackFrame = new THREE.Mesh(new THREE.BoxGeometry(7.2, 2.05, 1.4), M.steelDunnage);
+            rackFrame.position.set(-11.0, gY + 1.025, nz);
+            const manifoldHeader = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 7.6, 10), M.copperBus);
+            manifoldHeader.rotation.z = Math.PI / 2;
+            manifoldHeader.position.set(-11.0, gY + 2.35, nz);
+            const riser = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 4.8, 10), M.pipeFireRed);
+            riser.position.set(-6.8, gY + 2.4, nz);
+            groundMechFirePlant.add(manifoldHeader, riser);
+            for (let cx = -14.0; cx <= -8.0; cx += 1.15) {
+                [-0.36, 0.36].forEach(dz => {
+                    cylItems.push({ pos: [cx, gY + 0.92, nz + dz] });
+                });
+            }
+        });
+        groundMechFirePlant.add(buildInstanced(new THREE.CylinderGeometry(0.24, 0.24, 1.84, 12), M.novecRed, cylItems, "Novec1230Cylinders"));
+
+        // NFPA-20 Fire Pump Room (z: +12..+27): Electric + Diesel Pumps + Red Main Header
+        [15.5, 22.5].forEach((fz, pIdx) => {
+            const pad = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.26, 2.2), M.concreteSlab);
+            pad.position.set(-10.5, gY + 0.13, fz);
+            const motor = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.1, 1.1), pIdx === 0 ? M.novecRed : M.pumpYellow);
+            motor.position.set(-11.4, gY + 0.81, fz);
+            const volute = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.5, 14), M.novecRed);
+            volute.rotation.x = Math.PI / 2;
+            volute.position.set(-9.4, gY + 0.85, fz);
+            const jockey = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 1.2, 10), M.chwSupplyPipe);
+            jockey.position.set(-15.5, gY + 0.86, fz);
+            groundMechFirePlant.add(pad, motor, volute, jockey);
+        });
+        const fireLoopPipe = createFlangedPipeWithValve(14.5, 0.18, M.pipeFireRed, M.valveRed);
+        fireLoopPipe.rotation.y = Math.PI / 2;
+        fireLoopPipe.position.set(-8.0, gY + 3.6, 19.0);
+        groundMechFirePlant.add(fireLoopPipe);
+
+        // RO/DI Water Treatment & Domestic Booster Skid (z: -9..+9, A5320)
+        [-5.2, 5.2].forEach(wz => {
+            const breakTank = new THREE.Mesh(new THREE.CylinderGeometry(1.65, 1.65, 3.6, 18), M.stainlessSteel);
+            breakTank.position.set(-14.5, gY + 1.8, wz);
+            groundMechFirePlant.add(breakTank);
+        });
+        [-4.2, -1.8, 1.8, 4.2].forEach(fz => {
+            const vessel = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 2.35, 14), M.bufferTankBlue);
+            vessel.position.set(-7.5, gY + 1.18, fz);
+            groundMechFirePlant.add(vessel);
+        });
+        const waterHeader = createFlangedPipeWithValve(14.0, 0.16, M.chwSupplyPipe, M.valveBlue);
+        waterHeader.rotation.y = Math.PI / 2;
+        waterHeader.position.set(-7.5, gY + 3.5, 0);
+        groundMechFirePlant.add(waterHeader);
+
+        // Industrial High-Bay Linear LED Ceiling Fixtures across Zones G2, G3 & G4 (_xrayControlled)
+        const highBayFixtures = [];
+        const highBayRods = [];
+        for (let hx = -35.0; hx <= 18.0; hx += 9.5) {
+            for (let hz = -23.0; hz <= 23.0; hz += 11.5) {
+                if (hx < -25.0 && hz < -20.0) continue; // QA Office has its own T-bar ceiling
+                highBayFixtures.push({ pos: [hx, gY + 4.35, hz] });
+                highBayRods.push({ pos: [hx, gY + 4.62, hz] });
+            }
+        }
+        groundCeilings.add(buildInstanced(new THREE.BoxGeometry(2.4, 0.08, 0.36), M.ceilingTroffer, highBayFixtures, "GroundHighBayLEDs"));
+        groundCeilings.add(buildInstanced(new THREE.CylinderGeometry(0.025, 0.025, 0.55, 6), M.steelDunnage, highBayRods, "GroundHighBayHangers"));
+
+        // =====================================================================
+        // PART 4: ZONE G4 WEST RECEIVING, LOADING DOCK, FREIGHT LIFT & RACKS (x: -39.6 .. -20.5)
+        // =====================================================================
+        // Receiving / QA-QC Shipping Dispatch Office (x: -39.2..-26.8, z: -28.8..-21.4)
+        const qaEast = buildOfficeWallSegment(7.4, 3.5, 0.18, 'door', M);
+        qaEast.rotation.y = Math.PI / 2;
+        qaEast.position.set(-26.8, gY, -25.1);
+        const qaSouth = buildOfficeWallSegment(12.4, 3.5, 0.18, 'glazed_full', M);
+        qaSouth.position.set(-33.0, gY, -21.4);
+        groundWalls.add(qaEast, qaSouth);
+        buildOfficeCeilingBay(12.2, 7.2, -33.0, -25.1, gY + 3.5, soffitY, groundCeilings, M);
+
+        // QA-QC Office Furniture: 2 Dispatch Desks + Unboxing Steel Workbench + Digital Weigh Scale
+        const qaWs1 = buildWorkstationUnit(0, M);
+        qaWs1.position.set(-35.5, gY, -26.8);
+        const qaWs2 = buildWorkstationUnit(0, M);
+        qaWs2.position.set(-32.0, gY, -26.8);
+        const qaBench = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.92, 0.95), M.stainlessSteel);
+        qaBench.position.set(-29.0, gY + 0.46, -27.5);
+        const floorScale = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.08, 1.8), M.steelDunnage);
+        floorScale.position.set(-29.0, gY + 0.06, -23.5);
+        groundFitout.add(qaWs1, qaWs2, qaBench, floorScale);
+
+        // 6-Ton Freight Elevator Core (x = -23.5, z = -22.0, L0 -> L1 -> L2)
+        const frShaft = new THREE.Mesh(new THREE.BoxGeometry(4.0, 15.6, 5.0), M.concreteSlab);
+        frShaft.position.set(-23.0, gY + 7.8, -22.0);
+        [gY, 7.30, 13.15].forEach(ly => {
+            const frDoor = new THREE.Mesh(new THREE.BoxGeometry(0.18, 2.8, 2.8), M.louvers);
+            frDoor.position.set(-25.05, ly + 1.4, -22.0);
+            groundFitout.add(frDoor);
+        });
+        groundWalls.add(frShaft);
+
+        // Interior Loading Dock Levelers & Track Channels behind West Loading Doors (z = -19.5 & -8.5)
+        [-19.5, -8.5].forEach(dz => {
+            const dockLeveler = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.10, 2.6), M.steelDunnage);
+            dockLeveler.position.set(-38.3, gY + 0.06, dz);
+            const guardL = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 1.2, 8), M.k12Yellow);
+            guardL.position.set(-39.2, gY + 0.6, dz - 1.8);
+            const guardR = guardL.clone();
+            guardR.position.z = dz + 1.8;
+            groundFitout.add(dockLeveler, guardL, guardR);
+        });
+
+        // Secure Wire-Mesh Spares Cage (x: -26.2..-20.8, z: +19.0..+28.0)
+        const cageMesh = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.6, 8.8), M.cageWireframe);
+        cageMesh.position.set(-23.5, gY + 1.8, 23.5);
+        groundWalls.add(cageMesh);
+
+        // 3 Rows x 3-Tier Heavy Industrial Pallet Racking + Crated Racks & Cartons (InstancedMesh)
+        const uprightPosts = [];
+        const orangeBeams = [];
+        const palletCrates = [];
+        [-36.0, -32.0, -28.0].forEach(rx => {
+            for (let rz = 5.0; rz <= 23.0; rz += 3.0) {
+                [-0.65, 0.65].forEach(dx => uprightPosts.push({ pos: [rx + dx, gY + 2.1, rz] }));
+                if (rz < 23.0) {
+                    [1.35, 2.75, 4.05].forEach(ty => {
+                        [-0.65, 0.65].forEach(dx => orangeBeams.push({ pos: [rx + dx, gY + ty, rz + 1.5] }));
+                        palletCrates.push({ pos: [rx, gY + ty - 0.55, rz + 1.5] });
+                    });
+                }
+            }
+        });
+        groundFitout.add(buildInstanced(new THREE.BoxGeometry(0.10, 4.2, 0.10), M.chillerBlue, uprightPosts, "GroundPalletRackUprights"));
+        groundFitout.add(buildInstanced(new THREE.BoxGeometry(0.08, 0.14, 2.9), M.craneYellow, orangeBeams, "GroundPalletRackBeams"));
+        groundFitout.add(buildInstanced(new THREE.BoxGeometry(1.15, 0.92, 1.35), M.cardboardBox, palletCrates, "GroundStoredEquipmentCrates"));
+
+        // Staging Unboxing Pallets (z: -14..+2) + Parked Electric Reach Forklift
+        [-13.5, -10.5, -5.0, -1.5].forEach((pz, idx) => {
+            const skid = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 1.2), M.palletWood);
+            skid.position.set(-31.0, gY + 0.07, pz);
+            const crate = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.65, 1.0), idx % 2 === 0 ? M.serverRackBody : M.cardboardBox);
+            crate.position.set(-31.0, gY + 0.96, pz);
+            groundFitout.add(skid, crate);
+        });
+
+        const forklift = new THREE.Group();
+        forklift.name = "StagingElectricForklift";
+        forklift.position.set(-34.2, gY, -2.5);
+        const fkBody = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.05, 1.15), M.craneYellow);
+        fkBody.position.set(0, 0.68, 0);
+        const fkMastL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.6, 0.12), M.switchgear);
+        fkMastL.position.set(1.1, 1.4, -0.35);
+        const fkMastR = fkMastL.clone();
+        fkMastR.position.z = 0.35;
+        const fkForkL = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.06, 0.12), M.steelDunnage);
+        fkForkL.position.set(1.65, 0.25, -0.28);
+        const fkForkR = fkForkL.clone();
+        fkForkR.position.z = 0.28;
+        const fkCageTop = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.08, 1.05), M.switchgear);
+        fkCageTop.position.set(-0.2, 2.05, 0);
+        forklift.add(fkBody, fkMastL, fkMastR, fkForkL, fkForkR, fkCageTop);
+        groundFitout.add(forklift);
+
+        // Prepare 4D amber wireframes + tag Ground Floor ceilings for X-Ray fading
+        [groundWalls, groundCeilings, groundElecPlant, groundMechFirePlant, groundFitout].forEach(g => {
+            prepare4DWireframeGroup(g, M.amberWireframe);
+        });
+        groundCeilings.traverse(c => {
+            if (c.isMesh && !c.userData.isWireOverlay) {
+                c.userData._xrayControlled = true;
+            }
+        });
+
+        return { groundWalls, groundCeilings, groundElecPlant, groundMechFirePlant, groundFitout };
+    }
+
     // 7. Phase 6: 4-Zone Interior Data Center BIM Layout (60% White-Space / 20% Power / 10% Mech / 10% NOC)
     function createWhiteSpaceFitOut(M) {
         const group = new THREE.Group();
@@ -8157,13 +8915,22 @@ window.DC36_SCHEDULE = {
         group.userData.upsRoom = upsCabinetsGroup;
         group.userData.batteryRacks = batteryRacksGroup;
         const officeBIM = createOfficeLayoutBIM(M);
-        group.add(officeBIM.officeWalls, officeBIM.officeCeilingsL1, officeBIM.officeCeilingsL2, officeBIM.officeFurniture);
+        const groundBIM = createGroundFloorBIM(M);
+        group.add(
+            officeBIM.officeWalls, officeBIM.officeCeilingsL1, officeBIM.officeCeilingsL2, officeBIM.officeFurniture,
+            groundBIM.groundWalls, groundBIM.groundCeilings, groundBIM.groundElecPlant, groundBIM.groundMechFirePlant, groundBIM.groundFitout
+        );
 
         group.userData.nocLobby = nocLobbyGroup;
         group.userData.officeWalls = officeBIM.officeWalls;
         group.userData.officeCeilingsL1 = officeBIM.officeCeilingsL1;
         group.userData.officeCeilingsL2 = officeBIM.officeCeilingsL2;
         group.userData.officeFurniture = officeBIM.officeFurniture;
+        group.userData.groundWalls = groundBIM.groundWalls;
+        group.userData.groundCeilings = groundBIM.groundCeilings;
+        group.userData.groundElecPlant = groundBIM.groundElecPlant;
+        group.userData.groundMechFirePlant = groundBIM.groundMechFirePlant;
+        group.userData.groundFitout = groundBIM.groundFitout;
         return group;
     }
 
@@ -8473,9 +9240,9 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: timeline_engine.js (v22 Interior + Office 4D Sequence + Smooth X-Ray) ===
-// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.022)
-// Preserves all Primavera P6 Scrubber Logic + Interior 4-Zone BIM Sequence + Smooth X-Ray Cutaway
+    // === MODULE: timeline_engine.js (v24 Interior + Office 4D Sequence + Smooth X-Ray) ===
+// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.024)
+// Preserves all Primavera P6 Scrubber Logic + Interior 4-Zone BIM Sequence + Smooth X-Ray Cutaway + Clean Pile Encasement
 
 (function() {
     window.DC36_TIMELINE = {};
@@ -8619,6 +9386,7 @@ window.DC36_SCHEDULE = {
         const p6 = models.p6_whitespace;
         const offCeilL1 = p6 && p6.userData ? p6.userData.officeCeilingsL1 : null;
         const offCeilL2 = p6 && p6.userData ? p6.userData.officeCeilingsL2 : null;
+        const groundCeils = p6 && p6.userData ? p6.userData.groundCeilings : null;
         if (offCeilL2) {
             offCeilL2.visible = !hideRoofNow && (lastTauFloor > 0);
         }
@@ -8645,6 +9413,9 @@ window.DC36_SCHEDULE = {
         }
         if (offCeilL2 && !hideRoofNow && (isFadingNow || wasXRayBlending || lastTauFloor >= 1.0)) {
             applyXRayToGroup(offCeilL2, cutawayBlend, false);
+        }
+        if (groundCeils && (isFadingNow || wasXRayBlending || lastTauFloor >= 1.0)) {
+            applyXRayToGroup(groundCeils, cutawayBlend, false);
         }
         wasXRayBlending = isFadingNow;
     }
@@ -8750,6 +9521,7 @@ window.DC36_SCHEDULE = {
             const tau_roof   = getTaskFrac('A4320', currentTimestamp);
             const tau_sub    = getTaskFrac('A5110', currentTimestamp);
             const tau_swgr   = getTaskFrac('A5120', currentTimestamp);
+            const tau_xfmr   = getTaskFrac('A5150', currentTimestamp);
             const tau_chw    = getTaskFrac('A5310', currentTimestamp);
             const tau_pumps  = getTaskFrac('A5320', currentTimestamp);
             const tau_piping = getTaskFrac('A5340', currentTimestamp);
@@ -8761,6 +9533,7 @@ window.DC36_SCHEDULE = {
             const tau_crah   = getTaskFrac('A5450', currentTimestamp);
             const tau_racks  = getTaskFrac('A5470', currentTimestamp);
             const tau_fiber  = getTaskFrac('A5480', currentTimestamp);
+            const tau_fire   = getTaskFrac('A5540', currentTimestamp);
             const tau_noc    = getTaskFrac('A5560', currentTimestamp);
             const tau_heat   = getTaskFrac('A6420', currentTimestamp);
 
@@ -8769,30 +9542,36 @@ window.DC36_SCHEDULE = {
             lastTauChw = tau_chw;
             lastTauFloor = tau_floor;
 
-            // 1. Phase 1: Bored Piling (A4120)
+            // 1. Phase 1: Bored Piling (A4120) — encased & hidden as Raft Slab (A4140) pours over them
             const p1 = models.p1_piling;
             if (p1 && p1.userData) {
-                p1.visible = (activePhase >= 1);
+                p1.visible = (activePhase >= 1) && (tau_raft < 1.0);
                 const piles = p1.userData.piles || [];
                 const totalPiles = piles.length;
                 const rig = p1.userData.rig;
+                const pourFrontX = (tau_raft > 0) ? (-40 + 90 * tau_raft) : -9999;
 
-                if (tau_piling <= 0) {
+                if (tau_piling <= 0 || tau_raft >= 1.0) {
                     piles.forEach(p => { if (p.group) p.group.visible = false; if (p.wire) p.wire.visible = false; });
                     if (rig) rig.visible = false;
                 } else if (tau_piling >= 1.0) {
                     piles.forEach(p => {
-                        if (p.group) { p.group.visible = true; p.group.position.y = 0; }
+                        const encased = (tau_raft > 0) && (p.x < pourFrontX);
+                        if (p.group) { p.group.visible = !encased; p.group.position.y = 0; }
                         if (p.wire) p.wire.visible = false;
                     });
-                    if (rig) { rig.visible = (tau_truss <= 0); rig.position.set(-36, 0, 20); }
+                    if (rig) { rig.visible = (tau_raft <= 0.15) && (tau_truss <= 0); rig.position.set(-36, 0, 20); }
                 } else {
                     const activeIdx = Math.floor(tau_piling * totalPiles);
                     const subFrac = (tau_piling * totalPiles) - activeIdx;
                     for (let i = 0; i < totalPiles; i++) {
                         const p = piles[i];
                         if (!p || !p.group) continue;
-                        if (i < activeIdx) {
+                        const encased = (tau_raft > 0) && (p.x < pourFrontX);
+                        if (encased) {
+                            p.group.visible = false;
+                            if (p.wire) p.wire.visible = false;
+                        } else if (i < activeIdx) {
                             p.group.visible = true; p.group.position.y = 0;
                             if (p.wire) p.wire.visible = false;
                         } else if (i === activeIdx) {
@@ -8804,7 +9583,7 @@ window.DC36_SCHEDULE = {
                         }
                     }
                     if (rig && activeIdx < totalPiles) {
-                        rig.visible = true;
+                        rig.visible = (tau_raft <= 0.15);
                         const curP = piles[activeIdx];
                         rig.position.set(curP.x, 0, curP.z + 3.2);
                         if (rig.userData && rig.userData.auger) {
@@ -9041,7 +9820,7 @@ window.DC36_SCHEDULE = {
             // Order: Internal Partition Walls (A4250) -> 600mm Raised Floor (A5430) -> Overhead Red Busways, Yellow Fiber Trays & MEP Piping (A5440/A5480/A5340) -> Pumps, Buffer Tanks, CRAH (A5320/A5450) -> Switchgear, UPS, Batteries, Racks & NOC (A5120/A5410/A5420/A5470/A5560)
             const p6 = models.p6_whitespace;
             if (p6 && p6.userData) {
-                const anyInterior = (tau_part > 0 || tau_floor > 0 || tau_busway > 0 || tau_fiber > 0 || tau_piping > 0 || tau_pumps > 0 || tau_crah > 0 || tau_swgr > 0 || tau_ups > 0 || tau_batt > 0 || tau_racks > 0 || tau_noc > 0);
+                const anyInterior = (tau_part > 0 || tau_floor > 0 || tau_busway > 0 || tau_fiber > 0 || tau_piping > 0 || tau_pumps > 0 || tau_crah > 0 || tau_swgr > 0 || tau_xfmr > 0 || tau_ups > 0 || tau_batt > 0 || tau_racks > 0 || tau_fire > 0 || tau_noc > 0);
                 if (!anyInterior) {
                     p6.visible = false;
                 } else {
@@ -9053,7 +9832,10 @@ window.DC36_SCHEDULE = {
                     if (p6.userData.officeWalls) {
                         setVisual(p6.userData.officeWalls, tau_part);
                     }
-                    // Step B: 600x600mm Raised Access Floor Grid & Suspended Office Ceilings (A5430)
+                    if (p6.userData.groundWalls) {
+                        setVisual(p6.userData.groundWalls, tau_part);
+                    }
+                    // Step B: 600x600mm Raised Access Floor Grid & Suspended Office/Ground Ceilings (A5430)
                     if (p6.userData.raisedFloor) {
                         setVisual(p6.userData.raisedFloor, tau_floor);
                     }
@@ -9062,6 +9844,9 @@ window.DC36_SCHEDULE = {
                     }
                     if (p6.userData.officeCeilingsL2) {
                         setVisual(p6.userData.officeCeilingsL2, tau_floor);
+                    }
+                    if (p6.userData.groundCeilings) {
+                        setVisual(p6.userData.groundCeilings, tau_floor);
                     }
                     // Step C: Overhead Red Busways & Yellow Fiber Trays (A5440 / A5480)
                     if (p6.userData.overheadTrays) {
@@ -9081,9 +9866,12 @@ window.DC36_SCHEDULE = {
                     if (p6.userData.upsRoom) setVisual(p6.userData.upsRoom, tau_ups);
                     if (p6.userData.batteryRacks) setVisual(p6.userData.batteryRacks, tau_batt);
 
-                    // Step G: Security / NOC Lobby Fit-Out (A5560)
+                    // Step G: Security / NOC Lobby Fit-Out + Ground Floor Fit-Out & Plants (A5560 / A5120 / A5150 / A5320 / A5540)
                     if (p6.userData.nocLobby) setVisual(p6.userData.nocLobby, tau_noc);
                     if (p6.userData.officeFurniture) setVisual(p6.userData.officeFurniture, tau_noc);
+                    if (p6.userData.groundElecPlant) setVisual(p6.userData.groundElecPlant, Math.max(tau_swgr, tau_xfmr));
+                    if (p6.userData.groundMechFirePlant) setVisual(p6.userData.groundMechFirePlant, Math.max(tau_pumps, tau_fire));
+                    if (p6.userData.groundFitout) setVisual(p6.userData.groundFitout, tau_noc);
 
                     // Step H: HAC Glass Containment & Sequential Server Racks (A5470)
                     if (p6.userData.containmentGlass) {
@@ -9763,8 +10551,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v22 X-Ray + Offices Cam + Interior Lighting + Mobile Nav) ===
-// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.022)
+    // === MODULE: app.js (v24 X-Ray + Offices Cam + Interior Lighting + Mobile Nav) ===
+// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.023)
 // Executive Digital Twin: X-Ray / Cutaway Interior Mode, PCFSoftShadowMap (2048x2048), FogExp2, Bloom + FXAA, Drone Tour & FPV
 
 (function() {
@@ -9801,7 +10589,8 @@ window.DC36_SCHEDULE = {
         generators: { pos: [-115, 32, 10], target: [-66, 5, 0] },
         rooftop: { pos: [25, 52, 42], target: [0, 20, 0] },
         whitespace: { pos: [-8, 16.5, -2], target: [-8, 14.5, -16] },
-        offices: { pos: [76, 15.5, 16], target: [38, 10.2, 0] }
+        offices: { pos: [76, 15.5, 16], target: [38, 10.2, 0] },
+        ground: { pos: [78, 5.8, 15], target: [32, 3.6, 0] }
     };
 
     function isMobileViewport() {
@@ -9980,10 +10769,18 @@ window.DC36_SCHEDULE = {
         lightOffN.position.set(37, 10.2, -13);
         const lightOffS = new THREE.PointLight(0xfff7ed, 1.45, 58);
         lightOffS.position.set(37, 10.2, 13);
-        scene.add(lightOffN, lightOffS);
+        const lightGndLobby = new THREE.PointLight(0xfffbeb, 1.55, 65);
+        lightGndLobby.position.set(40, 5.4, 0);
+        const lightGndN = new THREE.PointLight(0xfff7ed, 1.30, 55);
+        lightGndN.position.set(38, 5.0, -19);
+        const lightGndS = new THREE.PointLight(0xfff7ed, 1.30, 55);
+        lightGndS.position.set(38, 5.0, 19);
+        const lightGndWest = new THREE.PointLight(0xe0f2fe, 1.25, 65);
+        lightGndWest.position.set(-22, 5.6, 0);
+        scene.add(lightOffN, lightOffS, lightGndLobby, lightGndN, lightGndS, lightGndWest);
         interiorHallLights.push(lightHall1, lightHall2, lightMEP);
         window.DC36_HALL_LIGHT = lightHall1;
-        window.DC36_OFFICE_LIGHTS = [lightOffN, lightOffS];
+        window.DC36_OFFICE_LIGHTS = [lightOffN, lightOffS, lightGndLobby, lightGndN, lightGndS, lightGndWest];
 
         updateSkyGradient('#0284c7', '#cbd5e1');
     }
