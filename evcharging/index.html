@@ -303,7 +303,7 @@
     <div class="sticky top-[52px] z-30 bg-white/95 dark:bg-darkSurface/95 backdrop-blur-md p-2.5 rounded-2xl border border-borderSlate dark:border-darkBorder shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
       <!-- 3-Segmented Mode Switcher -->
       <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-darkCard rounded-xl font-mono text-xs w-full md:w-auto overflow-x-auto">
-        <button id="evModeBtnDirectory" type="button" onclick="switchEvWorkstationMode('directory')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
+        <button id="evModeBtnDirectory" type="button" onclick="switchEvWorkstationMode('directory')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
           <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
           </svg>
@@ -311,7 +311,7 @@
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/10 text-teal-600 dark:text-teal-400 font-mono font-bold" id="badgeDirectoryCount">22,055</span>
         </button>
 
-        <button id="evModeBtnTelemetry" type="button" onclick="switchEvWorkstationMode('telemetry')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+        <button id="evModeBtnTelemetry" type="button" onclick="switchEvWorkstationMode('telemetry')" class="ev-mode-btn flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold transition-all bg-white dark:bg-darkSurface text-teal-600 dark:text-teal-400 shadow-sm cursor-pointer">
           <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
@@ -348,9 +348,9 @@
     </div>
 
     <!-- ==================================================================== -->
-    <!-- VIEW 1: STATIONS DIRECTORY & SEARCH TABLE (DEFAULT)                  -->
+    <!-- VIEW 1: STATIONS DIRECTORY & SEARCH TABLE                            -->
     <!-- ==================================================================== -->
-    <div id="evWorkstationViewDirectory" class="space-y-4">
+    <div id="evWorkstationViewDirectory" class="space-y-4 hidden">
       <!-- MULTI-DIMENSIONAL STATION INTELLIGENCE & DIRECTORY COCKPIT -->
     <section class="space-y-4">
       <!-- Section Header with View Toggles -->
@@ -440,9 +440,9 @@
     </div>
 
     <!-- ==================================================================== -->
-    <!-- VIEW 2: 6-CHART INTERACTIVE E-MOBILITY TELEMETRY COCKPIT             -->
+    <!-- VIEW 2: 6-CHART INTERACTIVE E-MOBILITY TELEMETRY COCKPIT (DEFAULT)   -->
     <!-- ==================================================================== -->
-    <div id="evWorkstationViewTelemetry" class="space-y-6 hidden">
+    <div id="evWorkstationViewTelemetry" class="space-y-6">
       <section class="p-4 sm:p-6 rounded-2xl bg-white dark:bg-darkSurface border border-borderSlate dark:border-darkBorder shadow-sm space-y-6">
         <!-- Telemetry Master Header -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-borderSlate/60 dark:border-darkBorder/60 pb-4">
@@ -747,8 +747,15 @@
   <!-- ==================================================================== -->
   <script>
     // Theme Sync Listener (managed by /assets/js/rvn-header.js)
+    let evChartsRenderedThemeDark = null;
     window.addEventListener("rvn:themechange", () => {
       if (typeof initEvTelemetryCharts === "function") initEvTelemetryCharts();
+    });
+    window.addEventListener("hashchange", () => {
+      const h = window.location.hash.replace('#', '');
+      if ((h === 'directory' || h === 'telemetry' || h === 'corridors') && h !== activeEvMode) {
+        switchEvWorkstationMode(h);
+      }
     });
 
     // Supabase Live Store
@@ -772,7 +779,7 @@
     // =========================================================================
     // EV WORKSTATION CONTROLLER & 6-CHART INTERACTIVE TELEMETRY ENGINE
     // =========================================================================
-    let activeEvMode = 'directory';
+    let activeEvMode = 'telemetry';
     let evChartsInitialized = false;
     let selectedPowerTier = 'ALL';
 
@@ -811,9 +818,9 @@
       if (viewCor) viewCor.classList.toggle('hidden', mode !== 'corridors');
 
       if (mode === 'telemetry') {
-        if (!evChartsInitialized) {
+        const isDarkNow = document.documentElement.classList.contains('dark');
+        if (!evChartsInitialized || evChartsRenderedThemeDark !== isDarkNow) {
           initEvTelemetryCharts();
-          evChartsInitialized = true;
         } else {
           resizeEvCharts();
         }
@@ -865,6 +872,8 @@
     }
 
     function resizeEvCharts() {
+      const viewTel = document.getElementById('evWorkstationViewTelemetry');
+      if (viewTel && viewTel.classList.contains('hidden')) return;
       setTimeout(() => {
         [evCpoChartInstance, evPowerChartInstance, evProvinceChartInstance, evVelocityChartInstance, evConnectorChartInstance, evGridChartInstance].forEach(chart => {
           if (chart) {
@@ -873,6 +882,15 @@
           }
         });
       }, 50);
+    }
+
+    function syncEvCpoPills() {
+      document.querySelectorAll('.cpo-pill').forEach(b => {
+        const c = b.getAttribute('data-cpo');
+        b.className = c === selectedCPO
+          ? 'cpo-pill px-3 py-1 rounded-lg bg-teal-600 text-white font-semibold transition-all cursor-pointer'
+          : 'cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer';
+      });
     }
 
     function updateActiveFilterHUD(filteredCount) {
@@ -910,26 +928,24 @@
       const provinceSelect = document.getElementById('provinceSelect');
       if (provinceSelect) provinceSelect.value = 'ALL';
 
-      document.querySelectorAll('.cpo-pill').forEach(b => {
-        const c = b.getAttribute('data-cpo');
-        b.className = c === 'ALL'
-          ? 'cpo-pill px-3 py-1 rounded-lg bg-teal-600 text-white font-semibold transition-all cursor-pointer'
-          : 'cpo-pill px-3 py-1 rounded-lg bg-slate-100 dark:bg-darkSurface border border-borderSlate dark:border-darkBorder text-inkPrimary dark:text-textDarkMuted hover:text-teal-600 transition-all cursor-pointer';
-      });
+      syncEvCpoPills();
 
       applyFilters();
     }
 
     function initEvTelemetryCharts(attempts = 0) {
+      const viewTel = document.getElementById('evWorkstationViewTelemetry');
+      if (viewTel && viewTel.classList.contains('hidden')) return;
       if (typeof Chart === 'undefined') {
         if (attempts < 30) {
           setTimeout(() => initEvTelemetryCharts(attempts + 1), 100);
         }
         return;
       }
-      if (!ALL_STATIONS || !ALL_STATIONS.length) return;
 
       const isDark = document.documentElement.classList.contains('dark');
+      evChartsInitialized = true;
+      evChartsRenderedThemeDark = isDark;
       const textColor = isDark ? '#94A3B8' : '#64748B';
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
       const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
@@ -964,6 +980,7 @@
                 const idx = elements[0].index;
                 const cpoKey = idx === 0 ? 'VinFast' : (idx === 1 ? 'EV ONE' : (idx === 2 ? 'Charge+' : 'Other'));
                 selectedCPO = selectedCPO === cpoKey ? 'ALL' : cpoKey;
+                syncEvCpoPills();
                 applyFilters();
               }
             },
@@ -1253,6 +1270,9 @@ async function loadStationsData() {
 
       applyFilters();
       initEVMap();
+      if (activeEvMode === 'telemetry' && !evChartsInitialized && typeof initEvTelemetryCharts === 'function') {
+        initEvTelemetryCharts();
+      }
     }
 
     function applyFilters() {
@@ -1583,34 +1603,37 @@ async function loadStationsData() {
     document.getElementById("resetFiltersBtn")?.addEventListener("click", () => {
       selectedCPO = "ALL";
       selectedProvince = "ALL";
+      selectedPowerTier = "ALL";
       searchQuery = "";
       const searchInput = document.getElementById("evSearchInput");
       if (searchInput) searchInput.value = "";
       const provSelect = document.getElementById("provinceSelect");
       if (provSelect) provSelect.value = "ALL";
 
-      document.querySelectorAll(".cpo-pill").forEach(btn => {
-        if (btn.getAttribute("data-cpo") === "ALL") {
-          btn.classList.add("bg-teal-600", "text-white");
-          btn.classList.remove("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
-        } else {
-          btn.classList.remove("bg-teal-600", "text-white");
-          btn.classList.add("bg-slate-100", "dark:bg-darkSurface", "text-inkPrimary", "dark:text-textDarkMuted");
-        }
-      });
+      syncEvCpoPills();
       applyFilters();
     });
 
     // Initialize on DOM load
     document.addEventListener("DOMContentLoaded", () => {
       const initEvHash = window.location.hash.replace('#', '');
-      if (initEvHash === 'telemetry' || initEvHash === 'corridors') {
+      if (initEvHash === 'directory' || initEvHash === 'corridors') {
         switchEvWorkstationMode(initEvHash);
       } else {
-        switchEvWorkstationMode('directory');
+        switchEvWorkstationMode('telemetry');
       }
 
       loadStationsData();
+
+      window.addEventListener("resize", () => {
+        if (activeEvMode === 'telemetry') {
+          if (evChartsInitialized) {
+            resizeEvCharts();
+          } else if (typeof initEvTelemetryCharts === "function") {
+            initEvTelemetryCharts();
+          }
+        }
+      });
     });
   </script>
 </body>
