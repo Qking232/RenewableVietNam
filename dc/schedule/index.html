@@ -1115,7 +1115,8 @@
             <button class="cam-btn" data-cam="substation"><i class="fas fa-bolt"></i> Substation</button>
             <button class="cam-btn" data-cam="generators"><i class="fas fa-cogs"></i> Gensets</button>
             <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
-            <button class="cam-btn" data-cam="whitespace" style="grid-column: span 2;"><i class="fas fa-server"></i> Data Hall 1</button>
+            <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Data Hall 1</button>
+            <button class="cam-btn" data-cam="offices"><i class="fas fa-briefcase"></i> Offices</button>
         </div>
 
         <!-- Cinematic Drone Tour & FPV Row -->
@@ -1248,6 +1249,7 @@
         <button class="cam-btn" data-cam="generators"><i class="fas fa-cogs"></i> Gensets</button>
         <button class="cam-btn" data-cam="rooftop"><i class="fas fa-fan"></i> Chillers</button>
         <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Hall 1</button>
+        <button class="cam-btn" data-cam="offices"><i class="fas fa-briefcase"></i> Offices</button>
         <button class="mob-fpv-btn" id="btn-mobile-fpv"><i class="fas fa-walking"></i> FPV</button>
     </div>
 
@@ -4613,8 +4615,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: procedural_textures.js (v20 Raised Floor Grid + Concrete Road + NOC Wall) ===
-// Procedural PBR Texture Synthesizer for DC36-T3 Hyperscale Datacenter (Rev.020)
+    // === MODULE: procedural_textures.js (v22 Raised Floor + Office Carpets/Ceilings + Concrete Road + NOC Wall) ===
+// Procedural PBR Texture Synthesizer for DC36-T3 Hyperscale Datacenter (Rev.022)
 // Zero External Image Assets - 100% Procedural HTML5 Canvas Generation
 
 (function() {
@@ -5195,6 +5197,111 @@ window.DC36_SCHEDULE = {
         return tex;
     }
 
+
+    // 17. Modular Commercial Office Carpet Tiles (500x500mm Dark Slate Weave)
+    function generateOfficeCarpetTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(0, 0, 256, 256);
+
+        const cell = 128;
+        for (let r = 0; r < 2; r++) {
+            for (let c = 0; c < 2; c++) {
+                const x = c * cell, y = r * cell;
+                ctx.fillStyle = ((r + c) % 2 === 0) ? '#38465a' : '#303e50';
+                ctx.fillRect(x + 2, y + 2, cell - 4, cell - 4);
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.14)';
+                for (let k = 0; k < 220; k++) {
+                    const fx = x + 4 + ((k * 23 + r * 17) % (cell - 8));
+                    const fy = y + 4 + ((k * 41 + c * 31) % (cell - 8));
+                    ctx.fillRect(fx, fy, (r + c) % 2 === 0 ? 4 : 2, (r + c) % 2 === 0 ? 2 : 4);
+                }
+            }
+        }
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(128, 0); ctx.lineTo(128, 256);
+        ctx.moveTo(0, 128); ctx.lineTo(256, 128);
+        ctx.stroke();
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(14, 18);
+        return tex;
+    }
+
+    // 18. Architectural Warm Walnut / Oak Veneer (Desks, Boardroom Table & Office Doors)
+    function generateWoodFinishTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#8d5b34';
+        ctx.fillRect(0, 0, 256, 256);
+
+        for (let y = 0; y < 256; y += 2) {
+            const shade = Math.sin(y * 0.18) * 18 + ((y * 13) % 14) - 7;
+            const r = Math.min(255, Math.max(0, 141 + shade));
+            const g = Math.min(255, Math.max(0, 91 + Math.floor(shade * 0.7)));
+            const b = Math.min(255, Math.max(0, 52 + Math.floor(shade * 0.4)));
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(0, y, 256, 2);
+        }
+        ctx.fillStyle = 'rgba(58, 30, 12, 0.25)';
+        for (let k = 0; k < 28; k++) {
+            const yy = (k * 37) % 256;
+            ctx.fillRect(0, yy, 256, 1);
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(2, 2);
+        return tex;
+    }
+
+    // 19. Suspended 600x600mm Acoustic Drop Ceiling Grid (T-Bar Tees & Fissured Mineral Tiles)
+    function generateCeilingGridTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(0, 0, 512, 512);
+
+        const cell = 128; // 4x4 grid = 2.4m x 2.4m repeat
+        for (let r = 0; r < 4; r++) {
+            for (let c = 0; c < 4; c++) {
+                const x = c * cell, y = r * cell;
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(x + 4, y + 4, cell - 8, cell - 8);
+                ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+                for (let k = 0; k < 36; k++) {
+                    const fx = x + 10 + ((k * 31 + r * 13) % (cell - 20));
+                    const fy = y + 10 + ((k * 47 + c * 19) % (cell - 20));
+                    ctx.fillRect(fx, fy, 2, 2);
+                }
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(x + 2, y + 2, cell - 4, cell - 4);
+            }
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(6, 12);
+        return tex;
+    }
+
     window.DC36_TEXTURES.init = function() {
         const darkRibs = generateRibbedCladdingTextures('#334155');
         const lightRibs = generateRibbedCladdingTextures('#cbd5e1');
@@ -5217,15 +5324,18 @@ window.DC36_SCHEDULE = {
             concreteRoad: generateConcreteRoadTexture(),
             speedBump: generateSpeedBumpTexture(),
             nocVideoWall: generateNOCVideoWallTexture(),
-            grassBerm: generateGrassTexture()
+            grassBerm: generateGrassTexture(),
+            officeCarpet: generateOfficeCarpetTexture(),
+            woodFinish: generateWoodFinishTexture(),
+            ceilingGrid: generateCeilingGridTexture()
         };
     };
 })();
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v21 4-Zone Interior BIM + Civil Campus) ===
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.021)
+    // === MODULE: datacenter_models.js (v22 4-Zone BIM + Office Walls/Ceilings + Civil Campus) ===
+// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.022)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
 (function() {
@@ -5288,6 +5398,16 @@ window.DC36_SCHEDULE = {
             raisedFloor: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.52, metalness: 0.16, map: T.raisedFloorGrid }),
             nocDesk: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, metalness: 0.35 }),
             nocScreen: new THREE.MeshStandardMaterial({ color: 0xffffff, map: T.nocVideoWall, emissiveMap: T.nocVideoWall, emissive: 0xffffff, emissiveIntensity: 0.85, roughness: 0.22 }),
+            officeWall: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.78, metalness: 0.04 }),
+            officePlinth: new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.42, metalness: 0.75 }),
+            officeGlass: new THREE.MeshPhysicalMaterial({ color: 0xbae6fd, transmission: 0.70, opacity: 0.38, transparent: true, roughness: 0.06, depthWrite: false }),
+            officeDoorWood: new THREE.MeshStandardMaterial({ color: 0x926239, roughness: 0.45, metalness: 0.08, map: T.woodFinish }),
+            officeCeilingTile: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.86, metalness: 0.06, map: T.ceilingGrid, side: THREE.DoubleSide }),
+            ceilingTroffer: new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xe0f2fe, emissiveIntensity: 1.0, roughness: 0.20 }),
+            officeCarpet: new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.92, metalness: 0.04, map: T.officeCarpet }),
+            officeDeskTop: new THREE.MeshStandardMaterial({ color: 0xc29368, roughness: 0.42, metalness: 0.06, map: T.woodFinish }),
+            officeChairMesh: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.25 }),
+            loungeLeather: new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.55, metalness: 0.12 }),
 
             // MEP Electrical
             transformerTank: new THREE.MeshStandardMaterial({ color: 0x36413b, roughness: 0.42, metalness: 0.72, map: T.brushedMetal }),
@@ -5417,15 +5537,17 @@ window.DC36_SCHEDULE = {
             }
             solidMeshes.push(mesh);
 
-            const wireMesh = new THREE.Mesh(mesh.geometry, amberWireMat);
-            wireMesh.scale.set(1.003, 1.003, 1.003);
-            wireMesh.visible = false;
-            wireMesh.castShadow = false;
-            wireMesh.receiveShadow = false;
-            wireMesh.userData.isWireOverlay = true;
-            wireMesh.userData.noShadow = true;
-            mesh.add(wireMesh);
-            overlays.push(wireMesh);
+            if (!mesh.isInstancedMesh) {
+                const wireMesh = new THREE.Mesh(mesh.geometry, amberWireMat);
+                wireMesh.scale.set(1.003, 1.003, 1.003);
+                wireMesh.visible = false;
+                wireMesh.castShadow = false;
+                wireMesh.receiveShadow = false;
+                wireMesh.userData.isWireOverlay = true;
+                wireMesh.userData.noShadow = true;
+                mesh.add(wireMesh);
+                overlays.push(wireMesh);
+            }
         });
 
         rootObj.userData._wireOverlays = overlays;
@@ -6557,26 +6679,49 @@ window.DC36_SCHEDULE = {
         prepare4DWireframeGroup(westWall, M.amberWireframe);
         facadeGroup.add(westWall);
 
-        // East Facade
+        // East Facade (Glazed Central Entrance Opening z: -11..+11 + Fenestrated North/South Office Wings)
         const eastWall = new THREE.Group();
         eastWall.name = "EastFacadeGroup";
         eastWall.position.set(50.2, 10.3, 0);
-        eastWall.add(new THREE.Mesh(new THREE.BoxGeometry(0.4, 17, 60.4), M.facadeLight));
-        for (let z = -26; z <= 26; z += 7.4) {
-            const joint = new THREE.Mesh(new THREE.BoxGeometry(0.44, 17.02, 0.05), M.revealJoint);
-            joint.position.set(0, 0, z);
-            eastWall.add(joint);
-        }
-        [-3.4, 3.4].forEach(y => {
-            const hBand = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.06, 60.42), M.revealJoint);
-            hBand.position.set(0, y, 0);
-            eastWall.add(hBand);
-        });
-        [-19, 19].forEach(lz => {
-            const louver = createLouverAssembly(5.6, 3.0, M.copingCap, M.louvers, 9);
-            louver.rotation.y = Math.PI / 2;
-            louver.position.set(0.22, 3.4, lz);
-            eastWall.add(louver);
+
+        // Top Fascia Header across East Curtain Portal (z: -11..+11)
+        const portalHeader = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.5, 22.0), M.facadeDark);
+        portalHeader.position.set(0, 7.75, 0);
+        eastWall.add(portalHeader);
+
+        // North Wing (z: -30.2 .. -11.0) & South Wing (z: +11.0 .. +30.2) with L1 & L2 Office Ribbon Windows
+        [-20.6, 20.6].forEach(wingZ => {
+            const wingLen = 19.2;
+            const wingSign = wingZ > 0 ? 1 : -1;
+            const spandrelLow = new THREE.Mesh(new THREE.BoxGeometry(0.40, 6.2, wingLen), M.facadeLight);
+            spandrelLow.position.set(0, -5.4, wingZ);
+            const spandrelMid = new THREE.Mesh(new THREE.BoxGeometry(0.40, 3.4, wingLen), M.facadeLight);
+            spandrelMid.position.set(0, 1.7, wingZ);
+            const spandrelTop = new THREE.Mesh(new THREE.BoxGeometry(0.40, 2.7, wingLen), M.facadeDark);
+            spandrelTop.position.set(0, 7.15, wingZ);
+
+            // Corner End Piers framing glazed office bays
+            const outerPier = new THREE.Mesh(new THREE.BoxGeometry(0.42, 17.0, 2.2), M.facadeLight);
+            outerPier.position.set(0, 0, wingSign * 29.1);
+            const innerPier = new THREE.Mesh(new THREE.BoxGeometry(0.42, 17.0, 1.6), M.facadeLight);
+            innerPier.position.set(0, 0, wingSign * 11.8);
+
+            // Level 1 (local y = -1.15) & Level 2 (local y = +4.60) Glazed Office Window Ribbons
+            const winLen = 15.4;
+            const winCenterZ = wingSign * 20.3;
+            const winL1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.3, winLen), M.curtainGlass);
+            winL1.position.set(0, -1.15, winCenterZ);
+            winL1.userData.isGlass = true;
+            const winL2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 2.4, winLen), M.curtainGlass);
+            winL2.position.set(0, 4.6, winCenterZ);
+            winL2.userData.isGlass = true;
+            eastWall.add(spandrelLow, spandrelMid, spandrelTop, outerPier, innerPier, winL1, winL2);
+
+            for (let mz = 12.8; mz <= 28.0; mz += 2.5) {
+                const mull = new THREE.Mesh(new THREE.BoxGeometry(0.24, 17.0, 0.08), M.copingCap);
+                mull.position.set(0.04, 0, wingSign * mz);
+                eastWall.add(mull);
+            }
         });
         prepare4DWireframeGroup(eastWall, M.amberWireframe);
         facadeGroup.add(eastWall);
@@ -7196,6 +7341,377 @@ window.DC36_SCHEDULE = {
         return seg;
     }
 
+
+    // Helper: Architectural Office Wall Segment ('solid' | 'glazed_full' | 'door')
+    function buildOfficeWallSegment(length, height, thick, mode, M) {
+        const seg = new THREE.Group();
+        if (mode === 'glazed_full') {
+            const basePlinth = new THREE.Mesh(new THREE.BoxGeometry(length, 0.14, thick + 0.02), M.officePlinth);
+            basePlinth.position.y = 0.07;
+            const topTrack = new THREE.Mesh(new THREE.BoxGeometry(length, 0.12, thick + 0.02), M.officePlinth);
+            topTrack.position.y = height - 0.06;
+            const glassPane = new THREE.Mesh(new THREE.BoxGeometry(length - 0.12, height - 0.26, 0.06), M.officeGlass);
+            glassPane.position.y = height / 2;
+            glassPane.userData.isGlass = true;
+            seg.add(basePlinth, topTrack, glassPane);
+            const postCount = Math.max(2, Math.floor(length / 2.2) + 1);
+            for (let i = 0; i < postCount; i++) {
+                const lx = -length / 2 + (length * i) / (postCount - 1);
+                const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.07, height, thick + 0.03), M.officePlinth);
+                mullion.position.set(lx, height / 2, 0);
+                seg.add(mullion);
+            }
+        } else if (mode === 'door') {
+            const doorW = 1.15;
+            const doorH = 2.35;
+            const sideW = Math.max(0.25, (length - doorW) / 2);
+            [-1, 1].forEach(dir => {
+                const sideWall = new THREE.Mesh(new THREE.BoxGeometry(sideW, height, thick), M.officeWall);
+                sideWall.position.set(dir * (doorW / 2 + sideW / 2), height / 2, 0);
+                const sidePlinth = new THREE.Mesh(new THREE.BoxGeometry(sideW, 0.14, thick + 0.02), M.officePlinth);
+                sidePlinth.position.set(dir * (doorW / 2 + sideW / 2), 0.07, 0);
+                seg.add(sideWall, sidePlinth);
+            });
+            const transomWall = new THREE.Mesh(new THREE.BoxGeometry(doorW, height - doorH, thick), M.officeWall);
+            transomWall.position.set(0, doorH + (height - doorH) / 2, 0);
+            const doorFrameTop = new THREE.Mesh(new THREE.BoxGeometry(doorW + 0.08, 0.07, thick + 0.04), M.officePlinth);
+            doorFrameTop.position.set(0, doorH + 0.035, 0);
+            [-doorW / 2, doorW / 2].forEach(jx => {
+                const jamb = new THREE.Mesh(new THREE.BoxGeometry(0.06, doorH, thick + 0.04), M.officePlinth);
+                jamb.position.set(jx, doorH / 2, 0);
+                seg.add(jamb);
+            });
+            const doorLeaf = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.06, doorH - 0.04, 0.06), M.officeDoorWood);
+            doorLeaf.position.set(0, doorH / 2, 0);
+            const visionGlass = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.35, 0.075), M.officeGlass);
+            visionGlass.position.set(-0.28, 1.35, 0);
+            visionGlass.userData.isGlass = true;
+            const handleA = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.04, 0.12), M.exhaustStack);
+            handleA.position.set(0.38, 1.05, 0);
+            seg.add(transomWall, doorFrameTop, doorLeaf, visionGlass, handleA);
+        } else {
+            const wall = new THREE.Mesh(new THREE.BoxGeometry(length, height, thick), M.officeWall);
+            wall.position.y = height / 2;
+            const plinth = new THREE.Mesh(new THREE.BoxGeometry(length + 0.02, 0.14, thick + 0.02), M.officePlinth);
+            plinth.position.y = 0.07;
+            const crown = new THREE.Mesh(new THREE.BoxGeometry(length + 0.02, 0.06, thick + 0.02), M.officePlinth);
+            crown.position.y = height - 0.03;
+            seg.add(wall, plinth, crown);
+        }
+        return seg;
+    }
+
+    // Helper: Build Suspended 600x600mm Acoustic T-Bar Ceiling Bay + Linear LED Troffers + Diffusers + Plenum Hangers
+    function buildOfficeCeilingBay(widthX, depthZ, centerX, centerZ, ceilingY, soffitY, ceilingGroup, M) {
+        const deck = new THREE.Mesh(new THREE.BoxGeometry(widthX, 0.05, depthZ), M.officeCeilingTile);
+        deck.position.set(centerX, ceilingY, centerZ);
+        ceilingGroup.add(deck);
+
+        // Exposed Aluminum Edge Trim Bulkhead
+        const fasciaN = new THREE.Mesh(new THREE.BoxGeometry(widthX, 0.18, 0.06), M.officePlinth);
+        fasciaN.position.set(centerX, ceilingY + 0.06, centerZ - depthZ / 2);
+        const fasciaS = fasciaN.clone();
+        fasciaS.position.set(centerX, ceilingY + 0.06, centerZ + depthZ / 2);
+        const fasciaE = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.18, depthZ), M.officePlinth);
+        fasciaE.position.set(centerX + widthX / 2, ceilingY + 0.06, centerZ);
+        const fasciaW = fasciaE.clone();
+        fasciaW.position.set(centerX - widthX / 2, ceilingY + 0.06, centerZ);
+        ceilingGroup.add(fasciaN, fasciaS, fasciaE, fasciaW);
+
+        // Linear Recessed 600x1200mm LED Troffers & HVAC Supply Diffusers
+        const trofferItems = [];
+        const diffuserItems = [];
+        const rodItems = [];
+        const hangerH = Math.max(0.25, soffitY - ceilingY);
+        for (let lx = centerX - widthX / 2 + 2.4; lx <= centerX + widthX / 2 - 2.0; lx += 4.2) {
+            for (let lz = centerZ - depthZ / 2 + 2.2; lz <= centerZ + depthZ / 2 - 2.0; lz += 4.4) {
+                trofferItems.push({ pos: [lx, ceilingY - 0.02, lz] });
+                diffuserItems.push({ pos: [lx + 1.5, ceilingY - 0.025, lz + 1.2] });
+                rodItems.push({ pos: [lx, ceilingY + hangerH / 2, lz] });
+            }
+        }
+        if (trofferItems.length) {
+            ceilingGroup.add(buildInstanced(new THREE.BoxGeometry(1.2, 0.04, 0.6), M.ceilingTroffer, trofferItems, "CeilingLEDTroffers"));
+        }
+        if (diffuserItems.length) {
+            ceilingGroup.add(buildInstanced(new THREE.BoxGeometry(0.6, 0.05, 0.6), M.louvers, diffuserItems, "CeilingHVACDiffusers"));
+        }
+        if (rodItems.length) {
+            ceilingGroup.add(buildInstanced(new THREE.CylinderGeometry(0.018, 0.018, hangerH, 6), M.steelDunnage, rodItems, "CeilingHangerRods"));
+        }
+    }
+
+    // Helper: Modular Dual-Monitor Office Workstation Unit (Desk, Privacy Screen, Dual Displays & Task Chair)
+    function buildWorkstationUnit(yaw, M) {
+        const ws = new THREE.Group();
+        const top = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 0.78), M.officeDeskTop);
+        top.position.set(0, 0.74, 0);
+        [-0.72, 0.72].forEach(lx => {
+            const leg = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.72, 0.70), M.officePlinth);
+            leg.position.set(lx, 0.36, 0);
+            ws.add(leg);
+        });
+        const modesty = new THREE.Mesh(new THREE.BoxGeometry(1.56, 0.42, 0.04), M.loungeLeather);
+        modesty.position.set(0, 0.96, -0.37);
+        const pedestal = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.64, 0.62), M.officePlinth);
+        pedestal.position.set(0.52, 0.32, 0.02);
+        const monL = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.34, 0.03), M.nocScreen);
+        monL.position.set(-0.30, 1.04, -0.22);
+        monL.rotation.y = 0.12;
+        const monR = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.34, 0.03), M.nocScreen);
+        monR.position.set(0.30, 1.04, -0.22);
+        monR.rotation.y = -0.12;
+
+        // Task Chair
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.08, 0.48), M.officeChairMesh);
+        seat.position.set(0, 0.46, 0.56);
+        const back = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.54, 0.06), M.officeChairMesh);
+        back.position.set(0, 0.76, 0.78);
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.16, 0.42, 8), M.officePlinth);
+        stem.position.set(0, 0.21, 0.56);
+        ws.add(top, modesty, pedestal, monL, monR, seat, back, stem);
+        ws.rotation.y = yaw;
+        return ws;
+    }
+
+    // Complete Corporate & Facility Operations Office Layout (Level 1 East Wing + Level 2 SE Engineering Suite)
+    function createOfficeLayoutBIM(M) {
+        const officeWalls = new THREE.Group();
+        officeWalls.name = "OfficeInteriorWallsAndDoors";
+        const officeCeilingsL1 = new THREE.Group();
+        officeCeilingsL1.name = "OfficeSuspendedCeiling_L1";
+        const officeCeilingsL2 = new THREE.Group();
+        officeCeilingsL2.name = "OfficeSuspendedCeiling_L2";
+        const officeFurniture = new THREE.Group();
+        officeFurniture.name = "OfficeFurnitureAndAtriumStair";
+
+        const l1Y = 7.30;
+        const l1CeilY = 10.75;
+        const l1H = 3.45;
+        const l2Y = 13.15;
+        const l2CeilY = 16.95;
+        const l2H = 3.80;
+
+        // -----------------------------------------------------------------
+        // PART 1: LEVEL 1 EAST CORPORATE & OPERATIONS OFFICE WING (x: 23.2..49.5)
+        // -----------------------------------------------------------------
+        // Modular Commercial Carpet & Atrium Honed Floor Plates
+        const carpetN = new THREE.Mesh(new THREE.BoxGeometry(25.8, 0.04, 26.0), M.officeCarpet);
+        carpetN.position.set(36.3, l1Y + 0.02, -15.8);
+        const carpetS = new THREE.Mesh(new THREE.BoxGeometry(25.8, 0.04, 26.0), M.officeCarpet);
+        carpetS.position.set(36.3, l1Y + 0.02, 15.8);
+        const atriumFloor = new THREE.Mesh(new THREE.BoxGeometry(26.0, 0.04, 6.2), M.raisedFloor);
+        atriumFloor.position.set(36.4, l1Y + 0.02, 0);
+        officeFurniture.add(carpetN, carpetS, atriumFloor);
+
+        // Chiller-to-Office Boundary Separation Wall at x = 23.2 (Acoustic Solid + Double Entrance Doors at z=0)
+        const westSepN = buildOfficeWallSegment(26.5, l1H, 0.24, 'solid', M);
+        westSepN.rotation.y = Math.PI / 2;
+        westSepN.position.set(23.2, l1Y, -15.8);
+        const westSepS = buildOfficeWallSegment(26.5, l1H, 0.24, 'solid', M);
+        westSepS.rotation.y = Math.PI / 2;
+        westSepS.position.set(23.2, l1Y, 15.8);
+        const westSepDoor = buildOfficeWallSegment(5.2, l1H, 0.24, 'door', M);
+        westSepDoor.rotation.y = Math.PI / 2;
+        westSepDoor.position.set(23.2, l1Y, 0);
+        officeWalls.add(westSepN, westSepS, westSepDoor);
+
+        // Central Corridor Spine Walls (z = -2.2 and z = +2.2) with Framed Glazing & Timber Doors
+        const corrN1 = buildOfficeWallSegment(7.5, l1H, 0.18, 'door', M);
+        corrN1.position.set(27.5, l1Y, -2.2);
+        const corrN2 = buildOfficeWallSegment(10.0, l1H, 0.18, 'glazed_full', M);
+        corrN2.position.set(36.25, l1Y, -2.2);
+        const corrS1 = buildOfficeWallSegment(7.5, l1H, 0.18, 'door', M);
+        corrS1.position.set(27.5, l1Y, 2.2);
+        const corrS2 = buildOfficeWallSegment(7.5, l1H, 0.18, 'glazed_full', M);
+        corrS2.position.set(35.0, l1Y, 2.2);
+        const corrS3 = buildOfficeWallSegment(6.5, l1H, 0.18, 'door', M);
+        corrS3.position.set(42.0, l1Y, 2.2);
+        officeWalls.add(corrN1, corrN2, corrS1, corrS2, corrS3);
+
+        // North Quadrant Partitions: Executive Boardroom (z: -28.8..-14.5, x: 23.4..38.0) & Meeting Suites
+        const brGlassE = buildOfficeWallSegment(14.0, l1H, 0.16, 'glazed_full', M);
+        brGlassE.rotation.y = Math.PI / 2;
+        brGlassE.position.set(38.0, l1Y, -21.8);
+        const brSouthWall = buildOfficeWallSegment(14.6, l1H, 0.18, 'door', M);
+        brSouthWall.position.set(30.7, l1Y, -14.6);
+        const mtgDivider = buildOfficeWallSegment(12.2, l1H, 0.18, 'solid', M);
+        mtgDivider.rotation.y = Math.PI / 2;
+        mtgDivider.position.set(31.0, l1Y, -8.4);
+        const mtgEastGlass = buildOfficeWallSegment(12.2, l1H, 0.16, 'glazed_full', M);
+        mtgEastGlass.rotation.y = Math.PI / 2;
+        mtgEastGlass.position.set(38.0, l1Y, -8.4);
+        officeWalls.add(brGlassE, brSouthWall, mtgDivider, mtgEastGlass);
+
+        // Boardroom Walnut Conference Table (8.4m x 2.3m), Presentation Screen & 12 Chairs
+        const brTable = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.08, 2.3), M.officeDeskTop);
+        brTable.position.set(30.6, l1Y + 0.76, -21.8);
+        const brBaseA = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.72, 1.3), M.officePlinth);
+        brBaseA.position.set(27.8, l1Y + 0.36, -21.8);
+        const brBaseB = brBaseA.clone();
+        brBaseB.position.set(33.4, l1Y + 0.36, -21.8);
+        const brDisplay = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.65, 3.4), M.nocScreen);
+        brDisplay.position.set(23.5, l1Y + 1.85, -21.8);
+        officeFurniture.add(brTable, brBaseA, brBaseB, brDisplay);
+        for (let cx = 27.2; cx <= 34.0; cx += 1.35) {
+            [-1.55, 1.55].forEach(cz => {
+                const cSeat = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.08, 0.50), M.loungeLeather);
+                cSeat.position.set(cx, l1Y + 0.46, -21.8 + cz);
+                const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.58, 0.07), M.loungeLeather);
+                cBack.position.set(cx, l1Y + 0.78, -21.8 + (cz > 0 ? cz + 0.22 : cz - 0.22));
+                officeFurniture.add(cSeat, cBack);
+            });
+        }
+
+        // Two Small Conference / Meeting Room Tables (z = -8.4)
+        [27.2, 34.5].forEach(mx => {
+            const mTbl = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.07, 1.6), M.officeDeskTop);
+            mTbl.position.set(mx, l1Y + 0.75, -8.4);
+            const mPed = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 0.72, 10), M.officePlinth);
+            mPed.position.set(mx, l1Y + 0.36, -8.4);
+            officeFurniture.add(mTbl, mPed);
+            [-1.15, 1.15].forEach(cz => {
+                for (let sx = -1.1; sx <= 1.1; sx += 1.1) {
+                    const ch = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.78, 0.48), M.officeChairMesh);
+                    ch.position.set(mx + sx, l1Y + 0.42, -8.4 + cz);
+                    officeFurniture.add(ch);
+                }
+            });
+        });
+
+        // South Quadrant Partitions: 3 Private Executive Offices (x: 23.4..39.0, z: 16.5..28.8) & Staff Break Lounge
+        const execHallWall = buildOfficeWallSegment(15.6, l1H, 0.18, 'glazed_full', M);
+        execHallWall.position.set(31.2, l1Y, 16.5);
+        [28.6, 33.8, 39.0].forEach(px => {
+            const pWall = buildOfficeWallSegment(12.2, l1H, 0.18, px === 39.0 ? 'door' : 'solid', M);
+            pWall.rotation.y = Math.PI / 2;
+            pWall.position.set(px, l1Y, 22.6);
+            officeWalls.add(pWall);
+        });
+        officeWalls.add(execHallWall);
+
+        // 3 Executive Office Desks & Credenzas
+        [26.0, 31.2, 36.4].forEach(ex => {
+            const eDesk = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.06, 1.0), M.officeDeskTop);
+            eDesk.position.set(ex, l1Y + 0.75, 22.0);
+            const eCredenza = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.78, 0.55), M.officePlinth);
+            eCredenza.position.set(ex, l1Y + 0.39, 26.8);
+            const eChair = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.92, 0.56), M.loungeLeather);
+            eChair.position.set(ex, l1Y + 0.52, 23.1);
+            officeFurniture.add(eDesk, eCredenza, eChair);
+        });
+
+        // Breakroom Kitchenette Counter & 3 Cafe Tables (x: 39.8..49.2, z: 16.5..28.5)
+        const pantryCounter = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.92, 0.85), M.officeWall);
+        pantryCounter.position.set(44.5, l1Y + 0.46, 28.0);
+        const pantryTop = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.06, 0.90), M.officePlinth);
+        pantryTop.position.set(44.5, l1Y + 0.95, 28.0);
+        officeFurniture.add(pantryCounter, pantryTop);
+        [41.5, 44.5, 47.5].forEach(tx => {
+            const cTop = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.05, 16), M.officeDeskTop);
+            cTop.position.set(tx, l1Y + 0.75, 21.0);
+            const cStem = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.32, 0.72, 10), M.officePlinth);
+            cStem.position.set(tx, l1Y + 0.36, 21.0);
+            officeFurniture.add(cTop, cStem);
+        });
+
+        // Open-Plan Engineering & BMS Workstation Pods (24 Workstations Visible Behind East Curtain Wall)
+        const podLocations = [
+            { x: 43.5, z: -21.5 },
+            { x: 43.5, z: -13.5 },
+            { x: 29.0, z: 9.0 },
+            { x: 39.5, z: 9.0 }
+        ];
+        podLocations.forEach(pod => {
+            [-1.9, 0, 1.9].forEach(dx => {
+                const wsN = buildWorkstationUnit(Math.PI, M);
+                wsN.position.set(pod.x + dx, l1Y, pod.z - 0.44);
+                const wsS = buildWorkstationUnit(0, M);
+                wsS.position.set(pod.x + dx, l1Y, pod.z + 0.44);
+                officeFurniture.add(wsN, wsS);
+            });
+        });
+
+        // Feature Double-Height East Atrium Staircase (Level 1 y=7.30 -> Level 2 NOC Lobby y=13.15)
+        const stairGroup = new THREE.Group();
+        stairGroup.name = "AtriumFeatureStaircase";
+        const numSteps = 16;
+        for (let s = 0; s < numSteps; s++) {
+            const t = (s + 0.5) / numSteps;
+            const sy = l1Y + t * (l2Y - l1Y);
+            const sx = 43.0 + t * 5.2;
+            const tread = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 2.2), M.officeDeskTop);
+            tread.position.set(sx, sy, -4.4);
+            stairGroup.add(tread);
+        }
+        const strLen = Math.hypot(5.4, l2Y - l1Y);
+        const strAngle = Math.atan2(l2Y - l1Y, 5.4);
+        [-5.55, -3.25].forEach(sz => {
+            const stringer = new THREE.Mesh(new THREE.BoxGeometry(strLen, 0.28, 0.08), M.officePlinth);
+            stringer.position.set(45.6, (l1Y + l2Y) / 2 - 0.15, sz);
+            stringer.rotation.z = strAngle;
+            const bal = new THREE.Mesh(new THREE.BoxGeometry(strLen, 0.95, 0.05), M.officeGlass);
+            bal.position.set(45.6, (l1Y + l2Y) / 2 + 0.48, sz);
+            bal.rotation.z = strAngle;
+            bal.userData.isGlass = true;
+            stairGroup.add(stringer, bal);
+        });
+        officeFurniture.add(stairGroup);
+
+        // Level 1 Suspended T-Bar Acoustic Drop Ceiling Bays (y = 10.75, plenum hangers up to y = 12.00)
+        buildOfficeCeilingBay(25.6, 21.8, 36.2, -18.2, l1CeilY, 12.0, officeCeilingsL1, M);
+        buildOfficeCeilingBay(18.0, 14.0, 32.4, 0.0, l1CeilY, 12.0, officeCeilingsL1, M);
+        buildOfficeCeilingBay(25.6, 21.8, 36.2, 18.2, l1CeilY, 12.0, officeCeilingsL1, M);
+
+        // -----------------------------------------------------------------
+        // PART 2: LEVEL 2 SOUTH-EAST FACILITY ENGINEERING SUITE & L2 EAST CEILING (x: 41.4..49.5)
+        // -----------------------------------------------------------------
+        const l2SuiteFloor = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.04, 14.6), M.officeCarpet);
+        l2SuiteFloor.position.set(45.5, l2Y + 0.02, 21.6);
+        officeFurniture.add(l2SuiteFloor);
+
+        // Enclosed Engineering Office Front Partition at z = +14.2 with Door & Divider at z = +21.8
+        const l2FrontDoorWall = buildOfficeWallSegment(8.0, l2H, 0.18, 'door', M);
+        l2FrontDoorWall.position.set(45.5, l2Y, 14.2);
+        const l2MidWall = buildOfficeWallSegment(8.0, l2H, 0.18, 'glazed_full', M);
+        l2MidWall.position.set(45.5, l2Y, 21.8);
+        officeWalls.add(l2FrontDoorWall, l2MidWall);
+
+        // Level 2 War Room Conference Table (z: 18.0) & 4 Facility Engineering Workstations (z: 25.4)
+        const l2ConfTable = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.07, 1.5), M.officeDeskTop);
+        l2ConfTable.position.set(45.5, l2Y + 0.75, 18.0);
+        const l2ConfBase = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.42, 0.72, 10), M.officePlinth);
+        l2ConfBase.position.set(45.5, l2Y + 0.36, 18.0);
+        const l2Screen = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.25, 2.4), M.nocScreen);
+        l2Screen.position.set(41.65, l2Y + 1.85, 18.0);
+        officeFurniture.add(l2ConfTable, l2ConfBase, l2Screen);
+
+        [44.2, 46.8].forEach(ox => {
+            const wsN = buildWorkstationUnit(Math.PI, M);
+            wsN.position.set(ox, l2Y, 24.8);
+            const wsS = buildWorkstationUnit(0, M);
+            wsS.position.set(ox, l2Y, 26.2);
+            officeFurniture.add(wsN, wsS);
+        });
+
+        // Level 2 Suspended Acoustic Drop Ceiling across 10% East NOC + Security Lobby + SE Engineering Suite
+        buildOfficeCeilingBay(8.1, 57.6, 45.4, 0.0, l2CeilY, 17.75, officeCeilingsL2, M);
+
+        // Prepare 4D wireframe support across all office layers and tag suspended ceilings for X-Ray
+        [officeWalls, officeCeilingsL1, officeCeilingsL2, officeFurniture].forEach(g => {
+            prepare4DWireframeGroup(g, M.amberWireframe);
+        });
+        [officeCeilingsL1, officeCeilingsL2].forEach(cg => {
+            cg.traverse(c => {
+                if (c.isMesh && !c.userData.isWireOverlay) {
+                    c.userData._xrayControlled = true;
+                }
+            });
+        });
+
+        return { officeWalls, officeCeilingsL1, officeCeilingsL2, officeFurniture };
+    }
+
     // 7. Phase 6: 4-Zone Interior Data Center BIM Layout (60% White-Space / 20% Power / 10% Mech / 10% NOC)
     function createWhiteSpaceFitOut(M) {
         const group = new THREE.Group();
@@ -7640,7 +8156,14 @@ window.DC36_SCHEDULE = {
         group.userData.switchgear = switchgearGroup;
         group.userData.upsRoom = upsCabinetsGroup;
         group.userData.batteryRacks = batteryRacksGroup;
+        const officeBIM = createOfficeLayoutBIM(M);
+        group.add(officeBIM.officeWalls, officeBIM.officeCeilingsL1, officeBIM.officeCeilingsL2, officeBIM.officeFurniture);
+
         group.userData.nocLobby = nocLobbyGroup;
+        group.userData.officeWalls = officeBIM.officeWalls;
+        group.userData.officeCeilingsL1 = officeBIM.officeCeilingsL1;
+        group.userData.officeCeilingsL2 = officeBIM.officeCeilingsL2;
+        group.userData.officeFurniture = officeBIM.officeFurniture;
         return group;
     }
 
@@ -7950,8 +8473,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: timeline_engine.js (v21 Interior 4D Sequence + Smooth X-Ray) ===
-// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.021)
+    // === MODULE: timeline_engine.js (v22 Interior + Office 4D Sequence + Smooth X-Ray) ===
+// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.022)
 // Preserves all Primavera P6 Scrubber Logic + Interior 4-Zone BIM Sequence + Smooth X-Ray Cutaway
 
 (function() {
@@ -7975,6 +8498,7 @@ window.DC36_SCHEDULE = {
     let lastTauFacade = 1;
     let lastTauRoof = 1;
     let lastTauChw = 1;
+    let lastTauFloor = 1;
 
     window.DC36_TIMELINE.init = function(schedData, modelRefs, particleRefs) {
         schedule = schedData;
@@ -8092,7 +8616,14 @@ window.DC36_SCHEDULE = {
             coolingTowers.visible = !hideRoofNow && (lastTauChw > 0.35);
         }
 
-        // Smoothly interpolate opacity from 1.0 -> 0.12 on outer facade cladding, roof slab & rooftop chillers/towers
+        const p6 = models.p6_whitespace;
+        const offCeilL1 = p6 && p6.userData ? p6.userData.officeCeilingsL1 : null;
+        const offCeilL2 = p6 && p6.userData ? p6.userData.officeCeilingsL2 : null;
+        if (offCeilL2) {
+            offCeilL2.visible = !hideRoofNow && (lastTauFloor > 0);
+        }
+
+        // Smoothly interpolate opacity from 1.0 -> 0.12 on outer facade cladding, roof slab, rooftop chillers & suspended office ceilings
         const isFadingNow = cutawayBlend > 0.005;
         if (facadeGroup && (isFadingNow || wasXRayBlending || lastTauFacade >= 1.0)) {
             applyXRayToGroup(facadeGroup, cutawayBlend, false);
@@ -8108,6 +8639,12 @@ window.DC36_SCHEDULE = {
         }
         if (coolingTowers && !hideRoofNow && (isFadingNow || wasXRayBlending || lastTauChw >= 1.0)) {
             applyXRayToGroup(coolingTowers, cutawayBlend, false);
+        }
+        if (offCeilL1 && (isFadingNow || wasXRayBlending || lastTauFloor >= 1.0)) {
+            applyXRayToGroup(offCeilL1, cutawayBlend, false);
+        }
+        if (offCeilL2 && !hideRoofNow && (isFadingNow || wasXRayBlending || lastTauFloor >= 1.0)) {
+            applyXRayToGroup(offCeilL2, cutawayBlend, false);
         }
         wasXRayBlending = isFadingNow;
     }
@@ -8230,6 +8767,7 @@ window.DC36_SCHEDULE = {
             lastTauFacade = tau_facade;
             lastTauRoof = tau_roof;
             lastTauChw = tau_chw;
+            lastTauFloor = tau_floor;
 
             // 1. Phase 1: Bored Piling (A4120)
             const p1 = models.p1_piling;
@@ -8508,13 +9046,22 @@ window.DC36_SCHEDULE = {
                     p6.visible = false;
                 } else {
                     p6.visible = true;
-                    // Step A: Internal Zone Partition Walls (A4250)
+                    // Step A: Internal Zone Partition Walls & Office Walls/Doors (A4250)
                     if (p6.userData.partitionWalls) {
                         setVisual(p6.userData.partitionWalls, tau_part);
                     }
-                    // Step B: 600x600mm Raised Access Floor Grid (A5430)
+                    if (p6.userData.officeWalls) {
+                        setVisual(p6.userData.officeWalls, tau_part);
+                    }
+                    // Step B: 600x600mm Raised Access Floor Grid & Suspended Office Ceilings (A5430)
                     if (p6.userData.raisedFloor) {
                         setVisual(p6.userData.raisedFloor, tau_floor);
+                    }
+                    if (p6.userData.officeCeilingsL1) {
+                        setVisual(p6.userData.officeCeilingsL1, tau_floor);
+                    }
+                    if (p6.userData.officeCeilingsL2) {
+                        setVisual(p6.userData.officeCeilingsL2, tau_floor);
                     }
                     // Step C: Overhead Red Busways & Yellow Fiber Trays (A5440 / A5480)
                     if (p6.userData.overheadTrays) {
@@ -8536,6 +9083,7 @@ window.DC36_SCHEDULE = {
 
                     // Step G: Security / NOC Lobby Fit-Out (A5560)
                     if (p6.userData.nocLobby) setVisual(p6.userData.nocLobby, tau_noc);
+                    if (p6.userData.officeFurniture) setVisual(p6.userData.officeFurniture, tau_noc);
 
                     // Step H: HAC Glass Containment & Sequential Server Racks (A5470)
                     if (p6.userData.containmentGlass) {
@@ -8588,6 +9136,10 @@ window.DC36_SCHEDULE = {
 
         if (window.DC36_HALL_LIGHT) {
             window.DC36_HALL_LIGHT.intensity = (activePhase >= 5) ? 1.5 : 0.0;
+        }
+        if (window.DC36_OFFICE_LIGHTS) {
+            const officeLum = (activePhase >= 5) ? 1.45 : 0.0;
+            window.DC36_OFFICE_LIGHTS.forEach(l => { l.intensity = officeLum; });
         }
 
         if (window.DC36_SERVER_LEDS && window.DC36_SERVER_LEDS.length > 0) {
@@ -9211,8 +9763,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v21 X-Ray UI + Interior Lighting + Mobile Nav) ===
-// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.021)
+    // === MODULE: app.js (v22 X-Ray + Offices Cam + Interior Lighting + Mobile Nav) ===
+// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.022)
 // Executive Digital Twin: X-Ray / Cutaway Interior Mode, PCFSoftShadowMap (2048x2048), FogExp2, Bloom + FXAA, Drone Tour & FPV
 
 (function() {
@@ -9248,7 +9800,8 @@ window.DC36_SCHEDULE = {
         substation: { pos: [-15, 30, 105], target: [-5, 6, 52] },
         generators: { pos: [-115, 32, 10], target: [-66, 5, 0] },
         rooftop: { pos: [25, 52, 42], target: [0, 20, 0] },
-        whitespace: { pos: [-8, 16.5, -2], target: [-8, 14.5, -16] }
+        whitespace: { pos: [-8, 16.5, -2], target: [-8, 14.5, -16] },
+        offices: { pos: [76, 15.5, 16], target: [38, 10.2, 0] }
     };
 
     function isMobileViewport() {
@@ -9423,8 +9976,14 @@ window.DC36_SCHEDULE = {
         const lightMEP = new THREE.PointLight(0xfef9c3, 1.1, 65);
         lightMEP.position.set(34, 17.0, 0);
         scene.add(lightHall1, lightHall2, lightMEP);
+        const lightOffN = new THREE.PointLight(0xfff7ed, 1.45, 58);
+        lightOffN.position.set(37, 10.2, -13);
+        const lightOffS = new THREE.PointLight(0xfff7ed, 1.45, 58);
+        lightOffS.position.set(37, 10.2, 13);
+        scene.add(lightOffN, lightOffS);
         interiorHallLights.push(lightHall1, lightHall2, lightMEP);
         window.DC36_HALL_LIGHT = lightHall1;
+        window.DC36_OFFICE_LIGHTS = [lightOffN, lightOffS];
 
         updateSkyGradient('#0284c7', '#cbd5e1');
     }
