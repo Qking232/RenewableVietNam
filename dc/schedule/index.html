@@ -763,6 +763,127 @@
             touch-action: none !important;
         }
 
+        /* Floating Navigation Mode Switcher Pill (Orbit | Hand Pan | 3rd Person GTA) */
+        #nav-mode-pill {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 76px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 5px;
+            border-radius: 999px;
+            z-index: 48;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
+        }
+        .nav-pill-btn {
+            border: 1px solid transparent;
+            background: transparent;
+            color: #334155;
+            font-family: var(--font-ui);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: background-color 0.16s, color 0.16s, box-shadow 0.16s;
+        }
+        .nav-pill-btn:hover {
+            background: rgba(226, 232, 240, 0.7);
+            color: #0f172a;
+        }
+        .nav-pill-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+        }
+
+        /* GTA V 3rd-Person HUD (visible only when 3rd Person mode active) */
+        #tpv-hud {
+            display: none;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 116px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            z-index: 48;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: nowrap;
+            width: max-content;
+            max-width: calc(100vw - 24px);
+            overflow-x: auto;
+            scrollbar-width: none;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.16);
+        }
+        #tpv-hud::-webkit-scrollbar { display: none; }
+        @media (max-width: 1120px) {
+            .tpv-hint-txt { display: none; }
+        }
+        body.fpv-active #tpv-hud {
+            display: flex;
+        }
+        #tpv-floor-badge {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: #0369a1;
+            background: rgba(224, 242, 254, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .tpv-floor-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .tpv-floor-btn {
+            border: 1px solid rgba(148, 163, 184, 0.55);
+            background: rgba(241, 245, 249, 0.92);
+            color: #0f172a;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tpv-floor-btn.active {
+            background: #0284c7;
+            border-color: #0284c7;
+            color: #ffffff;
+        }
+        .tpv-hint-txt {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: #475569;
+            white-space: nowrap;
+        }
+        .tpv-mini-btn {
+            border: 1px solid rgba(148, 163, 184, 0.55);
+            background: rgba(241, 245, 249, 0.92);
+            color: #0f172a;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 7px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tpv-mini-btn.exit {
+            border-color: rgba(220, 38, 38, 0.4);
+            background: rgba(254, 226, 226, 0.85);
+            color: #dc2626;
+        }
+
         #btn-cutaway-xray {
             white-space: nowrap;
             font-size: 11px;
@@ -795,8 +916,6 @@
             position: fixed;
             inset: 0;
             background: rgba(15, 23, 42, 0.24);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
             z-index: 42;
         }
         #mobile-backdrop.visible { display: block; }
@@ -847,23 +966,23 @@
         #mobile-fpv-pad {
             display: none;
             position: fixed;
-            left: 10px;
-            bottom: calc(146px + env(safe-area-inset-bottom));
-            padding: 8px;
-            border-radius: 12px;
+            left: 8px;
+            bottom: calc(142px + env(safe-area-inset-bottom));
+            padding: 5px;
+            border-radius: 10px;
             z-index: 65;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
-        .fpv-pad-row { display: flex; gap: 5px; align-items: center; }
+        .fpv-pad-row { display: flex; gap: 4px; align-items: center; }
         .fpv-pad-btn {
-            width: 40px; height: 40px; border-radius: 8px;
+            width: 32px; height: 32px; border-radius: 7px;
             border: 1px solid rgba(203, 213, 225, 0.9);
             background: rgba(241, 245, 249, 0.92);
             color: #0f172a;
             display: flex; align-items: center; justify-content: center;
-            font-size: 13px; touch-action: none !important;
+            font-size: 12px; font-weight: 700; touch-action: none !important;
         }
         .fpv-pad-btn.pressed { background: var(--accent-cyan); color: #ffffff; border-color: var(--accent-cyan); }
         .fpv-exit-btn {
@@ -901,11 +1020,34 @@
                 left: 8px; right: 8px; z-index: 44;
                 justify-content: space-between;
                 padding: 4px 12px; font-size: 10px; gap: 6px;
-                background: rgba(255, 255, 255, 0.9);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
+                background: rgba(255, 255, 255, 0.94);
             }
             #hud-phase { flex: 1; text-align: right; max-width: none; overflow: hidden; text-overflow: ellipsis; }
+
+            #nav-mode-pill {
+                top: calc(89px + env(safe-area-inset-top));
+                bottom: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 3px 4px;
+                z-index: 44;
+            }
+            .nav-pill-btn { font-size: 10px; padding: 4px 9px; }
+
+            #tpv-hud {
+                top: calc(123px + env(safe-area-inset-top));
+                bottom: auto;
+                width: auto;
+                max-width: calc(100vw - 16px);
+                flex-wrap: nowrap;
+                padding: 4px 7px;
+                gap: 4px;
+                border-radius: 999px;
+            }
+            #tpv-floor-badge { font-size: 9px; padding: 3px 6px; }
+            .tpv-floor-btn { font-size: 9px; padding: 3px 6px; }
+            .tpv-mini-btn { font-size: 9px; padding: 3px 6px; }
+            .tpv-hint-txt { display: none; }
 
             #blackout-banner {
                 top: calc(90px + env(safe-area-inset-top));
@@ -1125,13 +1267,16 @@
             <button class="cam-btn" data-cam="ground" style="grid-column: span 2;"><i class="fas fa-door-open"></i> Ground Floor</button>
         </div>
 
-        <!-- Cinematic Drone Tour & FPV Row -->
-        <div class="cinematic-row">
-            <button class="hud-btn" id="btn-drone-tour" style="justify-content: center;">
-                <i class="fas fa-video"></i> Drone Tour
+        <!-- Cinematic Drone Tour, Hand Pan & GTA V 3rd Person Row -->
+        <div class="cinematic-row" style="grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+            <button class="hud-btn" id="btn-drone-tour" style="justify-content: center; font-size: 10px; padding: 6px 4px;">
+                <i class="fas fa-video"></i> Drone
             </button>
-            <button class="hud-btn" id="btn-fpv" style="justify-content: center;">
-                <i class="fas fa-walking"></i> Data Hall FPV
+            <button class="hud-btn" id="btn-hand-mode" style="justify-content: center; font-size: 10px; padding: 6px 4px;">
+                <i class="fas fa-hand-paper"></i> Hand
+            </button>
+            <button class="hud-btn" id="btn-fpv" style="justify-content: center; font-size: 10px; padding: 6px 4px;">
+                <i class="fas fa-street-view"></i> 3rd Person
             </button>
         </div>
 
@@ -1248,7 +1393,29 @@
     <!-- Mobile Modal Backdrop -->
     <div id="mobile-backdrop"></div>
 
-    <!-- Mobile 1-Tap Camera Viewpoints & FPV Quick Strip -->
+    <!-- Floating Navigation Mode Switcher (Orbit | Hand Pan | GTA 3rd Person) -->
+    <div id="nav-mode-pill" class="glass-panel">
+        <button class="nav-pill-btn active" id="nav-mode-orbit" title="Orbit Camera (Left Drag Rotate / Right Drag Pan)"><i class="fas fa-sync-alt"></i> Orbit</button>
+        <button class="nav-pill-btn" id="nav-mode-hand" title="Hand Mode (Left Drag or 1-Finger Pan Across Site)"><i class="fas fa-hand-paper"></i> Hand</button>
+        <button class="nav-pill-btn" id="nav-mode-tpv" title="GTA V Style 3rd-Person Stair-Climbing Mode"><i class="fas fa-street-view"></i> 3rd Person</button>
+    </div>
+
+    <!-- GTA V Style 3rd-Person Level Quick-Jump & Controls HUD -->
+    <div id="tpv-hud" class="glass-panel">
+        <span id="tpv-floor-badge">CAMPUS EXTERIOR (0.0m)</span>
+        <div class="tpv-floor-group">
+            <button class="tpv-floor-btn active" data-floor="ext" title="Site Exterior Entrance (Key 1)">Ext</button>
+            <button class="tpv-floor-btn" data-floor="l0" title="Ground Floor Atrium (Key 2)">L0</button>
+            <button class="tpv-floor-btn" data-floor="l1" title="Level 1 Offices (Key 3)">L1</button>
+            <button class="tpv-floor-btn" data-floor="l2" title="Level 2 NOC & Server Halls (Key 4)">L2</button>
+            <button class="tpv-floor-btn" data-floor="roof" title="Rooftop Chillers & Towers (Key 5)">Roof</button>
+        </div>
+        <span class="tpv-hint-txt">WASD/Shift/Space | Drag Look</span>
+        <button class="tpv-mini-btn" id="tpv-cam-toggle" title="Toggle 3rd-Person / 1st-Person (Key V)">1P/3P</button>
+        <button class="tpv-mini-btn exit" id="tpv-exit-btn" title="Exit 3rd Person (Esc)">Exit</button>
+    </div>
+
+    <!-- Mobile 1-Tap Camera Viewpoints & 3rd-Person Strip -->
     <div id="mobile-cam-strip" class="glass-panel">
         <button class="cam-btn" data-cam="campus"><i class="fas fa-globe"></i> Campus</button>
         <button class="cam-btn" data-cam="substation"><i class="fas fa-bolt"></i> Substation</button>
@@ -1257,20 +1424,22 @@
         <button class="cam-btn" data-cam="whitespace"><i class="fas fa-server"></i> Hall 1</button>
         <button class="cam-btn" data-cam="offices"><i class="fas fa-briefcase"></i> Offices</button>
         <button class="cam-btn" data-cam="ground"><i class="fas fa-door-open"></i> Ground</button>
-        <button class="mob-fpv-btn" id="btn-mobile-fpv"><i class="fas fa-walking"></i> FPV</button>
+        <button class="mob-fpv-btn" id="btn-mobile-fpv"><i class="fas fa-street-view"></i> 3P GTA</button>
     </div>
 
-    <!-- Mobile Touch FPV Movement Pad -->
+    <!-- Mobile Touch 3rd-Person Movement, Sprint & Jump Pad -->
     <div id="mobile-fpv-pad" class="glass-panel">
         <div class="fpv-pad-row">
+            <button class="fpv-pad-btn" id="fpv-btn-sprint" aria-label="Sprint" style="font-size: 9px;">RUN</button>
             <button class="fpv-pad-btn" id="fpv-btn-fwd" aria-label="Walk Forward"><i class="fas fa-chevron-up"></i></button>
+            <button class="fpv-pad-btn" id="fpv-btn-jump" aria-label="Jump" style="font-size: 9px;">JMP</button>
         </div>
         <div class="fpv-pad-row">
             <button class="fpv-pad-btn" id="fpv-btn-left" aria-label="Strafe Left"><i class="fas fa-chevron-left"></i></button>
             <button class="fpv-pad-btn" id="fpv-btn-back" aria-label="Walk Backward"><i class="fas fa-chevron-down"></i></button>
             <button class="fpv-pad-btn" id="fpv-btn-right" aria-label="Strafe Right"><i class="fas fa-chevron-right"></i></button>
         </div>
-        <button class="fpv-exit-btn" id="mobile-fpv-exit">EXIT FPV</button>
+        <button class="fpv-exit-btn" id="mobile-fpv-exit">EXIT 3RD PERSON</button>
     </div>
 
     <!-- Bottom Master Scrubber Bar -->
@@ -5452,8 +5621,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v26 Draw-Call Batching + Instanced Racks + Open Ground Floor) ===
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.026: Draw-Call Batching + Instanced Racks + Open Ground Floor)
+    // === MODULE: datacenter_models.js (v27 Stairwells + Entry Steps + Draw-Call Batching) ===
+// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.027: Continuous Stairwells + Entry Steps + Draw-Call Batching)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
 (function() {
@@ -5638,6 +5807,71 @@ window.DC36_SCHEDULE = {
         inst.castShadow = true;
         inst.receiveShadow = true;
         return inst;
+    }
+
+    // Helper: Subdivide a horizontal rectangular slab into exact non-overlapping plates framing stairwell cutouts
+    function buildSlabWithCutouts(totalW, thick, totalD, centerX, centerZ, mat, worldHoles, namePrefix) {
+        const grp = new THREE.Group();
+        const x0 = centerX - totalW / 2;
+        const x1 = centerX + totalW / 2;
+        const z0 = centerZ - totalD / 2;
+        const z1 = centerZ + totalD / 2;
+
+        const xsSet = new Set([x0, x1]);
+        const zsSet = new Set([z0, z1]);
+        (worldHoles || []).forEach(h => {
+            if (h.x1 > x0 && h.x1 < x1) xsSet.add(h.x1);
+            if (h.x2 > x0 && h.x2 < x1) xsSet.add(h.x2);
+            if (h.z1 > z0 && h.z1 < z1) zsSet.add(h.z1);
+            if (h.z2 > z0 && h.z2 < z1) zsSet.add(h.z2);
+        });
+        const xs = Array.from(xsSet).sort((a, b) => a - b);
+        const zs = Array.from(zsSet).sort((a, b) => a - b);
+
+        let idx = 0;
+        for (let i = 0; i < xs.length - 1; i++) {
+            const w = xs[i + 1] - xs[i];
+            if (w < 0.02) continue;
+            const mx = (xs[i] + xs[i + 1]) * 0.5;
+            for (let j = 0; j < zs.length - 1; j++) {
+                const d = zs[j + 1] - zs[j];
+                if (d < 0.02) continue;
+                const mz = (zs[j] + zs[j + 1]) * 0.5;
+                const insideHole = (worldHoles || []).some(h => mx > h.x1 && mx < h.x2 && mz > h.z1 && mz < h.z2);
+                if (insideHole) continue;
+                const plate = new THREE.Mesh(new THREE.BoxGeometry(w, thick, d), mat);
+                plate.position.set(mx - centerX, 0, mz - centerZ);
+                if (namePrefix) plate.name = `${namePrefix}_${idx++}`;
+                grp.add(plate);
+            }
+        }
+        return grp;
+    }
+
+    // Helper: Add glass/steel safety balustrade around 3 closed sides of a stairwell slab cutout (openSide: 'east'|'west'|'north'|'south')
+    function addStairwellGuardrail(parentGroup, offsetX, offsetZ, yFloor, hole, openSide, M) {
+        const h = 1.05;
+        const w = hole.x2 - hole.x1;
+        const d = hole.z2 - hole.z1;
+        const midX = (hole.x1 + hole.x2) * 0.5 - offsetX;
+        const midZ = (hole.z1 + hole.z2) * 0.5 - offsetZ;
+        const specs = [
+            { side: 'north', gx: midX, gz: hole.z1 - offsetZ, bw: w, bd: 0.05 },
+            { side: 'south', gx: midX, gz: hole.z2 - offsetZ, bw: w, bd: 0.05 },
+            { side: 'west',  gx: hole.x1 - offsetX, gz: midZ, bw: 0.05, bd: d },
+            { side: 'east',  gx: hole.x2 - offsetX, gz: midZ, bw: 0.05, bd: d }
+        ];
+        specs.forEach(s => {
+            if (s.side === openSide) return;
+            const glass = new THREE.Mesh(new THREE.BoxGeometry(s.bw, h, s.bd), M.officeGlass);
+            glass.position.set(s.gx, yFloor + h * 0.5, s.gz);
+            glass.userData.isGlass = true;
+            glass.userData.noCastShadow = true;
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(s.bw + 0.04, 0.06, s.bd + 0.04), M.stainlessSteel);
+            rail.position.set(s.gx, yFloor + h + 0.03, s.gz);
+            rail.userData.noCastShadow = true;
+            parentGroup.add(glass, rail);
+        });
     }
 
     // Helper: Merge static child meshes sharing identical material & flags inside rootGroup (zero visual/detail loss)
@@ -6278,6 +6512,29 @@ window.DC36_SCHEDULE = {
         expansionPad.add(buildInstanced(new THREE.CylinderGeometry(0.11, 0.16, 0.18, 10), M.roadMarking, coneCoords.map(c => ({ pos: [c[0], 0.72, c[1]] })), "ExpansionConeCollars"));
         group.add(expansionPad);
 
+        // --- EAST EXECUTIVE ENTRANCE PROCESSIONAL STEPS (Walkable y = 0.0 -> 1.80) ---
+        const entryStepsGroup = new THREE.Group();
+        entryStepsGroup.name = "EastExecutiveEntranceSteps";
+        const entryStepCount = 9;
+        for (let es = 0; es < entryStepCount; es++) {
+            const frac = (es + 0.5) / entryStepCount;
+            const sx = 55.2 - frac * 5.2;
+            const sh = ((es + 1) / entryStepCount) * 1.80;
+            const stepBox = new THREE.Mesh(new THREE.BoxGeometry(0.62, sh, 6.4), M.concreteCurb);
+            stepBox.position.set(sx, sh * 0.5, 0);
+            stepBox.userData.noCastShadow = true;
+            entryStepsGroup.add(stepBox);
+        }
+        [-3.25, 3.25].forEach(cz => {
+            const cheek = new THREE.Mesh(new THREE.BoxGeometry(5.6, 1.85, 0.28), M.facadeLight);
+            cheek.position.set(52.6, 0.925, cz);
+            const hRail = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.07, 0.08), M.stainlessSteel);
+            hRail.position.set(52.6, 1.80, cz);
+            hRail.rotation.z = -Math.atan2(1.80, 5.2);
+            entryStepsGroup.add(cheek, hRail);
+        });
+        group.add(entryStepsGroup);
+
         // --- SUB-FACILITY 1: Sliding Security Gatehouse, Boom Barriers & Card Readers ---
         const gateGroup = new THREE.Group();
         gateGroup.name = "SecurityGatehouseCheckpoint";
@@ -6751,19 +7008,23 @@ window.DC36_SCHEDULE = {
         prepare4DWireframeGroup(wallsGroup, M.amberWireframe);
         group.add(wallsGroup);
 
+        const slabL1Hole = { x1: 33.4, x2: 41.2, z1: -8.3, z2: -5.3 };
         const slabL1Group = new THREE.Group();
         slabL1Group.position.set(5, 7.0, 0);
-        const slabL1 = new THREE.Mesh(new THREE.BoxGeometry(89, 0.6, 59), M.concreteSlab);
+        const slabL1 = buildSlabWithCutouts(89, 0.6, 59, 5, 0, M.concreteSlab, [slabL1Hole], "SlabL1");
         slabL1.name = "SlabL1";
         slabL1Group.add(slabL1);
+        addStairwellGuardrail(slabL1Group, 5, 0, 0.30, slabL1Hole, 'east', M);
         prepare4DWireframeGroup(slabL1Group, M.amberWireframe);
         group.add(slabL1Group);
 
+        const slabL2Hole = { x1: 42.6, x2: 48.6, z1: -5.8, z2: -3.0 };
         const slabL2Group = new THREE.Group();
         slabL2Group.position.set(5, 12.3, 0);
-        const slabL2 = new THREE.Mesh(new THREE.BoxGeometry(89, 0.6, 59), M.concreteSlab);
+        const slabL2 = buildSlabWithCutouts(89, 0.6, 59, 5, 0, M.concreteSlab, [slabL2Hole], "SlabL2");
         slabL2.name = "SlabL2";
         slabL2Group.add(slabL2);
+        addStairwellGuardrail(slabL2Group, 5, 0, 0.30, slabL2Hole, 'east', M);
         prepare4DWireframeGroup(slabL2Group, M.amberWireframe);
         group.add(slabL2Group);
 
@@ -6800,7 +7061,8 @@ window.DC36_SCHEDULE = {
         roofAssembly.name = "RoofAssembly";
         roofAssembly.position.set(5, 0, 0);
 
-        const roof = new THREE.Mesh(new THREE.BoxGeometry(90.6, 0.5, 60.6), M.roofTPO);
+        const roofHatchHole = { x1: 42.2, x2: 48.5, z1: -27.5, z2: -24.9 };
+        const roof = buildSlabWithCutouts(90.6, 0.5, 60.6, 5, 0, M.roofTPO, [roofHatchHole], "RoofMembranePlate");
         roof.position.set(0, 18.5, 0);
         roof.name = "RoofMembrane";
         roof.userData.noMerge = true;
@@ -6862,11 +7124,17 @@ window.DC36_SCHEDULE = {
             walkwaysGroup.add(w);
         });
 
-        const stairPenthouse = new THREE.Mesh(new THREE.BoxGeometry(5.5, 2.8, 4.5), M.facadeLight);
-        stairPenthouse.position.set(33, 20.15, -21);
-        const stairDoor = createPersonnelDoor(M);
-        stairDoor.position.set(33, 18.75, -18.7);
-        walkwaysGroup.add(stairPenthouse, stairDoor);
+        // Rooftop Stair Hatch Enclosure (aligned cleanly with Level 2 -> Rooftop steel service stair, open at East landing x=48.5)
+        addStairwellGuardrail(walkwaysGroup, 5, 0, 18.75, { x1: 42.2, x2: 48.5, z1: -27.5, z2: -24.9 }, 'east', M);
+        const stairHoodTop = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.24, 3.2), M.facadeLight);
+        stairHoodTop.position.set(40.4, 21.55, -26.2);
+        const stairHoodN = new THREE.Mesh(new THREE.BoxGeometry(6.8, 2.8, 0.22), M.facadeLight);
+        stairHoodN.position.set(40.4, 20.15, -27.7);
+        const stairHoodW = new THREE.Mesh(new THREE.BoxGeometry(0.22, 2.8, 3.2), M.facadeLight);
+        stairHoodW.position.set(37.1, 20.15, -26.2);
+        const stairHoodS = new THREE.Mesh(new THREE.BoxGeometry(6.8, 2.8, 0.22), M.facadeLight);
+        stairHoodS.position.set(40.4, 20.15, -24.7);
+        walkwaysGroup.add(stairHoodTop, stairHoodN, stairHoodW, stairHoodS);
         roofAssembly.add(walkwaysGroup);
 
         mergeStaticGroupByMaterial(roofAssembly, { xrayControlled: true });
@@ -7030,18 +7298,46 @@ window.DC36_SCHEDULE = {
         lobbyGroup.name = "ExecutiveEntranceLobby";
         lobbyGroup.position.set(50.35, 9.2, 0);
 
-        const curtainGlass = new THREE.Mesh(new THREE.BoxGeometry(0.3, 15.6, 22), M.curtainGlass);
-        curtainGlass.userData.isGlass = true;
-        lobbyGroup.add(curtainGlass);
+        const cgNorth = new THREE.Mesh(new THREE.BoxGeometry(0.3, 15.6, 8.6), M.curtainGlass);
+        cgNorth.position.set(0, 0, -6.7);
+        cgNorth.userData.isGlass = true;
+        const cgSouth = new THREE.Mesh(new THREE.BoxGeometry(0.3, 15.6, 8.6), M.curtainGlass);
+        cgSouth.position.set(0, 0, 6.7);
+        cgSouth.userData.isGlass = true;
+        // Upper glazed transom above East Entrance open sliding portal (y = 4.55 .. 17.0)
+        const cgTop = new THREE.Mesh(new THREE.BoxGeometry(0.3, 12.45, 4.8), M.curtainGlass);
+        cgTop.position.set(0, 1.575, 0);
+        cgTop.userData.isGlass = true;
+        // Parted sliding entrance portal frame pillars
+        [-2.35, 2.35].forEach(pz => {
+            const portalStile = new THREE.Mesh(new THREE.BoxGeometry(0.42, 3.0, 0.16), M.stainlessSteel);
+            portalStile.position.set(0.05, -6.1, pz);
+            lobbyGroup.add(portalStile);
+        });
+        lobbyGroup.add(cgNorth, cgSouth, cgTop);
         for (let mz = -10; mz <= 10; mz += 2.0) {
-            const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 15.8, 0.08), M.copingCap);
-            mullion.position.set(0.05, 0, mz);
-            lobbyGroup.add(mullion);
+            if (Math.abs(mz) < 2.2) {
+                const upperMull = new THREE.Mesh(new THREE.BoxGeometry(0.35, 12.5, 0.08), M.copingCap);
+                upperMull.position.set(0.05, 1.6, mz);
+                lobbyGroup.add(upperMull);
+            } else {
+                const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 15.8, 0.08), M.copingCap);
+                mullion.position.set(0.05, 0, mz);
+                lobbyGroup.add(mullion);
+            }
         }
         for (let my = -6.0; my <= 6.0; my += 3.0) {
-            const hMullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.08, 22), M.copingCap);
-            hMullion.position.set(0.05, my, 0);
-            lobbyGroup.add(hMullion);
+            if (my === -6.0) {
+                [-6.7, 6.7].forEach(wz => {
+                    const hSeg = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.08, 8.6), M.copingCap);
+                    hSeg.position.set(0.05, my, wz);
+                    lobbyGroup.add(hSeg);
+                });
+            } else {
+                const hMullion = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.08, 22), M.copingCap);
+                hMullion.position.set(0.05, my, 0);
+                lobbyGroup.add(hMullion);
+            }
         }
         const entranceCanopy = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.3, 10), M.copingCap);
         entranceCanopy.position.set(1.8, -4.6, 0);
@@ -7995,8 +8291,31 @@ window.DC36_SCHEDULE = {
             officeFurniture.add(wsN, wsS);
         });
 
-        // Level 2 Suspended Acoustic Drop Ceiling across 10% East NOC + Security Lobby + SE Engineering Suite
-        buildOfficeCeilingBay(8.1, 57.6, 45.4, 0.0, l2CeilY, 17.75, officeCeilingsL2, M);
+        // Level 2 -> Rooftop Steel Service Staircase (y = 13.15 -> 18.75 at x: 42.6..48.0, z: -26.2)
+        const roofStair = new THREE.Group();
+        roofStair.name = "Level2ToRooftopStaircase";
+        const rSteps = 18;
+        for (let s = 0; s < rSteps; s++) {
+            const t = (s + 0.5) / rSteps;
+            const tread = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.08, 1.9), M.steelDunnage);
+            tread.position.set(42.6 + t * 5.4, l2Y + t * (18.75 - l2Y), -26.2);
+            roofStair.add(tread);
+        }
+        const rStrLen = Math.hypot(5.6, 18.75 - l2Y);
+        const rStrAng = Math.atan2(18.75 - l2Y, 5.6);
+        [-27.2, -25.2].forEach(sz => {
+            const str = new THREE.Mesh(new THREE.BoxGeometry(rStrLen, 0.24, 0.08), M.steelTruss);
+            str.position.set(45.3, (l2Y + 18.75) * 0.5 - 0.12, sz);
+            str.rotation.z = rStrAng;
+            const rail = new THREE.Mesh(new THREE.BoxGeometry(rStrLen, 0.07, 0.07), M.k12Yellow);
+            rail.position.set(45.3, (l2Y + 18.75) * 0.5 + 0.92, sz);
+            rail.rotation.z = rStrAng;
+            roofStair.add(str, rail);
+        });
+        officeFurniture.add(roofStair);
+
+        // Level 2 Suspended Acoustic Drop Ceiling across 10% East NOC + Security Lobby (stops south of NE Roof Stair Shaft)
+        buildOfficeCeilingBay(8.1, 53.0, 45.4, 2.3, l2CeilY, 17.75, officeCeilingsL2, M);
 
         // Batch static office meshes by material (zero detail loss) & keep indoor shadows disabled for max FPS
         mergeStaticGroupByMaterial(officeWalls, { noCastShadow: true });
@@ -8386,8 +8705,8 @@ window.DC36_SCHEDULE = {
         groundFitout.add(indCounter);
 
         // Ground Floor Executive Ceilings (_xrayControlled): Atrium Slatted Wood Baffles + T-Bar Ceilings in Wings
-        const atriumBaffleN = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.08, 21.0), M.groundBaffleCeil);
-        atriumBaffleN.position.set(43.8, 5.95, 0);
+        const atriumBaffleN = new THREE.Mesh(new THREE.BoxGeometry(7.8, 0.08, 21.0), M.groundBaffleCeil);
+        atriumBaffleN.position.set(45.4, 5.95, 0);
         const atriumBaffleS = new THREE.Mesh(new THREE.BoxGeometry(14.0, 0.08, 11.5), M.groundBaffleCeil);
         atriumBaffleS.position.set(30.6, 5.95, 4.8);
         groundCeilings.add(atriumBaffleN, atriumBaffleS);
@@ -8744,8 +9063,8 @@ window.DC36_SCHEDULE = {
         // Main White-Space 600x600mm Floor Deck (54m x 58.6m at y = 13.15)
         const rfWhiteSpace = new THREE.Mesh(new THREE.BoxGeometry(53.8, 0.08, 58.6), M.raisedFloor);
         rfWhiteSpace.position.set(-4.0, rfY - 0.04, 0);
-        // NOC Lobby Raised Floor Deck
-        const rfNoc = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.08, 58.6), M.raisedFloor);
+        // NOC Lobby Raised Floor Deck with AtriumFeatureStaircase Opening (x: 42.6..48.6, z: -5.8..-3.0)
+        const rfNoc = buildSlabWithCutouts(8.4, 0.08, 58.6, 45.2, 0, M.raisedFloor, [{ x1: 42.6, x2: 48.6, z1: -5.8, z2: -3.0 }], "RaisedFloorNOC");
         rfNoc.position.set(45.2, rfY - 0.04, 0);
         raisedFloorGroup.add(rfWhiteSpace, rfNoc);
 
@@ -10814,18 +11133,20 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v26 High-FPS Direct MSAA Day + Cached Shadows + Consolidated Lights) ===
-// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.025)
-// High-FPS Architecture: Cached PCFSoftShadowMap (1024), Day-Mode Direct MSAA Render, Streamlined Lighting & GPU Instancing
+    // === MODULE: app.js (v29 Orbit + Hand Pan + GTA V 3rd-Person Stair-Climbing Mode) ===
+// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.029)
+// Features: Orbit / Hand-Pan / GTA V 3rd-Person Stair-Climbing Mode + High-FPS Direct MSAA Day Render + Cached Shadows
 
 (function() {
     let scene, camera, renderer, controls, composer, bloomPass, fxaaPass;
     let particles, modelsRef;
-    let raycaster = new THREE.Raycaster();
     let mouse = new THREE.Vector2();
     let dirLight, hemiLight, rimLight, nightFloodlights = [], interiorHallLights = [];
     let currentLightingMode = 'day';
     let isBlackoutActive = false;
+
+    // Navigation Mode: 'orbit' | 'hand' | 'tpv'
+    let navMode = 'orbit';
 
     // Cinematic Drone Tour Engine
     let isDroneTourActive = false;
@@ -10833,10 +11154,36 @@ window.DC36_SCHEDULE = {
     let droneLookSpline = null;
     let droneTourProgress = 0;
 
-    // First-Person Walkthrough (FPV)
-    let isFPVActive = false;
-    let fpvKeys = { forward: false, backward: false, left: false, right: false };
-    let fpvDirection = new THREE.Vector3();
+    // GTA V Style 3rd-Person / Optional 1st-Person Character Controller
+    let isTPVActive = false;
+    let isTPVFirstPerson = false;
+    let tpvAvatar = null;
+    let tpvShadowDisc = null;
+    let tpvKeys = { forward: false, backward: false, left: false, right: false, sprint: false, jump: false, rotLeft: false, rotRight: false };
+    let tpvPos = new THREE.Vector3(56.5, 0.0, 0.0);
+    let tpvVelY = 0.0;
+    let tpvGrounded = true;
+    let tpvCharYaw = -Math.PI / 2; // Facing West toward East Executive Entrance
+    let tpvCamYaw = Math.PI / 2;   // Orbit yaw behind character (cam at +X looking -X)
+    let tpvCamPitch = 0.24;        // Slight downward chase angle
+    let tpvCamDist = 4.2;
+    let tpvCamPivotY = 1.48;
+    let tpvStridePhase = 0;
+    let tpvSpeed = 0;
+    let tpvIsDraggingLook = false;
+    let tpvDragLastX = 0;
+    let tpvDragLastY = 0;
+    let tpvHandDragging = false;
+    let tpvLandDip = 0;
+    let tpvSnapCamera = false;
+
+    const TPV_FLOOR_PRESETS = {
+        ext:  { pos: [57.5, 0.0, 0.0],    yaw: -Math.PI / 2,      camYaw: Math.PI / 2,  label: 'SITE EXTERIOR (0.0m)' },
+        l0:   { pos: [44.2, 1.80, -6.8],  yaw: -Math.PI / 2,      camYaw: Math.PI / 2,  label: 'GROUND FLOOR ATRIUM (1.8m)' },
+        l1:   { pos: [45.0, 7.30, 0.2],   yaw: -Math.PI / 2,      camYaw: Math.PI / 2,  label: 'LEVEL 1 OFFICES (7.3m)' },
+        l2:   { pos: [45.0, 13.15, 0.5],  yaw: -Math.PI * 0.72,   camYaw: Math.PI * 0.35, label: 'LEVEL 2 NOC & HALLS (13.15m)' },
+        roof: { pos: [46.5, 18.75, -20.5],yaw: -Math.PI * 0.78,   camYaw: 0.72,         label: 'ROOFTOP CHILLERS (18.75m)' }
+    };
 
     // Diagnostics Profiler
     let lastFpsTime = performance.now();
@@ -10864,7 +11211,7 @@ window.DC36_SCHEDULE = {
         if (!camera) return;
         const aspect = window.innerWidth / Math.max(1, window.innerHeight);
         camera.aspect = aspect;
-        if (!isFPVActive) {
+        if (!isTPVActive) {
             camera.fov = aspect < 1.0 ? Math.min(64, 45 / Math.pow(aspect, 0.30)) : 45;
             if (controls) {
                 controls.maxDistance = aspect < 1.0 ? 560 : 450;
@@ -10903,7 +11250,7 @@ window.DC36_SCHEDULE = {
         scene.fog = new THREE.FogExp2(0xdbeafe, 0.0016);
 
         const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / Math.max(1, window.innerHeight), 0.5, 1200);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / Math.max(1, window.innerHeight), 0.35, 1200);
         camera.position.set(130, 105, 150);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -10925,7 +11272,8 @@ window.DC36_SCHEDULE = {
         controls.enableDamping = true;
         controls.dampingFactor = isCoarsePointer ? 0.08 : 0.05;
         controls.rotateSpeed = isCoarsePointer ? 0.78 : 1.0;
-        controls.panSpeed = isCoarsePointer ? 0.85 : 1.0;
+        controls.panSpeed = isCoarsePointer ? 1.05 : 1.25;
+        controls.screenSpacePanning = false;
         controls.maxPolarAngle = Math.PI / 2 - 0.02;
         controls.minDistance = 2;
         controls.maxDistance = 450;
@@ -10940,6 +11288,8 @@ window.DC36_SCHEDULE = {
         modelsRef = window.DC36_MODELS.buildDatacenterScene(scene);
         particles = window.DC36_PARTICLES.init(scene);
 
+        buildThirdPersonCharacter();
+
         const initState = window.DC36_TIMELINE.init(window.DC36_SCHEDULE, modelsRef, particles);
         if (window.DC36_REQUEST_SHADOW_UPDATE) window.DC36_REQUEST_SHADOW_UPDATE();
         window.DC36_GANTT.init(window.DC36_SCHEDULE, handleScheduleJump);
@@ -10952,15 +11302,390 @@ window.DC36_SCHEDULE = {
 
         setupPostProcessing();
         setupDroneSplines();
-        setupFPVControls();
+        setupTPVControls();
 
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('mousemove', onMouseMove);
 
         setupUI();
+        setNavMode('orbit');
         animate();
     }
 
+    // -------------------------------------------------------------------------
+    // Articulated GTA V Chief Engineer Avatar (~1.76m tall, zero shadow pass cost)
+    // -------------------------------------------------------------------------
+    function buildThirdPersonCharacter() {
+        const root = new THREE.Group();
+        root.name = "GTA_Engineer_Avatar";
+        root.visible = false;
+
+        const mSkin = new THREE.MeshStandardMaterial({ color: 0xf1c27d, roughness: 0.65 });
+        const mShirt = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+        const mVest = new THREE.MeshStandardMaterial({ color: 0xeab308, roughness: 0.55 });
+        const mStripe = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, emissive: 0x94a3b8, emissiveIntensity: 0.25, roughness: 0.3 });
+        const mPants = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.8 });
+        const mBoots = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.7 });
+        const mHelmet = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.3, metalness: 0.1 });
+        const mHelmetStripe = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35 });
+        const mGlasses = new THREE.MeshStandardMaterial({ color: 0x020617, roughness: 0.15, metalness: 0.7 });
+
+        const hipGroup = new THREE.Group();
+        hipGroup.position.set(0, 0.90, 0);
+        root.add(hipGroup);
+
+        // Pelvis & Torso + ANSI Hi-Vis Vest
+        const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.16, 0.22), mPants);
+        pelvis.position.y = -0.02;
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.50, 0.24), mVest);
+        torso.position.y = 0.29;
+        const chestStripe = new THREE.Mesh(new THREE.BoxGeometry(0.415, 0.06, 0.255), mStripe);
+        chestStripe.position.y = 0.25;
+        const shoulders = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.12, 0.22), mShirt);
+        shoulders.position.y = 0.49;
+        hipGroup.add(pelvis, torso, chestStripe, shoulders);
+
+        // Head + Safety Hard Hat + Glasses
+        const headPivot = new THREE.Group();
+        headPivot.position.set(0, 0.58, 0);
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.23, 0.22), mSkin);
+        head.position.y = 0.12;
+        const glasses = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.05, 0.04), mGlasses);
+        glasses.position.set(0, 0.14, 0.11);
+        const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.145, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.58), mHelmet);
+        helmet.position.y = 0.19;
+        const brim = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.025, 0.16), mHelmet);
+        brim.position.set(0, 0.20, 0.08);
+        const crest = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.24), mHelmetStripe);
+        crest.position.set(0, 0.31, 0);
+        headPivot.add(head, glasses, helmet, brim, crest);
+        hipGroup.add(headPivot);
+
+        // Arms (Shoulder Pivots)
+        function makeArm(sideSign) {
+            const pivot = new THREE.Group();
+            pivot.position.set(sideSign * 0.29, 0.49, 0);
+            const upper = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.28, 0.11), mShirt);
+            upper.position.y = -0.13;
+            const fore = new THREE.Mesh(new THREE.BoxGeometry(0.095, 0.26, 0.095), mSkin);
+            fore.position.y = -0.39;
+            pivot.add(upper, fore);
+            hipGroup.add(pivot);
+            return pivot;
+        }
+        const armL = makeArm(-1);
+        const armR = makeArm(1);
+
+        // Articulated Legs (Hip + Knee + Safety Boot)
+        function makeLeg(sideSign) {
+            const hip = new THREE.Group();
+            hip.position.set(sideSign * 0.115, -0.05, 0);
+            const thigh = new THREE.Mesh(new THREE.BoxGeometry(0.145, 0.42, 0.155), mPants);
+            thigh.position.y = -0.20;
+
+            const knee = new THREE.Group();
+            knee.position.set(0, -0.42, 0);
+            const shin = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.36, 0.14), mPants);
+            shin.position.y = -0.18;
+            const boot = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.11, 0.24), mBoots);
+            boot.position.set(0, -0.375, 0.045);
+            knee.add(shin, boot);
+            hip.add(thigh, knee);
+            hipGroup.add(hip);
+            return { hip, knee };
+        }
+        const legL = makeLeg(-1);
+        const legR = makeLeg(1);
+
+        // Soft ambient contact shadow disc (zero extra directional shadow draw)
+        const shadowGeo = new THREE.CircleGeometry(0.42, 16);
+        const shadowMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: 0.32, depthWrite: false });
+        const shadowDisc = new THREE.Mesh(shadowGeo, shadowMat);
+        shadowDisc.rotation.x = -Math.PI / 2;
+        shadowDisc.visible = false;
+        shadowDisc.userData.noShadow = true;
+
+        root.traverse(c => {
+            if (c.isMesh) {
+                c.castShadow = false;
+                c.receiveShadow = false;
+                c.userData.noShadow = true;
+            }
+        });
+
+        scene.add(root);
+        scene.add(shadowDisc);
+        tpvShadowDisc = shadowDisc;
+
+        tpvAvatar = {
+            root, hipGroup, torso, headPivot, armL, armR, legL, legR
+        };
+    }
+
+    // -------------------------------------------------------------------------
+    // Deterministic Continuous Multi-Floor & Stair-Climbing Solver
+    // -------------------------------------------------------------------------
+    function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+    const STAIR_FLIGHTS = [
+        // 1. East Entrance Exterior Steps (0.00 -> 1.80)
+        {
+            name: 'EastEntrySteps',
+            xMin: 49.9, xMax: 55.4, zMin: -3.15, zMax: 3.15,
+            yMin: -0.4, yMax: 2.35,
+            yAt: (x) => clamp((55.2 - x) / 5.2, 0, 1) * 1.80,
+            zLockLo: -2.85, zLockHi: 2.85
+        },
+        // 2. Ground Floor -> Level 1 Monumental Atrium Stair (1.80 -> 7.30)
+        {
+            name: 'GroundToL1Stair',
+            xMin: 33.4, xMax: 41.2, zMin: -8.1, zMax: -5.5,
+            yMin: 1.4, yMax: 7.8,
+            yAt: (x) => 1.80 + clamp((x - 33.8) / 6.8, 0, 1) * (7.30 - 1.80),
+            zLockLo: -7.75, zLockHi: -5.85
+        },
+        // 3. Level 1 -> Level 2 Atrium Feature Stair (7.30 -> 13.15)
+        {
+            name: 'L1ToL2Stair',
+            xMin: 42.6, xMax: 48.6, zMin: -5.6, zMax: -3.2,
+            yMin: 6.9, yMax: 13.65,
+            yAt: (x) => 7.30 + clamp((x - 43.0) / 5.2, 0, 1) * (13.15 - 7.30),
+            zLockLo: -5.25, zLockHi: -3.55
+        },
+        // 4. Level 2 -> Rooftop Steel Service Stair (13.15 -> 18.75)
+        {
+            name: 'L2ToRoofStair',
+            xMin: 42.3, xMax: 48.4, zMin: -27.2, zMax: -25.1,
+            yMin: 12.6, yMax: 19.25,
+            yAt: (x) => 13.15 + clamp((x - 42.6) / 5.4, 0, 1) * (18.75 - 13.15),
+            zLockLo: -26.95, zLockHi: -25.45
+        }
+    ];
+
+    function inRect(x, z, x1, x2, z1, z2) {
+        return x >= x1 && x <= x2 && z >= z1 && z <= z2;
+    }
+
+    function sampleFloorElevation(x, z, curY) {
+        // 1. Active stair flight check: match ramp near player's vertical level
+        for (let i = 0; i < STAIR_FLIGHTS.length; i++) {
+            const st = STAIR_FLIGHTS[i];
+            if (x >= st.xMin && x <= st.xMax && z >= st.zMin && z <= st.zMax) {
+                const ry = st.yAt(x);
+                if (curY >= st.yMin && curY <= st.yMax && Math.abs(ry - curY) <= 1.25) {
+                    return { y: ry, onStair: st };
+                }
+            }
+        }
+
+        // 2. Discrete floor slabs reachable from curY + 0.68 step tolerance
+        let bestY = 0.0;
+        const maxReach = curY + 0.68;
+
+        // Ground floor (1.80) inside building footprint
+        if (1.80 <= maxReach && inRect(x, z, -40.0, 50.0, -30.0, 30.0)) {
+            bestY = Math.max(bestY, 1.80);
+        }
+        // Level 1 Slab (7.30), excluding Ground->L1 stairwell hole
+        if (7.30 <= maxReach && inRect(x, z, -39.5, 49.5, -29.5, 29.5)) {
+            if (!inRect(x, z, 33.4, 41.2, -8.3, -5.3)) {
+                bestY = Math.max(bestY, 7.30);
+            }
+        }
+        // Level 2 Plant Slab (12.60)
+        if (12.60 <= maxReach && inRect(x, z, -39.5, 49.5, -29.5, 29.5)) {
+            if (!inRect(x, z, 42.6, 48.6, -5.8, -3.0)) {
+                bestY = Math.max(bestY, 12.60);
+            }
+        }
+        // Level 2 Raised Floor White Space & NOC (13.15), excluding L1->L2 stair hole
+        if (13.15 <= maxReach && inRect(x, z, -31.0, 49.5, -29.5, 29.5)) {
+            if (!inRect(x, z, 42.6, 48.6, -5.8, -3.0)) {
+                bestY = Math.max(bestY, 13.15);
+            }
+        }
+        // Rooftop Deck (18.75), excluding L2->Roof hatch hole
+        if (18.75 <= maxReach && inRect(x, z, -40.2, 50.2, -30.2, 30.2)) {
+            if (!inRect(x, z, 42.2, 48.3, -27.5, -24.9)) {
+                bestY = Math.max(bestY, 18.75);
+            }
+        }
+
+        return { y: bestY, onStair: null };
+    }
+
+    function pushOutOfAABB(px, pz, r, x1, x2, z1, z2) {
+        const cx = clamp(px, x1, x2);
+        const cz = clamp(pz, z1, z2);
+        const dx = px - cx;
+        const dz = pz - cz;
+        const distSq = dx * dx + dz * dz;
+        if (distSq >= r * r) return [px, pz];
+        // Inside AABB or overlapping corner: resolve along minimum axis
+        const penLeft = Math.abs(px - x1);
+        const penRight = Math.abs(x2 - px);
+        const penTop = Math.abs(pz - z1);
+        const penBot = Math.abs(z2 - pz);
+        if (px > x1 && px < x2 && pz > z1 && pz < z2) {
+            const minPen = Math.min(penLeft, penRight, penTop, penBot);
+            if (minPen === penLeft) return [x1 - r, pz];
+            if (minPen === penRight) return [x2 + r, pz];
+            if (minPen === penTop) return [px, z1 - r];
+            return [px, z2 + r];
+        }
+        const dist = Math.sqrt(distSq) || 0.0001;
+        const overlap = r - dist;
+        return [px + (dx / dist) * overlap, pz + (dz / dist) * overlap];
+    }
+
+    function resolveTPVCollisions(x, z, y, activeStair) {
+        const r = 0.36;
+        // Clamp campus fence bounds
+        x = clamp(x, -108.0, 108.0);
+        z = clamp(z, -78.0, 78.0);
+
+        // Lock inside stairwell cheeks when mid-flight
+        if (activeStair && activeStair.zLockLo !== undefined && y > 0.25) {
+            const nearLanding = (y < 1.95 && activeStair.name === 'EastEntrySteps') ||
+                (y >= 1.95 && activeStair.name !== 'EastEntrySteps');
+            if (nearLanding) {
+                z = clamp(z, activeStair.zLockLo, activeStair.zLockHi);
+            }
+        }
+
+        // Exterior Facade Enclosures (when below roof height 18.3m):
+        // Keep clear open portal at East Executive Entrance (x ~ 50.2, z: -2.1 .. +2.1, y < 4.5)
+        if (y < 18.2 && y > 0.4) {
+            const inBuilding = (x < 50.0);
+            // South Wall (z = +30.2), North Wall (z = -30.2), West Wall (x = -40.2)
+            [x, z] = pushOutOfAABB(x, z, r, -40.6, -39.8, -30.4, 30.4);
+            [x, z] = pushOutOfAABB(x, z, r, -40.4, 50.5, -30.6, -29.8);
+            [x, z] = pushOutOfAABB(x, z, r, -40.4, 50.5, 29.8, 30.6);
+
+            // East Facade Wall segments at x = 49.8 .. 50.5 leaving central portal z: -2.1..+2.1 open on L0
+            const portalOpen = (y < 4.5);
+            if (portalOpen) {
+                [x, z] = pushOutOfAABB(x, z, r, 49.8, 50.6, -30.4, -2.05);
+                [x, z] = pushOutOfAABB(x, z, r, 49.8, 50.6, 2.05, 30.4);
+            } else if (!inBuilding || x > 49.0) {
+                // On Level 1 & Level 2, East glazing is solid!
+                if (x > 49.45 && x < 51.0) x = 49.45;
+            }
+        } else if (y <= 0.4) {
+            // Outside site: block walking straight through facade walls except up East Entry Steps (z: -3.2..+3.2)
+            [x, z] = pushOutOfAABB(x, z, r, -40.6, 50.4, -30.6, -3.25);
+            [x, z] = pushOutOfAABB(x, z, r, -40.6, 50.4, 3.25, 30.6);
+            if (x > -40.6 && x < 49.8 && z > -30.6 && z < 30.6) x = 50.5;
+        }
+
+        // Level 1 Glass Balustrade around L0->L1 stairwell (hole: 33.4..41.2, z: -8.3..-5.3; open East x=41.2)
+        if (y >= 6.9 && y <= 8.5 && !activeStair) {
+            [x, z] = pushOutOfAABB(x, z, r, 33.3, 41.2, -8.38, -8.22);
+            [x, z] = pushOutOfAABB(x, z, r, 33.3, 41.2, -5.38, -5.22);
+            [x, z] = pushOutOfAABB(x, z, r, 33.32, 33.48, -8.35, -5.25);
+        }
+
+        // Level 2 Glass Balustrade around L1->L2 stairwell (hole: 42.6..48.6, z: -5.8..-3.0; open East x=48.6)
+        if (y >= 12.6 && y <= 14.5 && !activeStair) {
+            [x, z] = pushOutOfAABB(x, z, r, 42.5, 48.6, -5.88, -5.72);
+            [x, z] = pushOutOfAABB(x, z, r, 42.5, 48.6, -3.08, -2.92);
+            [x, z] = pushOutOfAABB(x, z, r, 42.52, 42.68, -5.85, -2.95);
+        }
+
+        // Rooftop Parapet Safety Bounds + Hatch Balustrades (y >= 18.3)
+        if (y >= 18.3) {
+            x = clamp(x, -39.5, 49.5);
+            z = clamp(z, -29.5, 29.5);
+            if (!activeStair) {
+                [x, z] = pushOutOfAABB(x, z, r, 42.1, 48.5, -27.6, -27.4);
+                [x, z] = pushOutOfAABB(x, z, r, 42.1, 48.5, -25.0, -24.8);
+                [x, z] = pushOutOfAABB(x, z, r, 42.1, 42.3, -27.6, -24.8);
+            }
+        }
+
+        return [x, z];
+    }
+
+    function getFloorLabel(y) {
+        if (isMobileViewport()) {
+            if (y >= 18.2) return 'ROOF 18.8m';
+            if (y >= 12.2) return 'L2 13.2m';
+            if (y >= 6.8) return 'L1 7.3m';
+            if (y >= 1.2) return 'L0 1.8m';
+            return 'EXT 0.0m';
+        }
+        if (y >= 18.2) return 'ROOFTOP PLANT (18.75m)';
+        if (y >= 12.2) return 'LEVEL 2 NOC & HALLS (13.15m)';
+        if (y >= 6.8) return 'LEVEL 1 OFFICES (7.30m)';
+        if (y >= 1.2) return 'GROUND ATRIUM (1.80m)';
+        return 'EXTERIOR (0.0m)';
+    }
+
+    // Expose programmatic test & telemetry hook for QA verification
+    window.DC36_NAV = {
+        getMode: () => navMode,
+        setMode: (m) => setNavMode(m),
+        getOrbitTarget: () => controls ? {
+            x: +controls.target.x.toFixed(2),
+            y: +controls.target.y.toFixed(2),
+            z: +controls.target.z.toFixed(2)
+        } : null,
+        getTPVState: () => ({
+            active: isTPVActive,
+            x: +tpvPos.x.toFixed(2),
+            y: +tpvPos.y.toFixed(2),
+            z: +tpvPos.z.toFixed(2),
+            camYaw: +tpvCamYaw.toFixed(3),
+            camX: +(camera ? camera.position.x.toFixed(2) : 0),
+            camY: +(camera ? camera.position.y.toFixed(2) : 0),
+            camZ: +(camera ? camera.position.z.toFixed(2) : 0),
+            floor: getFloorLabel(tpvPos.y)
+        }),
+        setPos: (x, y, z, yaw, camYaw) => {
+            tpvPos.set(x, y, z);
+            tpvVelY = 0;
+            tpvGrounded = true;
+            if (yaw !== undefined) tpvCharYaw = yaw;
+            if (camYaw !== undefined) tpvCamYaw = camYaw;
+            tpvCamPivotY = y + 1.48;
+            tpvSnapCamera = true;
+            updateTPVMotion(0.016);
+            updateTPVHUDFloor();
+        },
+        teleportFloor: (key) => teleportTPVFloor(key)
+    };
+
+    function teleportTPVFloor(key) {
+        const p = TPV_FLOOR_PRESETS[key];
+        if (!p) return;
+        tpvPos.set(p.pos[0], p.pos[1], p.pos[2]);
+        tpvVelY = 0;
+        tpvGrounded = true;
+        tpvCharYaw = p.yaw;
+        tpvCamYaw = p.camYaw;
+        tpvCamPitch = 0.22;
+        tpvCamPivotY = tpvPos.y + 1.48;
+        tpvSnapCamera = true;
+        updateTPVMotion(0.016);
+        document.querySelectorAll('.tpv-floor-btn').forEach(b => {
+            b.classList.toggle('active', b.getAttribute('data-floor') === key);
+        });
+        updateTPVHUDFloor();
+    }
+
+    function updateTPVHUDFloor() {
+        const badge = document.getElementById('tpv-floor-badge');
+        if (badge) badge.innerText = getFloorLabel(tpvPos.y);
+        const y = tpvPos.y;
+        const activeKey = y >= 18.2 ? 'roof' : y >= 12.2 ? 'l2' : y >= 6.8 ? 'l1' : y >= 1.2 ? 'l0' : 'ext';
+        document.querySelectorAll('.tpv-floor-btn').forEach(b => {
+            b.classList.toggle('active', b.getAttribute('data-floor') === activeKey);
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Sky & Lighting
+    // -------------------------------------------------------------------------
     let skyMesh = null;
     function updateSkyGradient(topColor, bottomColor) {
         try {
@@ -11027,7 +11752,6 @@ window.DC36_SCHEDULE = {
             nightFloodlights.push(flood);
         });
 
-        // 3 broad zone PointLights (replacing 9 overlapping point lights for >2.5x faster PBR fragment shading)
         const lightHall = new THREE.PointLight(0xe0f2fe, 1.55, 95, 1.5);
         lightHall.position.set(-4, 17.0, 0);
         const lightOfficeE = new THREE.PointLight(0xfff7ed, 1.55, 82, 1.5);
@@ -11150,6 +11874,7 @@ window.DC36_SCHEDULE = {
             btn.classList.toggle('audio-active', isDroneTourActive);
         }
         if (isDroneTourActive) {
+            if (isTPVActive) setNavMode('orbit');
             controls.enabled = false;
             droneTourProgress = 0;
         } else {
@@ -11158,26 +11883,194 @@ window.DC36_SCHEDULE = {
         }
     }
 
-    function setupFPVControls() {
+    // -------------------------------------------------------------------------
+    // Unified Navigation Mode Controller: 'orbit' | 'hand' | 'tpv'
+    // -------------------------------------------------------------------------
+    function syncNavModeUI() {
+        const pillMap = {
+            orbit: document.getElementById('nav-mode-orbit'),
+            hand: document.getElementById('nav-mode-hand'),
+            tpv: document.getElementById('nav-mode-tpv')
+        };
+        Object.keys(pillMap).forEach(k => {
+            if (pillMap[k]) pillMap[k].classList.toggle('active', navMode === k);
+        });
+
+        const handBtn = document.getElementById('btn-hand-mode');
+        if (handBtn) handBtn.classList.toggle('audio-active', navMode === 'hand');
+
+        const fpvBtn = document.getElementById('btn-fpv');
+        if (fpvBtn) {
+            fpvBtn.innerHTML = navMode === 'tpv' ? '<i class="fas fa-street-view"></i> Exit 3rd Person' : '<i class="fas fa-street-view"></i> 3rd Person (GTA)';
+            fpvBtn.classList.toggle('audio-active', navMode === 'tpv');
+        }
+        const mobileBtn = document.getElementById('btn-mobile-fpv');
+        if (mobileBtn) mobileBtn.classList.toggle('cam-active', navMode === 'tpv');
+
+        const crosshair = document.getElementById('fpv-crosshair');
+        if (crosshair) crosshair.style.display = (navMode === 'tpv' && isTPVFirstPerson) ? 'block' : 'none';
+
+        document.body.classList.toggle('fpv-active', navMode === 'tpv');
+        document.body.classList.toggle('hand-active', navMode === 'hand');
+    }
+
+    function setNavMode(mode) {
+        if (mode !== 'orbit' && mode !== 'hand' && mode !== 'tpv') mode = 'orbit';
+        const prevMode = navMode;
+        navMode = mode;
+
+        if (isDroneTourActive && mode !== 'orbit') {
+            isDroneTourActive = false;
+            const dbtn = document.getElementById('btn-drone-tour');
+            if (dbtn) {
+                dbtn.innerHTML = '<i class="fas fa-video"></i> Drone Tour';
+                dbtn.classList.remove('audio-active');
+            }
+        }
+
+        if (mode === 'tpv') {
+            isTPVActive = true;
+            isTPVFirstPerson = false;
+            if (camAnimId !== null) { cancelAnimationFrame(camAnimId); camAnimId = null; }
+            controls.enabled = false;
+            if (tpvAvatar) tpvAvatar.root.visible = true;
+            if (tpvShadowDisc) tpvShadowDisc.visible = true;
+
+            camera.fov = 56;
+            camera.updateProjectionMatrix();
+            teleportTPVFloor('ext');
+            renderer.domElement.style.cursor = 'crosshair';
+
+            if (isMobileViewport()) {
+                const right = document.getElementById('right-panel');
+                if (right && !right.classList.contains('panel-collapsed') && window.toggleRightPanel) window.toggleRightPanel();
+            }
+        } else {
+            isTPVActive = false;
+            tpvKeys.forward = tpvKeys.backward = tpvKeys.left = tpvKeys.right = tpvKeys.sprint = tpvKeys.jump = tpvKeys.rotLeft = tpvKeys.rotRight = false;
+            if (tpvAvatar) tpvAvatar.root.visible = false;
+            if (tpvShadowDisc) tpvShadowDisc.visible = false;
+
+            controls.enabled = true;
+            controls.enableDamping = true;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 2;
+            updateResponsiveCamera();
+
+            if (mode === 'hand') {
+                controls.mouseButtons = {
+                    LEFT: THREE.MOUSE.PAN,
+                    MIDDLE: THREE.MOUSE.DOLLY,
+                    RIGHT: THREE.MOUSE.ROTATE
+                };
+                if (typeof THREE.TOUCH !== 'undefined') {
+                    controls.touches = {
+                        ONE: THREE.TOUCH.PAN,
+                        TWO: THREE.TOUCH.DOLLY_ROTATE !== undefined ? THREE.TOUCH.DOLLY_ROTATE : THREE.TOUCH.DOLLY_PAN
+                    };
+                }
+                renderer.domElement.style.cursor = 'grab';
+            } else {
+                controls.mouseButtons = {
+                    LEFT: THREE.MOUSE.ROTATE,
+                    MIDDLE: THREE.MOUSE.DOLLY,
+                    RIGHT: THREE.MOUSE.PAN
+                };
+                if (typeof THREE.TOUCH !== 'undefined') {
+                    controls.touches = {
+                        ONE: THREE.TOUCH.ROTATE,
+                        TWO: THREE.TOUCH.DOLLY_PAN
+                    };
+                }
+                renderer.domElement.style.cursor = 'default';
+            }
+
+            if (prevMode === 'tpv') {
+                switchCamera('campus');
+            }
+        }
+        syncNavModeUI();
+    }
+
+    function setupTPVControls() {
         window.addEventListener('keydown', (e) => {
-            if (!isFPVActive) return;
+            if (!isTPVActive) return;
             switch (e.code) {
-                case 'KeyW': case 'ArrowUp': fpvKeys.forward = true; break;
-                case 'KeyS': case 'ArrowDown': fpvKeys.backward = true; break;
-                case 'KeyA': case 'ArrowLeft': fpvKeys.left = true; break;
-                case 'KeyD': case 'ArrowRight': fpvKeys.right = true; break;
-                case 'Escape': toggleFPVMode(false); break;
+                case 'KeyW': case 'ArrowUp': tpvKeys.forward = true; break;
+                case 'KeyS': case 'ArrowDown': tpvKeys.backward = true; break;
+                case 'KeyA': case 'ArrowLeft': tpvKeys.left = true; break;
+                case 'KeyD': case 'ArrowRight': tpvKeys.right = true; break;
+                case 'KeyQ': tpvKeys.rotLeft = true; break;
+                case 'KeyE': tpvKeys.rotRight = true; break;
+                case 'ShiftLeft': case 'ShiftRight': tpvKeys.sprint = true; break;
+                case 'Space':
+                    e.preventDefault();
+                    if (tpvGrounded) {
+                        tpvVelY = 6.2;
+                        tpvGrounded = false;
+                    }
+                    break;
+                case 'KeyV':
+                    isTPVFirstPerson = !isTPVFirstPerson;
+                    syncNavModeUI();
+                    break;
+                case 'Digit1': teleportTPVFloor('ext'); break;
+                case 'Digit2': teleportTPVFloor('l0'); break;
+                case 'Digit3': teleportTPVFloor('l1'); break;
+                case 'Digit4': teleportTPVFloor('l2'); break;
+                case 'Digit5': teleportTPVFloor('roof'); break;
+                case 'Escape': setNavMode('orbit'); break;
             }
         });
 
         window.addEventListener('keyup', (e) => {
             switch (e.code) {
-                case 'KeyW': case 'ArrowUp': fpvKeys.forward = false; break;
-                case 'KeyS': case 'ArrowDown': fpvKeys.backward = false; break;
-                case 'KeyA': case 'ArrowLeft': fpvKeys.left = false; break;
-                case 'KeyD': case 'ArrowRight': fpvKeys.right = false; break;
+                case 'KeyW': case 'ArrowUp': tpvKeys.forward = false; break;
+                case 'KeyS': case 'ArrowDown': tpvKeys.backward = false; break;
+                case 'KeyA': case 'ArrowLeft': tpvKeys.left = false; break;
+                case 'KeyD': case 'ArrowRight': tpvKeys.right = false; break;
+                case 'KeyQ': tpvKeys.rotLeft = false; break;
+                case 'KeyE': tpvKeys.rotRight = false; break;
+                case 'ShiftLeft': case 'ShiftRight': tpvKeys.sprint = false; break;
             }
         });
+
+        const canvas = renderer.domElement;
+        canvas.addEventListener('pointerdown', (e) => {
+            if (navMode === 'hand') {
+                tpvHandDragging = true;
+                canvas.style.cursor = 'grabbing';
+                return;
+            }
+            if (!isTPVActive) return;
+            tpvIsDraggingLook = true;
+            tpvDragLastX = e.clientX;
+            tpvDragLastY = e.clientY;
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isTPVActive || !tpvIsDraggingLook) return;
+            const dx = e.clientX - tpvDragLastX;
+            const dy = e.clientY - tpvDragLastY;
+            tpvDragLastX = e.clientX;
+            tpvDragLastY = e.clientY;
+            tpvCamYaw -= dx * 0.0055;
+            tpvCamPitch = clamp(tpvCamPitch + dy * 0.0045, -0.45, 0.92);
+        });
+
+        window.addEventListener('pointerup', () => {
+            if (tpvHandDragging && navMode === 'hand') {
+                renderer.domElement.style.cursor = 'grab';
+            }
+            tpvHandDragging = false;
+            tpvIsDraggingLook = false;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            if (!isTPVActive) return;
+            e.preventDefault();
+            tpvCamDist = clamp(tpvCamDist + e.deltaY * 0.004, 1.8, 9.5);
+        }, { passive: false });
 
         [
             ['fpv-btn-fwd', 'forward'],
@@ -11187,89 +12080,254 @@ window.DC36_SCHEDULE = {
         ].forEach(([id, key]) => {
             const el = document.getElementById(id);
             if (!el) return;
-            const start = (ev) => { ev.preventDefault(); ev.stopPropagation(); fpvKeys[key] = true; el.classList.add('pressed'); };
-            const end = (ev) => { if (ev) ev.stopPropagation(); fpvKeys[key] = false; el.classList.remove('pressed'); };
+            const start = (ev) => { ev.preventDefault(); ev.stopPropagation(); tpvKeys[key] = true; el.classList.add('pressed'); };
+            const end = (ev) => { if (ev) ev.stopPropagation(); tpvKeys[key] = false; el.classList.remove('pressed'); };
             el.addEventListener('pointerdown', start);
             el.addEventListener('pointerup', end);
             el.addEventListener('pointercancel', end);
             el.addEventListener('pointerleave', end);
         });
 
+        const jumpPadBtn = document.getElementById('fpv-btn-jump');
+        if (jumpPadBtn) {
+            jumpPadBtn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isTPVActive && tpvGrounded) {
+                    tpvVelY = 6.2;
+                    tpvGrounded = false;
+                }
+            });
+        }
+
+        const sprintPadBtn = document.getElementById('fpv-btn-sprint');
+        if (sprintPadBtn) {
+            sprintPadBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); tpvKeys.sprint = true; sprintPadBtn.classList.add('pressed'); });
+            const endSpr = (e) => { if (e) e.stopPropagation(); tpvKeys.sprint = false; sprintPadBtn.classList.remove('pressed'); };
+            sprintPadBtn.addEventListener('pointerup', endSpr);
+            sprintPadBtn.addEventListener('pointercancel', endSpr);
+            sprintPadBtn.addEventListener('pointerleave', endSpr);
+        }
+
         const mobileFpvExit = document.getElementById('mobile-fpv-exit');
         if (mobileFpvExit) {
             mobileFpvExit.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                toggleFPVMode(false);
+                setNavMode('orbit');
             });
         }
     }
 
-    function toggleFPVMode(forceState) {
-        isFPVActive = (typeof forceState !== 'undefined') ? forceState : !isFPVActive;
-        document.body.classList.toggle('fpv-active', isFPVActive);
-        const btn = document.getElementById('btn-fpv');
-        const mobileBtn = document.getElementById('btn-mobile-fpv');
-        const crosshair = document.getElementById('fpv-crosshair');
-        if (btn) {
-            btn.innerHTML = isFPVActive ? '<i class="fas fa-walking"></i> Exit FPV' : '<i class="fas fa-walking"></i> Data Hall FPV';
-            btn.classList.toggle('audio-active', isFPVActive);
+    function updateTPVMotion(dt) {
+        if (!isTPVActive || !tpvAvatar) return;
+
+        if (tpvKeys.rotLeft) tpvCamYaw += 2.0 * dt;
+        if (tpvKeys.rotRight) tpvCamYaw -= 2.0 * dt;
+
+        // Forward direction in XZ from camera yaw
+        const camForwardX = -Math.sin(tpvCamYaw);
+        const camForwardZ = -Math.cos(tpvCamYaw);
+        const camRightX = Math.cos(tpvCamYaw);
+        const camRightZ = -Math.sin(tpvCamYaw);
+
+        const moveFwd = Number(tpvKeys.forward) - Number(tpvKeys.backward);
+        const moveSide = Number(tpvKeys.right) - Number(tpvKeys.left);
+
+        let vx = camForwardX * moveFwd + camRightX * moveSide;
+        let vz = camForwardZ * moveFwd + camRightZ * moveSide;
+        const mag = Math.hypot(vx, vz);
+        let isMoving = mag > 0.01;
+
+        const maxWalkSpeed = tpvKeys.sprint ? 7.6 : 4.2;
+        if (isMoving) {
+            vx /= mag;
+            vz /= mag;
+            tpvSpeed += (maxWalkSpeed - tpvSpeed) * Math.min(1, 14 * dt);
+
+            // Smooth GTA V character rotation toward movement vector
+            const targetYaw = Math.atan2(vx, vz);
+            let diff = targetYaw - tpvCharYaw;
+            while (diff > Math.PI) diff -= Math.PI * 2;
+            while (diff < -Math.PI) diff += Math.PI * 2;
+            tpvCharYaw += diff * Math.min(1, 12 * dt);
+        } else {
+            tpvSpeed += (0 - tpvSpeed) * Math.min(1, 14 * dt);
         }
-        if (mobileBtn) mobileBtn.classList.toggle('cam-active', isFPVActive);
-        if (crosshair) crosshair.style.display = isFPVActive ? 'block' : 'none';
 
-        if (isFPVActive) {
-            if (isDroneTourActive) toggleDroneTour();
-            setXRayUIState(true);
+        let nextX = tpvPos.x + (isMoving ? vx : Math.sin(tpvCharYaw)) * tpvSpeed * dt;
+        let nextZ = tpvPos.z + (isMoving ? vz : Math.cos(tpvCharYaw)) * tpvSpeed * dt;
 
-            camera.fov = 55;
-            camera.updateProjectionMatrix();
-            camera.position.set(-8, 14.8, -2);
-            controls.target.set(-8, 14.6, -16);
-            controls.minDistance = 0.5;
-            controls.maxDistance = 60;
-            if (isMobileViewport()) {
-                const right = document.getElementById('right-panel');
-                if (right && !right.classList.contains('panel-collapsed')) window.toggleRightPanel();
+        // Pre-sample stair state and resolve collisions
+        const preSample = sampleFloorElevation(nextX, nextZ, tpvPos.y);
+        [nextX, nextZ] = resolveTPVCollisions(nextX, nextZ, tpvPos.y, preSample.onStair);
+        const postSample = sampleFloorElevation(nextX, nextZ, tpvPos.y);
+
+        const floorY = postSample.y;
+        const onStair = postSample.onStair;
+        const dyFloor = floorY - tpvPos.y;
+
+        tpvPos.x = nextX;
+        tpvPos.z = nextZ;
+
+        if (!tpvGrounded) {
+            tpvVelY -= 18.0 * dt;
+            tpvPos.y += tpvVelY * dt;
+            if (tpvPos.y <= floorY) {
+                tpvPos.y = floorY;
+                tpvVelY = 0;
+                tpvGrounded = true;
+                tpvLandDip = 0.08;
             }
         } else {
-            fpvKeys.forward = fpvKeys.backward = fpvKeys.left = fpvKeys.right = false;
-            controls.minDistance = 5;
-            updateResponsiveCamera();
-            switchCamera('campus');
-        }
-    }
-
-    function updateFPVMotion(dt) {
-        if (!isFPVActive) return;
-
-        const moveSpeed = 6.0;
-        fpvDirection.z = Number(fpvKeys.forward) - Number(fpvKeys.backward);
-        fpvDirection.x = Number(fpvKeys.right) - Number(fpvKeys.left);
-        fpvDirection.normalize();
-
-        const forward = new THREE.Vector3();
-        camera.getWorldDirection(forward);
-        forward.y = 0;
-        forward.normalize();
-
-        const side = new THREE.Vector3(-forward.z, 0, forward.x);
-
-        if (fpvKeys.forward || fpvKeys.backward) {
-            camera.position.addScaledVector(forward, fpvDirection.z * moveSpeed * dt);
-            controls.target.addScaledVector(forward, fpvDirection.z * moveSpeed * dt);
-        }
-        if (fpvKeys.left || fpvKeys.right) {
-            camera.position.addScaledVector(side, fpvDirection.x * moveSpeed * dt);
-            controls.target.addScaledVector(side, fpvDirection.x * moveSpeed * dt);
+            // Smooth stair climbing or stepping off onto lower slab
+            if (dyFloor < -0.75 && !onStair) {
+                tpvGrounded = false;
+                tpvVelY = -0.5;
+            } else {
+                tpvPos.y = floorY;
+            }
         }
 
-        camera.position.y = 14.8;
-        controls.target.y = 14.6;
+        // Update avatar transform & procedural gait / stair-climb limbs
+        const climbingFactor = onStair && tpvSpeed > 0.4 ? clamp(Math.abs(dyFloor) / Math.max(0.01, tpvSpeed * dt), 0, 1.5) : 0;
+        const { root, hipGroup, torso, headPivot, armL, armR, legL, legR } = tpvAvatar;
+
+        root.visible = !isTPVFirstPerson;
+        root.position.copy(tpvPos);
+        root.rotation.y = tpvCharYaw;
+
+        if (tpvShadowDisc) {
+            tpvShadowDisc.visible = !isTPVFirstPerson;
+            tpvShadowDisc.position.set(tpvPos.x, floorY + 0.03, tpvPos.z);
+            const hDiff = Math.max(0, tpvPos.y - floorY);
+            const sScale = Math.max(0.5, 1.0 - hDiff * 0.25);
+            tpvShadowDisc.scale.set(sScale, sScale, 1);
+            tpvShadowDisc.material.opacity = Math.max(0.10, 0.34 - hDiff * 0.12);
+        }
+
+        tpvLandDip *= Math.max(0, 1 - 12 * dt);
+
+        if (!tpvGrounded) {
+            // Mid-air jump pose
+            hipGroup.position.y = 0.90;
+            legL.hip.rotation.x = -0.38;
+            legL.knee.rotation.x = 0.72;
+            legR.hip.rotation.x = 0.22;
+            legR.knee.rotation.x = 0.35;
+            armL.rotation.x = -0.65;
+            armR.rotation.x = 0.45;
+            torso.rotation.x = 0.08;
+        } else if (tpvSpeed > 0.35) {
+            const freq = tpvKeys.sprint ? 12.5 : 8.5;
+            tpvStridePhase += dt * freq;
+            const sw = Math.sin(tpvStridePhase);
+            const lift = climbingFactor > 0.15 ? 0.85 : (tpvKeys.sprint ? 0.78 : 0.56);
+
+            hipGroup.position.y = 0.90 + Math.abs(Math.cos(tpvStridePhase)) * 0.04 - tpvLandDip;
+            torso.rotation.x = (tpvKeys.sprint ? 0.14 : 0.06) + climbingFactor * 0.12;
+            headPivot.rotation.x = -torso.rotation.x * 0.6;
+
+            legL.hip.rotation.x = sw * lift;
+            legR.hip.rotation.x = -sw * lift;
+            legL.knee.rotation.x = Math.max(0, -Math.cos(tpvStridePhase) * (0.65 + climbingFactor * 0.55));
+            legR.knee.rotation.x = Math.max(0, Math.cos(tpvStridePhase) * (0.65 + climbingFactor * 0.55));
+
+            armL.rotation.x = -sw * lift * 0.85;
+            armR.rotation.x = sw * lift * 0.85;
+        } else {
+            const breath = Math.sin(performance.now() * 0.0025);
+            hipGroup.position.y = 0.90 + breath * 0.01 - tpvLandDip;
+            torso.rotation.x *= 0.82;
+            headPivot.rotation.x *= 0.82;
+            legL.hip.rotation.x *= 0.82;
+            legR.hip.rotation.x *= 0.82;
+            legL.knee.rotation.x *= 0.82;
+            legR.knee.rotation.x *= 0.82;
+            armL.rotation.x *= 0.82;
+            armR.rotation.x *= 0.82;
+        }
+
+        // Smooth spring-arm vertical tracking (instant snap after teleport)
+        const targetPivotY = tpvPos.y + 1.48;
+        if (tpvSnapCamera) {
+            tpvCamPivotY = targetPivotY;
+        } else {
+            tpvCamPivotY += (targetPivotY - tpvCamPivotY) * Math.min(1, 10.5 * dt);
+        }
+
+        if (isTPVFirstPerson) {
+            const eyeX = tpvPos.x;
+            const eyeY = tpvCamPivotY + 0.15;
+            const eyeZ = tpvPos.z;
+            camera.position.set(eyeX, eyeY, eyeZ);
+            tpvSnapCamera = false;
+            const lookDist = 10.0;
+            const lx = eyeX - Math.sin(tpvCamYaw) * Math.cos(tpvCamPitch) * lookDist;
+            const ly = eyeY - Math.sin(tpvCamPitch) * lookDist;
+            const lz = eyeZ - Math.cos(tpvCamYaw) * Math.cos(tpvCamPitch) * lookDist;
+            camera.lookAt(lx, ly, lz);
+        } else {
+            // GTA V Over-the-Right-Shoulder Chase Camera + Interior Curtain Containment
+            const isInsideBuilding = (tpvPos.x < 49.4 && tpvPos.y >= 1.2 && tpvPos.y < 18.2);
+            const effDist = isInsideBuilding ? Math.min(tpvCamDist, 3.05) : tpvCamDist;
+            const shoulderSide = isInsideBuilding ? 0.38 : 0.48;
+            const pivotX = tpvPos.x + camRightX * shoulderSide;
+            const pivotZ = tpvPos.z + camRightZ * shoulderSide;
+
+            const horiz = Math.cos(tpvCamPitch) * effDist;
+            const vert = Math.sin(tpvCamPitch) * effDist;
+            const dirX = Math.sin(tpvCamYaw);
+            const dirZ = Math.cos(tpvCamYaw);
+            let desiredCamX = pivotX + dirX * horiz;
+            let desiredCamZ = pivotZ + dirZ * horiz;
+
+            if (isInsideBuilding) {
+                const inEastPortal = (tpvPos.y < 4.5 && Math.abs(pivotZ) < 2.2 && tpvPos.x > 46.0);
+                if (!inEastPortal && desiredCamX > 48.9 && dirX > 0.05) {
+                    const s = Math.max(0.35, (48.9 - pivotX) / (dirX * horiz));
+                    desiredCamX = pivotX + dirX * horiz * s;
+                    desiredCamZ = pivotZ + dirZ * horiz * s;
+                }
+                if (desiredCamX < -38.9 && dirX < -0.05) {
+                    const s = Math.max(0.35, (-38.9 - pivotX) / (dirX * horiz));
+                    desiredCamX = pivotX + dirX * horiz * s;
+                    desiredCamZ = pivotZ + dirZ * horiz * s;
+                }
+                if (desiredCamZ > 28.9 && dirZ > 0.05) {
+                    const s = Math.max(0.35, (28.9 - pivotZ) / (dirZ * horiz));
+                    desiredCamX = pivotX + dirX * horiz * s;
+                    desiredCamZ = pivotZ + dirZ * horiz * s;
+                }
+                if (desiredCamZ < -28.9 && dirZ < -0.05) {
+                    const s = Math.max(0.35, (-28.9 - pivotZ) / (dirZ * horiz));
+                    desiredCamX = pivotX + dirX * horiz * s;
+                    desiredCamZ = pivotZ + dirZ * horiz * s;
+                }
+            }
+
+            let desiredCamY = tpvCamPivotY + vert;
+            const camFloor = sampleFloorElevation(desiredCamX, desiredCamZ, tpvPos.y).y;
+            if (desiredCamY < camFloor + 0.42) desiredCamY = camFloor + 0.42;
+
+            if (tpvSnapCamera) {
+                camera.position.set(desiredCamX, desiredCamY, desiredCamZ);
+                tpvSnapCamera = false;
+            } else {
+                camera.position.lerp(new THREE.Vector3(desiredCamX, desiredCamY, desiredCamZ), Math.min(1, 18 * dt));
+            }
+            const lookAheadX = pivotX - dirX * 2.2;
+            const lookAheadZ = pivotZ - dirZ * 2.2;
+            const lookAheadY = tpvCamPivotY - Math.sin(tpvCamPitch) * 0.65;
+            camera.lookAt(lookAheadX, lookAheadY, lookAheadZ);
+        }
+
+        updateTPVHUDFloor();
     }
 
     function onWindowResize() {
         updateResponsiveCamera();
+        if (isTPVActive) updateTPVHUDFloor();
         renderer.setSize(window.innerWidth, window.innerHeight);
         if (composer) composer.setSize(window.innerWidth, window.innerHeight);
         if (fxaaPass && fxaaPass.material && fxaaPass.material.uniforms['resolution']) {
@@ -11292,6 +12350,7 @@ window.DC36_SCHEDULE = {
         const slider = document.getElementById('timeline-slider');
         if (slider) slider.value = (state.progressPercent * 10);
 
+        if (isTPVActive) setNavMode('orbit');
         if (taskCode.startsWith('A511')) switchCamera('substation');
         else if (taskCode.startsWith('A52')) switchCamera('generators');
         else if (taskCode.startsWith('A531')) switchCamera('rooftop');
@@ -11350,7 +12409,7 @@ window.DC36_SCHEDULE = {
             el.addEventListener('pointerdown', (e) => e.stopPropagation());
         }
 
-        ['top-bar', 'left-panel', 'right-panel', 'bottom-bar', 'bottom-dock', 'mobile-cam-strip', 'mobile-fpv-pad'].forEach(id => {
+        ['top-bar', 'left-panel', 'right-panel', 'bottom-bar', 'bottom-dock', 'mobile-cam-strip', 'mobile-fpv-pad', 'nav-mode-pill', 'tpv-hud'].forEach(id => {
             const p = document.getElementById(id);
             if (p) {
                 p.addEventListener('pointerdown', (e) => e.stopPropagation());
@@ -11396,7 +12455,6 @@ window.DC36_SCHEDULE = {
             });
         }
 
-        // Primary X-Ray / Cutaway button next to P6 Schedule
         if (btnCutawayXray) {
             bindAction(btnCutawayXray, () => {
                 const nextState = !window.DC36_TIMELINE.isCutawayActive();
@@ -11431,8 +12489,27 @@ window.DC36_SCHEDULE = {
         bindAction(blackoutBtn, () => runBlackoutDrill());
         if (lightingSelect) lightingSelect.addEventListener('change', (e) => setLightingMode(e.target.value));
         bindAction(droneTourBtn, () => toggleDroneTour());
-        bindAction(fpvBtn, () => toggleFPVMode());
-        bindAction(document.getElementById('btn-mobile-fpv'), () => toggleFPVMode());
+
+        // Nav Mode Pill & Synchronized Controls
+        bindAction(document.getElementById('nav-mode-orbit'), () => setNavMode('orbit'));
+        bindAction(document.getElementById('nav-mode-hand'), () => setNavMode('hand'));
+        bindAction(document.getElementById('nav-mode-tpv'), () => setNavMode('tpv'));
+        bindAction(document.getElementById('btn-hand-mode'), () => setNavMode(navMode === 'hand' ? 'orbit' : 'hand'));
+        bindAction(fpvBtn, () => setNavMode(navMode === 'tpv' ? 'orbit' : 'tpv'));
+        bindAction(document.getElementById('btn-mobile-fpv'), () => setNavMode(navMode === 'tpv' ? 'orbit' : 'tpv'));
+
+        document.querySelectorAll('.tpv-floor-btn').forEach(btn => {
+            bindAction(btn, () => {
+                if (!isTPVActive) setNavMode('tpv');
+                teleportTPVFloor(btn.getAttribute('data-floor'));
+            });
+        });
+        bindAction(document.getElementById('tpv-exit-btn'), () => setNavMode('orbit'));
+        bindAction(document.getElementById('tpv-cam-toggle'), () => {
+            isTPVFirstPerson = !isTPVFirstPerson;
+            syncNavModeUI();
+        });
+
         document.querySelectorAll('.cam-btn[data-cam="campus"]').forEach(b => b.classList.add('cam-active'));
 
         let isRealityMode = true;
@@ -11471,7 +12548,7 @@ window.DC36_SCHEDULE = {
         document.querySelectorAll('.cam-btn').forEach(btn => {
             bindAction(btn, () => {
                 if (isDroneTourActive) toggleDroneTour();
-                if (isFPVActive) toggleFPVMode(false);
+                if (isTPVActive) setNavMode('orbit');
                 const camKey = btn.getAttribute('data-cam');
                 if (camKey === 'whitespace' && !window.DC36_TIMELINE.isCutawayActive()) {
                     setXRayUIState(true);
@@ -11527,9 +12604,7 @@ window.DC36_SCHEDULE = {
             syncMobileBackdrop();
         }
 
-        if (backdrop) {
-            bindAction(backdrop, closeAllMobileDrawers);
-        }
+        if (backdrop) bindAction(backdrop, closeAllMobileDrawers);
 
         bindAction(btnToggleSchedule, () => {
             if (!bottomDock) return;
@@ -11557,9 +12632,7 @@ window.DC36_SCHEDULE = {
         bindAction(dockCloseBtn, () => {
             if (!bottomDock) return;
             bottomDock.classList.remove('dock-open');
-            if (btnToggleSchedule) {
-                btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
-            }
+            if (btnToggleSchedule) btnToggleSchedule.innerHTML = '<i class="fas fa-calendar-alt"></i> P6 Schedule';
             syncMobileBackdrop();
         });
 
@@ -11574,8 +12647,7 @@ window.DC36_SCHEDULE = {
                 const right = document.getElementById('right-panel');
                 if (right && !right.classList.contains('panel-collapsed')) {
                     right.classList.add('panel-collapsed');
-                    const btnTopTelemetry = document.getElementById('btn-top-telemetry');
-                    if (btnTopTelemetry) btnTopTelemetry.classList.remove('active');
+                    document.getElementById('btn-top-telemetry')?.classList.remove('active');
                 }
                 if (bottomDock && bottomDock.classList.contains('dock-open')) {
                     bottomDock.classList.remove('dock-open');
@@ -11597,8 +12669,7 @@ window.DC36_SCHEDULE = {
                 const left = document.getElementById('left-panel');
                 if (left && !left.classList.contains('panel-collapsed')) {
                     left.classList.add('panel-collapsed');
-                    const btnTopTasks = document.getElementById('btn-top-tasks');
-                    if (btnTopTasks) btnTopTasks.classList.remove('active');
+                    document.getElementById('btn-top-tasks')?.classList.remove('active');
                 }
                 if (bottomDock && bottomDock.classList.contains('dock-open')) {
                     bottomDock.classList.remove('dock-open');
@@ -11741,11 +12812,12 @@ window.DC36_SCHEDULE = {
             camera.position.copy(camPos);
             camera.lookAt(lookPos);
             controls.target.copy(lookPos);
-        } else if (isFPVActive) {
-            updateFPVMotion(dt);
-            controls.update();
+        } else if (isTPVActive) {
+            updateTPVMotion(dt);
         } else {
             controls.update();
+            if (controls.target.y < 0) controls.target.y = 0;
+            if (camera.position.y < 1.2) camera.position.y = 1.2;
         }
 
         if (window.DC36_COOLING_FANS) {
