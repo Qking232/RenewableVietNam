@@ -1485,7 +1485,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
-    <!-- Self-Contained Single-File Application Modules (Zero Placeholders) -->
+    <!-- Self-Contained Single-File Application Modules (Rev.033) -->
     <script>
     // === MODULE: datacenter_schedule.js ===
 // Institutional DC36-T3 Hyperscale Datacenter Schedule Dataset
@@ -5621,8 +5621,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v27 Stairwells + Entry Steps + Draw-Call Batching) ===
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.027: Continuous Stairwells + Entry Steps + Draw-Call Batching)
+    // === MODULE: datacenter_models.js (v31 Merged Facade + Instanced Trusses/Xfmrs Equipment + Merged Substation & Columns) ===
+// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.031: Merged Reality Facade + Instanced Trusses/Transformers + Shared Ceiling/Partition/Fitout Batches)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
 (function() {
@@ -5971,6 +5971,71 @@ window.DC36_SCHEDULE = {
         }
         return rootGroup;
     }
+
+    const _instTmpMat = new THREE.Matrix4();
+    const _instTmpPos = new THREE.Vector3();
+    const _instTmpQuat = new THREE.Quaternion();
+    const _instTmpScale = new THREE.Vector3(1, 1, 1);
+    const _instTmpEuler = new THREE.Euler(0, 0, 0);
+
+    function buildInstancedAssemblyGroup(protoGroup, instanceTransforms, groupName, opts) {
+        mergeStaticGroupByMaterial(protoGroup, opts);
+        const outGroup = new THREE.Group();
+        outGroup.name = groupName || 'InstancedAssembly';
+        const instMeshes = [];
+        const count = instanceTransforms.length;
+
+        protoGroup.traverse(ch => {
+            if (ch.isMesh && !ch.userData.isWireOverlay) {
+                const inst = new THREE.InstancedMesh(ch.geometry, ch.material, count);
+                inst.name = `${groupName || 'Inst'}_${instMeshes.length}`;
+                if (ch.userData.noCastShadow) inst.userData.noCastShadow = true;
+                if (ch.userData.noShadow) inst.userData.noShadow = true;
+                if (ch.userData._xrayControlled || (opts && opts.xrayControlled)) inst.userData._xrayControlled = true;
+                if (ch.userData.isGlass) inst.userData.isGlass = true;
+                if (ch.userData.skipWireframe) inst.userData.skipWireframe = true;
+
+                for (let i = 0; i < count; i++) {
+                    const t = instanceTransforms[i];
+                    _instTmpPos.set(t.x || 0, t.y || 0, t.z || 0);
+                    _instTmpEuler.set(t.rx || 0, t.ry || 0, t.rz || 0);
+                    _instTmpQuat.setFromEuler(_instTmpEuler);
+                    _instTmpScale.set(t.sx !== undefined ? t.sx : 1, t.sy !== undefined ? t.sy : 1, t.sz !== undefined ? t.sz : 1);
+                    _instTmpMat.compose(_instTmpPos, _instTmpQuat, _instTmpScale);
+                    inst.setMatrixAt(i, _instTmpMat);
+                }
+                inst.instanceMatrix.needsUpdate = true;
+                inst.frustumCulled = false;
+                outGroup.add(inst);
+                instMeshes.push(inst);
+            }
+        });
+
+        outGroup.userData._instMeshes = instMeshes;
+        outGroup.userData._baseTransforms = instanceTransforms;
+        return outGroup;
+    }
+
+    window.DC36_MODELS.setInstancedTransform = function(instGroup, idx, x, y, z, sx, sy, sz, rx, ry, rz) {
+        if (!instGroup || !instGroup.userData || !instGroup.userData._instMeshes) return;
+        _instTmpPos.set(x, y, z);
+        _instTmpEuler.set(rx || 0, ry || 0, rz || 0);
+        _instTmpQuat.setFromEuler(_instTmpEuler);
+        _instTmpScale.set(sx !== undefined ? sx : 1, sy !== undefined ? sy : 1, sz !== undefined ? sz : 1);
+        _instTmpMat.compose(_instTmpPos, _instTmpQuat, _instTmpScale);
+        const meshes = instGroup.userData._instMeshes;
+        for (let i = 0; i < meshes.length; i++) {
+            meshes[i].setMatrixAt(idx, _instTmpMat);
+        }
+    };
+
+    window.DC36_MODELS.flushInstancedMatrices = function(instGroup) {
+        if (!instGroup || !instGroup.userData || !instGroup.userData._instMeshes) return;
+        const meshes = instGroup.userData._instMeshes;
+        for (let i = 0; i < meshes.length; i++) {
+            meshes[i].instanceMatrix.needsUpdate = true;
+        }
+    };
 
     // Helper: Deduplicated group-level material prep + optional glowing amber wireframe overlays (#f59e0b, opacity: 0.4)
     function prepare4DWireframeGroup(rootObj, amberWireMat, opts) {
@@ -6471,8 +6536,7 @@ window.DC36_SCHEDULE = {
             const lens = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.25), M.securityLampEmissive);
             lens.position.set(px + dx * 1.8, 8.78, pz + dz * 1.8);
             lens.rotation.y = yaw;
-            lens.userData.noCastShadow = true;
-            group.add(lens);
+                group.add(lens);
         });
         group.add(buildInstanced(new THREE.CylinderGeometry(0.28, 0.34, 0.6, 8), M.concreteCurb, polePlinths, "SecurityPoleBases"));
         group.add(buildInstanced(new THREE.CylinderGeometry(0.08, 0.16, 8.6, 10), M.securityPole, poleShafts, "SecurityPoleShafts"));
@@ -6522,7 +6586,6 @@ window.DC36_SCHEDULE = {
             const sh = ((es + 1) / entryStepCount) * 1.80;
             const stepBox = new THREE.Mesh(new THREE.BoxGeometry(0.62, sh, 6.4), M.concreteCurb);
             stepBox.position.set(sx, sh * 0.5, 0);
-            stepBox.userData.noCastShadow = true;
             entryStepsGroup.add(stepBox);
         }
         [-3.25, 3.25].forEach(cz => {
@@ -6813,12 +6876,7 @@ window.DC36_SCHEDULE = {
         group.add(transmissionGroup);
 
         window.DC36_SECURITY_LIGHTS = [{ material: M.securityLampEmissive }];
-        group.traverse(c => {
-            if (c.isMesh && !c.isInstancedMesh) {
-                const p = c.geometry && c.geometry.parameters;
-                if (p && p.height && p.height <= 0.45) c.userData.noCastShadow = true;
-            }
-        });
+
         mergeStaticGroupByMaterial(group);
 
         return group;
@@ -6920,6 +6978,7 @@ window.DC36_SCHEDULE = {
             plinthB.position.set(-74, 0.25, z);
             genPlinthGroup.add(plinthA, plinthB);
         }
+        mergeStaticGroupByMaterial(genPlinthGroup);
         prepare4DWireframeGroup(genPlinthGroup, M.amberWireframe);
         group.add(genPlinthGroup);
 
@@ -6953,24 +7012,23 @@ window.DC36_SCHEDULE = {
         const cols = 9, rows = 7;
         const startX = -38 + 5, startZ = -26;
         const stepX = 76 / (cols - 1), stepZ = 52 / (rows - 1);
-        const colArray = [];
 
-        // All 63 interior structural bay columns start cleanly above SlabL1 (y = 7.30 -> 17.80) so Ground Floor (Level 0) is 100% column-free
+        const upperColItems = [];
         for (let c = 0; c < cols; c++) {
             for (let r = 0; r < rows; r++) {
-                const h = upperHeight;
                 const startY = 7.3;
-                const baseY = startY + h / 2;
-                const col = new THREE.Mesh(upperColGeo, M.columns);
+                const baseY = startY + upperHeight / 2;
                 const cx = startX + c * stepX;
                 const cz = startZ + r * stepZ;
-                col.position.set(cx, baseY, cz);
-                col.userData.noCastShadow = true;
-                colGrid.add(col);
-                colArray.push({ mesh: col, cx, cz, startY, baseY, height: h });
+                upperColItems.push({ pos: [cx, baseY, cz], cx, cz, startY, baseY, height: upperHeight });
             }
         }
-        // True exterior envelope perimeter columns (y = 1.80 -> 17.80) along slab edges, keeping Atrium glass & dock aprons unobstructed
+        const upperColsInst = buildInstanced(upperColGeo, M.columns, upperColItems, "UpperBayColumnsInst");
+        upperColsInst.userData.noCastShadow = true;
+        upperColsInst.frustumCulled = false;
+        colGrid.add(upperColsInst);
+
+        const extColItems = [];
         const extColPositions = [];
         for (let px = -39.5; px <= 49.5; px += 11.125) {
             extColPositions.push([px, -29.4], [px, 29.4]);
@@ -6978,33 +7036,39 @@ window.DC36_SCHEDULE = {
         [-19.5, 19.5].forEach(pz => extColPositions.push([-39.5, pz], [49.5, pz]));
         [-11.8, 11.8].forEach(pz => extColPositions.push([49.5, pz]));
         extColPositions.forEach(([px, pz]) => {
-            const col = new THREE.Mesh(fullColGeo, M.columns);
             const baseY = 1.8 + fullHeight / 2;
-            col.position.set(px, baseY, pz);
-            colGrid.add(col);
-            colArray.push({ mesh: col, cx: px, cz: pz, startY: 1.8, baseY, height: fullHeight });
+            extColItems.push({ pos: [px, baseY, pz], cx: px, cz: pz, startY: 1.8, baseY, height: fullHeight });
         });
-        // Long-span Transfer Girders in L1 soffit (y = 6.50m) carrying interior L1/L2 columns cleanly above column-free Ground Floor
+        const extColsInst = buildInstanced(fullColGeo, M.columns, extColItems, "PerimeterColumnsInst");
+        extColsInst.frustumCulled = false;
+        colGrid.add(extColsInst);
+
+        const girdersSub = new THREE.Group();
+        girdersSub.name = "TransferGirders";
         for (let r = 1; r < rows - 1; r++) {
             const gz = startZ + r * stepZ;
             const girder = new THREE.Mesh(new THREE.BoxGeometry(76.8, 0.48, 0.72), M.columns);
             girder.position.set(5, 6.46, gz);
             girder.userData.noCastShadow = true;
-            colGrid.add(girder);
+            girdersSub.add(girder);
         }
-        prepare4DWireframeGroup(colGrid, M.amberWireframe);
+        mergeStaticGroupByMaterial(girdersSub, { noCastShadow: true });
+        colGrid.add(girdersSub);
+        prepare4DWireframeGroup(colGrid, M.amberWireframe, { skipWire: true });
         group.add(colGrid);
 
-        // Upper Core Shear Walls (y: 7.3 -> 12.6, keeping Ground Floor unobstructed)
+        // Upper Core Shear Walls (y: 7.3 -> 12.6, merged & anchored at base y = 7.3 for zero-alloc scaling)
         const wallsGroup = new THREE.Group();
+        wallsGroup.position.set(0, 7.3, 0);
         const wallGeo = new THREE.BoxGeometry(1.2, 5.3, 12);
         const wallA = new THREE.Mesh(wallGeo, M.columns);
-        wallA.position.set(-20, 9.95, 0);
+        wallA.position.set(-20, 2.65, 0);
         wallA.userData.noCastShadow = true;
         const wallB = new THREE.Mesh(wallGeo, M.columns);
-        wallB.position.set(22, 9.95, 0);
+        wallB.position.set(22, 2.65, 0);
         wallB.userData.noCastShadow = true;
         wallsGroup.add(wallA, wallB);
+        mergeStaticGroupByMaterial(wallsGroup, { noCastShadow: true });
         prepare4DWireframeGroup(wallsGroup, M.amberWireframe);
         group.add(wallsGroup);
 
@@ -7015,6 +7079,7 @@ window.DC36_SCHEDULE = {
         slabL1.name = "SlabL1";
         slabL1Group.add(slabL1);
         addStairwellGuardrail(slabL1Group, 5, 0, 0.30, slabL1Hole, 'east', M);
+        mergeStaticGroupByMaterial(slabL1Group);
         prepare4DWireframeGroup(slabL1Group, M.amberWireframe);
         group.add(slabL1Group);
 
@@ -7025,17 +7090,21 @@ window.DC36_SCHEDULE = {
         slabL2.name = "SlabL2";
         slabL2Group.add(slabL2);
         addStairwellGuardrail(slabL2Group, 5, 0, 0.30, slabL2Hole, 'east', M);
+        mergeStaticGroupByMaterial(slabL2Group);
         prepare4DWireframeGroup(slabL2Group, M.amberWireframe);
         group.add(slabL2Group);
 
-        group.userData.columns = colArray;
+        group.userData.columns = [];
+        group.userData.colInstances = [
+            { inst: upperColsInst, items: upperColItems, height: upperHeight, startY: 7.3 },
+            { inst: extColsInst, items: extColItems, height: fullHeight, startY: 1.8 }
+        ];
         group.userData.colGrid = colGrid;
         group.userData.wallsGroup = wallsGroup;
         group.userData.slabL1 = slabL1Group;
         group.userData.slabL1Mesh = slabL1;
         group.userData.slabL2 = slabL2Group;
         group.userData.slabL2Mesh = slabL2;
-        group.userData.walls = [wallA, wallB];
         return group;
     }
 
@@ -7046,15 +7115,20 @@ window.DC36_SCHEDULE = {
         group.userData = { phase: 4, tag: "envelope", wbs: "4.3-ENVEL" };
 
         const roofSteel = new THREE.Group();
-        const trussArray = [];
+        const trussItems = [];
         for (let i = 0; i < 9; i++) {
             const x = -38 + 5 + i * (76 / 8);
-            const trussBeam = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.0, 59), M.steelTruss);
-            trussBeam.position.set(x, 18.0, 0);
-            roofSteel.add(trussBeam);
-            trussArray.push({ mesh: trussBeam, x, targetY: 18.0 });
+            trussItems.push({ pos: [x, 18.0, 0], x, targetY: 18.0 });
         }
-        prepare4DWireframeGroup(roofSteel, M.amberWireframe);
+        const roofTrussesInst = buildInstanced(new THREE.BoxGeometry(0.5, 1.0, 59), M.steelTruss, trussItems, "RoofTrussesInst");
+        roofTrussesInst.frustumCulled = false;
+        roofSteel.add(roofTrussesInst);
+        const trussWireBox = new THREE.Mesh(new THREE.BoxGeometry(0.65, 1.15, 59.1), M.amberWireframe);
+        trussWireBox.visible = false;
+        trussWireBox.userData.isWireOverlay = true;
+        trussWireBox.userData.noShadow = true;
+        roofSteel.add(trussWireBox);
+        prepare4DWireframeGroup(roofSteel, M.amberWireframe, { skipWire: true });
         group.add(roofSteel);
 
         const roofAssembly = new THREE.Group();
@@ -7065,6 +7139,7 @@ window.DC36_SCHEDULE = {
         const roof = buildSlabWithCutouts(90.6, 0.5, 60.6, 5, 0, M.roofTPO, [roofHatchHole], "RoofMembranePlate");
         roof.position.set(0, 18.5, 0);
         roof.name = "RoofMembrane";
+        mergeStaticGroupByMaterial(roof, { xrayControlled: true });
         roof.userData.noMerge = true;
         roofAssembly.add(roof);
 
@@ -7170,7 +7245,6 @@ window.DC36_SCHEDULE = {
             southWall.add(door);
         });
         mergeStaticGroupByMaterial(southWall, { xrayControlled: true });
-        prepare4DWireframeGroup(southWall, M.amberWireframe);
         facadeGroup.add(southWall);
 
         // North Facade
@@ -7201,7 +7275,6 @@ window.DC36_SCHEDULE = {
             northWall.add(door);
         });
         mergeStaticGroupByMaterial(northWall, { xrayControlled: true });
-        prepare4DWireframeGroup(northWall, M.amberWireframe);
         facadeGroup.add(northWall);
 
         // West Facade
@@ -7226,7 +7299,6 @@ window.DC36_SCHEDULE = {
             westWall.add(louver);
         });
         mergeStaticGroupByMaterial(westWall, { xrayControlled: true });
-        prepare4DWireframeGroup(westWall, M.amberWireframe);
         facadeGroup.add(westWall);
 
         // East Facade (Glazed Central Entrance Opening z: -11..+11 + Fenestrated North/South Office Wings)
@@ -7279,7 +7351,6 @@ window.DC36_SCHEDULE = {
             }
         });
         mergeStaticGroupByMaterial(eastWall, { xrayControlled: true });
-        prepare4DWireframeGroup(eastWall, M.amberWireframe);
         facadeGroup.add(eastWall);
 
         // Perimeter Bollards (kept opaque for site clarity)
@@ -7345,7 +7416,6 @@ window.DC36_SCHEDULE = {
         brandSign.position.set(3.75, -3.9, 0);
         lobbyGroup.add(entranceCanopy, brandSign);
         mergeStaticGroupByMaterial(lobbyGroup, { xrayControlled: true });
-        prepare4DWireframeGroup(lobbyGroup, M.amberWireframe);
         facadeGroup.add(lobbyGroup);
 
         // Logistics Loading Dock Doors & 40ft Semi-Trailer (West Facade)
@@ -7387,13 +7457,44 @@ window.DC36_SCHEDULE = {
         truckGroup.add(cab, cabWindshield);
         dockGroup.add(truckGroup);
         mergeStaticGroupByMaterial(dockGroup, { xrayControlled: true });
-        prepare4DWireframeGroup(dockGroup, M.amberWireframe);
         facadeGroup.add(dockGroup);
+
+        // Consolidated animated vs resting Facade (34 calls -> ~13 calls at tau_facade >= 1.0)
+        const facadeAnimGroup = new THREE.Group();
+        facadeAnimGroup.name = "FacadeAnimatedWalls";
+        facadeAnimGroup.add(southWall, northWall, westWall, eastWall, lobbyGroup, dockGroup);
+        facadeAnimGroup.visible = false;
+        facadeGroup.add(facadeAnimGroup);
+
+        const facadeMergedGroup = new THREE.Group();
+        facadeMergedGroup.name = "FacadeMergedStatic";
+        facadeGroup.updateMatrixWorld(true);
+        const invFacadeMat = new THREE.Matrix4().copy(facadeGroup.matrixWorld).invert();
+        const relFacadeMat = new THREE.Matrix4();
+        [southWall, northWall, westWall, eastWall, lobbyGroup, dockGroup].forEach(part => {
+            part.updateMatrixWorld(true);
+            part.traverse(c => {
+                if (c.isMesh && !c.userData.isWireOverlay && !c.isInstancedMesh) {
+                    const clone = new THREE.Mesh(c.geometry, c.material);
+                    relFacadeMat.multiplyMatrices(invFacadeMat, c.matrixWorld);
+                    clone.applyMatrix4(relFacadeMat);
+                    if (c.userData.isGlass) clone.userData.isGlass = true;
+                    clone.userData._xrayControlled = true;
+                    facadeMergedGroup.add(clone);
+                }
+            });
+        });
+        mergeStaticGroupByMaterial(facadeMergedGroup, { xrayControlled: true });
+        prepare4DWireframeGroup(facadeMergedGroup, M.amberWireframe, { skipWire: true });
+        [southWall, northWall, westWall, eastWall, lobbyGroup, dockGroup].forEach(part => {
+            prepare4DWireframeGroup(part, M.amberWireframe);
+        });
+        facadeGroup.add(facadeMergedGroup);
 
         group.add(facadeGroup);
 
         // Tag exterior wall/roof/rooftop meshes that fade during X-Ray
-        [roofAssembly, southWall, northWall, westWall, eastWall, lobbyGroup, dockGroup].forEach(part => {
+        [roofAssembly, facadeAnimGroup, facadeMergedGroup].forEach(part => {
             part.traverse(c => {
                 if (c.isMesh && !c.userData.isWireOverlay) {
                     c.userData._xrayControlled = true;
@@ -7401,13 +7502,18 @@ window.DC36_SCHEDULE = {
             });
         });
 
-        group.userData.trusses = trussArray;
+        group.userData.trusses = [];
+        group.userData.roofTrussesInst = roofTrussesInst;
+        group.userData.trussItems = trussItems;
+        group.userData.trussWireBox = trussWireBox;
         group.userData.roofSteel = roofSteel;
         group.userData.roofAssembly = roofAssembly;
         group.userData.roof = roof;
         group.userData.parapet = parapetGroup;
         group.userData.walkways = walkwaysGroup;
         group.userData.facadeGroup = facadeGroup;
+        group.userData.facadeAnimGroup = facadeAnimGroup;
+        group.userData.facadeMergedGroup = facadeMergedGroup;
         group.userData.facade = { south: southWall, north: northWall, west: westWall, east: eastWall, lobby: lobbyGroup, dock: dockGroup };
         return group;
     }
@@ -7444,83 +7550,76 @@ window.DC36_SCHEDULE = {
         }
         subGroup.add(buildInstanced(new THREE.CylinderGeometry(0.14, 0.14, 1.2, 10), M.k12Yellow, subBollards, "SubstationBollards"));
 
-        const transformerArray = [];
-        const transformerPalms = [];
-        [-20, 10].forEach((tx, idx) => {
-            const tr = new THREE.Group();
-            tr.position.set(tx, 0.8, 0);
-            tr.name = `Transformer_${idx + 1}_50MVA`;
+        const trProto = new THREE.Group();
+        const tank = new THREE.Mesh(new THREE.BoxGeometry(5.2, 4.2, 3.8), M.transformerTank);
+        tank.position.y = 2.1;
+        const cabinet = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.0, 1.4), M.switchgear);
+        cabinet.position.set(2.85, 1.6, 0);
+        trProto.add(tank, cabinet);
 
-            const tank = new THREE.Mesh(new THREE.BoxGeometry(5.2, 4.2, 3.8), M.transformerTank);
-            tank.position.y = 2.1;
-            const cabinet = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.0, 1.4), M.switchgear);
-            cabinet.position.set(2.85, 1.6, 0);
-            tr.add(tank, cabinet);
+        [-2.45, 2.45].forEach(rz => {
+            const topManifold = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 4.8, 10), M.radiatorFin);
+            topManifold.rotation.z = Math.PI / 2;
+            topManifold.position.set(0, 3.6, rz);
+            const botManifold = topManifold.clone();
+            botManifold.position.set(0, 0.7, rz);
+            trProto.add(topManifold, botManifold);
 
-            [-2.45, 2.45].forEach(rz => {
-                const topManifold = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 4.8, 10), M.radiatorFin);
-                topManifold.rotation.z = Math.PI / 2;
-                topManifold.position.set(0, 3.6, rz);
-                const botManifold = topManifold.clone();
-                botManifold.position.set(0, 0.7, rz);
-                tr.add(topManifold, botManifold);
-
-                for (let fx = -2.2; fx <= 2.2; fx += 0.36) {
-                    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 3.1, 1.05), M.radiatorFin);
-                    fin.position.set(fx, 2.15, rz);
-                    tr.add(fin);
-                }
-                [-1.2, 1.2].forEach(fanX => {
-                    const fanRing = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.16, 12), M.coolingTowerFan);
-                    fanRing.rotation.x = Math.PI / 2;
-                    fanRing.position.set(fanX, 2.15, rz + (rz > 0 ? 0.58 : -0.58));
-                    tr.add(fanRing);
-                });
+            for (let fx = -2.2; fx <= 2.2; fx += 0.36) {
+                const fin = new THREE.Mesh(new THREE.BoxGeometry(0.06, 3.1, 1.05), M.radiatorFin);
+                fin.position.set(fx, 2.15, rz);
+                trProto.add(fin);
+            }
+            [-1.2, 1.2].forEach(fanX => {
+                const fanRing = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.16, 12), M.coolingTowerFan);
+                fanRing.rotation.x = Math.PI / 2;
+                fanRing.position.set(fanX, 2.15, rz + (rz > 0 ? 0.58 : -0.58));
+                trProto.add(fanRing);
             });
-
-            const palmsForTr = [];
-            [-1.5, 0, 1.5].forEach(bx => {
-                const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.55, 10), M.transformerTank);
-                turret.position.set(bx, 4.45, -0.4);
-                const bushingCore = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.22, 2.1, 10), M.bushingPorcelain);
-                bushingCore.position.set(bx, 5.75, -0.4);
-                tr.add(turret, bushingCore);
-
-                for (let k = 0; k < 6; k++) {
-                    const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.28 - k * 0.015, 0.32 - k * 0.015, 0.06, 12), M.bushingPorcelain);
-                    skirt.position.set(bx, 4.95 + k * 0.28, -0.4);
-                    tr.add(skirt);
-                }
-
-                const palm = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.08), M.copperBus);
-                palm.position.set(bx, 6.9, -0.4);
-                tr.add(palm);
-                palmsForTr.push(new THREE.Vector3(tx + bx, 7.7, -0.4));
-            });
-            transformerPalms.push(palmsForTr);
-
-            const cons = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 4.2, 16), M.transformerTank);
-            cons.rotation.z = Math.PI / 2;
-            cons.position.set(0, 5.5, 1.35);
-            const brk1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.4, 0.12), M.steelDunnage);
-            brk1.position.set(-1.3, 4.8, 1.35);
-            const brk2 = brk1.clone();
-            brk2.position.set(1.3, 4.8, 1.35);
-            const sightGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 8), M.insulatorGlass);
-            sightGlass.position.set(2.15, 5.5, 1.35);
-            const buchholzPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 8), M.exhaustStack);
-            buchholzPipe.rotation.x = Math.PI / 5;
-            buchholzPipe.position.set(0, 4.65, 0.8);
-            const breather = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 8), M.bushingPorcelain);
-            breather.position.set(-2.2, 4.6, 1.35);
-            const ngrBox = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.8, 1.4), M.switchgear);
-            ngrBox.position.set(-3.3, 0.9, 0);
-            tr.add(cons, brk1, brk2, sightGlass, buchholzPipe, breather, ngrBox);
-
-            prepare4DWireframeGroup(tr, M.amberWireframe);
-            subGroup.add(tr);
-            transformerArray.push({ group: tr, tx, targetY: 0.8 });
         });
+
+        [-1.5, 0, 1.5].forEach(bx => {
+            const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 0.55, 10), M.transformerTank);
+            turret.position.set(bx, 4.45, -0.4);
+            const bushingCore = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.22, 2.1, 10), M.bushingPorcelain);
+            bushingCore.position.set(bx, 5.75, -0.4);
+            trProto.add(turret, bushingCore);
+
+            for (let k = 0; k < 6; k++) {
+                const skirt = new THREE.Mesh(new THREE.CylinderGeometry(0.28 - k * 0.015, 0.32 - k * 0.015, 0.06, 12), M.bushingPorcelain);
+                skirt.position.set(bx, 4.95 + k * 0.28, -0.4);
+                trProto.add(skirt);
+            }
+
+            const palm = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.08), M.copperBus);
+            palm.position.set(bx, 6.9, -0.4);
+            trProto.add(palm);
+        });
+
+        const cons = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 4.2, 16), M.transformerTank);
+        cons.rotation.z = Math.PI / 2;
+        cons.position.set(0, 5.5, 1.35);
+        const brk1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.4, 0.12), M.steelDunnage);
+        brk1.position.set(-1.3, 4.8, 1.35);
+        const brk2 = brk1.clone();
+        brk2.position.set(1.3, 4.8, 1.35);
+        const sightGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.9, 8), M.insulatorGlass);
+        sightGlass.position.set(2.15, 5.5, 1.35);
+        const buchholzPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.2, 8), M.exhaustStack);
+        buchholzPipe.rotation.x = Math.PI / 5;
+        buchholzPipe.position.set(0, 4.65, 0.8);
+        const breather = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 8), M.bushingPorcelain);
+        breather.position.set(-2.2, 4.6, 1.35);
+        const ngrBox = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.8, 1.4), M.switchgear);
+        ngrBox.position.set(-3.3, 0.9, 0);
+        trProto.add(cons, brk1, brk2, sightGlass, buchholzPipe, breather, ngrBox);
+
+        const trTransforms = [{ x: -20, y: 0.8, z: 0 }, { x: 10, y: 0.8, z: 0 }];
+        const transformersInstGroup = buildInstancedAssemblyGroup(trProto, trTransforms, "Transformers50MVAInst", {});
+        prepare4DWireframeGroup(transformersInstGroup, M.amberWireframe, { skipWire: true });
+        subGroup.add(transformersInstGroup);
+
+        const transformerPalms = [-20, 10].map(tx => [-1.5, 0, 1.5].map(bx => new THREE.Vector3(tx + bx, 7.7, -0.4)));
 
         const blastWall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 6.5, 7.5), M.blastWall);
         blastWall.position.set(-5, 3.25, 0);
@@ -7584,73 +7683,75 @@ window.DC36_SCHEDULE = {
         prepare4DWireframeGroup(subGroup, M.amberWireframe);
         group.add(subGroup);
 
-        // B. 16x 2.5MVA Standby Diesel Generators
+        // B. 16x 2.5MVA Standby Diesel Generators (GPU Instanced Assembly -> ~11 draw calls vs ~190)
         const genGroup = new THREE.Group();
         genGroup.name = "GeneratorFarm";
         genGroup.position.set(-66, 0, 0);
-        const gensetArray = [];
+
+        const gensetProto = new THREE.Group();
+        const bellyTank = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.75, 2.8), M.fuelTank);
+        bellyTank.position.y = 0.375;
+        const fillCap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.22, 8), M.valveRed);
+        fillCap.position.set(3.2, 0.82, 1.0);
+        const ventPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.4, 8), M.exhaustStack);
+        ventPipe.position.set(3.35, 1.4, -1.1);
+        const container = new THREE.Mesh(new THREE.BoxGeometry(6.8, 2.8, 2.55), M.generatorBody);
+        container.position.y = 2.15;
+        const trimBand = new THREE.Mesh(new THREE.BoxGeometry(6.84, 0.22, 2.59), M.generatorTrim);
+        trimBand.position.y = 0.9;
+        gensetProto.add(bellyTank, fillCap, ventPipe, container, trimBand);
+
+        const louverEnd = createLouverAssembly(2.2, 2.0, M.copingCap, M.louvers, 7);
+        louverEnd.rotation.y = Math.PI / 2;
+        louverEnd.position.set(3.42, 2.15, 0);
+        const louverSide = createLouverAssembly(2.4, 1.3, M.copingCap, M.louvers, 5);
+        louverSide.position.set(1.4, 2.25, 1.30);
+        gensetProto.add(louverEnd, louverSide);
+
+        [-1.4, -0.3].forEach(dx => {
+            const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.1, 0.06), M.doors);
+            doorPanel.position.set(dx, 2.0, 1.29);
+            gensetProto.add(doorPanel);
+        });
+
+        const muffler1 = createSilencerMuffler(2.8, 0.36, M.silencerLagging, M.exhaustStack);
+        muffler1.position.set(-0.6, 4.0, -0.55);
+        const muffler2 = createSilencerMuffler(2.8, 0.36, M.silencerLagging, M.exhaustStack);
+        muffler2.position.set(-0.6, 4.0, 0.55);
+        const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 4.4, 12), M.exhaustStack);
+        stack.position.set(-2.3, 5.75, 0);
+        const rainCap = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.04, 12), M.exhaustStack);
+        rainCap.rotation.z = Math.PI / 8;
+        rainCap.position.set(-2.3, 8.0, 0);
+        const eStop = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.26, 0.14), M.cautionStripe);
+        eStop.position.set(-2.6, 1.6, 1.32);
+        const eBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.08, 8), M.loadBank);
+        eBtn.rotation.x = Math.PI / 2;
+        eBtn.position.set(-2.6, 1.6, 1.40);
+        gensetProto.add(muffler1, muffler2, stack, rainCap, eStop, eBtn);
+
+        for (let sx of [-2.8, 2.8]) {
+            for (let sz of [-1.0, 1.0]) {
+                const spring = createHelicalSpring(0.16, 0.36, 4, 0.03, M.springSteel);
+                spring.position.set(sx, 0.02, sz);
+                gensetProto.add(spring);
+            }
+        }
+
+        const gensetTransforms = [];
         for (let i = 0; i < 8; i++) {
             const z = -28 + i * 8;
-            [-8, 8].forEach((xOff, bankIdx) => {
-                const genset = new THREE.Group();
-                genset.position.set(xOff, 0.5, z);
-                genset.name = `Genset_${i * 2 + bankIdx + 1}_2.5MVA`;
-
-                const bellyTank = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.75, 2.8), M.fuelTank);
-                bellyTank.position.y = 0.375;
-                const fillCap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.22, 8), M.valveRed);
-                fillCap.position.set(3.2, 0.82, 1.0);
-                const ventPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.4, 8), M.exhaustStack);
-                ventPipe.position.set(3.35, 1.4, -1.1);
-                const container = new THREE.Mesh(new THREE.BoxGeometry(6.8, 2.8, 2.55), M.generatorBody);
-                container.position.y = 2.15;
-                const trimBand = new THREE.Mesh(new THREE.BoxGeometry(6.84, 0.22, 2.59), M.generatorTrim);
-                trimBand.position.y = 0.9;
-                genset.add(bellyTank, fillCap, ventPipe, container, trimBand);
-
-                const louverEnd = createLouverAssembly(2.2, 2.0, M.copingCap, M.louvers, 7);
-                louverEnd.rotation.y = Math.PI / 2;
-                louverEnd.position.set(3.42, 2.15, 0);
-                const louverSide = createLouverAssembly(2.4, 1.3, M.copingCap, M.louvers, 5);
-                louverSide.position.set(1.4, 2.25, 1.30);
-                genset.add(louverEnd, louverSide);
-
-                [-1.4, -0.3].forEach(dx => {
-                    const doorPanel = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.1, 0.06), M.doors);
-                    doorPanel.position.set(dx, 2.0, 1.29);
-                    genset.add(doorPanel);
-                });
-
-                const muffler1 = createSilencerMuffler(2.8, 0.36, M.silencerLagging, M.exhaustStack);
-                muffler1.position.set(-0.6, 4.0, -0.55);
-                const muffler2 = createSilencerMuffler(2.8, 0.36, M.silencerLagging, M.exhaustStack);
-                muffler2.position.set(-0.6, 4.0, 0.55);
-                const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 4.4, 12), M.exhaustStack);
-                stack.position.set(-2.3, 5.75, 0);
-                const rainCap = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.04, 12), M.exhaustStack);
-                rainCap.rotation.z = Math.PI / 8;
-                rainCap.position.set(-2.3, 8.0, 0);
-                const eStop = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.26, 0.14), M.cautionStripe);
-                eStop.position.set(-2.6, 1.6, 1.32);
-                const eBtn = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.08, 8), M.loadBank);
-                eBtn.rotation.x = Math.PI / 2;
-                eBtn.position.set(-2.6, 1.6, 1.40);
-                genset.add(muffler1, muffler2, stack, rainCap, eStop, eBtn);
-
-                for (let sx of [-2.8, 2.8]) {
-                    for (let sz of [-1.0, 1.0]) {
-                        const spring = createHelicalSpring(0.16, 0.36, 4, 0.03, M.springSteel);
-                        spring.position.set(sx, 0.02, sz);
-                        genset.add(spring);
-                    }
-                }
-
-                mergeStaticGroupByMaterial(genset);
-                prepare4DWireframeGroup(genset, M.amberWireframe, { skipWire: true });
-                genGroup.add(genset);
-                gensetArray.push({ group: genset, xOff, z, targetY: 0.5 });
-            });
+            [-8, 8].forEach(xOff => gensetTransforms.push({ x: xOff, y: 0.5, z, targetY: 0.5 }));
         }
+        const gensetsInstGroup = buildInstancedAssemblyGroup(gensetProto, gensetTransforms, "GensetsInstanced", {});
+        prepare4DWireframeGroup(gensetsInstGroup, M.amberWireframe, { skipWire: true });
+        genGroup.add(gensetsInstGroup);
+
+        const genWireBox = new THREE.Mesh(new THREE.BoxGeometry(7.2, 4.2, 3.0), M.amberWireframe);
+        genWireBox.visible = false;
+        genWireBox.userData.isWireOverlay = true;
+        genWireBox.userData.noShadow = true;
+        genGroup.add(genWireBox);
 
         const genBollards = [];
         for (let z = -34; z <= 34; z += 4.25) {
@@ -7685,126 +7786,117 @@ window.DC36_SCHEDULE = {
         genGroup.add(fuelSkid);
         group.add(genGroup);
 
-        // C. Central Chilled Water Plant & Rooftop Chillers / Towers
+        // C. Central Chilled Water Plant & Rooftop Chillers / Towers (Instanced Assemblies + Instanced Spinners)
         const chwPlant = new THREE.Group();
         chwPlant.name = "ChilledWaterPlant";
         window.DC36_COOLING_FANS = [];
+        window.DC36_COOLING_FAN_BATCHES = [];
 
-        const chillersGroup = new THREE.Group();
-        chillersGroup.name = "CentrifugalChillers";
-        const chillerArray = [];
-        for (let i = 0; i < 6; i++) {
-            const ch = new THREE.Group();
-            const cz = -20 + i * 8;
-            ch.position.set(-13, 7.3, cz);
-            ch.name = `Chiller_${i + 1}_1200RT`;
+        const chillerProto = new THREE.Group();
+        const evap = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 6.0, 14), M.chillerBlue);
+        evap.rotation.z = Math.PI / 2;
+        evap.position.y = 1.0;
+        const cond = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 5.8, 14), M.chillerBlue);
+        cond.rotation.z = Math.PI / 2;
+        cond.position.set(0, 2.3, 0.4);
+        const comp = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 2.0, 10), M.pumpYellow);
+        comp.position.set(0, 3.4, 0);
+        const valveA = createFlangedPipeWithValve(1.8, 0.22, M.chwSupplyPipe, M.valveBlue);
+        valveA.position.set(2.8, 1.0, 0);
+        chillerProto.add(evap, cond, comp, valveA);
 
-            const evap = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 6.0, 14), M.chillerBlue);
-            evap.rotation.z = Math.PI / 2;
-            evap.position.y = 1.0;
-            const cond = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 5.8, 14), M.chillerBlue);
-            cond.rotation.z = Math.PI / 2;
-            cond.position.set(0, 2.3, 0.4);
-            const comp = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 2.0, 10), M.pumpYellow);
-            comp.position.set(0, 3.4, 0);
-            const valveA = createFlangedPipeWithValve(1.8, 0.22, M.chwSupplyPipe, M.valveBlue);
-            valveA.position.set(2.8, 1.0, 0);
-            ch.add(evap, cond, comp, valveA);
-            mergeStaticGroupByMaterial(ch, { noCastShadow: true });
-            prepare4DWireframeGroup(ch, M.amberWireframe, { skipWire: true });
-
-            chillersGroup.add(ch);
-            chillerArray.push({ group: ch, cz, targetY: 7.3 });
-        }
+        const chillerTransforms = [];
+        for (let i = 0; i < 6; i++) chillerTransforms.push({ x: -13, y: 7.3, z: -20 + i * 8 });
+        const chillersGroup = buildInstancedAssemblyGroup(chillerProto, chillerTransforms, "CentrifugalChillers", { noCastShadow: true });
+        prepare4DWireframeGroup(chillersGroup, M.amberWireframe, { skipWire: true });
         chwPlant.add(chillersGroup);
 
-        // Rooftop Air-Cooled Modular Chillers on Steel Dunnage
+        // Rooftop Air-Cooled Modular Chillers (6 units + 24 spinning fans -> InstancedMesh)
         const rooftopChillersGroup = new THREE.Group();
         rooftopChillersGroup.name = "RooftopChillersDunnage";
-        const rooftopChillerArray = [];
 
-        for (let i = 0; i < 6; i++) {
-            const rc = new THREE.Group();
-            const cz = -18 + i * 7.2;
-            rc.position.set(-19, 18.75, cz);
-            rc.name = `RooftopChiller_${i + 1}`;
-
-            [-3.0, 0, 3.0].forEach(lx => {
-                [-1.4, 1.4].forEach(lz => {
-                    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.0, 0.22), M.steelDunnage);
-                    leg.position.set(lx, 0.5, lz);
-                    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.12, 0.45), M.concreteCurb);
-                    pad.position.set(lx, 0.06, lz);
-                    rc.add(leg, pad);
-                });
-            });
+        const rcProto = new THREE.Group();
+        [-3.0, 0, 3.0].forEach(lx => {
             [-1.4, 1.4].forEach(lz => {
-                const beam = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.26, 0.24), M.steelDunnage);
-                beam.position.set(0, 1.0, lz);
-                rc.add(beam);
+                const leg = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.0, 0.22), M.steelDunnage);
+                leg.position.set(lx, 0.5, lz);
+                const pad = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.12, 0.45), M.concreteCurb);
+                pad.position.set(lx, 0.06, lz);
+                rcProto.add(leg, pad);
             });
-            [-3.0, 0, 3.0].forEach(lx => {
-                const cross = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 3.0), M.steelDunnage);
-                cross.position.set(lx, 1.0, 0);
-                rc.add(cross);
-            });
+        });
+        [-1.4, 1.4].forEach(lz => {
+            const beam = new THREE.Mesh(new THREE.BoxGeometry(6.8, 0.26, 0.24), M.steelDunnage);
+            beam.position.set(0, 1.0, lz);
+            rcProto.add(beam);
+        });
+        [-3.0, 0, 3.0].forEach(lx => {
+            const cross = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 3.0), M.steelDunnage);
+            cross.position.set(lx, 1.0, 0);
+            rcProto.add(cross);
+        });
+        const skidBase = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.45, 2.8), M.chillerCasing);
+        skidBase.position.y = 1.35;
+        const ctrlPanel = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.8, 2.2), M.copingCap);
+        ctrlPanel.position.set(-3.1, 2.3, 0);
+        const compBarrel1 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 3.8, 12), M.chillerBlue);
+        compBarrel1.rotation.z = Math.PI / 2;
+        compBarrel1.position.set(0.4, 1.75, -0.55);
+        const compBarrel2 = compBarrel1.clone();
+        compBarrel2.position.z = 0.55;
+        rcProto.add(skidBase, ctrlPanel, compBarrel1, compBarrel2);
 
-            const skidBase = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.45, 2.8), M.chillerCasing);
-            skidBase.position.y = 1.35;
-            const ctrlPanel = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.8, 2.2), M.copingCap);
-            ctrlPanel.position.set(-3.1, 2.3, 0);
-            const compBarrel1 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 3.8, 12), M.chillerBlue);
-            compBarrel1.rotation.z = Math.PI / 2;
-            compBarrel1.position.set(0.4, 1.75, -0.55);
-            const compBarrel2 = compBarrel1.clone();
-            compBarrel2.position.z = 0.55;
-            rc.add(skidBase, ctrlPanel, compBarrel1, compBarrel2);
+        const coilS = new THREE.Mesh(new THREE.BoxGeometry(5.8, 1.5, 0.18), M.louvers);
+        coilS.position.set(0.2, 2.45, 1.28);
+        coilS.rotation.x = 0.14;
+        const coilN = coilS.clone();
+        coilN.position.z = -1.28;
+        coilN.rotation.x = -0.14;
+        const topDeck = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.18, 2.6), M.chillerCasing);
+        topDeck.position.set(0.2, 3.25, 0);
+        rcProto.add(coilS, coilN, topDeck);
 
-            const coilS = new THREE.Mesh(new THREE.BoxGeometry(5.8, 1.5, 0.18), M.louvers);
-            coilS.position.set(0.2, 2.45, 1.28);
-            coilS.rotation.x = 0.14;
-            const coilN = coilS.clone();
-            coilN.position.z = -1.28;
-            coilN.rotation.x = -0.14;
-            const topDeck = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.18, 2.6), M.chillerCasing);
-            topDeck.position.set(0.2, 3.25, 0);
-            rc.add(coilS, coilN, topDeck);
+        const rcFanXs = [-1.95, -0.55, 0.85, 2.25];
+        rcFanXs.forEach(fx => {
+            const cowl = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.65, 0.35, 16, 1, true), M.coolingTowerFan);
+            cowl.position.set(fx, 3.48, 0);
+            const outerRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.025, 6, 16), M.exhaustStack);
+            outerRing.rotation.x = Math.PI / 2;
+            outerRing.position.set(fx, 3.65, 0);
+            const innerRing = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.02, 6, 14), M.exhaustStack);
+            innerRing.rotation.x = Math.PI / 2;
+            innerRing.position.set(fx, 3.65, 0);
+            const barA = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.02, 0.03), M.exhaustStack);
+            barA.position.set(fx, 3.65, 0);
+            const barB = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.02, 1.2), M.exhaustStack);
+            barB.position.set(fx, 3.65, 0);
+            rcProto.add(cowl, outerRing, innerRing, barA, barB);
+        });
 
-            [-1.95, -0.55, 0.85, 2.25].forEach(fx => {
-                const cowl = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.65, 0.35, 16, 1, true), M.coolingTowerFan);
-                cowl.position.set(fx, 3.48, 0);
-                const outerRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.025, 6, 16), M.exhaustStack);
-                outerRing.rotation.x = Math.PI / 2;
-                outerRing.position.set(fx, 3.65, 0);
-                const innerRing = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.02, 6, 14), M.exhaustStack);
-                innerRing.rotation.x = Math.PI / 2;
-                innerRing.position.set(fx, 3.65, 0);
-                const barA = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.02, 0.03), M.exhaustStack);
-                barA.position.set(fx, 3.65, 0);
-                const barB = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.02, 1.2), M.exhaustStack);
-                barB.position.set(fx, 3.65, 0);
-                rc.add(cowl, outerRing, innerRing, barA, barB);
-
-                const fanHub = new THREE.Group();
-                fanHub.position.set(fx, 3.48, 0);
-                for (let b = 0; b < 4; b++) {
-                    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.03, 0.14), M.coolingTowerFan);
-                    blade.rotation.y = (b * Math.PI) / 2;
-                    blade.position.x = Math.cos((b * Math.PI) / 2) * 0.28;
-                    blade.position.z = Math.sin((b * Math.PI) / 2) * 0.28;
-                    fanHub.add(blade);
-                }
-                mergeStaticGroupByMaterial(fanHub, { noCastShadow: true, xrayControlled: true });
-                fanHub.userData.noMerge = true;
-                rc.add(fanHub);
-                window.DC36_COOLING_FANS.push(fanHub);
-            });
-
-            mergeStaticGroupByMaterial(rc, { xrayControlled: true });
-            prepare4DWireframeGroup(rc, M.amberWireframe, { skipWire: true });
-            rooftopChillersGroup.add(rc);
-            rooftopChillerArray.push({ group: rc, cz, targetY: 18.75 });
+        const rcTransforms = [];
+        const rcFanTransforms = [];
+        for (let i = 0; i < 6; i++) {
+            const cz = -18 + i * 7.2;
+            rcTransforms.push({ x: -19, y: 18.75, z: cz });
+            rcFanXs.forEach(fx => rcFanTransforms.push({ x: -19 + fx, y: 18.75 + 3.48, z: cz }));
         }
+        const rcInstBody = buildInstancedAssemblyGroup(rcProto, rcTransforms, "RooftopChillersBodyInst", { xrayControlled: true });
+        rooftopChillersGroup.add(rcInstBody);
+
+        const rcFanProto = new THREE.Group();
+        for (let b = 0; b < 4; b++) {
+            const blade = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.03, 0.14), M.coolingTowerFan);
+            blade.rotation.y = (b * Math.PI) / 2;
+            blade.position.x = Math.cos((b * Math.PI) / 2) * 0.28;
+            blade.position.z = Math.sin((b * Math.PI) / 2) * 0.28;
+            rcFanProto.add(blade);
+        }
+        const rcFansInstGroup = buildInstancedAssemblyGroup(rcFanProto, rcFanTransforms, "RooftopChillerFansInst", { noCastShadow: true, xrayControlled: true });
+        rooftopChillersGroup.add(rcFansInstGroup);
+        if (rcFansInstGroup.userData._instMeshes && rcFansInstGroup.userData._instMeshes[0]) {
+            window.DC36_COOLING_FAN_BATCHES.push({ inst: rcFansInstGroup.userData._instMeshes[0], positions: rcFanTransforms });
+        }
+        prepare4DWireframeGroup(rooftopChillersGroup, M.amberWireframe, { skipWire: true });
         chwPlant.add(rooftopChillersGroup);
 
         const rooftopPipes = new THREE.Group();
@@ -7846,50 +7938,53 @@ window.DC36_SCHEDULE = {
         prepare4DWireframeGroup(rooftopPipes, M.amberWireframe, { skipWire: true });
         chwPlant.add(rooftopPipes);
 
+        // 6x Cooling Towers + 6 Fan Hubs (Instanced)
         const coolingTowers = new THREE.Group();
         coolingTowers.name = "RooftopCoolingTowers";
-        for (let ct = 0; ct < 6; ct++) {
-            const tower = new THREE.Group();
-            const tz = -18 + ct * 7.2;
-            tower.position.set(12, 18.75, tz);
-            tower.name = `CoolingTower_${ct + 1}`;
-
-            [-2.2, 2.2].forEach(lx => {
-                [-2.2, 2.2].forEach(lz => {
-                    const dLeg = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.85, 0.24), M.steelDunnage);
-                    dLeg.position.set(lx, 0.425, lz);
-                    tower.add(dLeg);
-                });
+        const ctProto = new THREE.Group();
+        [-2.2, 2.2].forEach(lx => {
+            [-2.2, 2.2].forEach(lz => {
+                const dLeg = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.85, 0.24), M.steelDunnage);
+                dLeg.position.set(lx, 0.425, lz);
+                ctProto.add(dLeg);
             });
-            const dFrame = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.24, 5.2), M.steelDunnage);
-            dFrame.position.y = 0.85;
-            const casing = new THREE.Mesh(new THREE.BoxGeometry(5.0, 4.0, 5.0), M.coolingTowerCasing);
-            casing.position.y = 2.95;
-            const louverBase = new THREE.Mesh(new THREE.BoxGeometry(5.1, 1.2, 5.1), M.louvers);
-            louverBase.position.y = 1.55;
-            const cowl = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.9, 1.2, 16), M.coolingTowerFan);
-            cowl.position.y = 5.55;
+        });
+        const dFrame = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.24, 5.2), M.steelDunnage);
+        dFrame.position.y = 0.85;
+        const casing = new THREE.Mesh(new THREE.BoxGeometry(5.0, 4.0, 5.0), M.coolingTowerCasing);
+        casing.position.y = 2.95;
+        const louverBase = new THREE.Mesh(new THREE.BoxGeometry(5.1, 1.2, 5.1), M.louvers);
+        louverBase.position.y = 1.55;
+        const cowlCT = new THREE.Mesh(new THREE.CylinderGeometry(1.8, 1.9, 1.2, 16), M.coolingTowerFan);
+        cowlCT.position.y = 5.55;
+        ctProto.add(dFrame, casing, louverBase, cowlCT);
 
-            const fanHub = new THREE.Group();
-            fanHub.position.y = 5.55;
-            for (let b = 0; b < 4; b++) {
-                const blade = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 0.3), M.coolingTowerFan);
-                blade.rotation.y = (b * Math.PI) / 2;
-                blade.position.x = Math.cos((b * Math.PI) / 2) * 0.8;
-                blade.position.z = Math.sin((b * Math.PI) / 2) * 0.8;
-                fanHub.add(blade);
-            }
-            mergeStaticGroupByMaterial(fanHub, { noCastShadow: true, xrayControlled: true });
-            fanHub.userData.noMerge = true;
-            tower.add(dFrame, casing, louverBase, cowl, fanHub);
-            window.DC36_COOLING_FANS.push(fanHub);
-            coolingTowers.add(tower);
+        const ctTransforms = [];
+        const ctFanTransforms = [];
+        for (let ct = 0; ct < 6; ct++) {
+            const tz = -18 + ct * 7.2;
+            ctTransforms.push({ x: 12, y: 18.75, z: tz });
+            ctFanTransforms.push({ x: 12, y: 18.75 + 5.55, z: tz });
         }
-        mergeStaticGroupByMaterial(coolingTowers, { xrayControlled: true });
+        const ctInstBody = buildInstancedAssemblyGroup(ctProto, ctTransforms, "CoolingTowersBodyInst", { xrayControlled: true });
+        coolingTowers.add(ctInstBody);
+
+        const ctFanProto = new THREE.Group();
+        for (let b = 0; b < 4; b++) {
+            const blade = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 0.3), M.coolingTowerFan);
+            blade.rotation.y = (b * Math.PI) / 2;
+            blade.position.x = Math.cos((b * Math.PI) / 2) * 0.8;
+            blade.position.z = Math.sin((b * Math.PI) / 2) * 0.8;
+            ctFanProto.add(blade);
+        }
+        const ctFansInstGroup = buildInstancedAssemblyGroup(ctFanProto, ctFanTransforms, "CoolingTowerFansInst", { noCastShadow: true, xrayControlled: true });
+        coolingTowers.add(ctFansInstGroup);
+        if (ctFansInstGroup.userData._instMeshes && ctFansInstGroup.userData._instMeshes[0]) {
+            window.DC36_COOLING_FAN_BATCHES.push({ inst: ctFansInstGroup.userData._instMeshes[0], positions: ctFanTransforms });
+        }
         prepare4DWireframeGroup(coolingTowers, M.amberWireframe, { skipWire: true });
         chwPlant.add(coolingTowers);
 
-        // Tag rooftop MEP so X-Ray/Cutaway smoothly fades them alongside roof slab & cladding
         [rooftopChillersGroup, rooftopPipes, coolingTowers].forEach(rtObj => {
             rtObj.traverse(c => {
                 if (c.isMesh && !c.userData.isWireOverlay) {
@@ -7901,10 +7996,12 @@ window.DC36_SCHEDULE = {
         group.add(chwPlant);
 
         group.userData.substation = subGroup;
-        group.userData.transformers = transformerArray;
-        group.userData.gensets = gensetArray;
-        group.userData.chillers = chillerArray;
-        group.userData.rooftopChillers = rooftopChillerArray;
+        group.userData.transformersInstGroup = transformersInstGroup;
+        group.userData.genGroup = genGroup;
+        group.userData.gensetsInstGroup = gensetsInstGroup;
+        group.userData.gensetTransforms = gensetTransforms;
+        group.userData.genWireBox = genWireBox;
+        group.userData.chillersInstGroup = chillersGroup;
         group.userData.rooftopChillersGroup = rooftopChillersGroup;
         group.userData.rooftopPipes = rooftopPipes;
         group.userData.coolingTowers = coolingTowers;
@@ -7998,13 +8095,35 @@ window.DC36_SCHEDULE = {
         return seg;
     }
 
-    // Helper: Build Suspended 600x600mm Acoustic T-Bar Ceiling Bay + Linear LED Troffers + Diffusers + Plenum Hangers
-    function buildOfficeCeilingBay(widthX, depthZ, centerX, centerZ, ceilingY, soffitY, ceilingGroup, M) {
+    function createCeilingCollector() {
+        return { troffers: [], diffusers: [], rods: [], hangerH: 1.2 };
+    }
+
+    function flushCeilingCollector(col, ceilingGroup, M) {
+        if (!col) return;
+        if (col.troffers.length) {
+            const m = buildInstanced(new THREE.BoxGeometry(1.2, 0.04, 0.6), M.ceilingTroffer, col.troffers, "CeilingLEDTroffers");
+            m.frustumCulled = false;
+            ceilingGroup.add(m);
+        }
+        if (col.diffusers.length) {
+            const m = buildInstanced(new THREE.BoxGeometry(0.6, 0.05, 0.6), M.louvers, col.diffusers, "CeilingHVACDiffusers");
+            m.frustumCulled = false;
+            ceilingGroup.add(m);
+        }
+        if (col.rods.length) {
+            const m = buildInstanced(new THREE.CylinderGeometry(0.018, 0.018, col.hangerH, 6), M.steelDunnage, col.rods, "CeilingHangerRods");
+            m.frustumCulled = false;
+            ceilingGroup.add(m);
+        }
+    }
+
+    // Helper: Build Suspended 600x600mm Acoustic T-Bar Ceiling Bay + Shared Instanced Collector
+    function buildOfficeCeilingBay(widthX, depthZ, centerX, centerZ, ceilingY, soffitY, ceilingGroup, M, sharedCol) {
         const deck = new THREE.Mesh(new THREE.BoxGeometry(widthX, 0.05, depthZ), M.officeCeilingTile);
         deck.position.set(centerX, ceilingY, centerZ);
         ceilingGroup.add(deck);
 
-        // Exposed Aluminum Edge Trim Bulkhead
         const fasciaN = new THREE.Mesh(new THREE.BoxGeometry(widthX, 0.18, 0.06), M.officePlinth);
         fasciaN.position.set(centerX, ceilingY + 0.06, centerZ - depthZ / 2);
         const fasciaS = fasciaN.clone();
@@ -8015,27 +8134,17 @@ window.DC36_SCHEDULE = {
         fasciaW.position.set(centerX - widthX / 2, ceilingY + 0.06, centerZ);
         ceilingGroup.add(fasciaN, fasciaS, fasciaE, fasciaW);
 
-        // Linear Recessed 600x1200mm LED Troffers & HVAC Supply Diffusers
-        const trofferItems = [];
-        const diffuserItems = [];
-        const rodItems = [];
+        const col = sharedCol || createCeilingCollector();
         const hangerH = Math.max(0.25, soffitY - ceilingY);
+        col.hangerH = hangerH;
         for (let lx = centerX - widthX / 2 + 2.4; lx <= centerX + widthX / 2 - 2.0; lx += 4.2) {
             for (let lz = centerZ - depthZ / 2 + 2.2; lz <= centerZ + depthZ / 2 - 2.0; lz += 4.4) {
-                trofferItems.push({ pos: [lx, ceilingY - 0.02, lz] });
-                diffuserItems.push({ pos: [lx + 1.5, ceilingY - 0.025, lz + 1.2] });
-                rodItems.push({ pos: [lx, ceilingY + hangerH / 2, lz] });
+                col.troffers.push({ pos: [lx, ceilingY - 0.02, lz] });
+                col.diffusers.push({ pos: [lx + 1.5, ceilingY - 0.025, lz + 1.2] });
+                col.rods.push({ pos: [lx, ceilingY + hangerH / 2, lz] });
             }
         }
-        if (trofferItems.length) {
-            ceilingGroup.add(buildInstanced(new THREE.BoxGeometry(1.2, 0.04, 0.6), M.ceilingTroffer, trofferItems, "CeilingLEDTroffers"));
-        }
-        if (diffuserItems.length) {
-            ceilingGroup.add(buildInstanced(new THREE.BoxGeometry(0.6, 0.05, 0.6), M.louvers, diffuserItems, "CeilingHVACDiffusers"));
-        }
-        if (rodItems.length) {
-            ceilingGroup.add(buildInstanced(new THREE.CylinderGeometry(0.018, 0.018, hangerH, 6), M.steelDunnage, rodItems, "CeilingHangerRods"));
-        }
+        if (!sharedCol) flushCeilingCollector(col, ceilingGroup, M);
     }
 
     // Helper: Modular Dual-Monitor Office Workstation Unit (Desk, Privacy Screen, Dual Displays & Task Chair)
@@ -8255,10 +8364,12 @@ window.DC36_SCHEDULE = {
         });
         officeFurniture.add(stairGroup);
 
-        // Level 1 Suspended T-Bar Acoustic Drop Ceiling Bays (y = 10.75, plenum hangers up to y = 12.00)
-        buildOfficeCeilingBay(25.6, 21.8, 36.2, -18.2, l1CeilY, 12.0, officeCeilingsL1, M);
-        buildOfficeCeilingBay(18.0, 14.0, 32.4, 0.0, l1CeilY, 12.0, officeCeilingsL1, M);
-        buildOfficeCeilingBay(25.6, 21.8, 36.2, 18.2, l1CeilY, 12.0, officeCeilingsL1, M);
+        // Level 1 Suspended T-Bar Acoustic Drop Ceiling Bays (shared 3-mesh instanced batch)
+        const l1CeilCol = createCeilingCollector();
+        buildOfficeCeilingBay(25.6, 21.8, 36.2, -18.2, l1CeilY, 12.0, officeCeilingsL1, M, l1CeilCol);
+        buildOfficeCeilingBay(18.0, 14.0, 32.4, 0.0, l1CeilY, 12.0, officeCeilingsL1, M, l1CeilCol);
+        buildOfficeCeilingBay(25.6, 21.8, 36.2, 18.2, l1CeilY, 12.0, officeCeilingsL1, M, l1CeilCol);
+        flushCeilingCollector(l1CeilCol, officeCeilingsL1, M);
 
         // -----------------------------------------------------------------
         // PART 2: LEVEL 2 SOUTH-EAST FACILITY ENGINEERING SUITE & L2 EAST CEILING (x: 41.4..49.5)
@@ -8317,16 +8428,10 @@ window.DC36_SCHEDULE = {
         // Level 2 Suspended Acoustic Drop Ceiling across 10% East NOC + Security Lobby (stops south of NE Roof Stair Shaft)
         buildOfficeCeilingBay(8.1, 53.0, 45.4, 2.3, l2CeilY, 17.75, officeCeilingsL2, M);
 
-        // Batch static office meshes by material (zero detail loss) & keep indoor shadows disabled for max FPS
-        mergeStaticGroupByMaterial(officeWalls, { noCastShadow: true });
         mergeStaticGroupByMaterial(officeCeilingsL1, { noCastShadow: true, xrayControlled: true });
         mergeStaticGroupByMaterial(officeCeilingsL2, { noCastShadow: true, xrayControlled: true });
-        mergeStaticGroupByMaterial(officeFurniture, { noCastShadow: true });
-
-        prepare4DWireframeGroup(officeWalls, M.amberWireframe);
         prepare4DWireframeGroup(officeCeilingsL1, M.amberWireframe, { skipWire: true });
         prepare4DWireframeGroup(officeCeilingsL2, M.amberWireframe, { skipWire: true });
-        prepare4DWireframeGroup(officeFurniture, M.amberWireframe, { skipWire: true });
 
         [officeCeilingsL1, officeCeilingsL2].forEach(cg => {
             cg.traverse(c => {
@@ -8710,8 +8815,9 @@ window.DC36_SCHEDULE = {
         const atriumBaffleS = new THREE.Mesh(new THREE.BoxGeometry(14.0, 0.08, 11.5), M.groundBaffleCeil);
         atriumBaffleS.position.set(30.6, 5.95, 4.8);
         groundCeilings.add(atriumBaffleN, atriumBaffleS);
-        buildOfficeCeilingBay(25.6, 17.4, 36.2, -20.0, ceilY, soffitY, groundCeilings, M);
-        buildOfficeCeilingBay(25.6, 17.4, 36.2, 20.0, ceilY, soffitY, groundCeilings, M);
+        const gndCeilCol = createCeilingCollector();
+        buildOfficeCeilingBay(25.6, 17.4, 36.2, -20.0, ceilY, soffitY, groundCeilings, M, gndCeilCol);
+        buildOfficeCeilingBay(25.6, 17.4, 36.2, 20.0, ceilY, soffitY, groundCeilings, M, gndCeilCol);
 
         // =====================================================================
         // PART 2: ZONE G2 CENTRAL 22kV GIS SWITCHGEAR, TRANSFORMERS & BMS MDF (x: -2.0 .. +22.0)
@@ -8871,7 +8977,8 @@ window.DC36_SCHEDULE = {
         const qaSouth = buildOfficeWallSegment(12.4, 3.5, 0.18, 'glazed_full', M);
         qaSouth.position.set(-33.0, gY, -21.4);
         groundWalls.add(qaEast, qaSouth);
-        buildOfficeCeilingBay(12.2, 7.2, -33.0, -25.1, gY + 3.5, soffitY, groundCeilings, M);
+        buildOfficeCeilingBay(12.2, 7.2, -33.0, -25.1, gY + 3.5, soffitY, groundCeilings, M, gndCeilCol);
+        flushCeilingCollector(gndCeilCol, groundCeilings, M);
 
         // QA-QC Office Furniture: 2 Dispatch Desks + Unboxing Steel Workbench + Digital Weigh Scale
         const qaWs1 = buildWorkstationUnit(0, M);
@@ -8956,18 +9063,13 @@ window.DC36_SCHEDULE = {
         forklift.add(fkBody, fkMastL, fkMastR, fkForkL, fkForkR, fkCageTop);
         groundFitout.add(forklift);
 
-        // Batch static Ground Floor meshes by material (zero detail loss) & skip indoor shadow casting
-        mergeStaticGroupByMaterial(groundWalls, { noCastShadow: true });
         mergeStaticGroupByMaterial(groundCeilings, { noCastShadow: true, xrayControlled: true });
         mergeStaticGroupByMaterial(groundElecPlant, { noCastShadow: true });
         mergeStaticGroupByMaterial(groundMechFirePlant, { noCastShadow: true });
-        mergeStaticGroupByMaterial(groundFitout, { noCastShadow: true });
 
-        prepare4DWireframeGroup(groundWalls, M.amberWireframe);
         prepare4DWireframeGroup(groundCeilings, M.amberWireframe, { skipWire: true });
         prepare4DWireframeGroup(groundElecPlant, M.amberWireframe, { skipWire: true });
         prepare4DWireframeGroup(groundMechFirePlant, M.amberWireframe, { skipWire: true });
-        prepare4DWireframeGroup(groundFitout, M.amberWireframe, { skipWire: true });
 
         groundCeilings.traverse(c => {
             if (c.isMesh && !c.userData.isWireOverlay) {
@@ -9050,9 +9152,10 @@ window.DC36_SCHEDULE = {
         epoxyPower.position.set(32.0, floorY + 0.04, 0);
         partitionsGroup.add(epoxyMech, epoxyPower);
 
-        mergeStaticGroupByMaterial(partitionsGroup, { noCastShadow: true });
-        prepare4DWireframeGroup(partitionsGroup, M.amberWireframe);
-        group.add(partitionsGroup);
+        const allPartitionWalls = new THREE.Group();
+        allPartitionWalls.name = "AllInteriorPartitionWalls";
+        allPartitionWalls.add(partitionsGroup);
+        group.add(allPartitionWalls);
 
         // =====================================================================
         // B. 600x600mm RAISED ACCESS FLOOR GRID & UNDERFLOOR PLENUM (A5430)
@@ -9445,11 +9548,11 @@ window.DC36_SCHEDULE = {
             }
         });
 
-        mergeStaticGroupByMaterial(nocLobbyGroup, { noCastShadow: true });
-        prepare4DWireframeGroup(nocLobbyGroup, M.amberWireframe);
-        group.add(nocLobbyGroup);
+        const interiorFitoutGroup = new THREE.Group();
+        interiorFitoutGroup.name = "AllInteriorFitoutAndFurniture";
+        interiorFitoutGroup.add(nocLobbyGroup);
+        group.add(interiorFitoutGroup);
 
-        group.userData.partitionWalls = partitionsGroup;
         group.userData.raisedFloor = raisedFloorGroup;
         group.userData.overheadTrays = overheadMEPTrayGroup;
         group.userData.interiorPiping = interiorPipingGroup;
@@ -9462,23 +9565,34 @@ window.DC36_SCHEDULE = {
         group.userData.switchgear = switchgearGroup;
         group.userData.upsRoom = upsCabinetsGroup;
         group.userData.batteryRacks = batteryRacksGroup;
+
         const officeBIM = createOfficeLayoutBIM(M);
         const groundBIM = createGroundFloorBIM(M);
+
+        allPartitionWalls.add(officeBIM.officeWalls, groundBIM.groundWalls);
+        mergeStaticGroupByMaterial(allPartitionWalls, { noCastShadow: true });
+        prepare4DWireframeGroup(allPartitionWalls, M.amberWireframe, { skipWire: true });
+
+        interiorFitoutGroup.add(officeBIM.officeFurniture, groundBIM.groundFitout);
+        mergeStaticGroupByMaterial(interiorFitoutGroup, { noCastShadow: true });
+        prepare4DWireframeGroup(interiorFitoutGroup, M.amberWireframe, { skipWire: true });
+
         group.add(
-            officeBIM.officeWalls, officeBIM.officeCeilingsL1, officeBIM.officeCeilingsL2, officeBIM.officeFurniture,
-            groundBIM.groundWalls, groundBIM.groundCeilings, groundBIM.groundElecPlant, groundBIM.groundMechFirePlant, groundBIM.groundFitout
+            officeBIM.officeCeilingsL1, officeBIM.officeCeilingsL2,
+            groundBIM.groundCeilings, groundBIM.groundElecPlant, groundBIM.groundMechFirePlant
         );
 
-        group.userData.nocLobby = nocLobbyGroup;
-        group.userData.officeWalls = officeBIM.officeWalls;
+        group.userData.partitionWalls = allPartitionWalls;
+        group.userData.nocLobby = interiorFitoutGroup;
+        group.userData.officeWalls = null;
         group.userData.officeCeilingsL1 = officeBIM.officeCeilingsL1;
         group.userData.officeCeilingsL2 = officeBIM.officeCeilingsL2;
-        group.userData.officeFurniture = officeBIM.officeFurniture;
-        group.userData.groundWalls = groundBIM.groundWalls;
+        group.userData.officeFurniture = null;
+        group.userData.groundWalls = null;
         group.userData.groundCeilings = groundBIM.groundCeilings;
         group.userData.groundElecPlant = groundBIM.groundElecPlant;
         group.userData.groundMechFirePlant = groundBIM.groundMechFirePlant;
-        group.userData.groundFitout = groundBIM.groundFitout;
+        group.userData.groundFitout = null;
         return group;
     }
 
@@ -9488,27 +9602,23 @@ window.DC36_SCHEDULE = {
         group.name = "CommissioningLoadBanks";
         group.userData = { phase: 7, tag: "load_banks", wbs: "6.4-L5" };
 
-        const lbArray = [];
-        for (let i = 0; i < 8; i++) {
-            const z = -25 + i * 7.2;
-            const lb = new THREE.Group();
-            lb.position.set(54.5, 0.4, z);
-            lb.name = `LoadBank_${i + 1}_4.5MW`;
+        const lbProto = new THREE.Group();
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.6, 2.8), M.craneTreads);
+        chassis.position.y = 0.3;
+        const body = new THREE.Mesh(new THREE.BoxGeometry(5.8, 2.4, 2.6), M.loadBank);
+        body.position.y = 1.8;
+        const vent = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.4, 2.0), M.louvers);
+        vent.position.y = 3.1;
+        const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 6.0, 8), M.cableOrange);
+        cable.rotation.z = Math.PI / 2;
+        cable.position.set(-3.2, 0.3, 0);
+        lbProto.add(chassis, body, vent, cable);
 
-            const chassis = new THREE.Mesh(new THREE.BoxGeometry(6.5, 0.6, 2.8), M.craneTreads);
-            chassis.position.y = 0.3;
-            const body = new THREE.Mesh(new THREE.BoxGeometry(5.8, 2.4, 2.6), M.loadBank);
-            body.position.y = 1.8;
-            const vent = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.4, 2.0), M.louvers);
-            vent.position.y = 3.1;
-            const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 6.0, 8), M.cableOrange);
-            cable.rotation.z = Math.PI / 2;
-            cable.position.set(-3.2, 0.3, 0);
-            lb.add(chassis, body, vent, cable);
-            prepare4DWireframeGroup(lb, M.amberWireframe);
-            group.add(lb);
-            lbArray.push(lb);
-        }
+        const lbTransforms = [];
+        for (let i = 0; i < 8; i++) lbTransforms.push({ x: 54.5, y: 0.4, z: -25 + i * 7.2 });
+        const lbInstGroup = buildInstancedAssemblyGroup(lbProto, lbTransforms, "LoadBanksInstanced", {});
+        prepare4DWireframeGroup(lbInstGroup, M.amberWireframe, { skipWire: true });
+        group.add(lbInstGroup);
 
         const ringGeo = new THREE.RingGeometry(48, 52, 32);
         const ringMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
@@ -9519,7 +9629,7 @@ window.DC36_SCHEDULE = {
         ring.userData.noShadow = true;
         group.add(ring);
 
-        group.userData.loadBanks = lbArray;
+        group.userData.lbInstGroup = lbInstGroup;
         group.userData.pulseRing = ring;
         return group;
     }
@@ -9788,9 +9898,9 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: timeline_engine.js (v26 Instanced Racks + Cached Shadows + Smooth X-Ray) ===
-// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.025)
-// Preserves all Primavera P6 Scrubber Logic + Interior 4-Zone BIM Sequence + Smooth X-Ray Cutaway + Clean Pile Encasement
+    // === MODULE: timeline_engine.js (v31 Pre-Indexed Activities + Cached X-Ray + Instanced Kinematics) ===
+// 4D Timeline Engine & Construction State Machine for DC36-T3 Hyperscale Datacenter (Rev.031)
+// Pre-indexed Activity Map + Cached X-Ray Traversals + Instanced Phase 3/5/7 Kinematics
 
 (function() {
     window.DC36_TIMELINE = {};
@@ -9814,11 +9924,42 @@ window.DC36_SCHEDULE = {
     let lastTauRoof = 1;
     let lastTauChw = 1;
     let lastTauFloor = 1;
+    let lastTauCols = -1;
+    let lastTauTruss = -1;
+    let lastTauGens = -1;
+
+    const actByCode = new Map();
+    const P5_WINDOW_START = new Date('2028-07-17').getTime();
+    const WS_RACKS_START = new Date('2028-09-25').getTime();
+
+    // Reusable scratch transform objects (zero GC in 4D scrubbing / column animation)
+    const _tlMat = new THREE.Matrix4();
+    const _tlPos = new THREE.Vector3();
+    const _tlQuat = new THREE.Quaternion();
+    const _tlScale = new THREE.Vector3(1, 1, 1);
 
     window.DC36_TIMELINE.init = function(schedData, modelRefs, particleRefs) {
         schedule = schedData;
         models = modelRefs;
         particles = particleRefs;
+
+        actByCode.clear();
+        if (schedule && Array.isArray(schedule.activities)) {
+            for (let i = 0; i < schedule.activities.length; i++) {
+                actByCode.set(schedule.activities[i].code, schedule.activities[i]);
+            }
+        }
+        if (schedule && Array.isArray(schedule.phases)) {
+            for (let i = 0; i < schedule.phases.length; i++) {
+                const p = schedule.phases[i];
+                p.startTs = new Date(p.start_date).getTime();
+                p.finishTs = new Date(p.finish_date).getTime();
+            }
+        }
+
+        lastTauCols = -1;
+        lastTauTruss = -1;
+        lastTauGens = -1;
 
         // Default to Completed Operational Campus Reality
         currentTimestamp = schedule.max_timestamp;
@@ -9841,6 +9982,14 @@ window.DC36_SCHEDULE = {
 
     window.DC36_TIMELINE.isCutawayBlending = function() {
         return cutawayEnabled || cutawayBlend > 0.005;
+    };
+
+    window.DC36_TIMELINE.isHideRoofActive = function() {
+        return hideRoofEnabled;
+    };
+
+    window.DC36_TIMELINE.isFacadeComplete = function() {
+        return lastTauFacade >= 1.0;
     };
 
     window.DC36_TIMELINE.setCutaway = function(enabled) {
@@ -9879,11 +10028,22 @@ window.DC36_SCHEDULE = {
             grp.visible = false;
             return;
         }
+        if (!grp.userData._xrayMeshes) {
+            const list = [];
+            grp.traverse(child => {
+                if (child.isMesh && child.material && !child.userData.isWireOverlay && child.userData._xrayControlled) {
+                    list.push(child);
+                }
+            });
+            grp.userData._xrayMeshes = list;
+        }
+
         const targetOpacity = 1.0 - blend * (1.0 - 0.12);
         const fading = blend > 0.005;
+        const list = grp.userData._xrayMeshes;
 
-        grp.traverse(child => {
-            if (!child.isMesh || !child.material || child.userData.isWireOverlay || !child.userData._xrayControlled) return;
+        for (let i = 0; i < list.length; i++) {
+            const child = list[i];
             const orig = child.userData._origMatState;
             if (fading) {
                 child.material.transparent = true;
@@ -9899,13 +10059,13 @@ window.DC36_SCHEDULE = {
                 child.material.opacity = orig.opacity;
                 child.material.depthWrite = orig.depthWrite;
             }
-        });
+        }
     }
 
     function applyCutawayState() {
         if (!models || !models.p4_envelope) return;
-        const facadeGroup = models.p4_envelope.getObjectByName("BuildingFacade");
-        const roofAssembly = models.p4_envelope.getObjectByName("RoofAssembly");
+        const facadeGroup = models.p4_envelope.userData ? models.p4_envelope.userData.facadeGroup : models.p4_envelope.getObjectByName("BuildingFacade");
+        const roofAssembly = models.p4_envelope.userData ? models.p4_envelope.userData.roofAssembly : models.p4_envelope.getObjectByName("RoofAssembly");
         const roof = models.p4_envelope.getObjectByName("RoofMembrane");
         const p5 = models.p5_mep;
 
@@ -9939,7 +10099,6 @@ window.DC36_SCHEDULE = {
             offCeilL2.visible = !hideRoofNow && (lastTauFloor > 0);
         }
 
-        // Smoothly interpolate opacity from 1.0 -> 0.12 on outer facade cladding, roof slab, rooftop chillers & suspended office ceilings
         const isFadingNow = cutawayBlend > 0.005;
         if (facadeGroup && (isFadingNow || wasXRayBlending || lastTauFacade >= 1.0)) {
             applyXRayToGroup(facadeGroup, cutawayBlend, false);
@@ -9970,8 +10129,7 @@ window.DC36_SCHEDULE = {
     }
 
     function getTaskFrac(code, curTime) {
-        if (!schedule || !schedule.activities) return 0;
-        const act = schedule.activities.find(a => a.code === code);
+        const act = actByCode.get(code) || (schedule && schedule.activities ? schedule.activities.find(a => a.code === code) : null);
         if (!act) return 0;
         if (curTime < act.startTimestamp) return 0;
         if (curTime >= act.finishTimestamp) return 1;
@@ -10000,24 +10158,23 @@ window.DC36_SCHEDULE = {
         let completedTasks = 0;
         let activePhase = 1;
 
-        schedule.activities.forEach(act => {
+        const acts = schedule.activities;
+        for (let i = 0; i < acts.length; i++) {
+            const act = acts[i];
             if (currentTimestamp >= act.finishTimestamp) {
                 completedTasks++;
             } else if (currentTimestamp >= act.startTimestamp && currentTimestamp < act.finishTimestamp) {
                 activeTasks.push(act);
             }
-        });
+        }
 
         for (let i = 0; i < schedule.phases.length; i++) {
             const p = schedule.phases[i];
-            const pStart = new Date(p.start_date).getTime();
-            if (currentTimestamp >= pStart) {
+            if (currentTimestamp >= p.startTs) {
                 activePhase = p.id;
             }
         }
-        const p5WindowStart = new Date('2028-07-17').getTime();
-        const wsRacksStart = new Date('2028-09-25').getTime();
-        if (activePhase === 6 && currentTimestamp >= p5WindowStart && currentTimestamp < wsRacksStart) {
+        if (activePhase === 6 && currentTimestamp >= P5_WINDOW_START && currentTimestamp < WS_RACKS_START) {
             activePhase = 5;
         }
         lastActivePhase = activePhase;
@@ -10032,9 +10189,7 @@ window.DC36_SCHEDULE = {
         let activeMW = 0;
         if (activePhase === 7) {
             const p7 = schedule.phases[6];
-            const p7Start = new Date(p7.start_date).getTime();
-            const p7End = new Date(p7.finish_date).getTime();
-            const frac = Math.max(0, Math.min(1, (currentTimestamp - p7Start) / (p7End - p7Start)));
+            const frac = Math.max(0, Math.min(1, (currentTimestamp - p7.startTs) / (p7.finishTs - p7.startTs)));
             activeMW = (frac * 36).toFixed(1);
         } else if (activePhase >= 8) {
             activeMW = "36.0";
@@ -10043,9 +10198,7 @@ window.DC36_SCHEDULE = {
         let racksDeployed = 0;
         if (activePhase === 6) {
             const p6 = schedule.phases[5];
-            const p6Start = new Date(p6.start_date).getTime();
-            const p6End = new Date(p6.finish_date).getTime();
-            const frac = Math.max(0, Math.min(1, (currentTimestamp - p6Start) / (p6End - p6Start)));
+            const frac = Math.max(0, Math.min(1, (currentTimestamp - p6.startTs) / (p6.finishTs - p6.startTs)));
             racksDeployed = Math.floor(frac * 1200);
         } else if (activePhase >= 7) {
             racksDeployed = 1200;
@@ -10056,7 +10209,7 @@ window.DC36_SCHEDULE = {
         else if (activePhase >= 8) currentPUE = "1.22";
 
         // =========================================================================
-        // 4D CONSTRUCTION SEQUENCE KINEMATICS WITH 1%-99% AMBER WIREFRAME OVERLAY
+        // 4D CONSTRUCTION SEQUENCE KINEMATICS
         // =========================================================================
         if (models) {
             const tau_piling = getTaskFrac('A4120', currentTimestamp);
@@ -10091,7 +10244,7 @@ window.DC36_SCHEDULE = {
             lastTauChw = tau_chw;
             lastTauFloor = tau_floor;
 
-            // 1. Phase 1: Bored Piling (A4120) — encased & hidden as Raft Slab (A4140) pours over them
+            // 1. Phase 1: Bored Piling (A4120)
             const p1 = models.p1_piling;
             if (p1 && p1.userData) {
                 p1.visible = (activePhase >= 1) && (tau_raft < 1.0);
@@ -10169,43 +10322,64 @@ window.DC36_SCHEDULE = {
                 }
             }
 
-            // 3. Phase 3: Structural Columns First (A4210), Core Shear Walls, L1 & L2 Slabs (A4220, A4230)
+            // 3. Phase 3: Instanced Structural Columns (A4210), Merged Shear Walls, L1 & L2 Slabs (A4220, A4230)
             const p3 = models.p3_superstructure;
             if (p3 && p3.userData) {
                 if (tau_cols <= 0 && tau_slab1 <= 0 && tau_slab2 <= 0) {
                     p3.visible = false;
+                    lastTauCols = 0;
                 } else {
                     p3.visible = true;
-                    const cols = p3.userData.columns || [];
+                    const colInstances = p3.userData.colInstances;
                     if (tau_cols <= 0) {
                         setVisual(p3.userData.colGrid, 0);
                         setVisual(p3.userData.wallsGroup, 0);
+                        lastTauCols = 0;
                     } else if (tau_cols >= 1.0) {
                         setVisual(p3.userData.colGrid, 1.0);
                         setVisual(p3.userData.wallsGroup, 1.0);
-                        cols.forEach(c => {
-                            if (c.mesh) { c.mesh.visible = true; c.mesh.scale.set(1, 1, 1); c.mesh.position.y = c.baseY; }
-                        });
-                        if (p3.userData.walls) {
-                            p3.userData.walls.forEach(w => { w.visible = true; w.scale.set(1, 1, 1); w.position.y = 9.95; });
+                        if (p3.userData.wallsGroup) p3.userData.wallsGroup.scale.set(1, 1, 1);
+                        if (colInstances && lastTauCols !== 1.0) {
+                            _tlQuat.set(0, 0, 0, 1);
+                            _tlScale.set(1, 1, 1);
+                            for (let b = 0; b < colInstances.length; b++) {
+                                const batch = colInstances[b];
+                                const inst = batch.inst;
+                                const items = batch.items;
+                                for (let k = 0; k < items.length; k++) {
+                                    const it = items[k];
+                                    _tlPos.set(it.cx, it.baseY, it.cz);
+                                    _tlMat.compose(_tlPos, _tlQuat, _tlScale);
+                                    inst.setMatrixAt(k, _tlMat);
+                                }
+                                inst.instanceMatrix.needsUpdate = true;
+                            }
+                            lastTauCols = 1.0;
                         }
                     } else {
                         setVisual(p3.userData.colGrid, tau_cols);
                         setVisual(p3.userData.wallsGroup, tau_cols);
                         const colScaleY = Math.max(0.005, tau_cols);
-                        cols.forEach(c => {
-                            if (c.mesh) {
-                                const h = c.height || 16.0;
-                                const sy = (c.startY !== undefined) ? c.startY : 1.8;
-                                c.mesh.visible = true;
-                                c.mesh.scale.set(1, colScaleY, 1);
-                                c.mesh.position.y = sy + (h * colScaleY) / 2;
+                        if (p3.userData.wallsGroup) p3.userData.wallsGroup.scale.set(1, colScaleY, 1);
+                        if (colInstances && Math.abs(tau_cols - lastTauCols) > 1e-4) {
+                            _tlQuat.set(0, 0, 0, 1);
+                            _tlScale.set(1, colScaleY, 1);
+                            for (let b = 0; b < colInstances.length; b++) {
+                                const batch = colInstances[b];
+                                const inst = batch.inst;
+                                const items = batch.items;
+                                const h = batch.height || 16.0;
+                                const sy = (batch.startY !== undefined) ? batch.startY : 1.8;
+                                const midY = sy + (h * colScaleY) / 2;
+                                for (let k = 0; k < items.length; k++) {
+                                    const it = items[k];
+                                    _tlPos.set(it.cx, midY, it.cz);
+                                    _tlMat.compose(_tlPos, _tlQuat, _tlScale);
+                                    inst.setMatrixAt(k, _tlMat);
+                                }
+                                inst.instanceMatrix.needsUpdate = true;
                             }
-                        });
-                        if (p3.userData.walls) {
-                            p3.userData.walls.forEach(w => {
-                                w.visible = true; w.scale.set(1, colScaleY, 1); w.position.y = 7.3 + (5.3 * colScaleY) / 2;
-                            });
+                            lastTauCols = tau_cols;
                         }
                     }
 
@@ -10240,42 +10414,94 @@ window.DC36_SCHEDULE = {
                 } else {
                     p4.visible = true;
                     const trusses = p4.userData.trusses || [];
+                    const roofTrussesInst = p4.userData.roofTrussesInst;
+                    const trussItems = p4.userData.trussItems || [];
+                    const trussWireBox = p4.userData.trussWireBox;
                     if (p4.userData.roofSteel) {
-                        if (tau_truss <= 0) setVisual(p4.userData.roofSteel, 0);
-                        else if (tau_truss >= 1.0) {
+                        if (tau_truss <= 0) {
+                            setVisual(p4.userData.roofSteel, 0);
+                            if (trussWireBox) trussWireBox.visible = false;
+                            lastTauTruss = 0;
+                        } else if (tau_truss >= 1.0) {
                             setVisual(p4.userData.roofSteel, 1.0);
+                            if (roofTrussesInst && lastTauTruss !== 1.0) {
+                                _tlQuat.set(0, 0, 0, 1);
+                                _tlScale.set(1, 1, 1);
+                                for (let i = 0; i < trussItems.length; i++) {
+                                    const it = trussItems[i];
+                                    _tlPos.set(it.x, it.targetY, 0);
+                                    _tlMat.compose(_tlPos, _tlQuat, _tlScale);
+                                    roofTrussesInst.setMatrixAt(i, _tlMat);
+                                }
+                                roofTrussesInst.count = trussItems.length;
+                                roofTrussesInst.instanceMatrix.needsUpdate = true;
+                                lastTauTruss = 1.0;
+                            }
+                            if (trussWireBox) trussWireBox.visible = false;
                             trusses.forEach(t => { if (t.mesh) { t.mesh.visible = true; t.mesh.position.y = t.targetY; } });
                         } else {
                             setVisual(p4.userData.roofSteel, tau_truss);
-                            const trussCount = trusses.length;
-                            for (let i = 0; i < trussCount; i++) {
-                                const t = trusses[i];
-                                if (!t || !t.mesh) continue;
-                                const slot = i / trussCount;
-                                const nextSlot = (i + 1) / trussCount;
-                                if (tau_truss >= nextSlot) { t.mesh.visible = true; t.mesh.position.y = t.targetY; }
-                                else if (tau_truss >= slot) {
-                                    const tFrac = (tau_truss - slot) / (nextSlot - slot);
-                                    t.mesh.visible = true;
-                                    t.mesh.position.y = t.targetY + (1.0 - tFrac) * 25.0;
-                                } else t.mesh.visible = false;
+                            if (roofTrussesInst && Math.abs(tau_truss - lastTauTruss) > 1e-4) {
+                                const trussCount = trussItems.length;
+                                let visCount = 0;
+                                let wireAssigned = false;
+                                _tlQuat.set(0, 0, 0, 1);
+                                _tlScale.set(1, 1, 1);
+                                for (let i = 0; i < trussCount; i++) {
+                                    const it = trussItems[i];
+                                    const slot = i / trussCount;
+                                    const nextSlot = (i + 1) / trussCount;
+                                    if (tau_truss >= nextSlot) {
+                                        _tlPos.set(it.x, it.targetY, 0);
+                                        _tlMat.compose(_tlPos, _tlQuat, _tlScale);
+                                        roofTrussesInst.setMatrixAt(i, _tlMat);
+                                        visCount = i + 1;
+                                    } else if (tau_truss >= slot) {
+                                        const tFrac = (tau_truss - slot) / (nextSlot - slot);
+                                        const dropY = it.targetY + (1.0 - tFrac) * 25.0;
+                                        _tlPos.set(it.x, dropY, 0);
+                                        _tlMat.compose(_tlPos, _tlQuat, _tlScale);
+                                        roofTrussesInst.setMatrixAt(i, _tlMat);
+                                        visCount = i + 1;
+                                        if (trussWireBox && !wireAssigned) {
+                                            trussWireBox.position.set(it.x, dropY, 0);
+                                            trussWireBox.visible = true;
+                                            wireAssigned = true;
+                                        }
+                                    }
+                                }
+                                roofTrussesInst.count = visCount;
+                                roofTrussesInst.instanceMatrix.needsUpdate = true;
+                                if (trussWireBox && !wireAssigned) trussWireBox.visible = false;
+                                lastTauTruss = tau_truss;
                             }
                         }
                     }
 
                     if (p4.userData.facadeGroup && p4.userData.facade) {
                         const f = p4.userData.facade;
+                        const fAnim = p4.userData.facadeAnimGroup;
+                        const fMerged = p4.userData.facadeMergedGroup;
                         if (tau_facade <= 0) {
                             p4.userData.facadeGroup.visible = false;
                         } else if (tau_facade >= 1.0) {
                             p4.userData.facadeGroup.visible = true;
-                            [f.south, f.west, f.north, f.east].forEach(wall => {
-                                if (wall) { setVisual(wall, 1.0); wall.position.y = 10.3; }
-                            });
-                            if (f.lobby) setVisual(f.lobby, 1.0);
-                            if (f.dock) setVisual(f.dock, 1.0);
+                            if (fMerged && fAnim) {
+                                fMerged.visible = true;
+                                fAnim.visible = false;
+                            } else {
+                                [f.south, f.west, f.north, f.east].forEach(wall => {
+                                    if (wall) { setVisual(wall, 1.0); wall.position.y = 10.3; }
+                                });
+                                if (f.lobby) setVisual(f.lobby, 1.0);
+                                if (f.dock) setVisual(f.dock, 1.0);
+                            }
                         } else {
                             p4.userData.facadeGroup.visible = true;
+                            if (fMerged && fAnim) {
+                                fMerged.visible = false;
+                                fAnim.visible = true;
+                            }
                             const sFrac = Math.max(0, Math.min(1.0, tau_facade / 0.25));
                             if (f.south) { setVisual(f.south, sFrac); f.south.position.y = 10.3 + (1.0 - sFrac) * 18.0; }
                             const wFrac = Math.max(0, Math.min(1.0, (tau_facade - 0.25) / 0.25));
@@ -10306,15 +10532,22 @@ window.DC36_SCHEDULE = {
                 }
             }
 
-            // 5. Phase 5: Heavy MEP Rigging (A5110, A5220, A5310)
+            // 5. Phase 5: Heavy MEP Rigging (Merged Substation, Instanced Gensets & Chillers)
             const p5 = models.p5_mep;
             if (p5 && p5.userData) {
                 if (tau_sub <= 0 && tau_chw <= 0 && tau_gens <= 0) {
                     p5.visible = false;
+                    lastTauGens = 0;
                 } else {
                     p5.visible = true;
                     if (p5.userData.substation) {
                         setVisual(p5.userData.substation, tau_sub);
+                        const trInstGrp = p5.userData.transformersInstGroup;
+                        if (trInstGrp) {
+                            if (tau_sub <= 0) setVisual(trInstGrp, 0);
+                            else if (tau_sub >= 1.0) { setVisual(trInstGrp, 1.0); trInstGrp.position.y = 0; }
+                            else { setVisual(trInstGrp, tau_sub); trInstGrp.position.y = (1.0 - tau_sub) * 16.0; }
+                        }
                         (p5.userData.transformers || []).forEach(tr => {
                             if (!tr.group) return;
                             if (tau_sub <= 0) tr.group.visible = false;
@@ -10323,38 +10556,70 @@ window.DC36_SCHEDULE = {
                         });
                     }
 
-                    const gensets = p5.userData.gensets || [];
-                    const genCount = gensets.length;
-                    if (tau_gens <= 0) {
-                        gensets.forEach(g => { if (g.group) setVisual(g.group, 0); });
-                    } else if (tau_gens >= 1.0) {
-                        gensets.forEach(g => { if (g.group) { setVisual(g.group, 1.0); g.group.position.y = g.targetY; } });
-                    } else {
-                        for (let i = 0; i < genCount; i++) {
-                            const g = gensets[i];
-                            if (!g || !g.group) continue;
-                            const slot = i / genCount, nextSlot = (i + 1) / genCount;
-                            if (tau_gens >= nextSlot) { setVisual(g.group, 1.0); g.group.position.y = g.targetY; }
-                            else if (tau_gens >= slot) {
-                                const gFrac = (tau_gens - slot) / (nextSlot - slot);
-                                setVisual(g.group, Math.max(0.01, Math.min(0.99, gFrac)));
-                                g.group.position.y = g.targetY + (1.0 - gFrac) * 12.0;
-                            } else setVisual(g.group, 0);
+                    const gensetsInst = p5.userData.gensetsInstGroup;
+                    const genTransforms = p5.userData.gensetTransforms || [];
+                    const genWireBox = p5.userData.genWireBox;
+                    const genCount = genTransforms.length;
+                    if (gensetsInst) {
+                        if (tau_gens <= 0) {
+                            setVisual(gensetsInst, 0);
+                            if (genWireBox) genWireBox.visible = false;
+                            lastTauGens = 0;
+                        } else if (tau_gens >= 1.0) {
+                            setVisual(gensetsInst, 1.0);
+                            if (lastTauGens !== 1.0) {
+                                for (let i = 0; i < genCount; i++) {
+                                    const t = genTransforms[i];
+                                    window.DC36_MODELS.setInstancedTransform(gensetsInst, i, t.x, t.targetY, t.z, 1, 1, 1);
+                                }
+                                (gensetsInst.userData._instMeshes || []).forEach(im => { im.count = genCount; });
+                                window.DC36_MODELS.flushInstancedMatrices(gensetsInst);
+                                lastTauGens = 1.0;
+                            }
+                            if (genWireBox) genWireBox.visible = false;
+                        } else {
+                            setVisual(gensetsInst, 1.0);
+                            if (Math.abs(tau_gens - lastTauGens) > 1e-4) {
+                                let visCount = 0;
+                                let wireAssigned = false;
+                                for (let i = 0; i < genCount; i++) {
+                                    const t = genTransforms[i];
+                                    const slot = i / genCount, nextSlot = (i + 1) / genCount;
+                                    if (tau_gens >= nextSlot) {
+                                        window.DC36_MODELS.setInstancedTransform(gensetsInst, i, t.x, t.targetY, t.z, 1, 1, 1);
+                                        visCount = i + 1;
+                                    } else if (tau_gens >= slot) {
+                                        const gFrac = (tau_gens - slot) / (nextSlot - slot);
+                                        const dropY = t.targetY + (1.0 - gFrac) * 12.0;
+                                        window.DC36_MODELS.setInstancedTransform(gensetsInst, i, t.x, dropY, t.z, 1, 1, 1);
+                                        visCount = i + 1;
+                                        if (genWireBox && !wireAssigned) {
+                                            genWireBox.position.set(t.x, dropY + 2.1, t.z);
+                                            genWireBox.visible = true;
+                                            wireAssigned = true;
+                                        }
+                                    }
+                                }
+                                (gensetsInst.userData._instMeshes || []).forEach(im => { im.count = visCount; });
+                                window.DC36_MODELS.flushInstancedMatrices(gensetsInst);
+                                if (genWireBox && !wireAssigned) genWireBox.visible = false;
+                                lastTauGens = tau_gens;
+                            }
                         }
                     }
 
-                    (p5.userData.chillers || []).forEach(ch => {
-                        if (!ch.group) return;
-                        if (tau_chw <= 0) setVisual(ch.group, 0);
-                        else if (tau_chw >= 1.0) { setVisual(ch.group, 1.0); ch.group.position.y = ch.targetY; }
-                        else { setVisual(ch.group, tau_chw); ch.group.position.y = ch.targetY + (1.0 - tau_chw) * 12.0; }
-                    });
-                    (p5.userData.rooftopChillers || []).forEach(rc => {
-                        if (!rc.group) return;
-                        if (tau_chw <= 0) setVisual(rc.group, 0);
-                        else if (tau_chw >= 1.0) { setVisual(rc.group, 1.0); rc.group.position.y = rc.targetY; }
-                        else { setVisual(rc.group, tau_chw); rc.group.position.y = rc.targetY + (1.0 - tau_chw) * 12.0; }
-                    });
+                    const chGrp = p5.userData.chillersInstGroup;
+                    if (chGrp) {
+                        if (tau_chw <= 0) setVisual(chGrp, 0);
+                        else if (tau_chw >= 1.0) { setVisual(chGrp, 1.0); chGrp.position.y = 0; }
+                        else { setVisual(chGrp, tau_chw); chGrp.position.y = (1.0 - tau_chw) * 12.0; }
+                    }
+                    const rcGrp = p5.userData.rooftopChillersGroup;
+                    if (rcGrp) {
+                        if (tau_chw <= 0) setVisual(rcGrp, 0);
+                        else if (tau_chw >= 1.0) { setVisual(rcGrp, 1.0); rcGrp.position.y = 0; }
+                        else { setVisual(rcGrp, tau_chw); rcGrp.position.y = (1.0 - tau_chw) * 12.0; }
+                    }
                     if (p5.userData.rooftopPipes) {
                         const pipeFrac = tau_chw <= 0 ? 0 : Math.max(0, Math.min(1, (tau_chw - 0.25) / 0.75));
                         setVisual(p5.userData.rooftopPipes, tau_chw >= 1.0 ? 1.0 : pipeFrac);
@@ -10367,7 +10632,6 @@ window.DC36_SCHEDULE = {
             }
 
             // 6. Zoned Interior Construction & Fit-Out Sequencing (P6)
-            // Order: Internal Partition Walls (A4250) -> 600mm Raised Floor (A5430) -> Overhead Red Busways, Yellow Fiber Trays & MEP Piping (A5440/A5480/A5340) -> Pumps, Buffer Tanks, CRAH (A5320/A5450) -> Switchgear, UPS, Batteries, Racks & NOC (A5120/A5410/A5420/A5470/A5560)
             const p6 = models.p6_whitespace;
             if (p6 && p6.userData) {
                 const anyInterior = (tau_part > 0 || tau_floor > 0 || tau_busway > 0 || tau_fiber > 0 || tau_piping > 0 || tau_pumps > 0 || tau_crah > 0 || tau_swgr > 0 || tau_xfmr > 0 || tau_ups > 0 || tau_batt > 0 || tau_racks > 0 || tau_fire > 0 || tau_noc > 0);
@@ -10375,55 +10639,25 @@ window.DC36_SCHEDULE = {
                     p6.visible = false;
                 } else {
                     p6.visible = true;
-                    // Step A: Internal Zone Partition Walls & Office Walls/Doors (A4250)
-                    if (p6.userData.partitionWalls) {
-                        setVisual(p6.userData.partitionWalls, tau_part);
-                    }
-                    if (p6.userData.officeWalls) {
-                        setVisual(p6.userData.officeWalls, tau_part);
-                    }
-                    if (p6.userData.groundWalls) {
-                        setVisual(p6.userData.groundWalls, tau_part);
-                    }
-                    // Step B: 600x600mm Raised Access Floor Grid & Suspended Office/Ground Ceilings (A5430)
-                    if (p6.userData.raisedFloor) {
-                        setVisual(p6.userData.raisedFloor, tau_floor);
-                    }
-                    if (p6.userData.officeCeilingsL1) {
-                        setVisual(p6.userData.officeCeilingsL1, tau_floor);
-                    }
-                    if (p6.userData.officeCeilingsL2) {
-                        setVisual(p6.userData.officeCeilingsL2, tau_floor);
-                    }
-                    if (p6.userData.groundCeilings) {
-                        setVisual(p6.userData.groundCeilings, tau_floor);
-                    }
-                    // Step C: Overhead Red Busways & Yellow Fiber Trays (A5440 / A5480)
-                    if (p6.userData.overheadTrays) {
-                        const trayFrac = Math.max(tau_busway, tau_fiber);
-                        setVisual(p6.userData.overheadTrays, trayFrac);
-                    }
-                    // Step D: Color-Coded MEP Piping Headers (A5340)
-                    if (p6.userData.interiorPiping) {
-                        setVisual(p6.userData.interiorPiping, tau_piping);
-                    }
-                    // Step E: Mechanical Gallery Pumps, Buffer Tanks & CRAH Units (A5320 / A5450)
-                    if (p6.userData.mechGallery) {
-                        setVisual(p6.userData.mechGallery, Math.max(tau_pumps, tau_crah));
-                    }
-                    // Step F: Power Room Switchgear, Static UPS & Battery Racks (A5120 / A5410 / A5420)
+                    if (p6.userData.partitionWalls) setVisual(p6.userData.partitionWalls, tau_part);
+                    if (p6.userData.officeWalls) setVisual(p6.userData.officeWalls, tau_part);
+                    if (p6.userData.groundWalls) setVisual(p6.userData.groundWalls, tau_part);
+                    if (p6.userData.raisedFloor) setVisual(p6.userData.raisedFloor, tau_floor);
+                    if (p6.userData.officeCeilingsL1) setVisual(p6.userData.officeCeilingsL1, tau_floor);
+                    if (p6.userData.officeCeilingsL2) setVisual(p6.userData.officeCeilingsL2, tau_floor);
+                    if (p6.userData.groundCeilings) setVisual(p6.userData.groundCeilings, tau_floor);
+                    if (p6.userData.overheadTrays) setVisual(p6.userData.overheadTrays, Math.max(tau_busway, tau_fiber));
+                    if (p6.userData.interiorPiping) setVisual(p6.userData.interiorPiping, tau_piping);
+                    if (p6.userData.mechGallery) setVisual(p6.userData.mechGallery, Math.max(tau_pumps, tau_crah));
                     if (p6.userData.switchgear) setVisual(p6.userData.switchgear, tau_swgr);
                     if (p6.userData.upsRoom) setVisual(p6.userData.upsRoom, tau_ups);
                     if (p6.userData.batteryRacks) setVisual(p6.userData.batteryRacks, tau_batt);
-
-                    // Step G: Security / NOC Lobby Fit-Out + Ground Floor Fit-Out & Plants (A5560 / A5120 / A5150 / A5320 / A5540)
                     if (p6.userData.nocLobby) setVisual(p6.userData.nocLobby, tau_noc);
                     if (p6.userData.officeFurniture) setVisual(p6.userData.officeFurniture, tau_noc);
                     if (p6.userData.groundElecPlant) setVisual(p6.userData.groundElecPlant, Math.max(tau_swgr, tau_xfmr));
                     if (p6.userData.groundMechFirePlant) setVisual(p6.userData.groundMechFirePlant, Math.max(tau_pumps, tau_fire));
                     if (p6.userData.groundFitout) setVisual(p6.userData.groundFitout, tau_noc);
 
-                    // Step H: HAC Glass Containment & Sequential Server Racks (A5470)
                     if (p6.userData.containmentGlass) {
                         p6.userData.containmentGlass.visible = (tau_racks > 0);
                     }
@@ -10454,40 +10688,22 @@ window.DC36_SCHEDULE = {
                                 }
                             }
                         }
-                    } else {
-                        if (tau_racks <= 0) {
-                            racks.forEach(r => { r.visible = false; if (r.userData && r.userData.wire) r.userData.wire.visible = false; });
-                        } else if (tau_racks >= 1.0) {
-                            racks.forEach(r => { r.visible = true; if (r.userData && r.userData.wire) r.userData.wire.visible = false; });
-                        } else {
-                            const activeCount = Math.floor(tau_racks * rackTotal);
-                            for (let i = 0; i < rackTotal; i++) {
-                                const r = racks[i];
-                                if (i < activeCount) {
-                                    r.visible = true;
-                                    if (r.userData && r.userData.wire) r.userData.wire.visible = false;
-                                } else if (i < activeCount + 8) {
-                                    r.visible = true;
-                                    if (r.userData && r.userData.wire) r.userData.wire.visible = true;
-                                } else {
-                                    r.visible = false;
-                                    if (r.userData && r.userData.wire) r.userData.wire.visible = false;
-                                }
-                            }
-                        }
                     }
                 }
             }
 
-            // Re-apply cutaway / X-ray visibility & opacity over any newly revealed envelope/roof groups
             applyCutawayState();
 
-            // 7. Phase 7: Commissioning Load Banks (A6420)
+            // 7. Phase 7: Commissioning Load Banks (A6420 - Instanced)
             const p7 = models.p7_loadbanks;
             if (p7 && p7.userData) {
                 p7.visible = (activePhase === 7);
                 if (activePhase === 7) {
-                    (p7.userData.loadBanks || []).forEach(lb => setVisual(lb, tau_heat > 0 ? tau_heat : 1.0));
+                    if (p7.userData.lbInstGroup) {
+                        setVisual(p7.userData.lbInstGroup, tau_heat > 0 ? tau_heat : 1.0);
+                    } else {
+                        (p7.userData.loadBanks || []).forEach(lb => setVisual(lb, tau_heat > 0 ? tau_heat : 1.0));
+                    }
                     if (p7.userData.pulseRing) p7.userData.pulseRing.rotation.z += 0.015;
                 }
             }
@@ -10586,7 +10802,7 @@ window.DC36_SCHEDULE = {
     };
 
     window.DC36_TIMELINE.jumpToMilestone = function(taskCode) {
-        const act = schedule.activities.find(a => a.code === taskCode);
+        const act = actByCode.get(taskCode) || schedule.activities.find(a => a.code === taskCode);
         if (act) {
             return updateState(act.finishTimestamp || act.startTimestamp);
         }
@@ -11133,9 +11349,9 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v29 Orbit + Hand Pan + GTA V 3rd-Person Stair-Climbing Mode) ===
-// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.029)
-// Features: Orbit / Hand-Pan / GTA V 3rd-Person Stair-Climbing Mode + High-FPS Direct MSAA Day Render + Cached Shadows
+    // === MODULE: app.js (v31 Zero-GC Instanced Fans + Indoor Zone Culling + Orbit/Hand/GTA-TPV) ===
+// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.031)
+// Features: Zero-GC Instanced Fan Spin + Unified Indoor & Far-Campus Vault Culling + Orbit / Hand-Pan / GTA V 3rd-Person
 
 (function() {
     let scene, camera, renderer, controls, composer, bloomPass, fxaaPass;
@@ -11176,6 +11392,11 @@ window.DC36_SCHEDULE = {
     let tpvHandDragging = false;
     let tpvLandDip = 0;
     let tpvSnapCamera = false;
+    const _tpvCamTargetPos = new THREE.Vector3();
+    const _cullCamDir = new THREE.Vector3();
+    const _fanDummy = new THREE.Object3D();
+    let _fanSpinAngle = 0;
+    let _culledObjects = [];
 
     const TPV_FLOOR_PRESETS = {
         ext:  { pos: [57.5, 0.0, 0.0],    yaw: -Math.PI / 2,      camYaw: Math.PI / 2,  label: 'SITE EXTERIOR (0.0m)' },
@@ -11220,8 +11441,129 @@ window.DC36_SCHEDULE = {
         camera.updateProjectionMatrix();
     }
 
+    function restoreZoneCulling() {
+        if (_culledObjects.length === 0) return;
+        for (let i = 0; i < _culledObjects.length; i++) {
+            const obj = _culledObjects[i];
+            if (obj && obj.userData && obj.userData._preCullVisible !== undefined) {
+                obj.visible = obj.userData._preCullVisible;
+                delete obj.userData._preCullVisible;
+            }
+        }
+        _culledObjects.length = 0;
+    }
+
+    function updateZoneCulling() {
+        if (!modelsRef) return;
+        const tl = window.DC36_TIMELINE;
+        const xrayOn = tl && tl.isCutawayBlending && tl.isCutawayBlending();
+        const hideRoofOn = tl && tl.isHideRoofActive && tl.isHideRoofActive();
+        const facadeComplete = tl && tl.isFacadeComplete && tl.isFacadeComplete();
+
+        const isTPVIndoors = isTPVActive && !xrayOn && tpvPos.x < 48.6 && tpvPos.y >= 1.2 && tpvPos.y < 18.2;
+        const camDist = camera ? camera.position.length() : 0;
+        const isFarExterior = !isTPVActive && !xrayOn && !hideRoofOn && !isDroneTourActive && facadeComplete && camDist > 88.0;
+
+        if (!isTPVIndoors && !isFarExterior) {
+            restoreZoneCulling();
+            return;
+        }
+
+        const p4 = modelsRef.p4_envelope ? modelsRef.p4_envelope.userData : null;
+        const p5 = modelsRef.p5_mep ? modelsRef.p5_mep.userData : null;
+        const p6 = modelsRef.p6_whitespace ? modelsRef.p6_whitespace.userData : null;
+        const nextCull = [];
+
+        if (isTPVIndoors) {
+            const isGroundFloor = tpvPos.y < 6.4;
+            if (camera) {
+                camera.getWorldDirection(_cullCamDir);
+                const tanV = Math.tan((camera.fov * Math.PI / 180) * 0.5);
+                const halfDiag = Math.atan(Math.hypot(tanV * camera.aspect, tanV)) + 0.03;
+                const fx = _cullCamDir.x;
+                const maxRayX = fx * Math.cos(halfDiag) + Math.sqrt(Math.max(0, 1 - fx * fx)) * Math.sin(halfDiag);
+                if (camera.position.x < 49.0 && maxRayX < -0.02 && modelsRef.site) {
+                    nextCull.push(modelsRef.site);
+                }
+            }
+            if (p5) {
+                if (p5.substation) nextCull.push(p5.substation);
+                if (p5.genGroup) nextCull.push(p5.genGroup);
+                if (p5.rooftopChillersGroup) nextCull.push(p5.rooftopChillersGroup);
+                if (p5.rooftopPipes) nextCull.push(p5.rooftopPipes);
+                if (p5.coolingTowers) nextCull.push(p5.coolingTowers);
+            }
+            if (modelsRef.p7_loadbanks) nextCull.push(modelsRef.p7_loadbanks);
+
+            if (isGroundFloor) {
+                if (p4) {
+                    if (p4.roofAssembly) nextCull.push(p4.roofAssembly);
+                    if (p4.roofSteel) nextCull.push(p4.roofSteel);
+                }
+                if (p6) {
+                    if (Array.isArray(p6.rackInstanced)) {
+                        for (let i = 0; i < p6.rackInstanced.length; i++) nextCull.push(p6.rackInstanced[i]);
+                    }
+                    if (p6.containmentGlass) nextCull.push(p6.containmentGlass);
+                    if (p6.mechGallery) nextCull.push(p6.mechGallery);
+                    if (p6.switchgear) nextCull.push(p6.switchgear);
+                    if (p6.upsRoom) nextCull.push(p6.upsRoom);
+                    if (p6.batteryRacks) nextCull.push(p6.batteryRacks);
+                    if (p6.officeCeilingsL1) nextCull.push(p6.officeCeilingsL1);
+                    if (p6.officeCeilingsL2) nextCull.push(p6.officeCeilingsL2);
+                    if (p6.raisedFloor) nextCull.push(p6.raisedFloor);
+                    if (p6.interiorPiping) nextCull.push(p6.interiorPiping);
+                    if (p6.overheadTrays) nextCull.push(p6.overheadTrays);
+                    if (tpvPos.x > 16.0) {
+                        if (p6.groundElecPlant) nextCull.push(p6.groundElecPlant);
+                        if (p6.groundMechFirePlant) nextCull.push(p6.groundMechFirePlant);
+                        if (p5 && p5.chillersInstGroup) nextCull.push(p5.chillersInstGroup);
+                    }
+                }
+            }
+        } else if (isFarExterior) {
+            if (p5 && p5.chillersInstGroup) nextCull.push(p5.chillersInstGroup);
+            if (p6) {
+                if (p6.groundElecPlant) nextCull.push(p6.groundElecPlant);
+                if (p6.groundMechFirePlant) nextCull.push(p6.groundMechFirePlant);
+                if (p6.switchgear) nextCull.push(p6.switchgear);
+                if (p6.upsRoom) nextCull.push(p6.upsRoom);
+                if (p6.batteryRacks) nextCull.push(p6.batteryRacks);
+                if (p6.mechGallery) nextCull.push(p6.mechGallery);
+                if (p6.interiorPiping) nextCull.push(p6.interiorPiping);
+                if (p6.overheadTrays) nextCull.push(p6.overheadTrays);
+                if (p6.raisedFloor) nextCull.push(p6.raisedFloor);
+                if (p6.containmentGlass) nextCull.push(p6.containmentGlass);
+                if (Array.isArray(p6.rackInstanced)) {
+                    for (let i = 0; i < p6.rackInstanced.length; i++) nextCull.push(p6.rackInstanced[i]);
+                }
+            }
+        }
+
+        for (let i = _culledObjects.length - 1; i >= 0; i--) {
+            const obj = _culledObjects[i];
+            if (nextCull.indexOf(obj) === -1) {
+                if (obj && obj.userData && obj.userData._preCullVisible !== undefined) {
+                    obj.visible = obj.userData._preCullVisible;
+                    delete obj.userData._preCullVisible;
+                }
+                _culledObjects.splice(i, 1);
+            }
+        }
+
+        for (let i = 0; i < nextCull.length; i++) {
+            const obj = nextCull[i];
+            if (obj && obj.userData && obj.userData._preCullVisible === undefined) {
+                obj.userData._preCullVisible = obj.visible;
+                obj.visible = false;
+                _culledObjects.push(obj);
+            }
+        }
+    }
+
     function setXRayUIState(enabled) {
         const isOn = !!enabled;
+        if (isOn) restoreZoneCulling();
         window.DC36_TIMELINE.setCutaway(isOn);
 
         const cutawayToggle = document.getElementById('toggle-cutaway');
@@ -11671,6 +12013,7 @@ window.DC36_SCHEDULE = {
             b.classList.toggle('active', b.getAttribute('data-floor') === key);
         });
         updateTPVHUDFloor();
+        updateZoneCulling();
     }
 
     function updateTPVHUDFloor() {
@@ -11947,6 +12290,7 @@ window.DC36_SCHEDULE = {
             }
         } else {
             isTPVActive = false;
+            restoreZoneCulling();
             tpvKeys.forward = tpvKeys.backward = tpvKeys.left = tpvKeys.right = tpvKeys.sprint = tpvKeys.jump = tpvKeys.rotLeft = tpvKeys.rotRight = false;
             if (tpvAvatar) tpvAvatar.root.visible = false;
             if (tpvShadowDisc) tpvShadowDisc.visible = false;
@@ -12314,7 +12658,8 @@ window.DC36_SCHEDULE = {
                 camera.position.set(desiredCamX, desiredCamY, desiredCamZ);
                 tpvSnapCamera = false;
             } else {
-                camera.position.lerp(new THREE.Vector3(desiredCamX, desiredCamY, desiredCamZ), Math.min(1, 18 * dt));
+                _tpvCamTargetPos.set(desiredCamX, desiredCamY, desiredCamZ);
+                camera.position.lerp(_tpvCamTargetPos, Math.min(1, 18 * dt));
             }
             const lookAheadX = pivotX - dirX * 2.2;
             const lookAheadZ = pivotZ - dirZ * 2.2;
@@ -12343,6 +12688,7 @@ window.DC36_SCHEDULE = {
     }
 
     function handleScheduleJump(timestamp, taskCode) {
+        restoreZoneCulling();
         const state = window.DC36_TIMELINE.updateToTime(timestamp);
         updateHUD(state);
         window.DC36_GANTT.updateTime(timestamp);
@@ -12438,6 +12784,7 @@ window.DC36_SCHEDULE = {
 
         if (slider) {
             slider.addEventListener('input', (e) => {
+                restoreZoneCulling();
                 const fraction = parseFloat(e.target.value) / 1000;
                 const state = window.DC36_TIMELINE.updateToProgress(fraction);
                 updateHUD(state);
@@ -12470,6 +12817,7 @@ window.DC36_SCHEDULE = {
 
         if (hideRoofToggle) {
             hideRoofToggle.addEventListener('change', (e) => {
+                if (e.target.checked) restoreZoneCulling();
                 window.DC36_TIMELINE.setHideRoof(e.target.checked);
             });
         }
@@ -12518,6 +12866,7 @@ window.DC36_SCHEDULE = {
         const iconModeToggle = document.getElementById('icon-mode-toggle');
         if (btnModeToggle) {
             bindAction(btnModeToggle, () => {
+                restoreZoneCulling();
                 isRealityMode = !isRealityMode;
                 if (isRealityMode) {
                     btnModeToggle.classList.add('active');
@@ -12559,6 +12908,7 @@ window.DC36_SCHEDULE = {
 
         document.querySelectorAll('.mile-btn').forEach(btn => {
             bindAction(btn, () => {
+                restoreZoneCulling();
                 const code = btn.getAttribute('data-code');
                 const state = window.DC36_TIMELINE.jumpToMilestone(code);
                 updateHUD(state);
@@ -12820,16 +13170,36 @@ window.DC36_SCHEDULE = {
             if (camera.position.y < 1.2) camera.position.y = 1.2;
         }
 
-        if (window.DC36_COOLING_FANS) {
-            window.DC36_COOLING_FANS.forEach(fan => {
-                fan.rotation.y += 0.10 * (dt / 0.016);
-            });
+        if (window.DC36_COOLING_FAN_BATCHES && window.DC36_COOLING_FAN_BATCHES.length > 0) {
+            _fanSpinAngle = (_fanSpinAngle + 0.10 * (dt / 0.016)) % (Math.PI * 2);
+            _fanDummy.rotation.set(0, _fanSpinAngle, 0);
+            _fanDummy.scale.set(1, 1, 1);
+            for (let b = 0; b < window.DC36_COOLING_FAN_BATCHES.length; b++) {
+                const batch = window.DC36_COOLING_FAN_BATCHES[b];
+                if (!batch.inst || !batch.inst.visible) continue;
+                let ancestorVis = true;
+                let p = batch.inst.parent;
+                while (p) {
+                    if (!p.visible) { ancestorVis = false; break; }
+                    p = p.parent;
+                }
+                if (!ancestorVis) continue;
+                const positions = batch.positions;
+                for (let i = 0; i < positions.length; i++) {
+                    const pos = positions[i];
+                    _fanDummy.position.set(pos.x, pos.y, pos.z);
+                    _fanDummy.updateMatrix();
+                    batch.inst.setMatrixAt(i, _fanDummy.matrix);
+                }
+                batch.inst.instanceMatrix.needsUpdate = true;
+            }
         }
 
         if (window.DC36_TIMELINE.updateCutawayTransition) {
             window.DC36_TIMELINE.updateCutawayTransition(dt);
         }
 
+        if (window.DC36_TIMELINE.isPlaying()) restoreZoneCulling();
         const state = window.DC36_TIMELINE.tick(Number.isFinite(now) ? now : performance.now());
         if (state) {
             updateHUD(state);
@@ -12847,6 +13217,8 @@ window.DC36_SCHEDULE = {
         if (particles) {
             particles.update(dt);
         }
+
+        updateZoneCulling();
 
         if (currentLightingMode !== 'day' && composer) {
             composer.render();
