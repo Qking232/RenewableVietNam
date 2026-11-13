@@ -1609,7 +1609,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
-    <!-- Self-Contained Single-File Application Modules (Rev.035) -->
+    <!-- Self-Contained Single-File Application Modules (Rev.036) -->
     <script>
     // === MODULE: datacenter_schedule.js (45MW Hyperscale) ===
 // Institutional DC36-T3 Hyperscale Datacenter Schedule Dataset
@@ -5745,8 +5745,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v31 Merged Facade + Instanced Trusses/Xfmrs) ===
-// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.031: Merged Reality Facade + Instanced Trusses/Transformers + Shared Ceiling/Partition/Fitout Batches)
+    // === MODULE: datacenter_models.js (v36 Architectural Deciduous Trees + Perimeter Landscaping) ===
+// Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.036: Architectural Deciduous Trees + Botanical Foliage Palette + Perimeter Boxwood Hedges & Shrubs)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
 (function() {
@@ -5888,9 +5888,16 @@ window.DC36_SCHEDULE = {
             silencerLagging: new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.38, metalness: 0.8, map: T.brushedMetal }),
             water: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.08, metalness: 0.82, transparent: true, opacity: 0.85 }),
             riprap: new THREE.MeshStandardMaterial({ color: 0x57534e, roughness: 0.95, metalness: 0.05 }),
-            treeFoliage: new THREE.MeshStandardMaterial({ color: 0x1d5e33, roughness: 0.88, metalness: 0.0 }),
-            treeFoliageLight: new THREE.MeshStandardMaterial({ color: 0x2d7a45, roughness: 0.86, metalness: 0.0 }),
-            treeBark: new THREE.MeshStandardMaterial({ color: 0x3e2723, roughness: 0.92, metalness: 0.04 }),
+            treeFoliage: new THREE.MeshStandardMaterial({ color: 0x2d4c1e, roughness: 0.9, flatShading: true }),
+            treeFoliageLight: new THREE.MeshStandardMaterial({ color: 0x3a5f27, roughness: 0.9, flatShading: true }),
+            treeBark: new THREE.MeshStandardMaterial({ color: 0x3b2a1d, roughness: 0.92, flatShading: true }),
+            // Architectural-grade 4-tone botanical palette (MeshStandardMaterial, flatShading: true, roughness: 0.9)
+            foliageForest: new THREE.MeshStandardMaterial({ color: 0x2d4c1e, roughness: 0.9, flatShading: true }), // Deep Forest Green
+            foliageOlive: new THREE.MeshStandardMaterial({ color: 0x3a5f27, roughness: 0.9, flatShading: true }),  // Olive Green
+            foliageSage: new THREE.MeshStandardMaterial({ color: 0x4a6b32, roughness: 0.9, flatShading: true }),   // Sage Green
+            foliageCypress: new THREE.MeshStandardMaterial({ color: 0x243d18, roughness: 0.9, flatShading: true }),// Dark Cypress
+            treeMulch: new THREE.MeshStandardMaterial({ color: 0x221a14, roughness: 0.95, flatShading: true }),    // Dark Soil / Mulch
+            hedgeBoxwood: new THREE.MeshStandardMaterial({ color: 0x2b4a1f, roughness: 0.9, flatShading: true }), // Low Boxwood Hedge
             k12Yellow: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, metalness: 0.55 }),
             anprCamera: new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.4, metalness: 0.7 }),
             evGreenGlow: new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981, emissiveIntensity: 0.85 }),
@@ -6930,16 +6937,223 @@ window.DC36_SCHEDULE = {
         basinGroup.add(riprapBank, waterMesh, lifebuoyPost, ring);
         group.add(basinGroup);
 
-        // Multi-Tier Procedural Trees along Landscaped Berms (InstancedMesh)
-        const treePositions = [
-            [-108, -81.5], [-88, -81.5], [-68, -81.5], [-48, -81.5], [-28, -81.5], [28, -81.5], [48, -81.5], [68, -81.5], [88, -81.5], [108, -81.5],
-            [110.5, -62], [110.5, -42], [110.5, -22], [110.5, -2], [110.5, 18], [110.5, 38], [110.5, 58], [110.5, 76],
-            [-110.5, -62], [-110.5, -42], [-110.5, -22], [-110.5, -2], [-110.5, 18], [-110.5, 38], [-110.5, 58], [-110.5, 76],
-            [-92, 79], [28, 79], [55, 79], [82, 79]
+        // Architectural-Grade Procedural Deciduous Trees & Perimeter Landscaping (Rev.036)
+        // (1) Organic Broadleaf Canopies (Clouds of 5-8 displaced IcosahedronGeometry spheres)
+        // (2) Natural Tapered Trunk (CylinderGeometry(0.18, 0.35, h, 7)) + 2-3 Angled Primary Branches + Mulch Ring (CircleGeometry)
+        // (3) Botanical 4-Tone Palette (#2d4c1e, #3a5f27, #4a6b32, #243d18) + 0.75x-1.35x Scale Variety + Random Y-Rotation
+        // (4) Low Boxwood Hedge Rows & Rounded Shrubbery along Perimeter Verges
+        // Elevated to sit precisely on the perimeter grass berms (berm top y = 1.10m / 0.90m)
+        // Merged by Material for Zero-Draw-Call Degradation (~7 draw calls total)
+        const landscapeGroup = new THREE.Group();
+        landscapeGroup.name = "PerimeterArchitecturalLandscape";
+
+        function makeTreeRng(seed) {
+            let s = seed % 2147483647;
+            if (s <= 0) s += 2147483646;
+            return function() {
+                s = (s * 16807) % 2147483647;
+                return (s - 1) / 2147483646;
+            };
+        }
+
+        function createDisplacedCanopyGeo(radius, detail, prng) {
+            const geo = new THREE.IcosahedronGeometry(radius, detail);
+            const pos = geo.attributes.position;
+            const v = new THREE.Vector3();
+            for (let i = 0; i < pos.count; i++) {
+                v.fromBufferAttribute(pos, i);
+                // Slight radial pseudo-random noise displacement
+                const noise = (prng() - 0.5) * 0.22;
+                v.multiplyScalar(1.0 + noise);
+                pos.setXYZ(i, v.x, v.y, v.z);
+            }
+            geo.computeVertexNormals();
+            return geo;
+        }
+
+        const foliagePalettes = [M.foliageForest, M.foliageOlive, M.foliageSage, M.foliageCypress];
+
+        const vergeSegments = [
+            // North Verge (z = -81.5, x: -108 -> 108, berm top y = 1.10m)
+            {
+                trees: [[-108, -81.5], [-88, -81.5], [-68, -81.5], [-48, -81.5], [-28, -81.5], [28, -81.5], [48, -81.5], [68, -81.5], [88, -81.5], [108, -81.5]],
+                axis: 'x',
+                bermTopY: 1.10
+            },
+            // East Verge (x = 110.5, z: -62 -> 76, berm top y = 1.10m)
+            {
+                trees: [[110.5, -62], [110.5, -42], [110.5, -22], [110.5, -2], [110.5, 18], [110.5, 38], [110.5, 58], [110.5, 76]],
+                axis: 'z',
+                bermTopY: 1.10
+            },
+            // West Verge (x = -110.5, z: -62 -> 76, berm top y = 1.10m)
+            {
+                trees: [[-110.5, -62], [-110.5, -42], [-110.5, -22], [-110.5, -2], [-110.5, 18], [-110.5, 38], [-110.5, 58], [-110.5, 76]],
+                axis: 'z',
+                bermTopY: 1.10
+            },
+            // South Entry Verge (z = 79, x: -92 -> 82, berm top y = 0.90m)
+            {
+                trees: [[-92, 79], [28, 79], [55, 79], [82, 79]],
+                axis: 'x',
+                bermTopY: 0.90
+            }
         ];
-        group.add(buildInstanced(new THREE.CylinderGeometry(0.22, 0.34, 2.4, 8), M.treeBark, treePositions.map(tp => ({ pos: [tp[0], 1.7, tp[1]] })), "TreeTrunks"));
-        group.add(buildInstanced(new THREE.ConeGeometry(2.1, 3.2, 8), M.treeFoliage, treePositions.map(tp => ({ pos: [tp[0], 3.8, tp[1]] })), "TreeFoliageLower"));
-        group.add(buildInstanced(new THREE.ConeGeometry(1.5, 2.8, 8), M.treeFoliageLight, treePositions.map(tp => ({ pos: [tp[0], 5.4, tp[1]] })), "TreeFoliageUpper"));
+
+        let globalTreeIndex = 0;
+        vergeSegments.forEach((seg, sIdx) => {
+            const tList = seg.trees;
+            const bY = seg.bermTopY;
+
+            for (let i = 0; i < tList.length; i++) {
+                const [tx, tz] = tList[i];
+                const trng = makeTreeRng(1000 + globalTreeIndex * 137);
+                globalTreeIndex++;
+
+                // (3) Randomize scale (0.75x to 1.35x), Y-rotation, and botanical palette
+                const scale = 0.75 + trng() * 0.60;
+                const rotY = trng() * Math.PI * 2;
+                const matFoliage = foliagePalettes[Math.floor(trng() * foliagePalettes.length)];
+
+                const treeNode = new THREE.Group();
+                treeNode.position.set(tx, bY, tz);
+                treeNode.rotation.y = rotY;
+                treeNode.scale.set(scale, scale, scale);
+
+                // (2) Base dark soil / mulch ring (CircleGeometry) on the grass strip
+                const mulchRadius = 1.15 + trng() * 0.30;
+                const mulchGeo = new THREE.CircleGeometry(mulchRadius, 12);
+                mulchGeo.rotateX(-Math.PI / 2);
+                const mulchMesh = new THREE.Mesh(mulchGeo, M.treeMulch);
+                mulchMesh.position.y = 0.035;
+                mulchMesh.userData.isLandscape = true;
+                treeNode.add(mulchMesh);
+
+                // (2) Natural Tapered Trunk: CylinderGeometry(0.18, 0.35, height, 7)
+                const trunkHeight = 2.4 + trng() * 0.5;
+                const trunkGeo = new THREE.CylinderGeometry(0.18, 0.35, trunkHeight, 7);
+                const trunkMesh = new THREE.Mesh(trunkGeo, M.treeBark);
+                trunkMesh.position.y = trunkHeight / 2;
+                trunkMesh.userData.isLandscape = true;
+                treeNode.add(trunkMesh);
+
+                // (2) 2-3 Angled primary branches reaching into the canopy
+                const branchCount = 2 + Math.floor(trng() * 2);
+                const branchBaseY = trunkHeight * 0.74;
+                const branchTips = [];
+
+                for (let b = 0; b < branchCount; b++) {
+                    const bLen = 1.25 + trng() * 0.45;
+                    const bGeo = new THREE.CylinderGeometry(0.08, 0.16, bLen, 5);
+                    bGeo.translate(0, bLen / 2, 0);
+
+                    const bMesh = new THREE.Mesh(bGeo, M.treeBark);
+                    bMesh.position.set(0, branchBaseY, 0);
+
+                    const azimuth = (b / branchCount) * Math.PI * 2 + (trng() - 0.5) * 0.45;
+                    const tilt = 0.48 + trng() * 0.22; // ~28 to 40 deg tilt
+
+                    bMesh.rotation.set(0, azimuth, 0);
+                    bMesh.rotateZ(tilt);
+                    bMesh.userData.isLandscape = true;
+                    treeNode.add(bMesh);
+
+                    const tipX = Math.sin(azimuth) * Math.sin(tilt) * bLen;
+                    const tipZ = Math.cos(azimuth) * Math.sin(tilt) * bLen;
+                    const tipY = branchBaseY + Math.cos(tilt) * bLen;
+                    branchTips.push({ x: tipX, y: tipY, z: tipZ, azimuth });
+                }
+
+                // (1) Organic Broadleaf Canopies: clustered clouds of 5 to 8 overlapping IcosahedronGeometry(radius, 1)
+                const canopyCount = 5 + Math.floor(trng() * 4); // 5 to 8 clusters
+                // Apical core dome
+                const coreR = 1.30 + trng() * 0.25;
+                const coreGeo = createDisplacedCanopyGeo(coreR, 1, trng);
+                const coreMesh = new THREE.Mesh(coreGeo, matFoliage);
+                coreMesh.position.set(0, trunkHeight + 1.15, 0);
+                coreMesh.scale.set(1.15, 0.95, 1.15);
+                coreMesh.userData.isLandscape = true;
+                treeNode.add(coreMesh);
+
+                // Lateral sculptural canopy clusters
+                for (let c = 1; c < canopyCount; c++) {
+                    const clusterR = 0.85 + trng() * 0.45;
+                    const cGeo = createDisplacedCanopyGeo(clusterR, 1, trng);
+                    const cMesh = new THREE.Mesh(cGeo, matFoliage);
+
+                    let cx, cy, cz;
+                    if (c - 1 < branchTips.length) {
+                        const bt = branchTips[c - 1];
+                        cx = bt.x + (trng() - 0.5) * 0.35;
+                        cy = bt.y + (trng() - 0.5) * 0.35;
+                        cz = bt.z + (trng() - 0.5) * 0.35;
+                    } else {
+                        const ang = trng() * Math.PI * 2;
+                        const rad = 0.65 + trng() * 0.70;
+                        cx = Math.sin(ang) * rad;
+                        cy = trunkHeight + 0.60 + trng() * 1.5;
+                        cz = Math.cos(ang) * rad;
+                    }
+                    cMesh.position.set(cx, cy, cz);
+                    cMesh.scale.set(0.85 + trng() * 0.40, 0.85 + trng() * 0.40, 0.85 + trng() * 0.40);
+                    cMesh.userData.isLandscape = true;
+                    treeNode.add(cMesh);
+                }
+
+                landscapeGroup.add(treeNode);
+
+                // (4) Low Boxwood Hedges and Rounded Shrubs between trees along the verge
+                if (i < tList.length - 1) {
+                    const [nextTx, nextTz] = tList[i + 1];
+                    const dist = Math.hypot(nextTx - tx, nextTz - tz);
+                    if (dist > 6 && dist < 32) {
+                        const midX = (tx + nextTx) / 2;
+                        const midZ = (tz + nextTz) / 2;
+                        const hedgeLen = Math.max(3.0, dist - 6.5);
+
+                        const hedgeNode = new THREE.Group();
+                        hedgeNode.position.set(midX, bY, midZ);
+
+                        let hedgeGeo;
+                        if (seg.axis === 'x') {
+                            hedgeGeo = new THREE.BoxGeometry(hedgeLen, 0.65, 0.85);
+                        } else {
+                            hedgeGeo = new THREE.BoxGeometry(0.85, 0.65, hedgeLen);
+                        }
+                        const hedgeMesh = new THREE.Mesh(hedgeGeo, M.hedgeBoxwood);
+                        hedgeMesh.position.y = 0.325;
+                        hedgeMesh.userData.isLandscape = true;
+                        hedgeNode.add(hedgeMesh);
+
+                        // 1 to 2 smaller rounded shrubs flanking the hedge ends
+                        const hrng = makeTreeRng(2000 + globalTreeIndex * 97);
+                        const shrubCount = 1 + Math.floor(hrng() * 2);
+                        for (let s = 0; s < shrubCount; s++) {
+                            const sR = 0.42 + hrng() * 0.25;
+                            const sGeo = createDisplacedCanopyGeo(sR, 1, hrng);
+                            const sMat = foliagePalettes[Math.floor(hrng() * foliagePalettes.length)];
+                            const sMesh = new THREE.Mesh(sGeo, sMat);
+
+                            const sFrac = (s === 0) ? -0.45 : 0.45;
+                            const sOffset = hedgeLen * sFrac;
+                            if (seg.axis === 'x') {
+                                sMesh.position.set(sOffset, sR * 0.85, (hrng() - 0.5) * 0.30);
+                            } else {
+                                sMesh.position.set((hrng() - 0.5) * 0.30, sR * 0.85, sOffset);
+                            }
+                            sMesh.userData.isLandscape = true;
+                            hedgeNode.add(sMesh);
+                        }
+
+                        landscapeGroup.add(hedgeNode);
+                    }
+                }
+            }
+        });
+
+        // Merge all landscape geometries by material to maintain low draw calls (< 8 calls total)
+        mergeStaticGroupByMaterial(landscapeGroup);
+        group.add(landscapeGroup);
 
         // 110kV Tapered Steel Transmission Monopoles & Overhead Catenary Feed
         const transmissionGroup = new THREE.Group();
@@ -13371,6 +13585,7 @@ window.DC36_SCHEDULE = {
         window.DC36_CAMERA_Y = camera.position.y;
         window.DC36_SCENE = scene;
         window.DC36_CAMERA = camera;
+        window.DC36_CONTROLS = controls;
         window.DC36_RENDERER = renderer;
         window.DC36_CULLED = _culledObjects;
         if (particles) {
