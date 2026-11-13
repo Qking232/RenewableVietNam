@@ -1561,6 +1561,9 @@
         <button class="play-btn" id="btn-play">
             <i class="fas fa-play"></i> Play
         </button>
+        <button class="play-btn" id="btn-play-continuous" title="Play Continuous 4D Evolution from Blank Ground to Operational Reality" style="background: rgba(2, 132, 199, 0.25); border-color: rgba(56, 189, 248, 0.4); color: #0284c7;">
+            <i class="fas fa-forward"></i> Auto Evolution
+        </button>
 
         <div class="speed-box">
             <span>Speed:</span>
@@ -5762,6 +5765,35 @@ window.DC36_SCHEDULE = {
 
         return {
             // Site & Terrain
+            // Heavy Equipment & Machinery PBR
+            catYellow: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.35, metalness: 0.25 }),
+            machineryDark: new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.60, metalness: 0.65 }),
+            trackSteel: new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.85, metalness: 0.40 }),
+            hydraulicChrome: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.12, metalness: 0.95 }),
+            excavatorBucket: new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.70, metalness: 0.55 }),
+            craneRed: new THREE.MeshStandardMaterial({ color: 0xdc2626, roughness: 0.35, metalness: 0.35 }),
+            craneWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.40, metalness: 0.25 }),
+            mixerWhite: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.45, metalness: 0.20 }),
+            mixerStripe: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.45, metalness: 0.20 }),
+            
+            // Construction Workers / Manpower
+            workerVestYellow: new THREE.MeshStandardMaterial({ color: 0xa3e635, roughness: 0.45, metalness: 0.05 }),
+            workerVestOrange: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.45, metalness: 0.05 }),
+            workerVestSilver: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.85 }),
+            workerHardHatYellow: new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.35, metalness: 0.10 }),
+            workerHardHatWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35, metalness: 0.10 }),
+            workerHardHatBlue: new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.35, metalness: 0.10 }),
+            workerJeans: new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.85, metalness: 0.02 }),
+            workerBoots: new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.80, metalness: 0.10 }),
+            workerSkin: new THREE.MeshStandardMaterial({ color: 0xd4a373, roughness: 0.70, metalness: 0.0 }),
+            
+            // Raw Construction Site Ground & Earthwork
+            rawEarth: new THREE.MeshStandardMaterial({ color: 0x5c3818, roughness: 0.98, metalness: 0.01 }),
+            excavationDirt: new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.98, metalness: 0.01 }),
+            barrierOrange: new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.50, metalness: 0.10 }),
+            woodTimber: new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.85, metalness: 0.02 }),
+
+            // Site & Terrain
             ground: new THREE.MeshStandardMaterial({ color: 0x3b4754, roughness: 0.94, metalness: 0.04 }),
             asphalt: new THREE.MeshStandardMaterial({ color: 0x222933, roughness: 0.90, metalness: 0.06, map: T.asphalt }),
             concreteRoadSlab: new THREE.MeshStandardMaterial({ color: 0xb0b8c2, roughness: 0.78, metalness: 0.06, map: T.concreteRoad }),
@@ -6418,15 +6450,695 @@ window.DC36_SCHEDULE = {
         return group;
     }
 
+    // =========================================================================
+    // PROCEDURAL CONSTRUCTION EQUIPMENT & WORKFORCE GENERATOR (Rev.040)
+    // =========================================================================
+
+    // 1. Raw Construction Site & Earthwork Cut (Blank Ground Base)
+    function createBlankConstructionSite(M) {
+        const group = new THREE.Group();
+        group.name = "BlankConstructionSite";
+
+        // Compacted Brown Earth Construction Ground Base
+        const rawEarthGeo = new THREE.PlaneGeometry(240, 180);
+        const rawEarthMesh = new THREE.Mesh(rawEarthGeo, M.rawEarth);
+        rawEarthMesh.rotation.x = -Math.PI / 2;
+        rawEarthMesh.position.y = 0.02;
+        rawEarthMesh.name = "RawEarthBase";
+        group.add(rawEarthMesh);
+
+        // Crushed Gravel Construction Haul Road
+        const haulRoadGeo = new THREE.PlaneGeometry(180, 14);
+        const haulRoad = new THREE.Mesh(haulRoadGeo, M.gravelPad);
+        haulRoad.rotation.x = -Math.PI / 2;
+        haulRoad.position.set(-10, 0.035, 72);
+        haulRoad.name = "ConstructionHaulRoad";
+        group.add(haulRoad);
+
+        // Foundation Excavation Pit Drop (Stepped Earth Basin)
+        const pitGroup = new THREE.Group();
+        pitGroup.name = "ExcavationPitBasin";
+        const pitFloorGeo = new THREE.PlaneGeometry(100, 68);
+        const pitFloor = new THREE.Mesh(pitFloorGeo, M.excavationDirt);
+        pitFloor.rotation.x = -Math.PI / 2;
+        pitFloor.position.set(5, -0.65, 0);
+        pitGroup.add(pitFloor);
+
+        // Pit Sloped Embankment Berms (4 sides)
+        const slopeN = new THREE.Mesh(new THREE.BoxGeometry(104, 0.75, 2.5), M.excavationDirt);
+        slopeN.position.set(5, -0.28, -34.5);
+        slopeN.rotation.x = Math.PI / 8;
+        const slopeS = new THREE.Mesh(new THREE.BoxGeometry(104, 0.75, 2.5), M.excavationDirt);
+        slopeS.position.set(5, -0.28, 34.5);
+        slopeS.rotation.x = -Math.PI / 8;
+        const slopeW = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.75, 70), M.excavationDirt);
+        slopeW.position.set(-46, -0.28, 0);
+        slopeW.rotation.z = -Math.PI / 8;
+        const slopeE = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.75, 70), M.excavationDirt);
+        slopeE.position.set(56, -0.28, 0);
+        slopeE.rotation.z = Math.PI / 8;
+        pitGroup.add(slopeN, slopeS, slopeW, slopeE);
+        group.add(pitGroup);
+
+        // Temporary Orange Safety Perimeter Barricades
+        const barricadesGroup = new THREE.Group();
+        barricadesGroup.name = "TemporarySafetyBarricades";
+        for (let bx = -44; bx <= 54; bx += 12) {
+            const bN = new THREE.Mesh(new THREE.BoxGeometry(10.5, 1.1, 0.2), M.barrierOrange);
+            bN.position.set(bx, 0.55, -36.5);
+            const bS = new THREE.Mesh(new THREE.BoxGeometry(10.5, 1.1, 0.2), M.barrierOrange);
+            bS.position.set(bx, 0.55, 36.5);
+            barricadesGroup.add(bN, bS);
+        }
+        group.add(barricadesGroup);
+
+        // Jobsite Office Modular Cabins (Double Stack Site Command)
+        const cabinGroup = new THREE.Group();
+        cabinGroup.name = "JobsiteOfficeCabins";
+        const cabin1 = new THREE.Mesh(new THREE.BoxGeometry(12, 3.2, 4.5), M.facadeLight);
+        cabin1.position.set(-85, 1.6, 68);
+        const cabin2 = new THREE.Mesh(new THREE.BoxGeometry(12, 3.2, 4.5), M.facadeLight);
+        cabin2.position.set(-85, 4.8, 68);
+        const cabinTrim1 = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.2, 4.7), M.facadeDark);
+        cabinTrim1.position.set(-85, 3.2, 68);
+        const cabinTrim2 = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.2, 4.7), M.facadeDark);
+        cabinTrim2.position.set(-85, 6.4, 68);
+        const cabinSign = new THREE.Mesh(new THREE.BoxGeometry(8, 1.0, 0.1), M.facadeAccent);
+        cabinSign.position.set(-85, 5.0, 70.3);
+        cabinGroup.add(cabin1, cabin2, cabinTrim1, cabinTrim2, cabinSign);
+        group.add(cabinGroup);
+
+        // Excavated Spoil Stockpiles (Earth Mounds with Green Silt Tarps)
+        const spoilGroup = new THREE.Group();
+        spoilGroup.name = "ExcavatedSoilStockpiles";
+        const mound1 = new THREE.Mesh(new THREE.ConeGeometry(9.0, 4.5, 12), M.rawEarth);
+        mound1.position.set(-75, 2.25, -25);
+        mound1.scale.set(1.4, 1.0, 1.0);
+        const mound2 = new THREE.Mesh(new THREE.ConeGeometry(7.5, 3.8, 12), M.rawEarth);
+        mound2.position.set(-78, 1.9, -40);
+        const mound3 = new THREE.Mesh(new THREE.ConeGeometry(8.5, 4.2, 12), M.grass); // Hydroseeded / tarped
+        mound3.position.set(78, 2.1, -25);
+        spoilGroup.add(mound1, mound2, mound3);
+        group.add(spoilGroup);
+
+        // Rebar Laydown Staging Yard (Steel rebar cages on timber dunnage)
+        const rebarYard = new THREE.Group();
+        rebarYard.name = "RebarStagingYard";
+        for (let ry = 0; ry < 4; ry++) {
+            const timber = new THREE.Mesh(new THREE.BoxGeometry(8, 0.25, 0.25), M.woodTimber);
+            timber.position.set(80, 0.12, 15 + ry * 3.5);
+            const rebarCage = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.8, 1.8), M.rebar);
+            rebarCage.position.set(80, 0.65, 15 + ry * 3.5);
+            rebarYard.add(timber, rebarCage);
+        }
+        group.add(rebarYard);
+
+        return group;
+    }
+
+    // 2. Articulated Hydraulic Crawler Excavator (Caterpillar 336 / Komatsu PC300 class)
+    function createExcavator(M, initialPos) {
+        const excavator = new THREE.Group();
+        excavator.name = "ExcavatorCrawler";
+        if (initialPos) excavator.position.copy(initialPos);
+
+        // Track Undercarriage
+        const undercarriage = new THREE.Group();
+        const leftTrack = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.2, 5.6), M.trackSteel);
+        leftTrack.position.set(-1.6, 0.6, 0);
+        const rightTrack = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.2, 5.6), M.trackSteel);
+        rightTrack.position.set(1.6, 0.6, 0);
+        const trackFrame = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 4.2), M.machineryDark);
+        trackFrame.position.set(0, 0.6, 0);
+        undercarriage.add(leftTrack, rightTrack, trackFrame);
+        excavator.add(undercarriage);
+
+        // Rotating Upperstructure / Cab Body
+        const upper = new THREE.Group();
+        upper.position.set(0, 1.2, 0);
+        const house = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.8, 4.5), M.catYellow);
+        house.position.set(0, 0.9, -0.4);
+        const counterweight = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.6, 1.2), M.machineryDark);
+        counterweight.position.set(0, 0.8, -2.4);
+        const cab = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.7, 2.0), M.glass);
+        cab.position.set(-1.1, 0.95, 1.1);
+        const cabRoof = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.2, 2.1), M.catYellow);
+        cabRoof.position.set(-1.1, 1.85, 1.1);
+        const exhaust = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.8, 8), M.machineryDark);
+        exhaust.position.set(1.0, 2.0, -1.8);
+        upper.add(house, counterweight, cab, cabRoof, exhaust);
+
+        // Boom Assembly (Hinged at upper cab base)
+        const boomBase = new THREE.Group();
+        boomBase.position.set(0.6, 0.6, 1.4);
+        const boomMesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.9, 6.2), M.catYellow);
+        boomMesh.position.set(0, 0.45, 2.8);
+        boomMesh.rotation.x = Math.PI / 4;
+        boomBase.add(boomMesh);
+
+        // Stick / Dipper Arm
+        const armPivot = new THREE.Group();
+        armPivot.position.set(0, 4.5, 4.2);
+        const armMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 3.8), M.catYellow);
+        armMesh.position.set(0, -1.2, 1.2);
+        armMesh.rotation.x = -Math.PI / 3;
+        armPivot.add(armMesh);
+
+        // Digging Bucket with Teeth
+        const bucketPivot = new THREE.Group();
+        bucketPivot.position.set(0, -2.8, 2.4);
+        const bucketMesh = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.0, 1.2), M.excavatorBucket);
+        bucketMesh.position.set(0, -0.4, 0.3);
+        bucketMesh.rotation.x = Math.PI / 4;
+        bucketPivot.add(bucketMesh);
+        armPivot.add(bucketPivot);
+        boomBase.add(armPivot);
+        upper.add(boomBase);
+        excavator.add(upper);
+
+        // Procedural Animation Kinematic Rig
+        excavator.userData.animate = function(time, isWorking) {
+            if (!isWorking) {
+                upper.rotation.y = 0;
+                boomBase.rotation.x = 0;
+                armPivot.rotation.x = 0;
+                bucketPivot.rotation.x = 0;
+                return;
+            }
+            const cycle = (time * 0.00085) % (Math.PI * 2);
+            // Digging cycle: Dip -> Scoop -> Slew -> Dump -> Return
+            const dip = Math.sin(cycle);
+            boomBase.rotation.x = -0.15 + dip * 0.25;
+            armPivot.rotation.x = -0.20 + Math.cos(cycle) * 0.35;
+            bucketPivot.rotation.x = -0.30 + Math.sin(cycle * 1.5) * 0.45;
+            upper.rotation.y = Math.sin(cycle * 0.5) * 0.75;
+        };
+
+        return excavator;
+    }
+
+    // 3. Heavy Concrete Transit Mixer Truck (8x4 Commercial Agitator)
+    function createConcreteMixer(M, pos, rotY) {
+        const mixer = new THREE.Group();
+        mixer.name = "ConcreteMixerTruck";
+        if (pos) mixer.position.copy(pos);
+        if (rotY !== undefined) mixer.rotation.y = rotY;
+
+        // Truck Chassis & Wheels
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.7, 8.5), M.machineryDark);
+        chassis.position.set(0, 0.8, 0);
+        mixer.add(chassis);
+
+        for (let wz = -3.2; wz <= 3.2; wz += 1.8) {
+            const wL = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.45, 12), M.trackSteel);
+            wL.rotation.z = Math.PI / 2;
+            wL.position.set(-1.4, 0.55, wz);
+            const wR = wL.clone();
+            wR.position.set(1.4, 0.55, wz);
+            mixer.add(wL, wR);
+        }
+
+        // Driver Cab
+        const cab = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.4, 2.4), M.mixerWhite);
+        cab.position.set(0, 2.1, 2.8);
+        const windshield = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.1, 0.1), M.glass);
+        windshield.position.set(0, 2.4, 4.02);
+        mixer.add(cab, windshield);
+
+        // Rotating Mixing Barrel / Drum
+        const drumGroup = new THREE.Group();
+        drumGroup.position.set(0, 2.4, -0.6);
+        drumGroup.rotation.x = 0.26; // Inclined drum axis
+        const drumBody = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.7, 4.8, 16), M.mixerWhite);
+        drumBody.rotation.x = Math.PI / 2;
+        const drumStripe = new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.72, 1.2, 16), M.mixerStripe);
+        drumStripe.rotation.x = Math.PI / 2;
+        drumGroup.add(drumBody, drumStripe);
+        mixer.add(drumGroup);
+
+        // Rear Chute & Hopper
+        const hopper = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.2, 8), M.machineryDark);
+        hopper.position.set(0, 3.2, -3.2);
+        hopper.rotation.x = Math.PI;
+        const chute = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.25, 2.2), M.machineryDark);
+        chute.position.set(0, 1.6, -3.8);
+        chute.rotation.x = -0.4;
+        mixer.add(hopper, chute);
+
+        mixer.userData.animate = function(time, isWorking) {
+            if (isWorking) {
+                drumGroup.rotation.z = (time * 0.0035) % (Math.PI * 2);
+            }
+        };
+
+        return mixer;
+    }
+
+    // 4. Mobile Concrete Boom Pump Truck (Putzmeister 47m Class)
+    function createConcretePumpTruck(M, pos, rotY) {
+        const pump = new THREE.Group();
+        pump.name = "ConcreteBoomPumpTruck";
+        if (pos) pump.position.copy(pos);
+        if (rotY !== undefined) pump.rotation.y = rotY;
+
+        // Carrier Chassis
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.8, 10.5), M.machineryDark);
+        chassis.position.set(0, 0.9, 0);
+        pump.add(chassis);
+
+        // 4 Outriggers Extended
+        const outriggerGroup = new THREE.Group();
+        const o1 = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.35, 0.35), M.catYellow);
+        o1.position.set(2.8, 0.3, 3.2);
+        o1.rotation.y = 0.35;
+        const o2 = o1.clone(); o2.position.set(-2.8, 0.3, 3.2); o2.rotation.y = -0.35;
+        const o3 = o1.clone(); o3.position.set(2.8, 0.3, -3.2); o3.rotation.y = -0.35;
+        const o4 = o1.clone(); o4.position.set(-2.8, 0.3, -3.2); o4.rotation.y = 0.35;
+        outriggerGroup.add(o1, o2, o3, o4);
+        pump.add(outriggerGroup);
+
+        // Cab
+        const cab = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.2, 2.4), M.catYellow);
+        cab.position.set(0, 2.1, 3.8);
+        pump.add(cab);
+
+        // Slewing Turret & Multi-Section Folding Placing Boom
+        const turret = new THREE.Group();
+        turret.position.set(0, 2.2, 1.2);
+        const turretBase = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.8, 16), M.machineryDark);
+        turret.add(turretBase);
+
+        // Boom Section 1 (Vertical Rise)
+        const boom1 = new THREE.Group();
+        boom1.position.set(0, 0.6, 0);
+        const b1Mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 9.5, 0.5), M.catYellow);
+        b1Mesh.position.set(0, 4.75, 0);
+        boom1.add(b1Mesh);
+
+        // Boom Section 2 (Horizontal Reach)
+        const boom2 = new THREE.Group();
+        boom2.position.set(0, 9.5, 0);
+        boom2.rotation.z = -Math.PI / 3;
+        const b2Mesh = new THREE.Mesh(new THREE.BoxGeometry(0.45, 8.5, 0.45), M.catYellow);
+        b2Mesh.position.set(0, 4.25, 0);
+        boom2.add(b2Mesh);
+
+        // Boom Section 3 (Reach Extension)
+        const boom3 = new THREE.Group();
+        boom3.position.set(0, 8.5, 0);
+        boom3.rotation.z = -Math.PI / 4;
+        const b3Mesh = new THREE.Mesh(new THREE.BoxGeometry(0.4, 7.5, 0.4), M.catYellow);
+        b3Mesh.position.set(0, 3.75, 0);
+        boom3.add(b3Mesh);
+
+        // Tremie Flexible Rubber Hose
+        const hose = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 5.5, 8), M.machineryDark);
+        hose.position.set(0, 7.5, 0);
+        hose.rotation.z = Math.PI * 0.58;
+        boom3.add(hose);
+
+        boom2.add(boom3);
+        boom1.add(boom2);
+        turret.add(boom1);
+        pump.add(turret);
+
+        pump.userData.animate = function(time, isPouring) {
+            if (isPouring) {
+                turret.rotation.y = Math.sin(time * 0.0006) * 0.45;
+                boom1.rotation.z = 0.15 + Math.sin(time * 0.001) * 0.08;
+            }
+        };
+
+        return pump;
+    }
+
+    // 5. All-Terrain Mobile Telescopic Crane (Liebherr 200t Class)
+    function createMobileCrane(M, pos, rotY) {
+        const crane = new THREE.Group();
+        crane.name = "MobileTelescopicCrane";
+        if (pos) crane.position.copy(pos);
+        if (rotY !== undefined) crane.rotation.y = rotY;
+
+        // 5-Axle Carrier Chassis
+        const carrier = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.2, 13.5), M.craneRed);
+        carrier.position.set(0, 1.0, 0);
+        crane.add(carrier);
+
+        // Outrigger Beams & Heavy Steel Footpads
+        for (let oz of [-4.5, 4.5]) {
+            const outL = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.4, 0.4), M.machineryDark);
+            outL.position.set(-3.2, 0.35, oz);
+            const padL = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.2, 12), M.catYellow);
+            padL.position.set(-5.0, 0.1, oz);
+            const outR = outL.clone(); outR.position.x = 3.2;
+            const padR = padL.clone(); padR.position.x = 5.0;
+            crane.add(outL, padL, outR, padR);
+        }
+
+        // Rotating Crane Turret
+        const turret = new THREE.Group();
+        turret.position.set(0, 1.8, -1.5);
+        const turretHouse = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.2, 4.8), M.craneRed);
+        turretHouse.position.set(0, 1.1, 0);
+        const counterweight = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.8, 1.8), M.machineryDark);
+        counterweight.position.set(0, 1.2, -2.4);
+        const craneCab = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.6, 2.2), M.glass);
+        craneCab.position.set(1.4, 1.1, 1.2);
+        turret.add(turretHouse, counterweight, craneCab);
+
+        // Multi-Stage Telescopic Boom
+        const boomGroup = new THREE.Group();
+        boomGroup.position.set(0, 1.8, 1.2);
+        boomGroup.rotation.x = Math.PI / 3; // Elevated 60 deg
+        const boomStage1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 16.0, 1.2), M.craneWhite);
+        boomStage1.position.set(0, 8.0, 0);
+        const boomStage2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 14.0, 0.9), M.catYellow);
+        boomStage2.position.set(0, 18.0, 0);
+        boomGroup.add(boomStage1, boomStage2);
+
+        // Hoist Cable & Hook Block
+        const cableGroup = new THREE.Group();
+        cableGroup.position.set(0, 25.0, 0.8);
+        const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 12.0, 8), M.machineryDark);
+        cable.position.set(0, -6.0, 0);
+        const hookBlock = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.0, 0.5), M.catYellow);
+        hookBlock.position.set(0, -12.0, 0);
+        const hook = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.08, 8, 16, Math.PI * 1.5), M.machineryDark);
+        hook.position.set(0, -12.8, 0);
+        hook.rotation.z = Math.PI / 2;
+        cableGroup.add(cable, hookBlock, hook);
+
+        // Hoisted Payload (Steel Beam or Chiller Unit)
+        const payload = new THREE.Mesh(new THREE.BoxGeometry(8.0, 0.6, 0.6), M.steelTruss);
+        payload.position.set(0, -13.5, 0);
+        cableGroup.add(payload);
+
+        boomGroup.add(cableGroup);
+        turret.add(boomGroup);
+        crane.add(turret);
+
+        crane.userData.animate = function(time, isHoisting) {
+            if (isHoisting) {
+                const cycle = (time * 0.0006) % (Math.PI * 2);
+                turret.rotation.y = Math.sin(cycle) * 0.65;
+                cable.scale.y = 1.0 + Math.sin(cycle * 2.0) * 0.25;
+                hookBlock.position.y = -12.0 * cable.scale.y;
+                hook.position.y = hookBlock.position.y - 0.8;
+                payload.position.y = hookBlock.position.y - 1.5;
+            }
+        };
+
+        return crane;
+    }
+
+    // 6. Heavy Transport Lowboy Delivery Transporter Truck
+    function createLowboyTransporter(M, pos, rotY) {
+        const truck = new THREE.Group();
+        truck.name = "HeavyLowboyTransporter";
+        if (pos) truck.position.copy(pos);
+        if (rotY !== undefined) truck.rotation.y = rotY;
+
+        // Tractor Unit
+        const tractor = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.8, 5.5), M.facadeDark);
+        tractor.position.set(0, 1.6, 6.0);
+        const tractorCab = new THREE.Mesh(new THREE.BoxGeometry(2.5, 1.4, 2.2), M.glass);
+        tractorCab.position.set(0, 2.2, 7.2);
+        truck.add(tractor, tractorCab);
+
+        // Drop-Deck Lowboy Trailer
+        const lowboy = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.45, 12.5), M.machineryDark);
+        lowboy.position.set(0, 0.55, -2.5);
+        truck.add(lowboy);
+
+        // Precast / Steel / Transformer Cargo on Trailer
+        const cargo = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.8, 9.5), M.steelTruss);
+        cargo.position.set(0, 1.7, -2.5);
+        truck.add(cargo);
+
+        return truck;
+    }
+
+    // 7. Stylized 3D Construction Worker / Manpower Figure
+    function createWorker(M, type) {
+        const worker = new THREE.Group();
+        worker.name = "Worker_" + type;
+
+        // Safety Boots
+        const bootL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, 0.32), M.workerBoots);
+        bootL.position.set(-0.14, 0.08, 0.04);
+        const bootR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, 0.32), M.workerBoots);
+        bootR.position.set(0.14, 0.08, 0.04);
+        worker.add(bootL, bootR);
+
+        // Work Jeans / Pants
+        const legs = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.85, 0.28), M.workerJeans);
+        legs.position.set(0, 0.58, 0);
+        worker.add(legs);
+
+        // High-Vis Safety Vest & Torso
+        const vestMat = (type === 'supervisor' || type === 'qa') ? M.workerVestOrange : M.workerVestYellow;
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.75, 0.32), vestMat);
+        torso.position.set(0, 1.35, 0);
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.53, 0.14, 0.33), M.workerVestSilver);
+        stripe.position.set(0, 1.35, 0);
+        worker.add(torso, stripe);
+
+        // Head & Hard Hat
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 12), M.workerSkin);
+        head.position.set(0, 1.88, 0);
+        const hatMat = (type === 'supervisor' || type === 'qa') ? M.workerHardHatWhite :
+                       (type === 'electrician') ? M.workerHardHatBlue : M.workerHardHatYellow;
+        const hat = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.20, 16), hatMat);
+        hat.position.set(0, 1.98, 0);
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.04, 16), hatMat);
+        brim.position.set(0, 1.90, 0.04);
+        worker.add(head, hat, brim);
+
+        // Trade-Specific Tool Accessory
+        if (type === 'surveyor') {
+            const tripod = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.18, 1.3, 6), M.catYellow);
+            tripod.position.set(0, 0.65, 0.6);
+            const totalStation = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.3, 0.25), M.facadeAccent);
+            totalStation.position.set(0, 1.45, 0.6);
+            worker.add(tripod, totalStation);
+        } else if (type === 'welder') {
+            const torch = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.4, 6), M.machineryDark);
+            torch.position.set(0.32, 1.25, 0.3);
+            torch.rotation.x = Math.PI / 4;
+            const sparkLight = new THREE.PointLight(0x60a5fa, 0, 4);
+            sparkLight.position.set(0.32, 1.1, 0.5);
+            worker.add(torch, sparkLight);
+            worker.userData.sparkLight = sparkLight;
+        } else if (type === 'qa') {
+            const tablet = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.22, 0.03), M.machineryDark);
+            tablet.position.set(0, 1.25, 0.35);
+            tablet.rotation.x = 0.5;
+            const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.18), M.facadeAccent);
+            screen.position.set(0, 1.26, 0.37);
+            screen.rotation.x = 0.5;
+            worker.add(tablet, screen);
+        }
+
+        worker.userData.animate = function(time) {
+            if (worker.userData.sparkLight) {
+                // Flickering welding arc flash
+                worker.userData.sparkLight.intensity = (Math.sin(time * 0.045) > 0.3) ? 1.8 : 0.0;
+            }
+        };
+
+        return worker;
+    }
+
+    // 8. Master Heavy Equipment Fleet Assembly
+    function createConstructionEquipmentFleet(M) {
+        const fleet = new THREE.Group();
+        fleet.name = "ConstructionEquipmentFleet";
+
+        // Phase 1 & 2: Excavators
+        const exc1 = createExcavator(M, new THREE.Vector3(-18, -0.65, 12));
+        exc1.name = "Excavator_Foundation";
+        const exc2 = createExcavator(M, new THREE.Vector3(28, -0.65, -14));
+        exc2.name = "Excavator_Trenching";
+        exc2.rotation.y = Math.PI * 0.75;
+        fleet.add(exc1, exc2);
+
+        // Phase 2 & 3: Concrete Transit Mixers
+        const mixer1 = createConcreteMixer(M, new THREE.Vector3(-48, 0.05, 18), Math.PI / 2);
+        mixer1.name = "ConcreteMixer_1";
+        const mixer2 = createConcreteMixer(M, new THREE.Vector3(-48, 0.05, 30), Math.PI / 2);
+        mixer2.name = "ConcreteMixer_2";
+        fleet.add(mixer1, mixer2);
+
+        // Phase 2 & 3: Concrete Boom Pump Truck
+        const pump1 = createConcretePumpTruck(M, new THREE.Vector3(-38, 0.05, 0), Math.PI / 2);
+        pump1.name = "ConcretePumpTruck";
+        fleet.add(pump1);
+
+        // Phase 3 & 5: All-Terrain Mobile Telescopic Crane
+        const crane1 = createMobileCrane(M, new THREE.Vector3(15, 0.05, 48), -Math.PI / 4);
+        crane1.name = "MobileCrane_Main";
+        fleet.add(crane1);
+
+        // Phase 3 & 5: Heavy Transport Lowboy
+        const lowboy1 = createLowboyTransporter(M, new THREE.Vector3(-10, 0.05, 72), Math.PI / 2);
+        lowboy1.name = "LowboyTransporter";
+        fleet.add(lowboy1);
+
+        fleet.userData = {
+            exc1, exc2, mixer1, mixer2, pump1, crane1, lowboy1,
+            animate: function(tNow, currentTimestamp, activePhase) {
+                const isP1 = activePhase === 1;
+                const isP2 = activePhase === 2;
+                const isP3 = activePhase === 3;
+                const isP5 = activePhase === 5;
+
+                exc1.visible = isP1 || isP2;
+                exc2.visible = isP1 || isP2;
+                if (exc1.visible) exc1.userData.animate(tNow, true);
+                if (exc2.visible) exc2.userData.animate(tNow + 1200, true);
+
+                mixer1.visible = isP2 || isP3;
+                mixer2.visible = isP2 || isP3;
+                if (mixer1.visible) mixer1.userData.animate(tNow, true);
+                if (mixer2.visible) mixer2.userData.animate(tNow + 800, true);
+
+                pump1.visible = isP2 || isP3;
+                if (pump1.visible) pump1.userData.animate(tNow, true);
+
+                crane1.visible = isP3 || isP5;
+                if (crane1.visible) crane1.userData.animate(tNow, true);
+
+                lowboy1.visible = isP3 || isP5;
+            }
+        };
+
+        return fleet;
+    }
+
+    // 9. Master Construction Workforce Assembly (~35 Dynamic Stylized Workers)
+    function createConstructionWorkforce(M) {
+        const labor = new THREE.Group();
+        labor.name = "ConstructionWorkforce";
+
+        const workers = [];
+
+        // Phase 1 Crew: Surveyors & Piling Rig Operators
+        const p1Workers = [
+            { type: 'surveyor', pos: [-35, 0.05, 38], rot: 0.5 },
+            { type: 'civil', pos: [-30, 0.05, 22], rot: -0.8 },
+            { type: 'supervisor', pos: [-42, 0.05, 28], rot: 1.2 }
+        ];
+
+        // Phase 2 Crew: Rebar Fixers & Concrete Finishers
+        const p2Workers = [
+            { type: 'civil', pos: [-10, -0.65, 8], rot: 0 },
+            { type: 'civil', pos: [5, -0.65, -12], rot: 1.4 },
+            { type: 'civil', pos: [22, -0.65, 14], rot: -1.2 },
+            { type: 'supervisor', pos: [-32, 0.05, 5], rot: 0.8 }
+        ];
+
+        // Phase 3 Crew: Structural Ironworkers & Welders
+        const p3Workers = [
+            { type: 'welder', pos: [-15, 0.05, -25], rot: 0.3 },
+            { type: 'welder', pos: [12, 0.05, 25], rot: -0.6 },
+            { type: 'civil', pos: [25, 0.05, 0], rot: 1.1 },
+            { type: 'supervisor', pos: [5, 0.05, 45], rot: 0 }
+        ];
+
+        // Phase 4 Crew: Facade & Glazing Installers
+        const p4Workers = [
+            { type: 'civil', pos: [-38, 0.05, -28], rot: 0 },
+            { type: 'civil', pos: [45, 0.05, 20], rot: 1.5 },
+            { type: 'supervisor', pos: [55, 0.05, -15], rot: -0.7 }
+        ];
+
+        // Phase 5 Crew: Substation Electricians & MEP Pipefitters
+        const p5Workers = [
+            { type: 'electrician', pos: [5, 0.05, -42], rot: 0.4 },
+            { type: 'electrician', pos: [-15, 0.05, -42], rot: -0.4 },
+            { type: 'civil', pos: [-50, 0.05, -10], rot: 1.2 },
+            { type: 'supervisor', pos: [-4, 0.05, -36], rot: 0 }
+        ];
+
+        // Phase 6 Crew: White Space IT Rack Deployment Technicians
+        const p6Workers = [
+            { type: 'electrician', pos: [-10, 1.2, 5], rot: 0 },
+            { type: 'electrician', pos: [15, 1.2, -5], rot: 1.5 },
+            { type: 'qa', pos: [5, 1.2, 0], rot: -1.0 }
+        ];
+
+        // Phase 7 Crew: QA/QC Commissioning Engineers
+        const p7Workers = [
+            { type: 'qa', pos: [50, 0.05, -20], rot: -0.5 },
+            { type: 'qa', pos: [52, 0.05, -10], rot: 0.8 },
+            { type: 'supervisor', pos: [48, 0.05, 5], rot: 1.2 }
+        ];
+
+        function spawnCrew(crewDef, phaseNum) {
+            const g = new THREE.Group();
+            g.name = "Crew_Phase" + phaseNum;
+            crewDef.forEach(c => {
+                const w = createWorker(M, c.type);
+                w.position.set(...c.pos);
+                w.rotation.y = c.rot;
+                g.add(w);
+                workers.push(w);
+            });
+            labor.add(g);
+            return g;
+        }
+
+        const crew1 = spawnCrew(p1Workers, 1);
+        const crew2 = spawnCrew(p2Workers, 2);
+        const crew3 = spawnCrew(p3Workers, 3);
+        const crew4 = spawnCrew(p4Workers, 4);
+        const crew5 = spawnCrew(p5Workers, 5);
+        const crew6 = spawnCrew(p6Workers, 6);
+        const crew7 = spawnCrew(p7Workers, 7);
+
+        labor.userData = {
+            crew1, crew2, crew3, crew4, crew5, crew6, crew7,
+            animate: function(tNow, currentTimestamp, activePhase) {
+                crew1.visible = (activePhase === 1);
+                crew2.visible = (activePhase === 2);
+                crew3.visible = (activePhase === 3);
+                crew4.visible = (activePhase === 4);
+                crew5.visible = (activePhase === 5);
+                crew6.visible = (activePhase === 6);
+                crew7.visible = (activePhase === 7);
+
+                for (let i = 0; i < workers.length; i++) {
+                    if (workers[i].parent && workers[i].parent.visible) {
+                        workers[i].userData.animate(tNow);
+                    }
+                }
+            }
+        };
+
+        return labor;
+    }
+
+
     // 1. Exterior Campus & Civil Realism
     function createCampusSite(M) {
-        const group = new THREE.Group();
-        group.name = "CampusSite";
+        const mainSiteRoot = new THREE.Group();
+        mainSiteRoot.name = "CampusSite";
 
         // Outer Regional Ground
         const groundMesh = new THREE.Mesh(new THREE.PlaneGeometry(340, 280), M.ground);
         groundMesh.rotation.x = -Math.PI / 2;
-        group.add(groundMesh);
+        mainSiteRoot.add(groundMesh);
+
+        // Blank Ground Construction Site (Active in Phases 1-6)
+        const constructionCivil = createBlankConstructionSite(M);
+        mainSiteRoot.add(constructionCivil);
+        mainSiteRoot.userData.constructionCivil = constructionCivil;
+
+        // Finished Operational Civil Infrastructure (Active in Reality / Phase 7-8 Handover)
+        const group = new THREE.Group();
+        group.name = "FinishedCivilInfrastructure";
+        mainSiteRoot.add(group);
+        mainSiteRoot.userData.finishedCivil = group;
 
         // Dark Asphalt Campus Base & Drive Lanes
         const campusMesh = new THREE.Mesh(new THREE.PlaneGeometry(236, 176), M.asphalt);
@@ -7248,8 +7960,9 @@ window.DC36_SCHEDULE = {
         window.DC36_SECURITY_LIGHTS = [{ material: M.securityLampEmissive }];
 
         mergeStaticGroupByMaterial(group);
+        mergeStaticGroupByMaterial(constructionCivil);
 
-        return group;
+        return mainSiteRoot;
     }
 
     // 2. Phase 1: Site Clearing, Bulk Excavation & Piling
@@ -10021,7 +10734,11 @@ window.DC36_SCHEDULE = {
         const p6 = createWhiteSpaceFitOut(M);
         const p7 = createCommissioningLoadBanks(M);
 
-        root.add(site, p1, p2, p3, p4, p5, p6, p7);
+        // End-to-End Construction Equipment Fleet & Manpower Workforce
+        const equipment = createConstructionEquipmentFleet(M);
+        const labor = createConstructionWorkforce(M);
+
+        root.add(site, p1, p2, p3, p4, p5, p6, p7, equipment, labor);
 
         root.traverse(obj => {
             if (obj.isMesh && !obj.userData.noShadow) {
@@ -10041,7 +10758,9 @@ window.DC36_SCHEDULE = {
             p4_envelope: p4,
             p5_mep: p5,
             p6_whitespace: p6,
-            p7_loadbanks: p7
+            p7_loadbanks: p7,
+            equipment: equipment,
+            labor: labor
         };
     };
 })();
@@ -10614,6 +11333,25 @@ window.DC36_SCHEDULE = {
             lastTauChw = tau_chw;
             lastTauFloor = tau_floor;
 
+            // 0. Blank Ground Base & Phase-Dependent Site Evolution
+            if (models.site && models.site.userData) {
+                const finishedCivil = models.site.userData.finishedCivil;
+                const constructionCivil = models.site.userData.constructionCivil;
+                const tau_civil = getTaskFrac('A7110', currentTimestamp) || (activePhase >= 8 ? 1.0 : (activePhase >= 7 ? 0.5 : 0.0));
+
+                if (currentTimestamp >= schedule.max_timestamp || activePhase >= 8) {
+                    if (finishedCivil) finishedCivil.visible = true;
+                    if (constructionCivil) constructionCivil.visible = false;
+                } else if (activePhase <= 6) {
+                    if (finishedCivil) finishedCivil.visible = false;
+                    if (constructionCivil) constructionCivil.visible = true;
+                } else {
+                    // Phase 7 Handover Transition
+                    if (finishedCivil) finishedCivil.visible = (tau_civil > 0.2);
+                    if (constructionCivil) constructionCivil.visible = (tau_civil < 0.8);
+                }
+            }
+
             // 1. Phase 1: Bored Piling (A4120)
             const p1 = models.p1_piling;
             if (p1 && p1.userData) {
@@ -11116,6 +11854,22 @@ window.DC36_SCHEDULE = {
             });
         }
         if (window.DC36_REQUEST_SHADOW_UPDATE) window.DC36_REQUEST_SHADOW_UPDATE();
+
+        // Update Dynamic Equipment & Workforce State
+        if (models && models.equipment && models.equipment.userData && models.equipment.userData.animate) {
+            const isFinished = (currentTimestamp >= schedule.max_timestamp || activePhase >= 8);
+            models.equipment.visible = !isFinished;
+            if (!isFinished) {
+                models.equipment.userData.animate(performance.now(), currentTimestamp, activePhase);
+            }
+        }
+        if (models && models.labor && models.labor.userData && models.labor.userData.animate) {
+            const isFinished = (currentTimestamp >= schedule.max_timestamp || activePhase >= 8);
+            models.labor.visible = !isFinished;
+            if (!isFinished) {
+                models.labor.userData.animate(performance.now(), currentTimestamp, activePhase);
+            }
+        }
 
         const curDate = new Date(currentTimestamp);
         const dateStr = curDate.toISOString().split('T')[0];
@@ -13137,6 +13891,18 @@ window.DC36_SCHEDULE = {
             }
         });
 
+        const btnPlayContinuous = document.getElementById('btn-play-continuous');
+        if (btnPlayContinuous) {
+            btnPlayContinuous.addEventListener('click', () => {
+                // Rewind to Day 0 Blank Ground Base and play through to completion
+                window.DC36_TIMELINE.scrubTo(window.DC36_SCHEDULE.min_timestamp);
+                window.DC36_TIMELINE.setPlaybackSpeed(4.0); // Smooth brisk evolution
+                if (!window.DC36_TIMELINE.isPlaying()) {
+                    window.DC36_TIMELINE.togglePlay();
+                }
+                syncPlaybackUI(true);
+            });
+        }
         const playBtn = document.getElementById('btn-play');
         const slider = document.getElementById('timeline-slider');
         const speedSel = document.getElementById('speed-select');
@@ -13622,6 +14388,12 @@ window.DC36_SCHEDULE = {
         window.DC36_CULLED = _culledObjects;
         if (particles) {
             particles.update(dt);
+        }
+        if (models && models.equipment && models.equipment.visible && models.equipment.userData && models.equipment.userData.animate) {
+            models.equipment.userData.animate(tNow, currentTimestamp, lastActivePhase);
+        }
+        if (models && models.labor && models.labor.visible && models.labor.userData && models.labor.userData.animate) {
+            models.labor.userData.animate(tNow, currentTimestamp, lastActivePhase);
         }
 
         updateZoneCulling();
