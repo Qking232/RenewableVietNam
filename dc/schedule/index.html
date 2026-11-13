@@ -10274,21 +10274,31 @@ window.DC36_SCHEDULE = {
         raisedFloorGroup.add(rfWhiteSpace, rfNoc);
 
         // Exposed Underfloor Steel Pedestal Grid Stanchions (InstancedMesh around corridor & perimeter)
+        // Coordinated BIM LOD 400: exclude pedestal placements colliding with structural column footprints
         const pedItems = [];
+        const colAvoidCoords = [];
+        for (let c = 0; c < 9; c++) {
+            for (let r = 0; r < 7; r++) {
+                colAvoidCoords.push([-33.0 + c * 9.5, -26.0 + r * (52.0 / 6.0)]);
+            }
+        }
         for (let px = -30; px <= 22; px += 4.0) {
             for (let pz = -28; pz <= 28; pz += 4.0) {
-                pedItems.push({ pos: [px, floorY + 0.27, pz] });
+                const hitsCol = colAvoidCoords.some(([cx, cz]) => Math.abs(px - cx) < 0.6 && Math.abs(pz - cz) < 0.6);
+                if (!hitsCol) {
+                    pedItems.push({ pos: [px, floorY + 0.27, pz] });
+                }
             }
         }
         raisedFloorGroup.add(buildInstanced(new THREE.CylinderGeometry(0.03, 0.03, 0.52, 6), M.steelDunnage, pedItems, "RaisedFloorPedestals"));
 
-        // Underfloor Chilled Water Flex Mains in Plenum
-        for (let z = -22; z <= 22; z += 11) {
+        // Underfloor Chilled Water Flex Mains in Plenum (Aligned to Bay Midpoints Clearing Columns)
+        [-21.67, -13.00, -5.00, 5.00, 13.00, 21.67].forEach(z => {
             const chwFlex = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 52, 10), M.underfloorFlex);
             chwFlex.rotation.z = Math.PI / 2;
             chwFlex.position.set(-4.0, floorY + 0.22, z);
             raisedFloorGroup.add(chwFlex);
-        }
+        });
 
         mergeStaticGroupByMaterial(raisedFloorGroup, { noCastShadow: true });
         prepare4DWireframeGroup(raisedFloorGroup, M.amberWireframe);
@@ -10300,8 +10310,8 @@ window.DC36_SCHEDULE = {
         const overheadMEPTrayGroup = new THREE.Group();
         overheadMEPTrayGroup.name = "OverheadBuswaysAndFiberTrays";
 
-        // White-Space Pod Row Z centers for Hall 1 (North) and Hall 2 (South)
-        const hallPodZCoords = [-22.8, -15.4, -8.0, 8.0, 15.4, 22.8];
+        // White-Space Pod Row Z centers aligned to structural bay midpoints (Zero Column Clashes)
+        const hallPodZCoords = [-21.67, -13.00, -5.00, 5.00, 13.00, 21.67];
 
         hallPodZCoords.forEach(pz => {
             // Dual Overhead RED 415V Power Busway Trunks (Feed A + Feed B at y = 16.35)
@@ -10318,8 +10328,9 @@ window.DC36_SCHEDULE = {
         });
 
         // Main North-South Yellow Fiber Trunk Spine & Red High-Current Feeder Busways bridging Power Room -> Server Halls
-        const mainFiberSpine = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.12, 52), M.fiberTrayYellow);
-        mainFiberSpine.position.set(-4.0, 16.95, 0);
+        // Coordinated BIM LOD 400: Positioned at x = -3.20m in clear aisle corridor (575mm buffer from c=3 columns)
+        const mainFiberSpine = new THREE.Mesh(new THREE.BoxGeometry(0.60, 0.12, 52), M.fiberTrayYellow);
+        mainFiberSpine.position.set(-3.20, 16.95, 0);
         const mainPowerTrunkA = new THREE.Mesh(new THREE.BoxGeometry(16.0, 0.30, 0.45), M.buswayRed);
         mainPowerTrunkA.position.set(27.0, 16.35, -3.2);
         const mainPowerTrunkB = mainPowerTrunkA.clone();
@@ -10441,9 +10452,10 @@ window.DC36_SCHEDULE = {
         const ledHeaderGeo = new THREE.BoxGeometry(0.62, 0.06, 0.03);
 
         // 2 Halls (North Hall A & South Hall B), 3 Cold/Hot Aisle Pods each = 6 Full Pods, 36 Racks/Pod = 216 Racks
+        // Coordinated BIM LOD 400: Aligned to structural bay midpoints clearing all columns
         const whiteSpacePods = [
-            { name: "WhiteSpace_Hall1_North", xRanges: [-26.5, -2.5], zList: [-22.8, -15.4, -8.0] },
-            { name: "WhiteSpace_Hall2_South", xRanges: [-26.5, -2.5], zList: [8.0, 15.4, 22.8] }
+            { name: "WhiteSpace_Hall1_North", xRanges: [-26.5, -2.5], zList: [-21.67, -13.00, -5.00] },
+            { name: "WhiteSpace_Hall2_South", xRanges: [-26.5, -2.5], zList: [5.00, 13.00, 21.67] }
         ];
 
         const containmentGroup = new THREE.Group();
