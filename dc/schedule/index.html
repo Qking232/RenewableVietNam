@@ -763,6 +763,110 @@
             touch-action: none !important;
         }
 
+        /* Scrubber Timestamp Telemetry Badge & Floating Thumb Tooltip */
+        .scrubber-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(241, 245, 249, 0.90);
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: #0f172a;
+            white-space: nowrap;
+            user-select: none;
+            transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+        .scrubber-badge.playing {
+            background: rgba(224, 242, 254, 0.95);
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 0 10px rgba(2, 132, 199, 0.25);
+        }
+        .scrub-state-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #94a3b8;
+            display: inline-block;
+            transition: background-color 0.2s, transform 0.2s;
+            flex-shrink: 0;
+        }
+        .scrubber-badge.playing .scrub-state-dot {
+            background: #0284c7;
+            box-shadow: 0 0 6px #0284c7;
+            animation: scrubDotPulse 1.2s infinite ease-in-out;
+        }
+        @keyframes scrubDotPulse {
+            0%, 100% { transform: scale(1.0); opacity: 1.0; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+        .scrub-state-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+        .scrubber-badge.playing .scrub-state-label {
+            color: #0369a1;
+        }
+        .scrub-date {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .scrub-sep {
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+        .scrub-day {
+            color: #475569;
+            font-size: 10px;
+        }
+        .timeline-slider-track-wrap {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .slider-time-bubble {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s ease;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+            z-index: 10;
+        }
+        .slider-time-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 4px;
+            border-style: solid;
+            border-color: #0f172a transparent transparent transparent;
+        }
+        #bottom-bar:hover .slider-time-bubble,
+        .timeline-slider-container:hover .slider-time-bubble,
+        .timeline-slider:active ~ .slider-time-bubble,
+        .scrubber-badge.playing ~ .timeline-slider-container .slider-time-bubble,
+        body.is-playing .slider-time-bubble {
+            opacity: 1;
+        }
+
         /* Floating Navigation Mode Switcher Pill (Orbit | Hand Pan | 3rd Person GTA) */
         #nav-mode-pill {
             position: fixed;
@@ -1071,6 +1175,15 @@
                 height: auto; padding: 8px 10px; border-radius: 16px;
                 flex-wrap: wrap; gap: 6px; z-index: 55;
             }
+            .scrubber-badge {
+                order: 0;
+                width: 100%;
+                justify-content: space-between;
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+            .scrub-day { font-size: 9px; }
+            .slider-time-bubble { display: none; }
             .timeline-slider-container { order: 1; flex: 1 0 100%; width: 100%; margin-bottom: 6px; }
             .timeline-slider { height: 8px; }
             .timeline-slider::-webkit-slider-thumb { width: 22px; height: 22px; }
@@ -1459,8 +1572,19 @@
             </select>
         </div>
 
+        <div id="scrubber-telemetry-badge" class="scrubber-badge" title="4D Construction Timeline Timestamp">
+            <span class="scrub-state-dot" id="scrub-live-dot"></span>
+            <span class="scrub-state-label" id="scrub-state-text">PAUSED</span>
+            <span class="scrub-date" id="scrub-date-text">2027-01-04</span>
+            <span class="scrub-sep">|</span>
+            <span class="scrub-day" id="scrub-day-text">Day 0 of 1001</span>
+        </div>
+
         <div class="timeline-slider-container">
-            <input type="range" min="0" max="1000" value="0" class="timeline-slider" id="timeline-slider">
+            <div class="timeline-slider-track-wrap">
+                <input type="range" min="0" max="1000" value="0" class="timeline-slider" id="timeline-slider">
+                <div id="slider-time-bubble" class="slider-time-bubble">2027-01-04 • Day 0</div>
+            </div>
         </div>
 
         <button class="hud-btn" id="btn-cutaway-xray" title="Toggle Interior X-Ray / Cutaway Mode" aria-pressed="false">
@@ -1485,7 +1609,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
 
-    <!-- Self-Contained Single-File Application Modules (Rev.033) -->
+    <!-- Self-Contained Single-File Application Modules (Rev.034) -->
     <script>
     // === MODULE: datacenter_schedule.js ===
 // Institutional DC36-T3 Hyperscale Datacenter Schedule Dataset
@@ -5621,7 +5745,7 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: datacenter_models.js (v31 Merged Facade + Instanced Trusses/Xfmrs Equipment + Merged Substation & Columns) ===
+    // === MODULE: datacenter_models.js (v31 Merged Facade + Instanced Trusses/Xfmrs) ===
 // Institutional Three.js Procedural PBR Models for DC36-T3 Hyperscale Datacenter (Rev.031: Merged Reality Facade + Instanced Trusses/Transformers + Shared Ceiling/Partition/Fitout Batches)
 // Executive Digital Twin: 4-Zone Interior BIM, Civil Campus Upgrades, InstancedMesh Batching & 4D Wireframe Support
 
@@ -11349,8 +11473,8 @@ window.DC36_SCHEDULE = {
 
     </script>
     <script>
-    // === MODULE: app.js (v31 Zero-GC Instanced Fans + Indoor Zone Culling + Orbit/Hand/GTA-TPV) ===
-// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.031)
+    // === MODULE: app.js (v34 Zero-GC + Playback Timestamp Telemetry) ===
+// Main Application Controller & Three.js WebGL Engine for DC36-T3 (Rev.034)
 // Features: Zero-GC Instanced Fan Spin + Unified Indoor & Far-Campus Vault Culling + Orbit / Hand-Pan / GTA V 3rd-Person
 
 (function() {
@@ -11553,11 +11677,14 @@ window.DC36_SCHEDULE = {
 
         for (let i = 0; i < nextCull.length; i++) {
             const obj = nextCull[i];
-            if (obj && obj.userData && obj.userData._preCullVisible === undefined) {
+            if (!obj) continue;
+            if (obj.userData && obj.userData._preCullVisible === undefined) {
                 obj.userData._preCullVisible = obj.visible;
-                obj.visible = false;
+            }
+            if (_culledObjects.indexOf(obj) === -1) {
                 _culledObjects.push(obj);
             }
+            obj.visible = false;
         }
     }
 
@@ -12780,6 +12907,7 @@ window.DC36_SCHEDULE = {
         bindAction(playBtn, () => {
             const playing = window.DC36_TIMELINE.togglePlay();
             playBtn.innerHTML = playing ? '<i class="fas fa-pause"></i> Pause' : '<i class="fas fa-play"></i> Play';
+            syncPlaybackUI(playing);
         });
 
         if (slider) {
@@ -12790,6 +12918,7 @@ window.DC36_SCHEDULE = {
                 updateHUD(state);
                 window.DC36_GANTT.updateTime(state.timestamp);
                 window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
+                if (!window.DC36_TIMELINE.isPlaying()) syncPlaybackUI(false);
             });
         }
 
@@ -12878,6 +13007,7 @@ window.DC36_SCHEDULE = {
                         window.DC36_GANTT.updateTime(state.timestamp);
                         window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
                         if (slider) slider.value = (state.progressPercent * 10);
+                        syncPlaybackUI(false);
                     }
                 } else {
                     btnModeToggle.classList.remove('active');
@@ -12889,6 +13019,7 @@ window.DC36_SCHEDULE = {
                         window.DC36_GANTT.updateTime(state.timestamp);
                         window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
                         if (slider) slider.value = 0;
+                        syncPlaybackUI(false);
                     }
                 }
             });
@@ -12916,6 +13047,7 @@ window.DC36_SCHEDULE = {
                 window.DC36_AUDIO.updateState(state.activePhase, isBlackoutActive);
                 if (slider) slider.value = (state.progressPercent * 10);
                 if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                syncPlaybackUI(false);
             });
         });
 
@@ -13093,12 +13225,34 @@ window.DC36_SCHEDULE = {
         lerpCam(startTime);
     }
 
+    function syncPlaybackUI(isPlaying) {
+        const badge = document.getElementById('scrubber-telemetry-badge');
+        const dot = document.getElementById('scrub-live-dot');
+        const stateTxt = document.getElementById('scrub-state-text');
+        if (badge) badge.classList.toggle('playing', !!isPlaying);
+        if (dot) dot.classList.toggle('active', !!isPlaying);
+        if (stateTxt) stateTxt.innerText = isPlaying ? 'PLAYING' : 'PAUSED';
+        document.body.classList.toggle('is-playing', !!isPlaying);
+    }
+
     function updateHUD(state) {
         if (!state) return;
 
         document.getElementById('hud-date').innerText = state.dateString;
         document.getElementById('hud-days').innerText = `Day ${state.elapsedDays} of ${state.totalDays}`;
         document.getElementById('hud-progress').innerText = `${state.progressPercent}%`;
+
+        const scrubDate = document.getElementById('scrub-date-text');
+        const scrubDay = document.getElementById('scrub-day-text');
+        if (scrubDate) scrubDate.innerText = state.dateString;
+        if (scrubDay) scrubDay.innerText = `Day ${state.elapsedDays} of ${state.totalDays}`;
+
+        const bubble = document.getElementById('slider-time-bubble');
+        if (bubble) {
+            bubble.innerText = `${state.dateString} • Day ${state.elapsedDays}`;
+            const frac = Math.max(0, Math.min(1, state.progressPercent / 100));
+            bubble.style.left = `${(frac * 100).toFixed(2)}%`;
+        }
         document.getElementById('hud-progress-bar').style.width = `${state.progressPercent}%`;
         document.getElementById('hud-phase').innerText = `Phase ${state.activePhase}: ${state.phaseName}`;
 
@@ -13210,10 +13364,15 @@ window.DC36_SCHEDULE = {
             if (state.playbackFinished) {
                 const playBtn = document.getElementById('btn-play');
                 if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+                syncPlaybackUI(false);
             }
         }
 
         window.DC36_CAMERA_Y = camera.position.y;
+        window.DC36_SCENE = scene;
+        window.DC36_CAMERA = camera;
+        window.DC36_RENDERER = renderer;
+        window.DC36_CULLED = _culledObjects;
         if (particles) {
             particles.update(dt);
         }
