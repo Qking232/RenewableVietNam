@@ -14389,11 +14389,15 @@ window.DC36_SCHEDULE = {
         if (particles) {
             particles.update(dt);
         }
-        if (models && models.equipment && models.equipment.visible && models.equipment.userData && models.equipment.userData.animate) {
-            models.equipment.userData.animate(tNow, currentTimestamp, lastActivePhase);
-        }
-        if (models && models.labor && models.labor.visible && models.labor.userData && models.labor.userData.animate) {
-            models.labor.userData.animate(tNow, currentTimestamp, lastActivePhase);
+        if (typeof modelsRef !== 'undefined' && modelsRef) {
+            const curPhase = state ? state.activePhase : 1;
+            const curTs = state ? state.timestamp : 0;
+            if (modelsRef.equipment && modelsRef.equipment.visible && modelsRef.equipment.userData && modelsRef.equipment.userData.animate) {
+                modelsRef.equipment.userData.animate(tNow, curTs, curPhase);
+            }
+            if (modelsRef.labor && modelsRef.labor.visible && modelsRef.labor.userData && modelsRef.labor.userData.animate) {
+                modelsRef.labor.userData.animate(tNow, curTs, curPhase);
+            }
         }
 
         updateZoneCulling();
