@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC36 Hyperscale 45MW Datacenter | Interactive 3D WebGL Digital Twin</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0f9ff', 500: '#0284c7', 600: '#0369a1', 900: '#0c4a6e' }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Three.js Suite -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+  
+  <!-- Post-Processing -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/FXAAShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+  <style>
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 0; }
+    .glass-panel { background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .hotspot-pin { position: absolute; transform: translate(-50%, -50%); cursor: pointer; pointer-events: auto; transition: transform 0.2s; }
+    .hotspot-pin:hover { transform: translate(-50%, -50%) scale(1.15); }
+  </style>
+</head>
+<body class="text-slate-100 select-none">
+
+  <!-- WebGL Canvas -->
+  <div id="canvas-container"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 transition-opacity duration-700">
+    <div class="max-w-md w-full px-6 text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-400 text-xs font-mono mb-4">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+        DC36-T3 HYPERSCALE DIGITAL TWIN
+      </div>
+      <h2 class="text-xl font-bold tracking-tight text-white mb-2">Loading 45MW Campus 3D Model</h2>
+      <p class="text-xs text-slate-400 mb-6 font-mono">Streaming 14.7 MB PBR glTF Binary Asset...</p>
+      
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700">
+        <div id="progress-bar" class="bg-gradient-to-r from-sky-500 to-emerald-400 h-full w-0 transition-all duration-200"></div>
+      </div>
+      <div class="flex justify-between items-center text-[11px] font-mono text-slate-500 mt-2">
+        <span id="load-status">Connecting...</span>
+        <span id="load-percent">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation & Brand Header -->
+  <header class="absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+    <div class="glass-panel px-4 py-2.5 rounded-xl pointer-events-auto flex items-center gap-3 shadow-lg">
+      <a href="/dc/" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <div class="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center font-black text-white text-xs">DC</div>
+        <div>
+          <h1 class="text-xs font-bold leading-tight tracking-tight text-white">DC36 HYPERSCALE CAMPUS</h1>
+          <p class="text-[10px] text-sky-400 font-mono">45MW Tier III/IV | Interactive 3D Twin</p>
+        </div>
+      </a>
+      <div class="h-6 w-px bg-slate-700"></div>
+      <a href="/dc/schedule/" class="text-[11px] font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        4D Gantt View
+      </a>
+    </div>
+
+    <!-- Lighting Mode & Settings -->
+    <div class="glass-panel p-1.5 rounded-xl pointer-events-auto flex items-center gap-1 shadow-lg">
+      <button onclick="setLighting('day')" id="btn-light-day" class="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-sky-600 text-white shadow-sm flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        Day
+      </button>
+      <button onclick="setLighting('sunset')" id="btn-light-sunset" class="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        Sunset
+      </button>
+      <button onclick="setLighting('night')" id="btn-light-night" class="px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+        Night
+      </button>
+      <div class="h-4 w-px bg-slate-700 mx-1"></div>
+      <button onclick="toggleAutoRotate()" id="btn-autorotate" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all" title="Toggle Auto-Rotation">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      </button>
+      <button onclick="toggleFullscreen()" class="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all" title="Fullscreen">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Bottom Camera Presets Toolbar -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none max-w-full px-4">
+    <div class="glass-panel p-1.5 rounded-2xl pointer-events-auto flex items-center gap-1 shadow-2xl overflow-x-auto no-scrollbar">
+      <button onclick="flyTo('hero')" id="btn-cam-hero" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap bg-sky-600 text-white shadow-sm transition-all">Overview</button>
+      <button onclick="flyTo('substation')" id="btn-cam-substation" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Substation</button>
+      <button onclick="flyTo('gensets')" id="btn-cam-gensets" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Generators</button>
+      <button onclick="flyTo('office')" id="btn-cam-office" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Admin Office</button>
+      <button onclick="flyTo('chillers')" id="btn-cam-chillers" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Rooftop MEP</button>
+      <button onclick="flyTo('docks')" id="btn-cam-docks" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all">Loading Docks</button>
+    </div>
+  </div>
+
+  <!-- Technical Spec Drawer / Info Card -->
+  <div id="zone-card" class="glass-panel absolute bottom-20 left-4 z-20 p-4 rounded-xl max-w-xs w-full pointer-events-auto shadow-xl hidden transition-all">
+    <div class="flex items-center justify-between mb-2">
+      <span id="zone-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-sky-900/80 text-sky-300 border border-sky-700">ZONE SPEC</span>
+      <button onclick="closeZoneCard()" class="text-slate-400 hover:text-white text-xs">&times;</button>
+    </div>
+    <h3 id="zone-title" class="text-sm font-bold text-white mb-1">Campus Subsystem</h3>
+    <p id="zone-desc" class="text-xs text-slate-300 leading-relaxed font-mono">Detailed engineering specifications and capacity.</p>
+  </div>
+
+  <!-- Three.js Interactive Application Script -->
+  <script>
+    let scene, camera, renderer, controls, composer;
+    let modelRoot, dirLight, hemiLight, ambientLight;
+    let autoRotate = false;
+    let tweening = false;
+    let targetCamPos = null, targetControlsPos = null;
+
+    const cameraPresets = {
+      hero: { pos: new THREE.Vector3(-105, 48, -165), target: new THREE.Vector3(5, 10, 0), title: "Campus Overview", desc: "45MW Hyperscale Data Center Campus on 3.8 ha master plot with Tier III/IV concurrent maintainability." },
+      substation: { pos: new THREE.Vector3(-5, 22, -90), target: new THREE.Vector3(5, 5, -48), title: "110kV/22kV Substation", desc: "Dual 63MVA power transformers isolated by reinforced concrete blast firewalls per NFPA 850 standards." },
+      gensets: { pos: new THREE.Vector3(-85, 20, -5), target: new THREE.Vector3(-54, 5, 0), title: "Standby Generator Yard", desc: "8x 3,000 kVA containerized diesel generators with dual cylindrical bulk fuel tanks within concrete containment bund." },
+      office: { pos: new THREE.Vector3(65, 18, -60), target: new THREE.Vector3(36, 6, -15), title: "Administrative Operations Center", desc: "Contemporary 2-story glass curtain wall facility with brise-soleil sunshades and executive lobby." },
+      chillers: { pos: new THREE.Vector3(-15, 38, -35), target: new THREE.Vector3(-10, 22, 5), title: "Rooftop Mechanical Penthouse", desc: "10 modular air-cooled chillers enclosed by 3.5m acoustic louvered screening wall with blue supply and green return piping." },
+      docks: { pos: new THREE.Vector3(-30, 16, 65), target: new THREE.Vector3(-18, 4, 30), title: "Heavy Logistics Loading Docks", desc: "3 heavy-duty truck bays with sectional roll-up doors, hydraulic dock levelers, and vulcanized rubber dock bumpers." }
+    };
+
+    function init() {
+      const container = document.getElementById('canvas-container');
+
+      // 1. Scene & Atmosphere
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xdbeafe);
+      scene.fog = new THREE.FogExp2(0xdbeafe, 0.0018);
+
+      // 2. Camera
+      camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.5, 1500);
+      camera.position.set(-105, 48, -165);
+
+      // 3. WebGL Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.05;
+      container.appendChild(renderer.domElement);
+
+      // 4. Orbit Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.maxPolarAngle = Math.PI / 2 - 0.02; // Prevent going below ground
+      controls.minDistance = 10;
+      controls.maxDistance = 500;
+      controls.target.set(5, 10, 0);
+
+      // 5. Lighting Rig
+      hemiLight = new THREE.HemisphereLight(0xffffff, 0xc4aa7b, 0.85);
+      scene.add(hemiLight);
+
+      ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+      scene.add(ambientLight);
+
+      dirLight = new THREE.DirectionalLight(0xfff6e5, 2.2);
+      dirLight.position.set(-90, 120, -110);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.width = 2048;
+      dirLight.shadow.mapSize.height = 2048;
+      dirLight.shadow.camera.near = 10;
+      dirLight.shadow.camera.far = 400;
+      dirLight.shadow.camera.left = -150;
+      dirLight.shadow.camera.right = 150;
+      dirLight.shadow.camera.top = 150;
+      dirLight.shadow.camera.bottom = -150;
+      dirLight.shadow.bias = -0.0004;
+      scene.add(dirLight);
+
+      // 6. Post-Processing Pipeline
+      const renderPass = new THREE.RenderPass(scene, camera);
+      const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.22, 0.4, 0.85);
+      composer = new THREE.EffectComposer(renderer);
+      composer.addPass(renderPass);
+      composer.addPass(bloomPass);
+
+      // 7. Load GLB Model
+      loadCampusModel();
+
+      // Window Resize Listener
+      window.addEventListener('resize', onWindowResize);
+      animate();
+    }
+
+    function loadCampusModel() {
+      const loader = new THREE.GLTFLoader();
+      const modelPath = 'models/dc36_45mw_datacenter_campus.glb';
+
+      loader.load(
+        modelPath,
+        function (gltf) {
+          modelRoot = gltf.scene;
+          
+          // Traverse and configure PBR materials and shadows
+          modelRoot.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              if (child.material) {
+                child.material.envMapIntensity = 1.0;
+                // Preserve transparency on glass
+                if (child.material.name.includes("Glass")) {
+                  child.material.transparent = true;
+                  child.material.opacity = 0.55;
+                }
+              }
+            }
+          });
+
+          scene.add(modelRoot);
+
+          // Hide Loading Screen
+          const overlay = document.getElementById('loading-overlay');
+          overlay.classList.add('opacity-0');
+          setTimeout(() => overlay.remove(), 700);
+        },
+        function (xhr) {
+          if (xhr.lengthComputable) {
+            const percent = Math.round((xhr.loaded / xhr.total) * 100);
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('load-percent').innerText = percent + '%';
+            document.getElementById('load-status').innerText = `Loaded ${(xhr.loaded / (1024*1024)).toFixed(1)} MB / ${(xhr.total / (1024*1024)).toFixed(1)} MB`;
+          }
+        },
+        function (error) {
+          console.error("An error occurred loading the GLB model:", error);
+          document.getElementById('load-status').innerText = 'Error loading 3D asset.';
+        }
+      );
+    }
+
+    function setLighting(mode) {
+      document.querySelectorAll('#btn-light-day, #btn-light-sunset, #btn-light-night').forEach(b => {
+        b.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-1';
+      });
+      document.getElementById('btn-light-' + mode).className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-sky-600 text-white shadow-sm flex items-center gap-1';
+
+      if (mode === 'day') {
+        scene.background = new THREE.Color(0xdbeafe);
+        scene.fog.color = new THREE.Color(0xdbeafe);
+        hemiLight.color.setHex(0xffffff);
+        hemiLight.groundColor.setHex(0xc4aa7b);
+        hemiLight.intensity = 0.85;
+        dirLight.color.setHex(0xfff6e5);
+        dirLight.intensity = 2.2;
+        dirLight.position.set(-90, 120, -110);
+        renderer.toneMappingExposure = 1.05;
+      } else if (mode === 'sunset') {
+        scene.background = new THREE.Color(0xfdba74);
+        scene.fog.color = new THREE.Color(0xfdba74);
+        hemiLight.color.setHex(0xfeb272);
+        hemiLight.groundColor.setHex(0x7c2d12);
+        hemiLight.intensity = 0.95;
+        dirLight.color.setHex(0xf97316);
+        dirLight.intensity = 2.8;
+        dirLight.position.set(-140, 45, -160);
+        renderer.toneMappingExposure = 0.95;
+      } else if (mode === 'night') {
+        scene.background = new THREE.Color(0x0f172a);
+        scene.fog.color = new THREE.Color(0x0f172a);
+        hemiLight.color.setHex(0x38bdf8);
+        hemiLight.groundColor.setHex(0x020617);
+        hemiLight.intensity = 0.35;
+        dirLight.color.setHex(0x93c5fd);
+        dirLight.intensity = 0.65;
+        dirLight.position.set(-60, 100, -80);
+        renderer.toneMappingExposure = 1.25;
+      }
+    }
+
+    function flyTo(presetKey) {
+      document.querySelectorAll('[id^="btn-cam-"]').forEach(b => {
+        b.className = 'px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap text-slate-300 hover:text-white hover:bg-slate-800 transition-all';
+      });
+      const btn = document.getElementById('btn-cam-' + presetKey);
+      if (btn) btn.className = 'px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap bg-sky-600 text-white shadow-sm transition-all';
+
+      const p = cameraPresets[presetKey];
+      if (!p) return;
+
+      targetCamPos = p.pos.clone();
+      targetControlsPos = p.target.clone();
+      tweening = true;
+
+      // Update Info Card
+      document.getElementById('zone-title').innerText = p.title;
+      document.getElementById('zone-desc').innerText = p.desc;
+      document.getElementById('zone-card').classList.remove('hidden');
+    }
+
+    function closeZoneCard() {
+      document.getElementById('zone-card').classList.add('hidden');
+    }
+
+    function toggleAutoRotate() {
+      autoRotate = !autoRotate;
+      controls.autoRotate = autoRotate;
+      controls.autoRotateSpeed = 0.8;
+      const btn = document.getElementById('btn-autorotate');
+      btn.classList.toggle('text-sky-400', autoRotate);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Smooth camera interpolation
+      if (tweening && targetCamPos && targetControlsPos) {
+        camera.position.lerp(targetCamPos, 0.05);
+        controls.target.lerp(targetControlsPos, 0.05);
+        if (camera.position.distanceTo(targetCamPos) < 0.2 && controls.target.distanceTo(targetControlsPos) < 0.2) {
+          tweening = false;
+        }
+      }
+
+      controls.update();
+      composer.render();
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
