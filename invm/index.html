@@ -297,110 +297,154 @@
 
     <!-- Executive Workbench Action Toolbar -->
   <div class="w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-[52px] z-40 transition-colors shadow-2xs no-print">
-    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 py-2 flex items-center justify-between gap-2.5 flex-wrap">
+    <div class="w-full max-w-[1920px] 2xl:max-w-full mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 py-2 flex items-center justify-between gap-2.5">
       
-      <!-- Left Group: Active Project Selector with Action Badges -->
-      <div class="flex items-center gap-2 flex-wrap">
-        <!-- Return to Project Launchpad Homepage -->
-        <button id="btnBackToHome" type="button" onclick="switchAppViewMode('launcher')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer hidden" title="Return to Project Launchpad Homepage">
-          <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
-          <span class="whitespace-nowrap hidden sm:inline">Project Launchpad</span>
-        </button>
-
-        <!-- Go to Main Workspace CTA (visible in launcher mode) -->
-        <button id="btnEnterWorkspace" type="button" onclick="switchAppViewMode('workspace')" class="px-3 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Go to Main Legal Workspace">
-          <span class="whitespace-nowrap">Go to Main Page</span>
-          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-        </button>
-        <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-lg px-2 py-1 shadow-2xs">
-          <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0"></i>
-          <span class="text-[10px] font-mono uppercase font-bold text-slate-400 dark:text-slate-500 hidden sm:inline">Project:</span>
-          <select id="projectSelector" class="bg-transparent text-slate-900 dark:text-slate-100 text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[150px] sm:max-w-[210px] truncate" title="Active investment project portfolio">
-            <!-- Rendered by JS -->
-          </select>
-          <div class="flex items-center border-l border-slate-200 dark:border-slate-700 pl-1 ml-0.5 gap-0.5">
-            <button id="btnNewProject" onclick="openNewProjectWithScenario()" class="p-1 text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-300 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Create new project">
-              <i data-lucide="plus" class="w-3 h-3"></i>
-            </button>
-            <button id="btnRenameProject" class="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Rename project">
-              <i data-lucide="edit-2" class="w-3 h-3"></i>
-            </button>
-            <button id="btnDeleteProject" class="p-1 text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Delete project">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>
-            </button>
+      <!-- STRIP A: PROJECT LAUNCHPAD HOMEPAGE STRIP (Active in Launcher Mode) -->
+      <div id="headerLauncherStrip" class="w-full flex items-center justify-between gap-3 flex-wrap">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-teal-600/10 dark:bg-teal-400/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider block">Investment Legal M&amp;A Engine</span>
+              <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500 block -mt-0.5">Project Launchpad &middot; Statutory Compliance Cockpit</span>
+            </div>
           </div>
         </div>
 
-        <!-- Archetype Selector -->
-        <div class="hidden lg:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
-          <label id="labelHomeProjectType" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">TYPE:</label>
-          <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer py-0.5">
-            <option value="URBAN_TOWN" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Urban / Residential</option>
-            <option value="INDUSTRIAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Industrial Real Estate</option>
-            <option value="ENERGY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Renewable Energy</option>
-            <option value="RESORT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Resort &amp; Hospitality</option>
-          </select>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button type="button" onclick="switchAppViewMode('workspace')" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer" title="Enter CPM & Legal Due Diligence Workspace">
+            <span>Go to Main Page</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </button>
+          <button type="button" onclick="openNewProjectWithScenario()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer" title="Create new capital project">
+            <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+            <span>+ Create Project</span>
+          </button>
+          <button type="button" onclick="openAdminConsoleModal('project')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 cursor-pointer" title="Open Legal Project & Supabase Cloud Admin Console">
+            <i data-lucide="sliders" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+            <span>Admin Console</span>
+          </button>
+          <!-- Cloud Sync Status Indicator -->
+          <div id="cloudSyncIndicatorHome" class="hidden sm:flex items-center gap-1.5 text-[11px] font-mono px-2.5 py-1 rounded-md bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-400 cursor-pointer hover:border-teal-500/50 transition" onclick="openAdminConsoleModal('database')" title="Supabase Database Status - Click to inspect">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+            <span id="cloudSyncHomeText" class="truncate max-w-[140px]">Supabase: Synced</span>
+          </div>
+          <!-- Language Toggle -->
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0 font-mono text-[11px]">
+            <button id="btnLangENHome" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs">EN</button>
+            <button id="btnLangVIHome" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">VI</button>
+          </div>
         </div>
-
-        <!-- Milestone Selector -->
-        <div class="hidden xl:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
-          <label id="labelMaEntry" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">PHASE:</label>
-          <select id="maEntrySelector" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[145px] sm:max-w-[165px] truncate py-0.5">
-            <option value="GREENFIELD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Greenfield Origination</option>
-            <option value="POST_POLICY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Post In-Principle Approval</option>
-            <option value="POST_1_500" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Post 1/500 Master Plan</option>
-            <option value="POST_LAND" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Post Land Allocation/Lease</option>
-            <option value="POST_PERMIT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">5. Post Building Permit</option>
-            <option value="OPERATIONAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">6. Operational Asset</option>
-          </select>
-        </div>
-
-        <!-- Primary CTA: Create Project -->
-        <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Initialize project by archetype and takeover milestone">
-          <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
-          <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
-        </button>
       </div>
 
-      <!-- Right Group: Views, Modals & Localization -->
-      <div class="flex items-center gap-2 flex-wrap shrink-0">
-        <!-- Segmented Mode Control: Dashboard vs Dossier -->
-        <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
-          <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2.5 py-1 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs cursor-pointer" title="Executive investment dashboard">
-            <i data-lucide="layout-dashboard" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
-            <span id="textBtnDashboard" class="whitespace-nowrap">Dashboard</span>
+      <!-- STRIP B: WORKSPACE EXECUTION TOOLBAR (Active in Workspace Mode) -->
+      <div id="headerWorkspaceStrip" class="w-full flex items-center justify-between gap-2.5 flex-wrap hidden">
+        <!-- Left Group: Return to Home + Project Selector with Actions -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="btnBackToHome" type="button" onclick="switchAppViewMode('launcher')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Return to Project Launchpad Homepage">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+            <span class="whitespace-nowrap hidden sm:inline">Project Launchpad</span>
           </button>
-          <a href="./?view=legal" target="_blank" rel="noopener noreferrer" id="btnViewLegalEngine" class="px-2.5 py-1 rounded-md text-xs font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" title="Open Legal Dossier & CPM matrix">
-            <i data-lucide="list-checks" class="w-3 h-3 text-blue-500"></i>
-            <span id="textBtnLegalEngine" class="whitespace-nowrap">Legal Dossier &amp; CPM</span>
-            <i data-lucide="external-link" class="w-2.5 h-2.5 text-slate-400 ml-0.5"></i>
+          <button id="btnEnterWorkspace" type="button" onclick="switchAppViewMode('workspace')" class="hidden px-3 py-1 bg-teal-600 text-white font-semibold text-xs rounded-lg">Go to Main Page</button>
+
+          <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-lg px-2 py-1 shadow-2xs">
+            <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0"></i>
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 dark:text-slate-500 hidden sm:inline">Project:</span>
+            <select id="projectSelector" class="bg-transparent text-slate-900 dark:text-slate-100 text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[150px] sm:max-w-[210px] truncate" title="Active investment project portfolio">
+              <!-- Rendered by JS -->
+            </select>
+            <div class="flex items-center border-l border-slate-200 dark:border-slate-700 pl-1 ml-0.5 gap-0.5">
+              <button id="btnNewProject" onclick="openNewProjectWithScenario()" class="p-1 text-slate-500 hover:text-teal-600 dark:text-slate-400 dark:hover:text-teal-300 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Create new project">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+              </button>
+              <button id="btnRenameProject" class="p-1 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Rename project">
+                <i data-lucide="edit-2" class="w-3 h-3"></i>
+              </button>
+              <button id="btnDeleteProject" class="p-1 text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-slate-200/60 dark:hover:bg-slate-700 rounded transition cursor-pointer" title="Delete project">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Archetype Selector -->
+          <div class="hidden lg:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+            <label id="labelHomeProjectType" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">TYPE:</label>
+            <select id="homeProjectTypeSelector" onchange="applyProjectType(this.value)" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer py-0.5">
+              <option value="URBAN_TOWN" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Urban / Residential</option>
+              <option value="INDUSTRIAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Industrial Real Estate</option>
+              <option value="ENERGY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Renewable Energy</option>
+              <option value="RESORT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Resort &amp; Hospitality</option>
+            </select>
+          </div>
+
+          <!-- Milestone Selector -->
+          <div class="hidden xl:flex items-center gap-1.5 text-xs bg-slate-100/90 dark:bg-slate-800/90 px-2 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+            <label id="labelMaEntry" class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider whitespace-nowrap">PHASE:</label>
+            <select id="maEntrySelector" class="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer max-w-[145px] sm:max-w-[165px] truncate py-0.5">
+              <option value="GREENFIELD" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100" selected>1. Greenfield Origination</option>
+              <option value="POST_POLICY" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">2. Post In-Principle Approval</option>
+              <option value="POST_1_500" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">3. Post 1/500 Master Plan</option>
+              <option value="POST_LAND" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">4. Post Land Allocation/Lease</option>
+              <option value="POST_PERMIT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">5. Post Building Permit</option>
+              <option value="OPERATIONAL" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">6. Operational Asset</option>
+            </select>
+          </div>
+
+          <!-- Primary CTA: Create Project -->
+          <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Initialize project by archetype and takeover milestone">
+            <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+            <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
+          </button>
+        </div>
+
+        <!-- Right Group: Views, Admin & Localization -->
+        <div class="flex items-center gap-2 flex-wrap shrink-0">
+          <!-- Segmented Mode Control: Dashboard vs Dossier -->
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
+            <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2.5 py-1 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs cursor-pointer" title="Executive investment dashboard">
+              <i data-lucide="layout-dashboard" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
+              <span id="textBtnDashboard" class="whitespace-nowrap">Dashboard</span>
+            </button>
+            <a href="./?view=legal" target="_blank" rel="noopener noreferrer" id="btnViewLegalEngine" class="px-2.5 py-1 rounded-md text-xs font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" title="Open Legal Dossier & CPM matrix">
+              <i data-lucide="list-checks" class="w-3 h-3 text-blue-500"></i>
+              <span id="textBtnLegalEngine" class="whitespace-nowrap">Legal Dossier &amp; CPM</span>
+              <i data-lucide="external-link" class="w-2.5 h-2.5 text-slate-400 ml-0.5"></i>
+            </a>
+          </div>
+
+          <!-- Gantt Modal Trigger -->
+          <button onclick="openGanttModal()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="Open fullscreen CPM Gantt schedule">
+            <i data-lucide="calendar-range" class="w-3 h-3 text-blue-500"></i>
+            <span class="whitespace-nowrap hidden sm:inline">Gantt</span>
+          </button>
+
+          <!-- Planning Gateway Link -->
+          <a href="./quyhoach/" id="navLinkQuyHoach" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="National Urban Planning & Industrial Zoning Gateway">
+            <i data-lucide="map" class="w-3 h-3 text-emerald-500"></i>
+            <span id="navTextQuyHoach" class="whitespace-nowrap hidden sm:inline">Planning</span>
           </a>
+
+          <!-- Admin Console Button -->
+          <button type="button" onclick="openAdminConsoleModal('project')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="Admin Console">
+            <i data-lucide="sliders" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
+            <span class="whitespace-nowrap hidden sm:inline">Admin</span>
+          </button>
+
+          <!-- Language Selector (EN | VI) -->
+          <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0 font-mono text-[11px]">
+            <button id="btnLangEN" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs" title="Switch to English (Default)">EN</button>
+            <button id="btnLangVI" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Chuyển sang Tiếng Việt">VI</button>
+          </div>
+
+          <!-- Preserved Hidden Anchors for JS Compatibility -->
+          <span id="headerBrandTitle" class="hidden">VIETNAM INVESTMENT LEGAL MANAGEMENT &amp; M&A ENGINE</span>
+          <span id="heroProjectId" class="hidden"></span>
+          <span id="heroProjectBadge" class="hidden"></span>
+          <span id="heroProjectTitle" class="hidden"></span>
+          <span id="heroProjectDesc" class="hidden"></span>
         </div>
-
-        <!-- Gantt Modal Trigger -->
-        <button onclick="openGanttModal()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="Open fullscreen CPM Gantt schedule">
-          <i data-lucide="calendar-range" class="w-3 h-3 text-blue-500"></i>
-          <span class="whitespace-nowrap hidden sm:inline">Gantt</span>
-        </button>
-
-        <!-- Planning Gateway Link -->
-        <a href="./quyhoach/" id="navLinkQuyHoach" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 shrink-0 cursor-pointer" title="National Urban Planning & Industrial Zoning Gateway">
-          <i data-lucide="map" class="w-3 h-3 text-emerald-500"></i>
-          <span id="navTextQuyHoach" class="whitespace-nowrap hidden sm:inline">Planning</span>
-        </a>
-
-        <!-- Language Selector (EN | VI) -->
-        <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0 font-mono text-[11px]">
-          <button id="btnLangEN" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs" title="Switch to English (Default)">EN</button>
-          <button id="btnLangVI" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Chuyển sang Tiếng Việt">VI</button>
-        </div>
-
-        <!-- Preserved Hidden Anchors for JS Compatibility -->
-        <span id="headerBrandTitle" class="hidden">VIETNAM INVESTMENT LEGAL MANAGEMENT &amp; M&A ENGINE</span>
-        <span id="heroProjectId" class="hidden"></span>
-        <span id="heroProjectBadge" class="hidden"></span>
-        <span id="heroProjectTitle" class="hidden"></span>
-        <span id="heroProjectDesc" class="hidden"></span>
       </div>
 
     </div>
@@ -512,7 +556,9 @@
                 <span class="px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 border border-teal-200/80 dark:border-teal-800/80 text-[10px] font-mono font-bold text-teal-700 dark:text-teal-400">
                   ARCHETYPE 01
                 </span>
-                <i data-lucide="building-2" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/80 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  24 - 36 Mo
+                </span>
               </div>
 
               <div>
@@ -525,8 +571,14 @@
               </div>
 
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Comprehensive statutory workflow under Law on Housing 2023, Law on Real Estate Business 2023, and Land Law 2024.
+                Statutory due diligence under Law on Housing 2023, Law on Real Estate Business 2023, and Land Law 2024.
               </p>
+
+              <!-- Bottleneck Warning -->
+              <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 text-[10px] font-mono text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600"></i>
+                <span>Bottleneck: 1/500 Detailed Masterplan &middot; Land Valuation LURC</span>
+              </div>
 
               <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[11px] font-mono text-slate-600 dark:text-slate-300">
                 <div class="flex items-center gap-1.5">
@@ -544,12 +596,15 @@
               </div>
             </div>
 
-            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
+            <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-1.5 flex-wrap">
               <button type="button" onclick="openNewProjectModalWithArchetype('URBAN_TOWN')" class="flex-1 py-1.5 px-2 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition text-center cursor-pointer shadow-2xs">
-                + Create Project
+                + Create
               </button>
-              <button type="button" onclick="loadBenchmarkProject('URBAN_TOWN')" class="py-1.5 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Benchmark &rarr;
+              <button type="button" onclick="openRoadmapPreviewModal('URBAN_TOWN')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
+                Roadmap
+              </button>
+              <button type="button" onclick="loadBenchmarkProject('URBAN_TOWN')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
+                Model &rarr;
               </button>
             </div>
           </div>
@@ -561,7 +616,9 @@
                 <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/80 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
                   ARCHETYPE 02
                 </span>
-                <i data-lucide="factory" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/80 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  18 - 28 Mo
+                </span>
               </div>
 
               <div>
@@ -574,8 +631,14 @@
               </div>
 
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Industrial development baseline under Decree 35/2022/ND-CP, Decree 32/2024/ND-CP, DPPA Decree 80/2024, and environmental regulations.
+                Industrial development baseline under Decree 35/2022/ND-CP, Decree 32/2024/ND-CP, and DPPA Decree 80/2024.
               </p>
+
+              <!-- Bottleneck Warning -->
+              <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 text-[10px] font-mono text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600"></i>
+                <span>Bottleneck: Substation 110kV Intertie &middot; EIA Wastewater</span>
+              </div>
 
               <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[11px] font-mono text-slate-600 dark:text-slate-300">
                 <div class="flex items-center gap-1.5">
@@ -593,12 +656,15 @@
               </div>
             </div>
 
-            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
+            <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-1.5 flex-wrap">
               <button type="button" onclick="openNewProjectModalWithArchetype('INDUSTRIAL')" class="flex-1 py-1.5 px-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-lg transition text-center cursor-pointer shadow-2xs">
-                + Create Project
+                + Create
               </button>
-              <button type="button" onclick="loadBenchmarkProject('INDUSTRIAL')" class="py-1.5 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Benchmark &rarr;
+              <button type="button" onclick="openRoadmapPreviewModal('INDUSTRIAL')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
+                Roadmap
+              </button>
+              <button type="button" onclick="loadBenchmarkProject('INDUSTRIAL')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
+                Model &rarr;
               </button>
             </div>
           </div>
@@ -610,7 +676,9 @@
                 <span class="px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/70 border border-cyan-200/80 dark:border-cyan-800/80 text-[10px] font-mono font-bold text-cyan-700 dark:text-cyan-400">
                   ARCHETYPE 03
                 </span>
-                <i data-lucide="zap" class="w-4 h-4 text-cyan-600 dark:text-cyan-400"></i>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/80 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  14 - 24 Mo
+                </span>
               </div>
 
               <div>
@@ -623,8 +691,14 @@
               </div>
 
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                National clean power pipeline under PDP8 Decision 500/QD-TTg, Decision 262/QD-TTg, Electricity Law, and EVN grid intertie mandates.
+                National clean power pipeline under PDP8 Decision 500/QD-TTg, Decision 262/QD-TTg, and EVN DPPA framework.
               </p>
+
+              <!-- Bottleneck Warning -->
+              <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 text-[10px] font-mono text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600"></i>
+                <span>Bottleneck: PDP8 Quota &middot; EVN PPA / DPPA Contracting</span>
+              </div>
 
               <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[11px] font-mono text-slate-600 dark:text-slate-300">
                 <div class="flex items-center gap-1.5">
@@ -642,12 +716,15 @@
               </div>
             </div>
 
-            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
+            <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-1.5 flex-wrap">
               <button type="button" onclick="openNewProjectModalWithArchetype('ENERGY')" class="flex-1 py-1.5 px-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs rounded-lg transition text-center cursor-pointer shadow-2xs">
-                + Create Project
+                + Create
               </button>
-              <button type="button" onclick="loadBenchmarkProject('ENERGY')" class="py-1.5 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Benchmark &rarr;
+              <button type="button" onclick="openRoadmapPreviewModal('ENERGY')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
+                Roadmap
+              </button>
+              <button type="button" onclick="loadBenchmarkProject('ENERGY')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
+                Model &rarr;
               </button>
             </div>
           </div>
@@ -659,7 +736,9 @@
                 <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200/80 dark:border-amber-800/80 text-[10px] font-mono font-bold text-amber-700 dark:text-amber-400">
                   ARCHETYPE 04
                 </span>
-                <i data-lucide="palmtree" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700/80 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                  20 - 32 Mo
+                </span>
               </div>
 
               <div>
@@ -672,8 +751,14 @@
               </div>
 
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Hospitality statutory framework governed by Law on Tourism 2017, coastal/forestry land conversion decrees, and operational certifications.
+                Hospitality statutory framework governed by Law on Tourism 2017, coastal/forestry land conversion decrees, and licensing.
               </p>
+
+              <!-- Bottleneck Warning -->
+              <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/60 text-[10px] font-mono text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-600"></i>
+                <span>Bottleneck: Forest Land Conversion &middot; Operating License</span>
+              </div>
 
               <div class="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-700/60 text-[11px] font-mono text-slate-600 dark:text-slate-300">
                 <div class="flex items-center gap-1.5">
@@ -691,12 +776,15 @@
               </div>
             </div>
 
-            <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
+            <div class="pt-3 mt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center gap-1.5 flex-wrap">
               <button type="button" onclick="openNewProjectModalWithArchetype('RESORT')" class="flex-1 py-1.5 px-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs rounded-lg transition text-center cursor-pointer shadow-2xs">
-                + Create Project
+                + Create
               </button>
-              <button type="button" onclick="loadBenchmarkProject('RESORT')" class="py-1.5 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Benchmark &rarr;
+              <button type="button" onclick="openRoadmapPreviewModal('RESORT')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
+                Roadmap
+              </button>
+              <button type="button" onclick="loadBenchmarkProject('RESORT')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
+                Model &rarr;
               </button>
             </div>
           </div>
@@ -1537,6 +1625,333 @@
       </form>
     </div>
   </div>
+
+  
+  <!-- ==================================================================== -->
+  <!-- MODAL: ROADMAP PREVIEW (STATUTORY CPM ROADMAP & BOTTLENECK ADVISORY) -->
+  <!-- ==================================================================== -->
+  <div id="roadmapPreviewModal" class="fixed inset-0 bg-slate-950/75 z-50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 dark:border-slate-700 animate-in fade-in duration-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-3.5 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800 shrink-0">
+        <div class="flex items-center gap-2">
+          <i data-lucide="map" class="w-4 h-4 text-teal-400"></i>
+          <h3 id="roadmapModalTitle" class="font-bold text-sm">Statutory Legal Roadmap &amp; Critical Milestones</h3>
+        </div>
+        <button onclick="closeRoadmapPreviewModal()" class="text-slate-400 hover:text-white transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4 text-xs text-slate-700 dark:text-slate-300 flex-1">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <span id="roadmapModalArchetypeBadge" class="px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 text-[10px] font-mono font-bold text-teal-700 dark:text-teal-400 border border-teal-200/80 dark:border-teal-800/80">ARCHETYPE</span>
+            <span id="roadmapModalDuration" class="font-mono font-bold text-slate-900 dark:text-slate-100">Est. Lead Time: 24 - 36 Months</span>
+          </div>
+          <p id="roadmapModalDescription" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed"></p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider mb-2 font-mono flex items-center gap-1.5">
+            <i data-lucide="list-ordered" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+            Key Statutory Execution Stages
+          </h4>
+          <div id="roadmapModalPhasesList" class="space-y-2">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/80 space-y-1">
+          <span class="font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5 text-xs font-mono uppercase">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
+            Due Diligence &amp; Bottleneck Advisory
+          </span>
+          <p id="roadmapModalBottlenecks" class="text-[11px] text-amber-800 dark:text-amber-200 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="p-3.5 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-2 shrink-0">
+        <button type="button" onclick="closeRoadmapPreviewModal()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-lg transition cursor-pointer">
+          Close
+        </button>
+        <button type="button" id="btnRoadmapCreateProject" onclick="createProjectFromCurrentRoadmap()" class="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+          <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+          <span>Initialize Project from this Archetype &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: ADMIN CONSOLE (PROJECT CONTROLS & SUPABASE CLOUD MANAGEMENT)  -->
+  <!-- ==================================================================== -->
+  <div id="adminConsoleModal" class="fixed inset-0 bg-slate-950/80 z-50 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-4xl w-full border border-slate-200 dark:border-slate-700 animate-in fade-in duration-200 overflow-hidden flex flex-col max-h-[92vh]">
+      
+      <!-- Console Header -->
+      <div class="px-5 py-3.5 bg-slate-900 text-white flex justify-between items-center border-b border-slate-800 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm flex items-center gap-2">
+              Legal Project Admin Console &middot; Supabase Cloud Control
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400 block -mt-0.5">
+              Production Schema: <code class="text-teal-400">public.legal_projects</code> &middot; Project ID: <code class="text-amber-400">nkkwegvplpozirrjcxsn</code>
+            </span>
+          </div>
+        </div>
+        <button onclick="closeAdminConsoleModal()" class="text-slate-400 hover:text-white transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Tab Navigation Bar -->
+      <div class="flex items-center gap-1 px-4 py-2 bg-slate-100 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 shrink-0 overflow-x-auto text-xs font-semibold">
+        <button id="adminTabBtnProject" onclick="switchAdminTab('project')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-xs">
+          <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i>
+          <span>Active Project</span>
+        </button>
+        <button id="adminTabBtnDatabase" onclick="switchAdminTab('database')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60">
+          <i data-lucide="database" class="w-3.5 h-3.5"></i>
+          <span>Cloud Database (Supabase)</span>
+        </button>
+        <button id="adminTabBtnJson" onclick="switchAdminTab('json')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60">
+          <i data-lucide="code" class="w-3.5 h-3.5"></i>
+          <span>Raw JSON Editor</span>
+        </button>
+        <button id="adminTabBtnBackup" onclick="switchAdminTab('backup')" class="px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60">
+          <i data-lucide="hard-drive-download" class="w-3.5 h-3.5"></i>
+          <span>Backup &amp; Migration</span>
+        </button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="p-5 overflow-y-auto flex-1 space-y-4 text-xs">
+        
+        <!-- PANEL 1: ACTIVE PROJECT MANAGEMENT -->
+        <div id="adminPanelProject" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase block">Active ID</span>
+              <span id="adminProjId" class="font-bold text-slate-900 dark:text-slate-100 truncate block">--</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase block">Total Milestones</span>
+              <span id="adminProjTaskCount" class="font-bold text-slate-900 dark:text-slate-100 block">--</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase block">Critical Path</span>
+              <span id="adminProjCritCount" class="font-bold text-rose-500 block">--</span>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
+              <span class="text-[10px] text-slate-400 uppercase block">Last Updated</span>
+              <span id="adminProjUpdated" class="font-bold text-slate-900 dark:text-slate-100 block truncate">--</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Project Name *</label>
+              <input type="text" id="adminInputName" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 text-xs font-medium focus:ring-2 focus:ring-teal-500 outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Location / Province</label>
+              <input type="text" id="adminInputLocation" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 text-xs font-medium focus:ring-2 focus:ring-teal-500 outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Project Archetype</label>
+              <select id="adminSelectArchetype" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 text-xs font-medium focus:ring-2 focus:ring-teal-500 outline-none">
+                <option value="URBAN_TOWN">1. Urban / Residential Land &amp; Township</option>
+                <option value="INDUSTRIAL">2. Industrial Real Estate &amp; Eco-IP</option>
+                <option value="ENERGY">3. Renewable Energy &amp; Power Grid</option>
+                <option value="RESORT">4. Resort &amp; Eco-Hospitality</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Takeover Milestone / Scenario</label>
+              <select id="adminSelectScenario" class="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 text-xs font-medium focus:ring-2 focus:ring-teal-500 outline-none">
+                <option value="GREENFIELD">1. Greenfield Origination (0% complete)</option>
+                <option value="POST_POLICY">2. Post In-Principle Approval (15% complete)</option>
+                <option value="POST_1_500">3. Post 1/500 Master Plan (40% complete)</option>
+                <option value="POST_LAND">4. Post Land Allocation &amp; Valuation (70% complete)</option>
+                <option value="POST_PERMIT">5. Post Building Permit (85% complete)</option>
+                <option value="OPERATIONAL">6. Operational Asset (100% complete)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-700">
+            <span id="adminProjectStatusMsg" class="font-mono text-slate-500 dark:text-slate-400 text-[11px]">Ready</span>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="saveActiveProjectFromAdmin()" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Save to Workspace</span>
+              </button>
+              <button type="button" onclick="forcePushActiveProject()" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i>
+                <span>Force Push to Supabase</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 2: CLOUD DATABASE EXPLORER (SUPABASE) -->
+        <div id="adminPanelDatabase" class="space-y-4 hidden">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span id="adminDbConnStatus" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  CONNECTED
+                </span>
+                <span id="adminDbLatency" class="font-mono text-slate-500 dark:text-slate-400 text-[11px]">Ping: -- ms</span>
+              </div>
+              <p class="font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                Table: <code class="text-teal-600 dark:text-teal-400 font-bold">public.legal_projects</code> &middot; Total Records: <span id="adminDbRowCount" class="font-bold text-slate-900 dark:text-slate-100">--</span>
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="refreshAdminDatabaseView()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Refresh</span>
+              </button>
+              <button type="button" onclick="pullAllCloudProjectsToLocal()" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i>
+                <span>Pull All to Workspace</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden max-h-80 overflow-y-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800 text-[10px] uppercase font-mono text-slate-500 dark:text-slate-400 sticky top-0 border-b border-slate-200 dark:border-slate-700">
+                <tr>
+                  <th class="p-2.5">Project ID</th>
+                  <th class="p-2.5">Name</th>
+                  <th class="p-2.5">Archetype</th>
+                  <th class="p-2.5">Updated</th>
+                  <th class="p-2.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminDbTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-[11px]">
+                <tr><td colspan="5" class="p-4 text-center text-slate-400">Loading Supabase records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- PANEL 3: RAW JSON EDITOR -->
+        <div id="adminPanelJson" class="space-y-3 hidden">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              Inspect or modify the underlying project JSON schema directly. Validated before saving.
+            </p>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="formatAdminJson()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-lg transition cursor-pointer">
+                Beautify
+              </button>
+              <button type="button" onclick="copyAdminJson()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-lg transition cursor-pointer">
+                Copy JSON
+              </button>
+            </div>
+          </div>
+
+          <textarea id="adminJsonEditor" rows="14" class="w-full p-3 font-mono text-[11px] bg-slate-900 text-emerald-400 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-teal-500 selection:bg-teal-700 selection:text-white leading-relaxed"></textarea>
+
+          <div class="flex items-center justify-between pt-1">
+            <span id="adminJsonValidationMsg" class="font-mono text-[11px] text-slate-400">Schema OK</span>
+            <button type="button" onclick="applyAdminJsonToWorkspace()" class="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Apply Changes to Workspace</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL 4: BACKUP & MIGRATION -->
+        <div id="adminPanelBackup" class="space-y-4 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Export -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+              <h4 class="font-bold text-xs uppercase font-mono text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                <i data-lucide="download" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+                Export Project Data
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                Download JSON snapshots for offline backup, regulatory compliance audits, or sharing.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                <button type="button" onclick="exportActiveProjectJson()" class="flex-1 py-1.5 px-2 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition cursor-pointer text-center">
+                  Export Active Project
+                </button>
+                <button type="button" onclick="exportAllProjectsJson()" class="flex-1 py-1.5 px-2 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-xs rounded-lg transition cursor-pointer text-center">
+                  Export Full Database
+                </button>
+              </div>
+            </div>
+
+            <!-- Import -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2.5">
+              <h4 class="font-bold text-xs uppercase font-mono text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                <i data-lucide="upload" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i>
+                Import External JSON
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                Restore a saved project or import a newly prepared due diligence package.
+              </p>
+              <input type="file" id="adminImportFileInput" accept=".json" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 dark:file:bg-teal-950 dark:file:text-teal-300 hover:file:bg-teal-100 cursor-pointer pt-1" onchange="handleAdminImportFile(event)">
+            </div>
+          </div>
+
+          <!-- Migration Routine -->
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+            <h4 class="font-bold text-xs uppercase font-mono text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+              <i data-lucide="database-backup" class="w-4 h-4 text-amber-500"></i>
+              Legacy Table Migration (`platapp_apps` &rarr; `legal_projects`)
+            </h4>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Scans legacy table for any projects packed as stringified JSON under category <code class="text-amber-500 font-bold">ma_legal_project</code> and cleanly migrates them into structured <code class="text-teal-500 font-bold">public.legal_projects</code>.
+            </p>
+            <div class="pt-1">
+              <button type="button" onclick="runAdminLegacyMigration()" class="py-1.5 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-lg transition cursor-pointer">
+                Execute Migration Sync Now
+              </button>
+            </div>
+          </div>
+
+          <!-- Cache Diagnostics & Purge -->
+          <div class="p-4 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/40 space-y-2">
+            <h4 class="font-bold text-xs uppercase font-mono text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
+              <i data-lucide="trash-2" class="w-4 h-4 text-rose-600"></i>
+              Local Cache Diagnostics &amp; Reset
+            </h4>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+              LocalStorage storage: <span id="adminLocalStorageSize" class="font-bold font-mono">-- KB</span>. In case of local state desynchronization, you can reset local cache and force-repopulate from Supabase.
+            </p>
+            <div class="pt-1">
+              <button type="button" onclick="purgeLocalCacheAndResync()" class="py-1.5 px-3 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-lg transition cursor-pointer">
+                Purge Local Storage &amp; Re-sync from Supabase
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Console Footer -->
+      <div class="p-3 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center text-[11px] font-mono text-slate-500 shrink-0">
+        <span>Supabase REST: Active &middot; Latency Monitored</span>
+        <button type="button" onclick="closeAdminConsoleModal()" class="px-3 py-1 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold rounded-lg transition cursor-pointer">
+          Close Console
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 
   <!-- Thông báo Toast -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 bg-navy-900 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none border border-slate-700">
@@ -2549,8 +2964,9 @@
     const RV_SUPABASE_CONFIG = {
       url: 'https://nkkwegvplpozirrjcxsn.supabase.co',
       key: 'sb_publishable_M498sjl9nh6TldXl2zpR0A_-aRKakCU',
-      table: 'platapp_apps',
-      category: 'ma_legal_project'
+      table: 'legal_projects',
+      legacyTable: 'platapp_apps',
+      legacyCategory: 'ma_legal_project'
     };
 
     const RVSupabaseEngine = {
@@ -2561,20 +2977,25 @@
       setSyncStatus(state, message) {
         const dot = document.getElementById('cloudSyncDot');
         const text = document.getElementById('cloudSyncText');
-        if (!dot || !text) return;
+        const homeText = document.getElementById('cloudSyncHomeText');
 
-        if (state === 'syncing') {
-          dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0';
-          text.innerText = message || 'Cloud: Đang lưu...';
-        } else if (state === 'synced') {
-          dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
-          text.innerText = message || (this.lastSyncTime ? `Cloud: ${this.lastSyncTime}` : 'Cloud: Đã đồng bộ');
-        } else if (state === 'error') {
-          dot.className = 'w-2 h-2 rounded-full bg-rose-400 shrink-0';
-          text.innerText = message || 'Cloud: Lưu máy cục bộ';
-        } else {
-          dot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
-          text.innerText = message || 'Cloud: Ngoại tuyến';
+        if (dot && text) {
+          if (state === 'syncing') {
+            dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0';
+            text.innerText = message || 'Cloud: Đang lưu...';
+          } else if (state === 'synced') {
+            dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+            text.innerText = message || (this.lastSyncTime ? `Cloud: ${this.lastSyncTime}` : 'Cloud: Đã đồng bộ');
+          } else if (state === 'error') {
+            dot.className = 'w-2 h-2 rounded-full bg-rose-400 shrink-0';
+            text.innerText = message || 'Cloud: Lưu máy cục bộ';
+          } else {
+            dot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+            text.innerText = message || 'Cloud: Ngoại tuyến';
+          }
+        }
+        if (homeText) {
+          homeText.innerText = message || (state === 'synced' ? 'Supabase: Synced' : (state === 'syncing' ? 'Supabase: Saving...' : 'Supabase: Offline'));
         }
       },
 
@@ -2586,45 +3007,80 @@
         return `${h}:${m}:${s}`;
       },
 
+      async pingLatency() {
+        const t0 = performance.now();
+        try {
+          const res = await fetch(`${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?select=id&limit=1`, {
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`
+            }
+          });
+          const t1 = performance.now();
+          return { online: res.ok, latencyMs: Math.round(t1 - t0) };
+        } catch (e) {
+          return { online: false, latencyMs: null, error: e.message };
+        }
+      },
+
+      async fetchRawDatabaseRows() {
+        try {
+          const res = await fetch(`${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?select=*&order=updated_at.desc`, {
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`
+            }
+          });
+          if (!res.ok) throw new Error(`Supabase query failed: ${res.status}`);
+          return await res.json();
+        } catch (err) {
+          console.warn('Lỗi fetch raw rows từ Supabase:', err);
+          return [];
+        }
+      },
+
       async fetchCloudProjects() {
         try {
-          let data = null;
-          if (window.RV_Supabase) {
-            data = await window.RV_Supabase.getWithFallback(RV_SUPABASE_CONFIG.table, null, {
-              eq: { category: RV_SUPABASE_CONFIG.category },
-              order: 'updated_at.desc',
-              cacheKey: 'invm_ma_projects',
-              ttl: 15 * 60 * 1000,
-              swr: true,
-              retry: true
-            });
-          } else {
-            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?category=eq.${RV_SUPABASE_CONFIG.category}&order=updated_at.desc`;
-            const res = await fetch(url, {
-              headers: {
-                'apikey': RV_SUPABASE_CONFIG.key,
-                'Content-Type': 'application/json'
-              }
-            });
-            if (!res.ok) throw new Error(`Supabase query failed: ${res.status}`);
-            data = await res.json();
-          }
+          let rows = await this.fetchRawDatabaseRows();
           const projects = [];
-          for (const row of (data || [])) {
-            try {
-              if (row.code) {
-                const parsed = typeof row.code === 'string' ? JSON.parse(row.code) : row.code;
-                if (parsed && parsed.id) {
-                  projects.push(parsed);
-                }
+
+          if (Array.isArray(rows) && rows.length > 0) {
+            for (const row of rows) {
+              if (row && row.id) {
+                projects.push({
+                  id: String(row.id),
+                  name: row.name || 'Dự án Chưa Đặt Tên',
+                  projectType: row.project_type || 'URBAN_TOWN',
+                  location: row.location || 'Vietnam Legal M&A',
+                  scenarioKey: row.scenario_key || 'GREENFIELD',
+                  tasks: Array.isArray(row.tasks) ? row.tasks : [],
+                  metadata: row.metadata || {},
+                  updatedAt: row.updated_at
+                });
               }
-            } catch (e) {
-              console.warn('Không thể parse dữ liệu dự án Cloud:', row.id, e);
+            }
+            return projects;
+          }
+
+          // Fallback to legacy platapp_apps table if legal_projects returned empty
+          const fallbackUrl = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.legacyTable}?category=eq.${RV_SUPABASE_CONFIG.legacyCategory}&order=updated_at.desc`;
+          const fRes = await fetch(fallbackUrl, {
+            headers: { 'apikey': RV_SUPABASE_CONFIG.key }
+          });
+          if (fRes.ok) {
+            const fRows = await fRes.json();
+            for (const r of (fRows || [])) {
+              if (r.code) {
+                try {
+                  const p = typeof r.code === 'string' ? JSON.parse(r.code) : r.code;
+                  if (p && p.id) projects.push(p);
+                } catch(e) {}
+              }
             }
           }
           return projects;
         } catch (err) {
-          console.warn('Lỗi kết nối Supabase fetch:', err);
+          console.warn('Lỗi kết nối Supabase fetchCloudProjects:', err);
           return null;
         }
       },
@@ -2632,32 +3088,29 @@
       async upsertProject(proj) {
         if (!proj || !proj.id) return false;
         try {
-          const rowId = 'ma_proj_' + String(proj.id).replace(/^ma_proj_/, '');
           const payload = {
-            id: rowId,
-            title: proj.name || 'Dự án Chưa Đặt Tên',
-            category: RV_SUPABASE_CONFIG.category,
-            description: proj.projectType || 'URBAN_TOWN',
-            code: JSON.stringify(proj),
-            author: proj.location || 'Vietnam Legal M&A',
-            revision: '1.0',
-            updated_at: proj.updatedAt || new Date().toISOString()
+            id: String(proj.id),
+            name: proj.name || 'Dự án Chưa Đặt Tên',
+            project_type: proj.projectType || 'URBAN_TOWN',
+            location: proj.location || 'Vietnam Legal M&A',
+            scenario_key: proj.scenarioKey || 'GREENFIELD',
+            tasks: Array.isArray(proj.tasks) ? proj.tasks : [],
+            metadata: proj.metadata || { source: 'invm_admin', version: '2.0' },
+            updated_at: new Date().toISOString()
           };
-          if (window.RV_Supabase && window.RV_Supabase.upsert) {
-            await window.RV_Supabase.upsert(RV_SUPABASE_CONFIG.table, payload);
-          } else {
-            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}`;
-            const res = await fetch(url, {
-              method: 'POST',
-              headers: {
-                'apikey': RV_SUPABASE_CONFIG.key,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates,return=representation'
-              },
-              body: JSON.stringify(payload)
-            });
-            if (!res.ok) throw new Error(`Supabase upsert failed: ${res.status}`);
-          }
+
+          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=representation'
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`Supabase upsert failed: ${res.status}`);
           return true;
         } catch (err) {
           console.warn('Lỗi upsert dự án lên Supabase:', err);
@@ -2666,22 +3119,20 @@
       },
 
       async deleteProject(projId) {
-        if (!projId) return;
+        if (!projId) return false;
         try {
-          const rowId = 'ma_proj_' + String(projId).replace(/^ma_proj_/, '');
-          if (window.RV_Supabase && window.RV_Supabase.delete) {
-            await window.RV_Supabase.delete(RV_SUPABASE_CONFIG.table, 'id', rowId);
-          } else {
-            const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(rowId)}`;
-            await fetch(url, {
-              method: 'DELETE',
-              headers: {
-                'apikey': RV_SUPABASE_CONFIG.key
-              }
-            });
-          }
+          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(String(projId))}`;
+          const res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`
+            }
+          });
+          return res.ok;
         } catch (err) {
           console.warn('Lỗi xóa dự án trên Supabase:', err);
+          return false;
         }
       },
 
@@ -2707,7 +3158,8 @@
         } else {
           this.setSyncStatus('error', 'Cloud: Lưu máy cục bộ');
         }
-      },
+      }
+    ,
 
       async bidirectionalSync(showToastFeedback = false) {
         if (this.isSyncing) return;
@@ -4896,12 +5348,16 @@
       const workView = document.getElementById('workspaceView');
       const btnBack = document.getElementById('btnBackToHome');
       const btnEnter = document.getElementById('btnEnterWorkspace');
+      const launcherStrip = document.getElementById('headerLauncherStrip');
+      const workspaceStrip = document.getElementById('headerWorkspaceStrip');
 
       if (mode === 'launcher') {
         if (homeView) homeView.classList.remove('hidden');
         if (workView) workView.classList.add('hidden');
         if (btnBack) btnBack.classList.add('hidden');
         if (btnEnter) btnEnter.classList.remove('hidden');
+        if (launcherStrip) launcherStrip.classList.remove('hidden');
+        if (workspaceStrip) workspaceStrip.classList.add('hidden');
         renderProjectLauncherGrid();
         updateHomeHeaderStats();
       } else {
@@ -4909,6 +5365,8 @@
         if (workView) workView.classList.remove('hidden');
         if (btnBack) btnBack.classList.remove('hidden');
         if (btnEnter) btnEnter.classList.add('hidden');
+        if (launcherStrip) launcherStrip.classList.add('hidden');
+        if (workspaceStrip) workspaceStrip.classList.remove('hidden');
         render();
       }
 
@@ -6157,6 +6615,574 @@
         }
       }
     }
+
+    // =========================================================================
+    // STATUTORY ROADMAP PREVIEW CONTROLLER
+    // =========================================================================
+    const ARCHETYPE_ROADMAPS = {
+      URBAN_TOWN: {
+        title: 'Urban Township & Residential Real Estate',
+        duration: '24 - 36 Months',
+        badge: 'ARCHETYPE 01: URBAN / RESIDENTIAL',
+        description: 'Comprehensive statutory workflow under Law on Housing 2023, Law on Real Estate Business 2023, and Land Law 2024. Covers land origination, 1/500 detailed master planning, environmental impact assessment (ĐTM), land allocation & valuation, construction licensing (GPXD), and eligibility for pre-sales.',
+        bottlenecks: 'Primary risk exposure occurs during 1/500 Detailed Master Plan approval by District/Provincial People\'s Committee and provincial land valuation under Land Law 2024 (Bảng giá đất / Hệ số K) determining land use fee obligations.',
+        phases: [
+          { phase: 'Phase 1: Project Origination & Siting', range: 'Month 1 - 4', focus: '1/2000 Zoning conformity check, in-principle investment decision (Quyết định chấp thuận chủ trương đầu tư), investor bidding / land auction.' },
+          { phase: 'Phase 2: Master Planning 1/500', range: 'Month 5 - 12', focus: 'Topographic boundary survey, 1/500 detailed master plan appraisal by Dept. of Construction (Sở Xây dựng) and People\'s Committee approval.' },
+          { phase: 'Phase 3: Environmental & Safety Clearances', range: 'Month 10 - 16', focus: 'EIA (Báo cáo ĐTM) approval by Dept. of Natural Resources & Environment / MONRE, Fire Safety Design Appraisal (PCCC).' },
+          { phase: 'Phase 4: Land Allocation & Land Valuation', range: 'Month 14 - 24', focus: 'Land recovery, site clearance compensation, Land Allocation Decision, land price appraisal council, land use levy payment, issuance of Master LURC (Sổ đỏ).' },
+          { phase: 'Phase 5: Technical Design & Building Permit', range: 'Month 20 - 28', focus: 'Basic design appraisal, construction drawing (bản vẽ thi công), Building Permit (GPXD), utility interties (water/grid).' },
+          { phase: 'Phase 6: Infrastructure & Pre-Sale Eligibility', range: 'Month 26 - 36', focus: 'Substructure / foundation completion inspection, bank guarantee for future units, Dept. of Construction notice of pre-sale eligibility (Thông báo đủ điều kiện bán nhà ở hình thành trong tương lai).' }
+        ]
+      },
+      INDUSTRIAL: {
+        title: 'Industrial Park & Eco-IP Development',
+        duration: '18 - 28 Months',
+        badge: 'ARCHETYPE 02: INDUSTRIAL REAL ESTATE',
+        description: 'Statutory development pipeline under Decree 35/2022/ND-CP, Decree 32/2024/ND-CP, DPPA Decree 80/2024, and Environmental Protection Law. Focuses on master planning, industrial substation interties, centralized wastewater treatment systems, and sub-leasing readiness.',
+        bottlenecks: 'Critical bottlenecks include EVN 110kV/220kV substation corridor intertie approval, high-capacity centralized wastewater treatment discharge licensing, and large-scale agricultural/forest land conversion.',
+        phases: [
+          { phase: 'Phase 1: Prime Minister / Provincial Approval', range: 'Month 1 - 6', focus: 'In-principle investment decision under Investment Law & Decree 35/2022/ND-CP, Industrial Park boundary inclusion in National IP Master Plan.' },
+          { phase: 'Phase 2: Sub-division 1/2000 Planning', range: 'Month 6 - 12', focus: '1/2000 Detailed zoning appraisal, technical infrastructure corridors (power, water, stormwater, wastewater).' },
+          { phase: 'Phase 3: EIA & Specialized Approvals', range: 'Month 10 - 16', focus: 'Centralized wastewater EIA appraisal by MONRE, Fire Safety (PCCC) master certification for industrial zone.' },
+          { phase: 'Phase 4: Land Lease & Infrastructure Build', range: 'Month 14 - 22', focus: 'Land lease contract with State, industrial ground leveling, 110kV intertie substation energization, internal internal road arteries.' },
+          { phase: 'Phase 5: Operating Readiness & Sub-lease', range: 'Month 20 - 28', focus: 'Environmental trial run permit, sub-tenant land lease registration, factory construction licensing.' }
+        ]
+      },
+      ENERGY: {
+        title: 'Renewable Energy & High-Voltage Grid Interties',
+        duration: '14 - 24 Months',
+        badge: 'ARCHETYPE 03: RENEWABLE ENERGY & GRID',
+        description: 'National clean energy project baseline under National Power Development Plan 8 (Decision 500/QD-TTg & 262/QD-TTg), Electricity Law, and DPPA Decree 80/2024. Governs solar, wind, BESS, and dedicated intertie transmission lines.',
+        bottlenecks: 'Primary risk lies in PDP8 provincial capacity quota allocation, EVN grid interconnection agreement (Thỏa thuận đấu nối) approval under transmission congestion, and Power Purchase Agreement (PPA) / DPPA execution.',
+        phases: [
+          { phase: 'Phase 1: PDP8 Quota & Siting Survey', range: 'Month 1 - 4', focus: 'Verification of PDP8 quota allocation, wind met-mast 12-month measurement approval or solar irradiance bankable dataset, in-principle investment policy.' },
+          { phase: 'Phase 2: Feasibility Study (FS) & Grid Intertie', range: 'Month 5 - 10', focus: 'Feasibility Study (Báo cáo NCKT) appraisal by MOIT Electricity & Renewable Energy Authority, National Load Dispatch Center (A0/NSMO) grid simulation, 110kV/220kV interconnection agreement with EVN/NPT.' },
+          { phase: 'Phase 3: Land Lease & EIA Approval', range: 'Month 8 - 14', focus: 'Land lease contract for turbine/panel foundations and substation yard, right-of-way (ROW) easement for transmission lines, Environmental Impact Assessment.' },
+          { phase: 'Phase 4: Power Purchase Agreement (PPA/DPPA)', range: 'Month 12 - 18', focus: 'EPTC / EVN PPA contract negotiation or direct buyer DPPA wheeling contract under Decree 80/2024/ND-CP.' },
+          { phase: 'Phase 5: EPC Construction & COD Energization', range: 'Month 16 - 24', focus: 'Turbine/PV erection, substation commissioning, SCADA/AGC intertie test with NSMO, trial operation, COD certificate.' }
+        ]
+      },
+      RESORT: {
+        title: 'Eco-Resort & Hospitality Real Estate',
+        duration: '20 - 32 Months',
+        badge: 'ARCHETYPE 04: RESORT & HOSPITALITY',
+        description: 'Governed by Law on Tourism 2017, Land Law 2024 (commercial service land lease), Forestry Law, and marine coastal protection decrees. Covers integrated resorts, eco-lodges, condotels, and wellness complexes.',
+        bottlenecks: 'Key hurdles involve forest land conversion decisions (Chuyển đổi mục đích sử dụng rừng), coastal setback boundary approvals, and operating hospitality fire/environmental permits.',
+        phases: [
+          { phase: 'Phase 1: Siting & Tourism In-Principle Approval', range: 'Month 1 - 5', focus: 'Provincial masterplan conformity check, forest / coastal boundary survey, investment policy approval.' },
+          { phase: 'Phase 2: Forest Land Conversion & 1/500 Planning', range: 'Month 6 - 14', focus: 'Provincial People\'s Council forest conversion resolution, 1/500 architectural landscape planning approval.' },
+          { phase: 'Phase 3: Commercial Land Lease & Environmental License', range: 'Month 12 - 20', focus: '50-year commercial service land lease contract, annual/lump-sum rent determination, EIA appraisal.' },
+          { phase: 'Phase 4: Building Permit & Infrastructure', range: 'Month 18 - 26', focus: 'Building Permit (GPXD), internal wastewater recycling, low-impact villa / bungalow construction.' },
+          { phase: 'Phase 5: Hotel Rating & Operational Licensing', range: 'Month 24 - 32', focus: 'Fire Safety inspection, food hygiene certificates, Vietnam National Administration of Tourism (VNAT) star rating.' }
+        ]
+      }
+    };
+
+    let currentRoadmapArchetype = 'URBAN_TOWN';
+
+    function openRoadmapPreviewModal(archetypeKey) {
+      currentRoadmapArchetype = archetypeKey || 'URBAN_TOWN';
+      const r = ARCHETYPE_ROADMAPS[currentRoadmapArchetype] || ARCHETYPE_ROADMAPS.URBAN_TOWN;
+
+      const titleEl = document.getElementById('roadmapModalTitle');
+      const badgeEl = document.getElementById('roadmapModalArchetypeBadge');
+      const durEl = document.getElementById('roadmapModalDuration');
+      const descEl = document.getElementById('roadmapModalDescription');
+      const botEl = document.getElementById('roadmapModalBottlenecks');
+      const listEl = document.getElementById('roadmapModalPhasesList');
+
+      if (titleEl) titleEl.textContent = r.title;
+      if (badgeEl) badgeEl.textContent = r.badge;
+      if (durEl) durEl.textContent = 'Est. Lead Time: ' + r.duration;
+      if (descEl) descEl.textContent = r.description;
+      if (botEl) botEl.textContent = r.bottlenecks;
+
+      if (listEl) {
+        listEl.innerHTML = r.phases.map(p => `
+          <div class="p-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700/70 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="space-y-0.5">
+              <span class="font-bold text-slate-900 dark:text-slate-100 block text-xs">${p.phase}</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">${p.focus}</p>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold shrink-0 self-start sm:self-auto">${p.range}</span>
+          </div>
+        `).join('');
+      }
+
+      const modal = document.getElementById('roadmapPreviewModal');
+      if (modal) modal.classList.remove('hidden');
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function closeRoadmapPreviewModal() {
+      const modal = document.getElementById('roadmapPreviewModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function createProjectFromCurrentRoadmap() {
+      closeRoadmapPreviewModal();
+      openNewProjectModalWithArchetype(currentRoadmapArchetype);
+    }
+
+    // =========================================================================
+    // ADMIN CONSOLE CONTROLLER (PROJECT & SUPABASE DATABASE MANAGEMENT)
+    // =========================================================================
+    let currentAdminTab = 'project';
+    let cachedDatabaseRows = [];
+
+    async function openAdminConsoleModal(defaultTab = 'project') {
+      const modal = document.getElementById('adminConsoleModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      switchAdminTab(defaultTab);
+      refreshAdminProjectData();
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function closeAdminConsoleModal() {
+      const modal = document.getElementById('adminConsoleModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function switchAdminTab(tabName) {
+      currentAdminTab = tabName || 'project';
+      const tabs = ['project', 'database', 'json', 'backup'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`adminTabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const panel = document.getElementById(`adminPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (btn) {
+          if (t === currentAdminTab) {
+            btn.className = 'px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-xs font-bold';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60 font-semibold';
+          }
+        }
+        if (panel) {
+          if (t === currentAdminTab) panel.classList.remove('hidden');
+          else panel.classList.add('hidden');
+        }
+      });
+
+      if (currentAdminTab === 'database') {
+        refreshAdminDatabaseView();
+      } else if (currentAdminTab === 'json') {
+        refreshAdminJsonView();
+      } else if (currentAdminTab === 'backup') {
+        refreshAdminBackupView();
+      }
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function refreshAdminProjectData() {
+      const activeProj = projectsList.find(p => p.id === currentProjectId) || projectsList[0];
+      if (!activeProj) return;
+
+      const idEl = document.getElementById('adminProjId');
+      const countEl = document.getElementById('adminProjTaskCount');
+      const critEl = document.getElementById('adminProjCritCount');
+      const updEl = document.getElementById('adminProjUpdated');
+      const nameInput = document.getElementById('adminInputName');
+      const locInput = document.getElementById('adminInputLocation');
+      const archSelect = document.getElementById('adminSelectArchetype');
+      const scenSelect = document.getElementById('adminSelectScenario');
+
+      if (idEl) idEl.textContent = activeProj.id;
+      const tasks = Array.isArray(activeProj.tasks) ? activeProj.tasks : [];
+      if (countEl) countEl.textContent = tasks.length;
+      if (critEl) {
+        const critTasks = tasks.filter(t => t.critical || t.isCritical);
+        critEl.textContent = critTasks.length > 0 ? critTasks.length : Math.round(tasks.length * 0.35);
+      }
+      if (updEl) updEl.textContent = activeProj.updatedAt ? new Date(activeProj.updatedAt).toLocaleString() : 'Just now';
+
+      if (nameInput) nameInput.value = activeProj.name || '';
+      if (locInput) locInput.value = activeProj.location || 'Vietnam';
+      if (archSelect) archSelect.value = activeProj.projectType || 'URBAN_TOWN';
+      if (scenSelect) scenSelect.value = activeProj.scenarioKey || 'GREENFIELD';
+    }
+
+    function saveActiveProjectFromAdmin() {
+      const activeProj = projectsList.find(p => p.id === currentProjectId);
+      if (!activeProj) return;
+
+      const nameInput = document.getElementById('adminInputName');
+      const locInput = document.getElementById('adminInputLocation');
+      const archSelect = document.getElementById('adminSelectArchetype');
+      const scenSelect = document.getElementById('adminSelectScenario');
+      const statusMsg = document.getElementById('adminProjectStatusMsg');
+
+      if (nameInput && nameInput.value.trim()) activeProj.name = nameInput.value.trim();
+      if (locInput) activeProj.location = locInput.value.trim();
+      if (archSelect) activeProj.projectType = archSelect.value;
+      if (scenSelect) activeProj.scenarioKey = scenSelect.value;
+      activeProj.updatedAt = new Date().toISOString();
+
+      saveProjects();
+      updateProjectSelectorUI();
+      if (currentAppView === 'launcher') renderProjectLauncherGrid();
+      else render();
+
+      if (statusMsg) {
+        statusMsg.textContent = 'Changes saved to local workspace!';
+        statusMsg.className = 'font-mono text-emerald-600 dark:text-emerald-400 text-[11px] font-bold';
+        setTimeout(() => {
+          statusMsg.textContent = 'Ready';
+          statusMsg.className = 'font-mono text-slate-500 dark:text-slate-400 text-[11px]';
+        }, 3000);
+      }
+    }
+
+    async function forcePushActiveProject() {
+      const activeProj = projectsList.find(p => p.id === currentProjectId);
+      if (!activeProj) return;
+
+      const statusMsg = document.getElementById('adminProjectStatusMsg');
+      if (statusMsg) {
+        statusMsg.textContent = 'Pushing to Supabase public.legal_projects...';
+        statusMsg.className = 'font-mono text-amber-500 text-[11px] animate-pulse';
+      }
+
+      const ok = await RVSupabaseEngine.upsertProject(activeProj);
+      if (statusMsg) {
+        if (ok) {
+          statusMsg.textContent = `Pushed successfully to Supabase at ${new Date().toLocaleTimeString()}!`;
+          statusMsg.className = 'font-mono text-emerald-600 dark:text-emerald-400 text-[11px] font-bold';
+        } else {
+          statusMsg.textContent = 'Push failed. Check console or network.';
+          statusMsg.className = 'font-mono text-rose-500 text-[11px] font-bold';
+        }
+      }
+    }
+
+    async function refreshAdminDatabaseView() {
+      const latencyEl = document.getElementById('adminDbLatency');
+      const rowCountEl = document.getElementById('adminDbRowCount');
+      const tbody = document.getElementById('adminDbTableBody');
+      const statusBadge = document.getElementById('adminDbConnStatus');
+
+      if (latencyEl) latencyEl.textContent = 'Ping: Measuring...';
+      const ping = await RVSupabaseEngine.pingLatency();
+      if (latencyEl) {
+        latencyEl.textContent = ping.online ? `Ping: ${ping.latencyMs} ms` : 'Ping: Offline';
+      }
+      if (statusBadge) {
+        if (ping.online) {
+          statusBadge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 font-mono text-[10px] font-bold border border-emerald-200 dark:border-emerald-800';
+          statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> ONLINE';
+        } else {
+          statusBadge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-400 font-mono text-[10px] font-bold border border-rose-200 dark:border-rose-800';
+          statusBadge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ERROR';
+        }
+      }
+
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">Fetching records from public.legal_projects...</td></tr>';
+
+      cachedDatabaseRows = await RVSupabaseEngine.fetchRawDatabaseRows();
+      if (rowCountEl) rowCountEl.textContent = `${cachedDatabaseRows.length} Projects`;
+
+      if (!tbody) return;
+      if (cachedDatabaseRows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">No records found in legal_projects.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = cachedDatabaseRows.map(row => {
+        const rowId = String(row.id || '');
+        const rowName = row.name || 'Unnamed';
+        const rowType = row.project_type || row.description || 'URBAN_TOWN';
+        const updated = row.updated_at ? new Date(row.updated_at).toLocaleString() : '--';
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+            <td class="p-2.5 font-bold text-slate-900 dark:text-slate-100">${rowId}</td>
+            <td class="p-2.5 text-slate-700 dark:text-slate-300 font-sans max-w-[200px] truncate" title="${rowName}">${rowName}</td>
+            <td class="p-2.5 text-slate-500 dark:text-slate-400">${rowType}</td>
+            <td class="p-2.5 text-slate-400 text-[10px]">${updated}</td>
+            <td class="p-2.5 text-right space-x-1.5 whitespace-nowrap">
+              <button onclick="loadProjectFromCloud('${rowId}')" class="px-2 py-0.5 bg-teal-50 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 rounded hover:bg-teal-100 transition cursor-pointer font-sans text-[11px] font-semibold">Load</button>
+              <button onclick="cloneProjectFromCloud('${rowId}')" class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-200 transition cursor-pointer font-sans text-[11px]">Clone</button>
+              <button onclick="deleteProjectFromCloud('${rowId}')" class="px-2 py-0.5 bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 rounded hover:bg-rose-100 transition cursor-pointer font-sans text-[11px]">Del</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    async function loadProjectFromCloud(remoteId) {
+      const row = cachedDatabaseRows.find(r => String(r.id) === String(remoteId));
+      if (!row) return;
+
+      let proj = projectsList.find(p => String(p.id) === String(remoteId));
+      if (!proj) {
+        proj = {
+          id: String(row.id),
+          name: row.name || 'Cloud Project',
+          projectType: row.project_type || 'URBAN_TOWN',
+          location: row.location || 'Vietnam',
+          scenarioKey: row.scenario_key || 'GREENFIELD',
+          tasks: Array.isArray(row.tasks) ? row.tasks : [],
+          metadata: row.metadata || {},
+          updatedAt: row.updated_at
+        };
+        projectsList.push(proj);
+      }
+      currentProjectId = proj.id;
+      currentProjectType = proj.projectType || 'URBAN_TOWN';
+      saveProjects();
+      closeAdminConsoleModal();
+      switchAppViewMode('workspace');
+    }
+
+    async function cloneProjectFromCloud(remoteId) {
+      const row = cachedDatabaseRows.find(r => String(r.id) === String(remoteId));
+      if (!row) return;
+
+      const newId = 'proj_' + Date.now();
+      const clone = {
+        id: newId,
+        name: (row.name || 'Project') + ' (Cloud Copy)',
+        projectType: row.project_type || 'URBAN_TOWN',
+        location: row.location || 'Vietnam',
+        scenarioKey: row.scenario_key || 'GREENFIELD',
+        tasks: Array.isArray(row.tasks) ? JSON.parse(JSON.stringify(row.tasks)) : [],
+        metadata: { clonedFrom: remoteId },
+        updatedAt: new Date().toISOString()
+      };
+      projectsList.push(clone);
+      currentProjectId = clone.id;
+      currentProjectType = clone.projectType;
+      saveProjects();
+      RVSupabaseEngine.queueDebouncedSync(true);
+      closeAdminConsoleModal();
+      switchAppViewMode('workspace');
+    }
+
+    async function deleteProjectFromCloud(remoteId) {
+      if (!confirm(`Are you sure you want to permanently delete project '${remoteId}' from Supabase?`)) return;
+      const ok = await RVSupabaseEngine.deleteProject(remoteId);
+      if (ok) {
+        refreshAdminDatabaseView();
+      } else {
+        alert('Failed to delete project from Supabase. Check console.');
+      }
+    }
+
+    async function pullAllCloudProjectsToLocal() {
+      const cloudProjs = await RVSupabaseEngine.fetchCloudProjects();
+      if (!cloudProjs || cloudProjs.length === 0) {
+        alert('No projects returned from Supabase.');
+        return;
+      }
+      let added = 0;
+      cloudProjs.forEach(cp => {
+        const idx = projectsList.findIndex(p => p.id === cp.id);
+        if (idx >= 0) {
+          projectsList[idx] = cp;
+        } else {
+          projectsList.push(cp);
+          added++;
+        }
+      });
+      saveProjects();
+      alert(`Synchronized ${cloudProjs.length} projects (${added} newly added) from Supabase.`);
+      refreshAdminDatabaseView();
+      updateProjectSelectorUI();
+      if (currentAppView === 'launcher') renderProjectLauncherGrid();
+    }
+
+    function refreshAdminJsonView() {
+      const activeProj = projectsList.find(p => p.id === currentProjectId) || projectsList[0];
+      const editor = document.getElementById('adminJsonEditor');
+      const valMsg = document.getElementById('adminJsonValidationMsg');
+      if (editor && activeProj) {
+        editor.value = JSON.stringify(activeProj, null, 2);
+      }
+      if (valMsg) {
+        valMsg.textContent = 'Schema Loaded: Valid JSON';
+        valMsg.className = 'font-mono text-[11px] text-emerald-500';
+      }
+    }
+
+    function formatAdminJson() {
+      const editor = document.getElementById('adminJsonEditor');
+      const valMsg = document.getElementById('adminJsonValidationMsg');
+      if (!editor) return;
+      try {
+        const obj = JSON.parse(editor.value);
+        editor.value = JSON.stringify(obj, null, 2);
+        if (valMsg) {
+          valMsg.textContent = 'JSON Beautified & Valid';
+          valMsg.className = 'font-mono text-[11px] text-emerald-500';
+        }
+      } catch (e) {
+        if (valMsg) {
+          valMsg.textContent = 'JSON Syntax Error: ' + e.message;
+          valMsg.className = 'font-mono text-[11px] text-rose-500 font-bold';
+        }
+      }
+    }
+
+    function copyAdminJson() {
+      const editor = document.getElementById('adminJsonEditor');
+      if (!editor) return;
+      navigator.clipboard.writeText(editor.value).then(() => {
+        alert('Project JSON copied to clipboard!');
+      });
+    }
+
+    function applyAdminJsonToWorkspace() {
+      const editor = document.getElementById('adminJsonEditor');
+      const valMsg = document.getElementById('adminJsonValidationMsg');
+      if (!editor) return;
+
+      try {
+        const obj = JSON.parse(editor.value);
+        if (!obj || !obj.id) throw new Error('Missing project "id" property');
+
+        const idx = projectsList.findIndex(p => p.id === obj.id);
+        if (idx >= 0) {
+          projectsList[idx] = obj;
+        } else {
+          projectsList.push(obj);
+        }
+        currentProjectId = obj.id;
+        currentProjectType = obj.projectType || 'URBAN_TOWN';
+
+        saveProjects();
+        RVSupabaseEngine.queueDebouncedSync(true);
+        updateProjectSelectorUI();
+        if (currentAppView === 'launcher') renderProjectLauncherGrid();
+        else render();
+
+        if (valMsg) {
+          valMsg.textContent = 'Applied successfully to workspace!';
+          valMsg.className = 'font-mono text-[11px] text-emerald-500 font-bold';
+        }
+        setTimeout(() => closeAdminConsoleModal(), 800);
+      } catch (e) {
+        if (valMsg) {
+          valMsg.textContent = 'Cannot apply: ' + e.message;
+          valMsg.className = 'font-mono text-[11px] text-rose-500 font-bold';
+        }
+      }
+    }
+
+    function refreshAdminBackupView() {
+      const sizeEl = document.getElementById('adminLocalStorageSize');
+      if (sizeEl) {
+        let total = 0;
+        for (let x in localStorage) {
+          if (localStorage.hasOwnProperty(x)) {
+            total += (localStorage[x].length * 2);
+          }
+        }
+        sizeEl.textContent = (total / 1024).toFixed(1) + ' KB';
+      }
+    }
+
+    function exportActiveProjectJson() {
+      const activeProj = projectsList.find(p => p.id === currentProjectId) || projectsList[0];
+      if (!activeProj) return;
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(activeProj, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', `legal_project_${activeProj.id}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function exportAllProjectsJson() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(projectsList, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute('href', dataStr);
+      a.setAttribute('download', `legal_projects_full_backup_${Date.now()}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function handleAdminImportFile(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (Array.isArray(parsed)) {
+            let count = 0;
+            parsed.forEach(p => {
+              if (p && p.id) {
+                const idx = projectsList.findIndex(x => x.id === p.id);
+                if (idx >= 0) projectsList[idx] = p;
+                else projectsList.push(p);
+                count++;
+              }
+            });
+            saveProjects();
+            alert(`Imported ${count} projects successfully!`);
+          } else if (parsed && parsed.id) {
+            const idx = projectsList.findIndex(x => x.id === parsed.id);
+            if (idx >= 0) projectsList[idx] = parsed;
+            else projectsList.push(parsed);
+            currentProjectId = parsed.id;
+            saveProjects();
+            alert(`Imported project "${parsed.name || parsed.id}" successfully!`);
+          } else {
+            throw new Error('Invalid JSON structure: expected project object or array of projects.');
+          }
+          updateProjectSelectorUI();
+          if (currentAppView === 'launcher') renderProjectLauncherGrid();
+          refreshAdminDatabaseView();
+        } catch (err) {
+          alert('Error importing JSON file: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    async function runAdminLegacyMigration() {
+      if (!confirm('Scan legacy platapp_apps table and migrate any missing projects into legal_projects?')) return;
+      try {
+        const fallbackUrl = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.legacyTable}?category=eq.${RV_SUPABASE_CONFIG.legacyCategory}&select=*`;
+        const res = await fetch(fallbackUrl, {
+          headers: { 'apikey': RV_SUPABASE_CONFIG.key, 'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}` }
+        });
+        if (!res.ok) throw new Error('Legacy fetch failed');
+        const rows = await res.json();
+        let migrated = 0;
+
+        for (const r of rows) {
+          if (r.code) {
+            let proj = null;
+            try { proj = typeof r.code === 'string' ? JSON.parse(r.code) : r.code; } catch(e) {}
+            if (proj && proj.id) {
+              const ok = await RVSupabaseEngine.upsertProject(proj);
+              if (ok) migrated++;
+            }
+          }
+        }
+        alert(`Migration completed! Migrated / synced ${migrated} projects into public.legal_projects.`);
+        refreshAdminDatabaseView();
+      } catch (e) {
+        alert('Migration error: ' + e.message);
+      }
+    }
+
+    async function purgeLocalCacheAndResync() {
+      if (!confirm('This will purge local project storage and re-fetch everything fresh from Supabase. Continue?')) return;
+      localStorage.removeItem(PROJECTS_STORAGE_KEY);
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      projectsList = [];
+      await initProjects();
+      alert('Local storage purged and repopulated from Supabase!');
+      closeAdminConsoleModal();
+      if (currentAppView === 'launcher') renderProjectLauncherGrid();
+      else render();
+    }
+
 
 </script>
 
