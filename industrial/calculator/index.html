@@ -12,7 +12,7 @@
       } catch (e) {}
     })();
   </script>
-  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=2" />
+  <link rel="stylesheet" href="/assets/built/rvn-shell.css?v=1" />
 <title>Vietnam Clean Energy Sizing &amp; EVN Tariff Suite — Renewable Vietnam</title>
   <meta name="description" content="Institutional modeling suite for corporate DPPA clean power siting, EVN statutory 6-tier progressive retail tariffs, and European Green Deal CBAM carbon compliance." />
   <link rel="canonical" href="https://renewablevietnam.com/industrial/calculator/" />
@@ -101,6 +101,7 @@
   }
 }
   </script>
+<link rel="stylesheet" href="/assets/css/cbam_solar_estimator_Rev.001.css" />
 </head>
 
 <body class="min-h-screen text-inkPrimary dark:text-textDarkPrimary antialiased bg-alabaster dark:bg-obsidian font-sans selection:bg-teal-500 selection:text-white dark:selection:bg-teal-400 dark:selection:text-obsidian transition-colors duration-500 flex flex-col justify-between">
@@ -109,7 +110,7 @@
   <!-- TOP EXECUTIVE NAVIGATION BAR                                        -->
   <!-- ==================================================================== -->
       <header id="rvn-header" data-active="industrial"></header>
-  <script src="/assets/js/rvn-header.js?v=2"></script>
+  <script src="/assets/js/rvn-header.js?v=1"></script>
 
     <!-- ==================================================================== -->
   <!-- MAIN WORKSPACE: FULL PAGE INTERACTIVE CALCULATOR SUITE               -->
@@ -149,9 +150,9 @@
         <span class="font-mono text-[10px] text-teal-600 dark:text-teal-400 px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20 font-semibold shrink-0">B2B &middot; B2C</span>
       </div>
 
-      <!-- COMPACT 3-TAB SELECTOR -->
-      <div class="grid grid-cols-3 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder font-mono text-[11px]">
-        <button id="tabCorporateSizerBtn" class="calc-tab-btn py-1.5 px-1 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer text-center truncate" title="Corporate Power Sizer (B2B &middot; DPPA)">
+      <!-- COMPACT 4-TAB SELECTOR -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-xl bg-slate-100 dark:bg-darkCard border border-borderSlate dark:border-darkBorder font-mono text-[11px]">
+        <button id="tabCorporateSizerBtn" class="calc-tab-btn py-1.5 px-1 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer text-center truncate" title="Corporate Power Sizer (B2B &middot; DPPA)">
           Power Sizer
         </button>
         <button id="tabEvnEstimatorBtn" class="calc-tab-btn py-1.5 px-1 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer text-center truncate" title="EVN Tariff &amp; Consumption Estimator (English)">
@@ -159,6 +160,9 @@
         </button>
         <button id="tabGreenIndicatorBtn" class="calc-tab-btn py-1.5 px-1 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer text-center truncate" title="Green Indicators (EU CBAM &amp; Principles)">
           Green CBAM
+        </button>
+        <button id="tabCbamSolarBtn" class="calc-tab-btn py-1.5 px-1 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer text-center truncate" title="Rooftop Solar &amp; CBAM Shield (Decree 135/2024)">
+          CBAM Solar Shield
         </button>
       </div>
 
@@ -697,6 +701,185 @@
           </div>
         </div>
       </div>
+    
+      <!-- TAB 4: INDUSTRIAL PARK CBAM SHIELD & ROOFTOP SOLAR ESTIMATOR (DECREE 135/2024) -->
+      <div id="cbamSolarContainer" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-borderSlate dark:border-darkBorder pb-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20">
+                Decree 135/2024/ND-CP &middot; Rooftop Solar
+              </span>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                EU Regulation 2023/956 &middot; CBAM Shield
+              </span>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-amber-500 font-semibold px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
+                2026 Definitive Enforcement
+              </span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-normal tracking-tight text-inkPrimary dark:text-textDarkPrimary mt-1.5">
+              Industrial Park CBAM Carbon Shield &amp; Rooftop Solar Sizing Engine
+            </h3>
+            <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light mt-0.5">
+              Model factory rooftop solar generation under Decree 135/2024 provisions, estimate commercial power bill savings, and calculate avoided EU ETS carbon border penalty taxes.
+            </p>
+          </div>
+          <div class="font-mono text-[11px] text-inkMuted dark:text-textDarkMuted shrink-0">
+            Grid Baseline: <span class="font-semibold text-teal-600 dark:text-teal-400">0.7221 tCO<sub>2</sub>e/MWh</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start font-sans">
+          <!-- Parameter Inputs -->
+          <div class="space-y-4 text-xs">
+            <!-- Regulatory Operating Mode -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-2">
+              <label class="font-medium text-inkPrimary dark:text-textDarkPrimary block">
+                Decree 135/2024 Regulatory Operating Mode:
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" id="btnModeZeroExport" class="cbam-mode-btn py-2 px-3 rounded-lg bg-teal-600 text-white font-semibold text-center transition-all">
+                  Zero-Export (100% Self-Use)
+                </button>
+                <button type="button" id="btnModeGridTied" class="cbam-mode-btn py-2 px-3 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center transition-all">
+                  Grid-Tied (Max 20% Sellback)
+                </button>
+              </div>
+            </div>
+
+            <!-- Industrial Hub / Province Selector -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1.5">
+              <label for="cbamProvinceSelect" class="font-medium text-inkPrimary dark:text-textDarkPrimary flex justify-between">
+                <span>Industrial Park Corridor &amp; Province:</span>
+                <span id="cbamGhiVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold">4.9 PSH/day</span>
+              </label>
+              <select id="cbamProvinceSelect" class="w-full p-2.5 rounded-lg bg-white dark:bg-darkSurface border border-slate-300 dark:border-darkBorder text-inkPrimary dark:text-textDarkPrimary font-sans">
+                <option value="Binh Duong" selected>Binh Duong (VSIP I/II/III, My Phuoc, Bau Bang) - 4.9 h/day</option>
+                <option value="Dong Nai">Dong Nai (Amata, Bien Hoa II, Nhon Trach) - 4.9 h/day</option>
+                <option value="Bac Ninh">Bac Ninh (VSIP Bac Ninh, Yen Phong, Que Vo) - 3.9 h/day</option>
+                <option value="Hai Phong">Hai Phong (DEEP C, Trang Due, Dinh Vu) - 3.9 h/day</option>
+                <option value="Ho Chi Minh City">Ho Chi Minh City (Tan Thuan, Hiep Phuoc, Linh Trung) - 4.9 h/day</option>
+                <option value="Long An">Long An (Long Hau, Duc Hoa, Thu Thua) - 5.0 h/day</option>
+                <option value="Da Nang">Da Nang (Hoa Khanh, Lien Chieu) - 4.6 h/day</option>
+                <option value="Hanoi">Hanoi (Thang Long, Quang Minh, Sai Dong) - 3.8 h/day</option>
+              </select>
+            </div>
+
+            <!-- Usable Factory Roof Area Slider -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-2">
+              <div class="flex justify-between items-center">
+                <label for="cbamRoofSlider" class="font-medium text-inkPrimary dark:text-textDarkPrimary">
+                  Factory Usable Roof Area:
+                </label>
+                <span id="cbamRoofVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold text-sm">10,000 m²</span>
+              </div>
+              <input type="range" id="cbamRoofSlider" min="1000" max="50000" step="500" value="10000" class="w-full accent-teal-600 cursor-pointer" />
+              <div class="flex justify-between font-mono text-[10px] text-slate-400">
+                <span>1,000 m²</span>
+                <span>25,000 m²</span>
+                <span>50,000 m²</span>
+              </div>
+            </div>
+
+            <!-- Operating Shifts & Night Demand -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-2">
+              <label class="font-medium text-inkPrimary dark:text-textDarkPrimary block">
+                Manufacturing Shift Schedule (Day vs Night Profile):
+              </label>
+              <div class="grid grid-cols-3 gap-2">
+                <button type="button" class="cbam-shift-btn py-1.5 px-2 rounded-lg bg-teal-600 text-white font-semibold text-center text-[11px]" data-shift="1">
+                  1 Shift (Daytime)
+                </button>
+                <button type="button" class="cbam-shift-btn py-1.5 px-2 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center text-[11px]" data-shift="2">
+                  2 Shifts (16h)
+                </button>
+                <button type="button" class="cbam-shift-btn py-1.5 px-2 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center text-[11px]" data-shift="3">
+                  3 Shifts (24/7)
+                </button>
+              </div>
+            </div>
+
+            <!-- Monthly Electricity Consumption -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-2">
+              <div class="flex justify-between items-center">
+                <label for="cbamDemandSlider" class="font-medium text-inkPrimary dark:text-textDarkPrimary">
+                  Monthly Electricity Demand:
+                </label>
+                <span id="cbamDemandVal" class="font-mono text-teal-600 dark:text-teal-400 font-semibold text-sm">250,000 kWh</span>
+              </div>
+              <input type="range" id="cbamDemandSlider" min="20000" max="1500000" step="10000" value="250000" class="w-full accent-teal-600 cursor-pointer" />
+              <div class="flex justify-between font-mono text-[10px] text-slate-400">
+                <span>20k kWh</span>
+                <span>750k kWh</span>
+                <span>1.5M kWh</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Impact & CBAM Defense Telemetry -->
+          <div class="space-y-4">
+            <!-- Hero Impact Card -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-teal-500/10 via-emerald-500/10 to-indigo-500/10 border border-teal-500/30 space-y-3">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-teal-600 dark:text-teal-400 font-semibold block">
+                Total Combined Annual Economic Value
+              </span>
+              <div class="flex items-baseline gap-2">
+                <span id="cbamTotalValueUsd" class="font-mono text-3xl sm:text-4xl font-extrabold text-inkPrimary dark:text-white tracking-tight">$211,172</span>
+                <span class="text-xs text-inkMuted dark:text-textDarkMuted font-medium">/ year</span>
+              </div>
+              <p class="text-xs text-inkMuted dark:text-textDarkMuted font-light">
+                Direct EVN industrial power bill reduction combined with avoided European carbon border tax exposure.
+              </p>
+
+              <!-- Sinusoidal Wavy Clean Energy Coverage Bar -->
+              <div class="pt-2">
+                <div class="flex justify-between text-xs font-mono mb-1">
+                  <span class="text-inkPrimary dark:text-textDarkPrimary font-medium">Factory Power Greened:</span>
+                  <span id="cbamGreenPercent" class="text-teal-600 dark:text-teal-400 font-bold">48%</span>
+                </div>
+                <div class="w-full h-5 rounded-full bg-slate-200 dark:bg-darkSurface overflow-hidden relative border border-slate-300 dark:border-darkBorder">
+                  <div id="cbamProgressBar" class="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 48%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4-Grid Metric Cards -->
+            <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+                <span class="text-[10px] uppercase text-inkMuted dark:text-textDarkMuted block">Peak Solar Capacity</span>
+                <p id="cbamCapacityKwp" class="text-lg font-bold text-teal-600 dark:text-teal-400">1,238 kWp</p>
+                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted block">~1.24 MWp installation</span>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+                <span class="text-[10px] uppercase text-inkMuted dark:text-textDarkMuted block">Annual Clean Yield</span>
+                <p id="cbamAnnualYieldMwh" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">1,449 MWh</p>
+                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted block">Direct factory generation</span>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+                <span class="text-[10px] uppercase text-inkMuted dark:text-textDarkMuted block">Carbon Avoidance</span>
+                <p id="cbamCarbonAvoided" class="text-lg font-bold text-teal-600 dark:text-teal-400">1,046 tCO₂e</p>
+                <span class="text-[10px] text-inkMuted dark:text-textDarkMuted block">Scope 2 emissions abated</span>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-darkCard/50 border border-slate-200 dark:border-darkBorder space-y-1">
+                <span class="text-[10px] uppercase text-inkMuted dark:text-textDarkMuted block">Payback Amortization</span>
+                <p id="cbamPaybackYears" class="text-lg font-bold text-amber-500">2.8 Years</p>
+                <span id="cbamCapexUsd" class="text-[10px] text-inkMuted dark:text-textDarkMuted block">CAPEX: $718,000</span>
+              </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="flex items-center gap-2 pt-1">
+              <button id="btnCopyCbamBrief" type="button" class="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                <span>Copy Executive CBAM Briefing</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
   </main>
 
@@ -1582,5 +1765,148 @@
       document.getElementById("calcReSlider")?.addEventListener("input", updateCalculator);
     });
   </script>
+
+  <script src="/assets/js/cbam_solar_estimator_Rev.001.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let cbamMode = "zero_export";
+      let cbamShifts = 1;
+
+      const tabCbamSolarBtn = document.getElementById("tabCbamSolarBtn");
+      const cbamSolarContainer = document.getElementById("cbamSolarContainer");
+      const corporateSizerContainer = document.getElementById("corporateSizerContainer");
+      const evnEstimatorContainer = document.getElementById("evnEstimatorContainer");
+      const greenIndicatorContainer = document.getElementById("greenIndicatorContainer");
+
+      const tabCorporateSizerBtn = document.getElementById("tabCorporateSizerBtn");
+      const tabEvnEstimatorBtn = document.getElementById("tabEvnEstimatorBtn");
+      const tabGreenIndicatorBtn = document.getElementById("tabGreenIndicatorBtn");
+
+      function activateTab(activeBtn, activeContainer) {
+        [tabCorporateSizerBtn, tabEvnEstimatorBtn, tabGreenIndicatorBtn, tabCbamSolarBtn].forEach(btn => {
+          if (!btn) return;
+          if (btn === activeBtn) {
+            btn.className = "calc-tab-btn py-1.5 px-1 rounded-lg bg-teal-600 text-white font-semibold shadow-sm transition-all cursor-pointer text-center truncate";
+          } else {
+            btn.className = "calc-tab-btn py-1.5 px-1 rounded-lg text-inkMuted dark:text-textDarkMuted hover:text-inkPrimary dark:hover:text-white transition-all cursor-pointer text-center truncate";
+          }
+        });
+        [corporateSizerContainer, evnEstimatorContainer, greenIndicatorContainer, cbamSolarContainer].forEach(c => {
+          if (!c) return;
+          if (c === activeContainer) {
+            c.classList.remove("hidden");
+          } else {
+            c.classList.add("hidden");
+          }
+        });
+      }
+
+      if (tabCbamSolarBtn) {
+        tabCbamSolarBtn.addEventListener("click", function () {
+          activateTab(tabCbamSolarBtn, cbamSolarContainer);
+          updateCBAMEstimator();
+        });
+      }
+
+      // Mode toggles
+      const btnZero = document.getElementById("btnModeZeroExport");
+      const btnGrid = document.getElementById("btnModeGridTied");
+      if (btnZero && btnGrid) {
+        btnZero.addEventListener("click", function () {
+          cbamMode = "zero_export";
+          btnZero.className = "cbam-mode-btn py-2 px-3 rounded-lg bg-teal-600 text-white font-semibold text-center transition-all";
+          btnGrid.className = "cbam-mode-btn py-2 px-3 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center transition-all";
+          updateCBAMEstimator();
+        });
+        btnGrid.addEventListener("click", function () {
+          cbamMode = "grid_tied";
+          btnGrid.className = "cbam-mode-btn py-2 px-3 rounded-lg bg-teal-600 text-white font-semibold text-center transition-all";
+          btnZero.className = "cbam-mode-btn py-2 px-3 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center transition-all";
+          updateCBAMEstimator();
+        });
+      }
+
+      // Shifts toggles
+      const shiftBtns = document.querySelectorAll(".cbam-shift-btn");
+      shiftBtns.forEach(btn => {
+        btn.addEventListener("click", function () {
+          cbamShifts = parseInt(this.getAttribute("data-shift"), 10);
+          shiftBtns.forEach(b => {
+            b.className = "cbam-shift-btn py-1.5 px-2 rounded-lg bg-slate-200 dark:bg-darkSurface text-inkMuted dark:text-textDarkMuted font-medium text-center text-[11px]";
+          });
+          this.className = "cbam-shift-btn py-1.5 px-2 rounded-lg bg-teal-600 text-white font-semibold text-center text-[11px]";
+          updateCBAMEstimator();
+        });
+      });
+
+      // Inputs
+      const roofSlider = document.getElementById("cbamRoofSlider");
+      const demandSlider = document.getElementById("cbamDemandSlider");
+      const provSelect = document.getElementById("cbamProvinceSelect");
+
+      if (roofSlider) roofSlider.addEventListener("input", updateCBAMEstimator);
+      if (demandSlider) demandSlider.addEventListener("input", updateCBAMEstimator);
+      if (provSelect) provSelect.addEventListener("change", updateCBAMEstimator);
+
+      function updateCBAMEstimator() {
+        if (!window.RVN_CBAM_Estimator) return;
+        const roofArea = parseFloat(roofSlider ? roofSlider.value : 10000);
+        const monthlyKWh = parseFloat(demandSlider ? demandSlider.value : 250000);
+        const prov = provSelect ? provSelect.value : "Binh Duong";
+
+        document.getElementById("cbamRoofVal").textContent = roofArea.toLocaleString() + " m²";
+        document.getElementById("cbamDemandVal").textContent = monthlyKWh.toLocaleString() + " kWh";
+
+        const res = window.RVN_CBAM_Estimator.calculate({
+          roofAreaM2: roofArea,
+          monthlyConsumptionKWh: monthlyKWh,
+          province: prov,
+          decreeMode: cbamMode,
+          operatingShifts: cbamShifts
+        });
+
+        document.getElementById("cbamGhiVal").textContent = res.peakSunHours + " PSH/day";
+        document.getElementById("cbamTotalValueUsd").textContent = "$" + res.totalAnnualValueUSD.toLocaleString();
+        document.getElementById("cbamGreenPercent").textContent = res.energyGreenedPercent + "%";
+        document.getElementById("cbamProgressBar").style.width = Math.min(res.energyGreenedPercent, 100) + "%";
+
+        document.getElementById("cbamCapacityKwp").textContent = res.solarCapacityKWp.toLocaleString() + " kWp";
+        document.getElementById("cbamAnnualYieldMwh").textContent = res.annualYieldMWh.toLocaleString() + " MWh";
+        document.getElementById("cbamCarbonAvoided").textContent = res.carbonAvoidedTons.toLocaleString() + " tCO₂e";
+        document.getElementById("cbamPaybackYears").textContent = res.paybackPeriodYears + " Years";
+        document.getElementById("cbamCapexUsd").textContent = "CAPEX: $" + res.totalCapexUSD.toLocaleString();
+      }
+
+      // Initial run
+      updateCBAMEstimator();
+
+      // Copy Brief
+      const btnCopy = document.getElementById("btnCopyCbamBrief");
+      if (btnCopy) {
+        btnCopy.addEventListener("click", function () {
+          const val = document.getElementById("cbamTotalValueUsd").textContent;
+          const green = document.getElementById("cbamGreenPercent").textContent;
+          const cap = document.getElementById("cbamCapacityKwp").textContent;
+          const co2 = document.getElementById("cbamCarbonAvoided").textContent;
+          const payback = document.getElementById("cbamPaybackYears").textContent;
+
+          const text = `[RENEWABLE VIETNAM - CBAM SHIELD & ROOFTOP SOLAR ESTIMATE]\n` +
+            `- Peak Solar Capacity: ${cap}\n` +
+            `- Total Annual Value: ${val}/year\n` +
+            `- Factory Power Greened: ${green}\n` +
+            `- Scope 2 Carbon Avoided: ${co2}\n` +
+            `- Turnkey Payback Period: ${payback}\n` +
+            `- Regulatory Framework: Decree 135/2024/ND-CP & EU CBAM 2026\n` +
+            `- Sizing Suite: https://renewablevietnam.com/industrial/calculator/`;
+
+          navigator.clipboard.writeText(text).then(function () {
+            btnCopy.textContent = "✓ Briefing Copied to Clipboard!";
+            setTimeout(function () { btnCopy.textContent = "Copy Executive CBAM Briefing"; }, 2500);
+          });
+        });
+      }
+    });
+  </script>
 </body>
+
 </html>
