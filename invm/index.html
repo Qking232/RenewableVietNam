@@ -823,6 +823,24 @@
           </div>
         </div>
 
+        <!-- Multi-Select Bulk Action Toolbar -->
+        <div id="homeBulkActionBar" class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between gap-3 flex-wrap text-xs">
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-700 dark:text-slate-300 select-none">
+              <input type="checkbox" id="homeSelectAllProjects" onchange="toggleSelectAllHomeProjects(this.checked)" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 cursor-pointer">
+              <span>Select All</span>
+            </label>
+            <span class="text-slate-300 dark:text-slate-600 font-mono text-[11px]">&middot;</span>
+            <span id="homeSelectedCountText" class="font-mono text-[11px] text-slate-500 dark:text-slate-400">0 projects selected</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btnHomeDeleteSelected" onclick="deleteSelectedHomeProjects()" disabled class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Delete Selected (<span id="homeDeleteCount">0</span>)</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Dynamic Projects Cards Grid -->
         <div id="homeProjectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <!-- Dynamically populated by renderProjectLauncherGrid() -->
@@ -1822,6 +1840,10 @@
                 <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i>
                 <span>Pull All to Workspace</span>
               </button>
+              <button type="button" id="btnAdminDbDeleteSelected" onclick="deleteSelectedAdminDbProjects()" disabled class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                <span>Delete Selected (<span id="adminDbDeleteCount">0</span>)</span>
+              </button>
             </div>
           </div>
 
@@ -1830,6 +1852,9 @@
             <table class="w-full text-left border-collapse text-xs">
               <thead class="bg-slate-100 dark:bg-slate-800 text-[10px] uppercase font-mono text-slate-500 dark:text-slate-400 sticky top-0 border-b border-slate-200 dark:border-slate-700">
                 <tr>
+                  <th class="p-2.5 w-8">
+                    <input type="checkbox" id="adminDbSelectAll" onchange="toggleSelectAllAdminDb(this.checked)" class="w-3.5 h-3.5 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 cursor-pointer">
+                  </th>
                   <th class="p-2.5">Project ID</th>
                   <th class="p-2.5">Name</th>
                   <th class="p-2.5">Archetype</th>
@@ -3434,6 +3459,8 @@
         RVSupabaseEngine.queueDebouncedSync(true);
       }
       showToast(`Đã tạo thành công dự án mới: ${newProj.name}`);
+      // Auto-redirect to newly created project workspace
+      switchAppViewMode('workspace');
     }
 
     function renameCurrentProject(newName) {
@@ -5442,9 +5469,12 @@
           <div class="p-5 rounded-2xl bg-white dark:bg-slate-800/90 border ${isCurrent ? 'border-teal-500 ring-2 ring-teal-500/20' : 'border-slate-200/80 dark:border-slate-700/70'} hover:border-teal-500 transition-all flex flex-col justify-between shadow-xs space-y-4">
             <div class="space-y-3">
               <div class="flex items-center justify-between gap-2 flex-wrap">
-                <span class="px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold ${badgeColor}">
-                  ${escapeHtml(labels[pType] || pType)}
-                </span>
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" class="home-project-checkbox w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 cursor-pointer shrink-0" data-id="${escapeHtml(p.id)}" onchange="updateHomeSelectionState()" ${selectedHomeProjectIds.has(p.id) ? 'checked' : ''}>
+                  <span class="px-2 py-0.5 rounded-full border text-[10px] font-mono font-bold ${badgeColor}">
+                    ${escapeHtml(labels[pType] || pType)}
+                  </span>
+                </div>
                 <div class="flex items-center gap-1 text-[10px] font-mono text-slate-400">
                   <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
                   <span>${escapeHtml(p.location || 'Việt Nam')}</span>
@@ -6893,7 +6923,10 @@
         const rowType = row.project_type || row.description || 'URBAN_TOWN';
         const updated = row.updated_at ? new Date(row.updated_at).toLocaleString() : '--';
         return `
-          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors">
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors ${selectedAdminDbProjectIds.has(rowId) ? 'bg-teal-50/50 dark:bg-teal-950/30' : ''}">
+            <td class="p-2.5">
+              <input type="checkbox" class="admin-db-checkbox w-3.5 h-3.5 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 cursor-pointer" data-id="${rowId}" onchange="updateAdminDbSelectionState()" ${selectedAdminDbProjectIds.has(rowId) ? 'checked' : ''}>
+            </td>
             <td class="p-2.5 font-bold text-slate-900 dark:text-slate-100">${rowId}</td>
             <td class="p-2.5 text-slate-700 dark:text-slate-300 font-sans max-w-[200px] truncate" title="${rowName}">${rowName}</td>
             <td class="p-2.5 text-slate-500 dark:text-slate-400">${rowType}</td>
@@ -7181,6 +7214,159 @@
       closeAdminConsoleModal();
       if (currentAppView === 'launcher') renderProjectLauncherGrid();
       else render();
+    }
+
+
+
+    // =========================================================================
+    // MULTI-SELECT & BULK DELETION CONTROLLER
+    // =========================================================================
+    let selectedHomeProjectIds = new Set();
+    let selectedAdminDbProjectIds = new Set();
+
+    function toggleSelectAllHomeProjects(checked) {
+      const checkboxes = document.querySelectorAll('.home-project-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = checked;
+        const id = cb.getAttribute('data-id');
+        if (checked && id) selectedHomeProjectIds.add(id);
+        else if (id) selectedHomeProjectIds.delete(id);
+      });
+      updateHomeSelectionState(false);
+    }
+
+    function updateHomeSelectionState(syncCheckboxes = true) {
+      if (syncCheckboxes) {
+        selectedHomeProjectIds.clear();
+        const checkboxes = document.querySelectorAll('.home-project-checkbox:checked');
+        checkboxes.forEach(cb => {
+          const id = cb.getAttribute('data-id');
+          if (id) selectedHomeProjectIds.add(id);
+        });
+      }
+
+      const totalRendered = document.querySelectorAll('.home-project-checkbox').length;
+      const count = selectedHomeProjectIds.size;
+
+      const countText = document.getElementById('homeSelectedCountText');
+      const deleteCount = document.getElementById('homeDeleteCount');
+      const deleteBtn = document.getElementById('btnHomeDeleteSelected');
+      const selectAllCb = document.getElementById('homeSelectAllProjects');
+
+      if (countText) countText.textContent = `${count} project${count === 1 ? '' : 's'} selected`;
+      if (deleteCount) deleteCount.textContent = count;
+      if (deleteBtn) deleteBtn.disabled = count === 0;
+
+      if (selectAllCb) {
+        selectAllCb.checked = totalRendered > 0 && count === totalRendered;
+        selectAllCb.indeterminate = count > 0 && count < totalRendered;
+      }
+    }
+
+    async function deleteSelectedHomeProjects() {
+      const count = selectedHomeProjectIds.size;
+      if (count === 0) return;
+
+      if (projectsList.length <= count) {
+        alert('You must keep at least 1 project in your workspace!');
+        return;
+      }
+
+      const confirmMsg = `Are you sure you want to permanently delete ${count} selected project(s)? This will remove them locally and synchronize deletion to Supabase cloud.`;
+      if (!confirm(confirmMsg)) return;
+
+      const deleteIds = Array.from(selectedHomeProjectIds);
+      let deletedActive = false;
+
+      // 1. Delete from Supabase
+      for (const id of deleteIds) {
+        if (id === currentProjectId) deletedActive = true;
+        if (typeof RVSupabaseEngine !== 'undefined') {
+          RVSupabaseEngine.deleteProject(id);
+        }
+      }
+
+      // 2. Remove from local projectsList
+      projectsList = projectsList.filter(p => !selectedHomeProjectIds.has(p.id));
+      selectedHomeProjectIds.clear();
+
+      // 3. Fallback active project if needed
+      if (deletedActive && projectsList.length > 0) {
+        currentProjectId = projectsList[0].id;
+        currentProjectType = projectsList[0].projectType || 'URBAN_TOWN';
+        syncActiveProjectData();
+      }
+
+      saveProjects();
+      updateProjectSelectorUI();
+      renderProjectLauncherGrid();
+      updateHomeSelectionState();
+      updateHomeHeaderStats();
+      showToast(`Successfully deleted ${count} project(s)`);
+    }
+
+    function toggleSelectAllAdminDb(checked) {
+      const checkboxes = document.querySelectorAll('.admin-db-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = checked;
+        const id = cb.getAttribute('data-id');
+        if (checked && id) selectedAdminDbProjectIds.add(id);
+        else if (id) selectedAdminDbProjectIds.delete(id);
+      });
+      updateAdminDbSelectionState(false);
+    }
+
+    function updateAdminDbSelectionState(syncCheckboxes = true) {
+      if (syncCheckboxes) {
+        selectedAdminDbProjectIds.clear();
+        const checkboxes = document.querySelectorAll('.admin-db-checkbox:checked');
+        checkboxes.forEach(cb => {
+          const id = cb.getAttribute('data-id');
+          if (id) selectedAdminDbProjectIds.add(id);
+        });
+      }
+
+      const totalRendered = document.querySelectorAll('.admin-db-checkbox').length;
+      const count = selectedAdminDbProjectIds.size;
+
+      const deleteCount = document.getElementById('adminDbDeleteCount');
+      const deleteBtn = document.getElementById('btnAdminDbDeleteSelected');
+      const selectAllCb = document.getElementById('adminDbSelectAll');
+
+      if (deleteCount) deleteCount.textContent = count;
+      if (deleteBtn) deleteBtn.disabled = count === 0;
+
+      if (selectAllCb) {
+        selectAllCb.checked = totalRendered > 0 && count === totalRendered;
+        selectAllCb.indeterminate = count > 0 && count < totalRendered;
+      }
+    }
+
+    async function deleteSelectedAdminDbProjects() {
+      const count = selectedAdminDbProjectIds.size;
+      if (count === 0) return;
+
+      if (!confirm(`Are you sure you want to permanently delete ${count} selected project(s) directly from Supabase public.legal_projects?`)) return;
+
+      const deleteIds = Array.from(selectedAdminDbProjectIds);
+      const deleteBtn = document.getElementById('btnAdminDbDeleteSelected');
+      if (deleteBtn) {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="animate-pulse">Deleting...</span>';
+      }
+
+      for (const id of deleteIds) {
+        await RVSupabaseEngine.deleteProject(id);
+        projectsList = projectsList.filter(p => p.id !== id);
+      }
+
+      selectedAdminDbProjectIds.clear();
+      saveProjects();
+      updateProjectSelectorUI();
+      if (currentAppView === 'launcher') renderProjectLauncherGrid();
+      await refreshAdminDatabaseView();
+      updateAdminDbSelectionState();
+      alert(`Deleted ${count} project(s) from Supabase successfully.`);
     }
 
 
