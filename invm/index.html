@@ -315,7 +315,7 @@
 
         <div class="flex items-center gap-2 flex-wrap">
           <button type="button" onclick="switchAppViewMode('workspace')" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer" title="Enter CPM & Legal Due Diligence Workspace">
-            <span>Go to Main Page</span>
+            <span>Open Workspace</span>
             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           </button>
           <button type="button" onclick="openNewProjectWithScenario()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer" title="Create new capital project">
@@ -340,19 +340,18 @@
       </div>
 
       <!-- STRIP B: WORKSPACE EXECUTION TOOLBAR (Active in Workspace Mode) -->
-      <div id="headerWorkspaceStrip" class="w-full flex items-center justify-between gap-2.5 flex-wrap hidden">
+      <div id="headerWorkspaceStrip" class="w-full flex items-center justify-between gap-2 overflow-x-auto no-scrollbar hidden py-0.5">
         <!-- Left Group: Return to Home + Project Selector with Actions -->
-        <div class="flex items-center gap-2 flex-wrap">
-          <button id="btnBackToHome" type="button" onclick="switchAppViewMode('launcher')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Return to Project Launchpad Homepage">
-            <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
-            <span class="whitespace-nowrap hidden sm:inline">Project Launchpad</span>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="btnBackToHome" type="button" onclick="switchAppViewMode('launcher')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Return to Project Launchpad Homepage">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+            <span class="whitespace-nowrap">Projects</span>
           </button>
-          <button id="btnEnterWorkspace" type="button" onclick="switchAppViewMode('workspace')" class="hidden px-3 py-1 bg-teal-600 text-white font-semibold text-xs rounded-lg">Go to Main Page</button>
+          <button id="btnEnterWorkspace" type="button" onclick="switchAppViewMode('workspace')" class="hidden"></button>
 
-          <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-lg px-2 py-1 shadow-2xs">
+          <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-lg px-2 py-1 shadow-2xs shrink-0">
             <i data-lucide="folder-kanban" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0"></i>
-            <span class="text-[10px] font-mono uppercase font-bold text-slate-400 dark:text-slate-500 hidden sm:inline">Project:</span>
-            <select id="projectSelector" class="bg-transparent text-slate-900 dark:text-slate-100 text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[150px] sm:max-w-[210px] truncate" title="Active investment project portfolio">
+            <select id="projectSelector" class="bg-transparent text-slate-900 dark:text-slate-100 text-xs font-semibold py-0.5 px-1 outline-none cursor-pointer max-w-[140px] sm:max-w-[200px] truncate" title="Active investment project portfolio">
               <!-- Rendered by JS -->
             </select>
             <div class="flex items-center border-l border-slate-200 dark:border-slate-700 pl-1 ml-0.5 gap-0.5">
@@ -392,15 +391,15 @@
             </select>
           </div>
 
-          <!-- Primary CTA: Create Project -->
-          <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs flex items-center gap-1.5 shrink-0 cursor-pointer" title="Initialize project by archetype and takeover milestone">
+          <!-- Primary CTA: Create Project (Compact on wide screens, hidden on compact) -->
+          <button id="btnApplyScenario" onclick="openNewProjectWithScenario()" class="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs rounded-lg transition shadow-xs shrink-0 cursor-pointer" title="Initialize project by archetype and takeover milestone">
             <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
             <span id="textBtnApplyScenario" class="whitespace-nowrap">+ Create Project</span>
           </button>
         </div>
 
         <!-- Right Group: Views, Admin & Localization -->
-        <div class="flex items-center gap-2 flex-wrap shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <!-- Segmented Mode Control: Dashboard vs Dossier -->
           <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0">
             <button id="btnViewDashboard" onclick="switchViewMode('dashboard')" class="px-2.5 py-1 rounded-md text-xs font-semibold transition flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-xs cursor-pointer" title="Executive investment dashboard">
@@ -457,77 +456,68 @@
     <!-- ==================================================================== -->
     <div id="projectHomeView" class="w-full max-w-full space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       
-      <!-- HERO COCKPIT HEADER -->
-      <section class="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-xs space-y-5 relative overflow-hidden">
-        <div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-gradient-to-br from-teal-500/10 via-emerald-500/5 to-transparent blur-3xl pointer-events-none"></div>
-
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
-          <div class="space-y-2 max-w-3xl">
+      <!-- HERO COCKPIT HEADER (STREAMLINED EXECUTIVE BANNER) -->
+      <section class="rounded-xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 p-3.5 sm:p-4.5 shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-700/60 pb-2.5">
+          <div class="space-y-0.5">
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 border border-teal-200/80 dark:border-teal-800/80 text-[11px] font-mono font-bold text-teal-700 dark:text-teal-400">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/70 border border-teal-200/80 dark:border-teal-800/80 text-[10px] font-mono font-bold text-teal-700 dark:text-teal-400">
                 <span class="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span>
                 VIETNAM LEGAL STATUTORY SUITE
               </span>
-              <span class="text-xs font-mono text-slate-400 dark:text-slate-500 hidden sm:inline">&bull;</span>
-              <span class="text-xs font-mono text-slate-500 dark:text-slate-400">
+              <span class="text-[11px] font-mono text-slate-400 dark:text-slate-500">
                 Decree 151/2025/ND-CP &middot; Land Law 2024 &middot; DPPA Decree 80/2024
               </span>
             </div>
-
-            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
               Vietnam Investment Project Legal Management &amp; Execution Cockpit
             </h1>
-
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
-              Executive project portfolio launcher: choose statutory project archetypes, create and configure due diligence takeovers, or load and manage active multi-phase capital projects before proceeding to the CPM workspace.
-            </p>
           </div>
-
-          <!-- Hero Action CTAs -->
-          <div class="flex items-center gap-2.5 flex-wrap shrink-0">
-            <button type="button" onclick="openNewProjectWithScenario()" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs sm:text-sm rounded-xl transition shadow-sm hover:shadow flex items-center gap-2 cursor-pointer">
-              <i data-lucide="folder-plus" class="w-4 h-4"></i>
-              <span>+ Create New Project</span>
-            </button>
-            <button type="button" onclick="switchAppViewMode('workspace')" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm rounded-xl transition shadow-sm hover:shadow flex items-center gap-2 cursor-pointer">
-              <span>Go to Main Page</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </button>
-          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md hidden md:block text-right">
+            Select statutory archetype, initialize due diligence takeovers, or manage portfolio before entering CPM workspace.
+          </p>
         </div>
 
-        <!-- 4 Key Portfolio Metrics -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 pt-4 border-t border-slate-100 dark:border-slate-700/60 font-mono text-xs">
-          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 space-y-1">
-            <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Active Portfolio</span>
-            <div class="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 tabular-nums">
-              <span id="homeStatProjectsCount">0</span> <span class="text-xs text-teal-600 dark:text-teal-400 font-normal">Projects</span>
+        <!-- 4 Key Portfolio Metrics (Slim Single-Row Metric Bar) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 font-mono text-xs">
+          <div class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <span class="block text-[9px] text-slate-400 uppercase tracking-wider">Active Portfolio</span>
+              <div class="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 tabular-nums leading-tight">
+                <span id="homeStatProjectsCount">0</span> <span class="text-xs text-teal-600 dark:text-teal-400 font-normal">Projects</span>
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400">IndexedDB &middot; Supabase Synced</p>
+            <span class="text-[9px] text-slate-400 hidden sm:inline">Supabase Synced</span>
           </div>
 
-          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 space-y-1">
-            <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Current Archetype</span>
-            <div id="homeStatActiveArchetype" class="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 truncate">
-              Urban Township
+          <div class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <span class="block text-[9px] text-slate-400 uppercase tracking-wider">Current Archetype</span>
+              <div id="homeStatActiveArchetype" class="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate leading-tight">
+                Urban Township
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400">36 Milestones &middot; 7 Phases</p>
+            <span class="text-[9px] text-slate-400 hidden sm:inline shrink-0">36 Milestones</span>
           </div>
 
-          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 space-y-1">
-            <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Statutory Due Diligence</span>
-            <div class="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-              100% <span class="text-xs text-slate-400 font-normal">Coverage</span>
+          <div class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <span class="block text-[9px] text-slate-400 uppercase tracking-wider">Statutory DD</span>
+              <div class="text-base sm:text-lg font-bold text-emerald-600 dark:text-emerald-400 tabular-nums leading-tight">
+                100% <span class="text-xs text-slate-400 font-normal">CPM</span>
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400">CPM Critical Path Analysis</p>
+            <span class="text-[9px] text-slate-400 hidden sm:inline">Critical Path</span>
           </div>
 
-          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 space-y-1">
-            <span class="block text-[10px] text-slate-400 uppercase tracking-wider">Data Synchronization</span>
-            <div class="text-lg sm:text-xl font-bold text-sky-600 dark:text-sky-400">
-              Real-Time
+          <div class="px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <div>
+              <span class="block text-[9px] text-slate-400 uppercase tracking-wider">Data Sync</span>
+              <div class="text-base sm:text-lg font-bold text-sky-600 dark:text-sky-400 leading-tight">
+                Real-Time
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400">Offline-First IndexedDB Cache</p>
+            <span class="text-[9px] text-slate-400 hidden sm:inline">Offline Cache</span>
           </div>
         </div>
       </section>
