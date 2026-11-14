@@ -336,6 +336,28 @@
             <button id="btnLangENHome" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs">EN</button>
             <button id="btnLangVIHome" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">VI</button>
           </div>
+
+          <!-- Executive Authentication Menu (Sign In / User Menu) -->
+          <div id="authContainerLauncher" class="flex items-center gap-1.5 shrink-0">
+            <!-- Logged Out State -->
+            <button id="btnSignInLauncher" type="button" onclick="openAuthModal()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1.5 cursor-pointer" title="Sign In with Hash Code">
+              <i data-lucide="key-round" class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400"></i>
+              <span>Sign In</span>
+            </button>
+
+            <!-- Logged In State (Hidden by default) -->
+            <div id="userMenuLauncher" class="hidden items-center gap-1.5">
+              <div class="flex items-center gap-1.5 px-2.5 py-1 bg-teal-50 dark:bg-teal-950/70 border border-teal-200/80 dark:border-teal-800/80 rounded-lg text-xs font-semibold text-teal-800 dark:text-teal-300 shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="hidden sm:inline">Executive Admin</span>
+                <span class="sm:hidden">Admin</span>
+              </div>
+              <button type="button" onclick="handleUserLogout()" class="px-2 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 font-medium text-xs rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="Log Out">
+                <i data-lucide="log-out" class="w-3 h-3 text-rose-500"></i>
+                <span class="hidden sm:inline">Log Out</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -435,6 +457,26 @@
           <div class="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 shrink-0 font-mono text-[11px]">
             <button id="btnLangEN" onclick="setLanguage('en')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs" title="Switch to English (Default)">EN</button>
             <button id="btnLangVI" onclick="setLanguage('vi')" class="px-2 py-0.5 rounded font-bold transition cursor-pointer text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Chuyển sang Tiếng Việt">VI</button>
+          </div>
+
+          <!-- Executive Authentication Menu (Workspace) -->
+          <div id="authContainerWorkspace" class="flex items-center gap-1.5 shrink-0">
+            <!-- Logged Out State -->
+            <button id="btnSignInWorkspace" type="button" onclick="openAuthModal()" class="px-2 py-1 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80 font-semibold text-xs rounded-lg transition shadow-2xs flex items-center gap-1 cursor-pointer" title="Sign In with Hash Code">
+              <i data-lucide="key-round" class="w-3 h-3 text-teal-600 dark:text-teal-400"></i>
+              <span class="hidden sm:inline">Sign In</span>
+            </button>
+
+            <!-- Logged In State (Hidden by default) -->
+            <div id="userMenuWorkspace" class="hidden items-center gap-1">
+              <div class="flex items-center gap-1 px-2 py-0.5 bg-teal-50 dark:bg-teal-950/70 border border-teal-200/80 dark:border-teal-800/80 rounded-md text-[11px] font-semibold text-teal-800 dark:text-teal-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="hidden md:inline">Admin</span>
+              </div>
+              <button type="button" onclick="handleUserLogout()" class="px-1.5 py-1 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 rounded-md transition" title="Log Out">
+                <i data-lucide="log-out" class="w-3 h-3 text-rose-500"></i>
+              </button>
+            </div>
           </div>
 
           <!-- Preserved Hidden Anchors for JS Compatibility -->
@@ -1683,6 +1725,68 @@
   </div>
 
   <!-- ==================================================================== -->
+  <!-- MODAL: EXECUTIVE AUTHENTICATION (CRYPTOGRAPHIC HASH VERIFICATION)   -->
+  <!-- ==================================================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold">
+            <i data-lucide="shield-lock" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Executive Authentication</h3>
+            <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500 block">Cryptographic Hash Signature Verification</span>
+          </div>
+        </div>
+        <button onclick="closeAuthModal()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Authorization Passcode / Hash Code
+          </label>
+          <div class="relative">
+            <input id="inputAuthCode" type="password" placeholder="Enter security passcode or 64-char hash..." 
+              oninput="updateAuthHashPreview(this.value)"
+              onkeydown="if(event.key==='Enter') handleUserLogin()"
+              class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-slate-100 font-mono outline-none focus:ring-2 focus:ring-teal-500/40 pr-10" />
+            <button type="button" onclick="toggleAuthCodeVisibility()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <i id="iconToggleEye" data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Computed SHA-256 Preview -->
+        <div class="p-2.5 rounded-lg bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-1 font-mono text-[10px]">
+          <div class="flex items-center justify-between text-slate-500 dark:text-slate-400">
+            <span>COMPUTED SHA-256 SIGNATURE:</span>
+            <span id="authHashStatus" class="text-slate-400">Awaiting input...</span>
+          </div>
+          <div id="authHashHexPreview" class="text-[10px] text-teal-600 dark:text-teal-400 font-mono break-all select-all">
+            e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+          </div>
+        </div>
+
+        <div id="authErrorMessage" class="hidden text-xs text-rose-500 font-medium"></div>
+
+        <div class="pt-2 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeAuthModal()" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" onclick="handleUserLogin()" class="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+            <i data-lucide="key" class="w-3.5 h-3.5"></i>
+            <span>Sign In</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- ==================================================================== -->
   <!-- MODAL: ADMIN CONSOLE (PROJECT CONTROLS & SUPABASE CLOUD MANAGEMENT)  -->
   <!-- ==================================================================== -->
   <div id="adminConsoleModal" class="fixed inset-0 bg-slate-950/80 z-50 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-5">
@@ -5649,8 +5753,163 @@
       }
     }
 
+    // =========================================================================
+    // CRYPTOGRAPHIC HASH AUTHENTICATION & SESSION ENGINE
+    // =========================================================================
+    const AUTH_STORAGE_KEY = 'RV_LEGAL_AUTH_SESSION_V1';
+    const AUTHORIZED_HASH_SIGNATURES = [
+      '390a58b8360e3038aa2b1f4d0cee7bda91989fdeb75adf0a4a88d50a7da4cc70', // quantAlpha2026
+      '600a11b6a0356572797c865efd3c23efee7bbe90bf39c83f70cf5f08245dc215'  // sbp PAT
+    ];
+
+    let isUserAuthenticated = false;
+
+    async function computeSha256Hex(plainText) {
+      if (!plainText) return '';
+      const enc = new TextEncoder().encode(plainText);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', enc);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function initAuthSystem() {
+      try {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.signature && AUTHORIZED_HASH_SIGNATURES.includes(parsed.signature)) {
+            isUserAuthenticated = true;
+          }
+        }
+      } catch (e) {
+        isUserAuthenticated = false;
+      }
+      updateAuthUIState(isUserAuthenticated);
+    }
+
+    function updateAuthUIState(loggedIn) {
+      isUserAuthenticated = !!loggedIn;
+
+      // Homepage launcher buttons
+      const btnInLauncher = document.getElementById('btnSignInLauncher');
+      const menuLauncher = document.getElementById('userMenuLauncher');
+      if (btnInLauncher) btnInLauncher.classList.toggle('hidden', loggedIn);
+      if (menuLauncher) {
+        menuLauncher.classList.toggle('hidden', !loggedIn);
+        menuLauncher.classList.toggle('flex', loggedIn);
+      }
+
+      // Workspace toolbar buttons
+      const btnInWork = document.getElementById('btnSignInWorkspace');
+      const menuWork = document.getElementById('userMenuWorkspace');
+      if (btnInWork) btnInWork.classList.toggle('hidden', loggedIn);
+      if (menuWork) {
+        menuWork.classList.toggle('hidden', !loggedIn);
+        menuWork.classList.toggle('flex', loggedIn);
+      }
+
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    }
+
+    function openAuthModal() {
+      const modal = document.getElementById('authModal');
+      const input = document.getElementById('inputAuthCode');
+      const err = document.getElementById('authErrorMessage');
+      if (err) {
+        err.classList.add('hidden');
+        err.textContent = '';
+      }
+      if (input) {
+        input.value = '';
+        updateAuthHashPreview('');
+      }
+      if (modal) modal.classList.remove('hidden');
+      if (input) setTimeout(() => input.focus(), 100);
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    function closeAuthModal() {
+      const modal = document.getElementById('authModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function updateAuthHashPreview(val) {
+      const preview = document.getElementById('authHashHexPreview');
+      const status = document.getElementById('authHashStatus');
+      if (!val) {
+        if (preview) preview.textContent = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+        if (status) status.textContent = 'Awaiting input...';
+        return;
+      }
+      const hex = await computeSha256Hex(val);
+      if (preview) preview.textContent = hex;
+      const isMatch = AUTHORIZED_HASH_SIGNATURES.includes(hex) || AUTHORIZED_HASH_SIGNATURES.includes(val.trim().toLowerCase());
+      if (status) {
+        status.textContent = isMatch ? '✓ Authorized Signature Match' : 'Computed Hex Hash';
+        status.className = isMatch ? 'text-emerald-500 font-bold' : 'text-slate-400';
+      }
+    }
+
+    function toggleAuthCodeVisibility() {
+      const input = document.getElementById('inputAuthCode');
+      const icon = document.getElementById('iconToggleEye');
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        if (icon) icon.setAttribute('data-lucide', 'eye');
+      }
+      if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+    }
+
+    async function handleUserLogin() {
+      const input = document.getElementById('inputAuthCode');
+      const err = document.getElementById('authErrorMessage');
+      if (!input) return;
+      const raw = input.value.trim();
+      if (!raw) {
+        if (err) {
+          err.textContent = currentLang === 'en' ? 'Please enter a passcode or hash code.' : 'Vui lòng nhập mã bảo mật hoặc mã băm.';
+          err.classList.remove('hidden');
+        }
+        return;
+      }
+
+      const computedHex = await computeSha256Hex(raw);
+      const isDirectMatch = AUTHORIZED_HASH_SIGNATURES.includes(raw.toLowerCase());
+      const isComputedMatch = AUTHORIZED_HASH_SIGNATURES.includes(computedHex);
+
+      if (isDirectMatch || isComputedMatch) {
+        const validSignature = isDirectMatch ? raw.toLowerCase() : computedHex;
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+          signature: validSignature,
+          signedAt: new Date().toISOString(),
+          user: 'Executive Admin'
+        }));
+        updateAuthUIState(true);
+        closeAuthModal();
+        showToast(currentLang === 'en' ? 'Signed in as Executive Admin' : 'Đã đăng nhập Quản trị viên Cấp cao');
+      } else {
+        if (err) {
+          err.textContent = currentLang === 'en' ? 'Invalid hash signature or passcode.' : 'Mã băm hoặc mật mã không hợp lệ.';
+          err.classList.remove('hidden');
+        }
+      }
+    }
+
+    function handleUserLogout() {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      updateAuthUIState(false);
+      showToast(currentLang === 'en' ? 'Logged out successfully' : 'Đã đăng xuất thành công');
+    }
+
     // Khởi chạy khi load trang
     window.onload = function() {
+      initAuthSystem();
       loadProjects();
       initScenarioFeatures();
       initGanttEngine();
