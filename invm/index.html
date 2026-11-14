@@ -593,9 +593,7 @@
               <button type="button" onclick="openRoadmapPreviewModal('URBAN_TOWN')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
                 Roadmap
               </button>
-              <button type="button" onclick="loadBenchmarkProject('URBAN_TOWN')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Model &rarr;
-              </button>
+
             </div>
           </div>
 
@@ -653,9 +651,7 @@
               <button type="button" onclick="openRoadmapPreviewModal('INDUSTRIAL')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
                 Roadmap
               </button>
-              <button type="button" onclick="loadBenchmarkProject('INDUSTRIAL')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Model &rarr;
-              </button>
+
             </div>
           </div>
 
@@ -713,9 +709,7 @@
               <button type="button" onclick="openRoadmapPreviewModal('ENERGY')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
                 Roadmap
               </button>
-              <button type="button" onclick="loadBenchmarkProject('ENERGY')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Model &rarr;
-              </button>
+
             </div>
           </div>
 
@@ -773,9 +767,7 @@
               <button type="button" onclick="openRoadmapPreviewModal('RESORT')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Preview statutory roadmap and milestone schedules">
                 Roadmap
               </button>
-              <button type="button" onclick="loadBenchmarkProject('RESORT')" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-xs rounded-lg transition text-center cursor-pointer" title="Load benchmark model and open workspace">
-                Model &rarr;
-              </button>
+
             </div>
           </div>
 
@@ -3215,8 +3207,14 @@
             }
           }
 
-          // 2. Đẩy các dự án mới tạo ở máy lên Cloud
+          // 2. Đẩy các dự án mới tạo ở máy lên Cloud (chỉ dự án do người dùng tạo)
           for (const lp of projectsList) {
+            // Safeguard: Never auto-push unverified sample/benchmark models
+            const isSample = /Dự Án Mẫu 1|Benchmark Model Project 1/i.test(lp.name || '') || String(lp.id).startsWith('proj_bm_');
+            if (isSample && !lp.isUserCreated) {
+              continue;
+            }
+
             const cleanLpId = String(lp.id).replace(/^ma_proj_/, '');
             const cp = cloudProjects.find(c => {
               const cleanCId = String(c.id).replace(/^ma_proj_/, '');
@@ -3283,40 +3281,24 @@
             }));
           }
         } catch (e) {
-          console.error("Lỗi đọc registry dự án, khởi tạo mặc định:", e);
+          console.error("Lỗi đọc registry dự án:", e);
         }
       }
 
-      // Tự động chuyển đổi từ phiên bản 1 dự án cũ (backward compatibility)
-      if (!projectsList || projectsList.length === 0) {
-        let initialTasks = JSON.parse(JSON.stringify(VIETNAM_LEGAL_BASELINE));
-        const legacyStored = localStorage.getItem(LEGACY_STORAGE_KEY);
-        if (legacyStored) {
-          try {
-            const legacyParsed = JSON.parse(legacyStored);
-            if (Array.isArray(legacyParsed) && legacyParsed.length > 0) {
-              initialTasks = normalizeTasks(legacyParsed);
-            }
-          } catch(e) {}
-        }
-
-        const defaultProj = {
-          id: 'proj_' + Date.now(),
-          name: (currentLang === 'en' ? 'Benchmark Model Project 1 (Standard)' : 'Dự Án Mẫu 1 (Tiêu Chuẩn)'),
-          projectType: (currentLang === 'en' ? 'Industrial Real Estate' : 'Khu Công Nghiệp / CCN'),
-          location: (currentLang === 'en' ? 'Nationwide' : 'Toàn quốc'),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          scenarioKey: 'GREENFIELD',
-          tasks: initialTasks
-        };
-        projectsList = [defaultProj];
+      // NO auto-generation of sample projects. Projects are created ONLY by user explicit action.
+      if (!Array.isArray(projectsList)) {
+        projectsList = [];
       }
 
       // Xác định active project
-      const found = projectsList.find(p => p.id === storedActiveId);
-      currentProjectId = found ? found.id : projectsList[0].id;
-      syncActiveProjectData();
+      if (projectsList.length > 0) {
+        const found = projectsList.find(p => p.id === storedActiveId);
+        currentProjectId = found ? found.id : projectsList[0].id;
+        syncActiveProjectData();
+      } else {
+        currentProjectId = null;
+        taskList = [];
+      }
       updateProjectSelectorUI();
       if (typeof RVSupabaseEngine !== 'undefined') {
         setTimeout(() => {
@@ -3326,6 +3308,11 @@
     }
 
     function syncActiveProjectData() {
+      if (!projectsList || projectsList.length === 0) {
+        currentProjectId = null;
+        taskList = [];
+        return;
+      }
       const activeProj = projectsList.find(p => p.id === currentProjectId) || projectsList[0];
       if (activeProj) {
         currentProjectId = activeProj.id;
@@ -3399,6 +3386,10 @@
     function updateProjectSelectorUI() {
       const sel = document.getElementById('projectSelector');
       if (!sel) return;
+      if (!projectsList || projectsList.length === 0) {
+        sel.innerHTML = `<option value="" class="bg-slate-900 text-slate-400 py-1" disabled selected>${currentLang === 'en' ? '(No projects - Click + to create)' : '(Chưa có dự án - Bấm + để tạo)'}</option>`;
+        return;
+      }
       sel.innerHTML = projectsList.map(p => `
         <option value="${escapeHtml(p.id)}" class="bg-slate-900 text-white py-1" ${p.id === currentProjectId ? 'selected' : ''}>
           ${escapeHtml(getLocalizedProjectName(p))} (${(p.tasks || []).length} ${currentLang === 'en' ? 'tasks' : 'việc'})
@@ -3435,6 +3426,7 @@
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         scenarioKey: 'GREENFIELD',
+        isUserCreated: true,
         tasks: normalizeTasks(seedTasks)
       };
 
@@ -5556,58 +5548,8 @@
     }
 
     function loadBenchmarkProject(archetypeKey) {
-      const key = resolveArchetypeKey(archetypeKey);
-      const benchmarkConfigs = {
-        'INDUSTRIAL': {
-          name: currentLang === 'en' ? 'Nam Tien Phong Eco-Industrial Park (Benchmark)' : 'KCN Nam Tiền Phong - Eco IP (Dự án Mẫu)',
-          type: 'INDUSTRIAL',
-          location: 'Quảng Ninh',
-          scenario: 'GREENFIELD'
-        },
-        'URBAN_TOWN': {
-          name: currentLang === 'en' ? 'Riverfront TOD Eco-Township (Benchmark)' : 'KĐT Sinh Thái Riverfront TOD (Dự án Mẫu)',
-          type: 'URBAN_TOWN',
-          location: 'Bình Dương',
-          scenario: 'POST_1_500'
-        },
-        'ENERGY': {
-          name: currentLang === 'en' ? 'Ninh Thuan Hybrid Wind & Solar 100MW (Benchmark)' : 'Tổ Hợp Năng Lượng Ninh Thuận 100MW (Dự án Mẫu)',
-          type: 'ENERGY',
-          location: 'Ninh Thuận',
-          scenario: 'POST_POLICY'
-        },
-        'RESORT': {
-          name: currentLang === 'en' ? 'Emerald Bay Eco-Resort & Marina (Benchmark)' : 'Khu Nghỉ Dưỡng Sinh Thái Emerald Bay (Dự án Mẫu)',
-          type: 'RESORT',
-          location: 'Phú Quốc',
-          scenario: 'POST_LAND'
-        }
-      };
-
-      const cfg = benchmarkConfigs[key] || benchmarkConfigs['URBAN_TOWN'];
-      let baseline = (window.PROJECT_LEGAL_ARCHETYPES && window.PROJECT_LEGAL_ARCHETYPES[cfg.type]) ? window.PROJECT_LEGAL_ARCHETYPES[cfg.type] : (VIETNAM_LEGAL_BASELINE || []);
-
-      // Create benchmark project
-      const newProj = {
-        id: 'proj_bm_' + key.toLowerCase() + '_' + Date.now(),
-        name: cfg.name,
-        projectType: cfg.type,
-        location: cfg.location,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        scenarioKey: cfg.scenario,
-        tasks: normalizeTasks(JSON.parse(JSON.stringify(baseline)))
-      };
-
-      projectsList.unshift(newProj);
-      currentProjectId = newProj.id;
-      currentProjectType = cfg.type;
-      VIETNAM_LEGAL_BASELINE = baseline;
-      taskList = newProj.tasks;
-      saveProjects();
-      updateProjectSelectorUI();
-      switchAppViewMode('workspace');
-      showToast(currentLang === 'en' ? `Loaded benchmark: ${cfg.name}` : `Đã tải dự án mẫu: ${cfg.name}`);
+      // Delegate strictly to user creation modal: projects are only created when user submits modal
+      openNewProjectModalWithArchetype(archetypeKey);
     }
 
     function duplicateProject(projId) {
