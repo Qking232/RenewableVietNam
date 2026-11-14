@@ -1,17 +1,23 @@
 /**
- * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Transition Director - Rev.011
+ * Cloudflare Worker: Multi-Subdomain Edge Reverse Proxy & Transition Director - Rev.012 / v3.0
+ *
+ * Architecture v3.0 Enhancement:
+ *  - Unified Edge HTML caching with stale-while-revalidate=604800
+ *  - Core preconnect resource hints for fonts & Supabase REST API
+ *  - Hardened edge security headers (nosniff, strict-origin, server-timing)
+ *  - Seamless single-hop 301 canonical redirects for legacy subdomains
  *
  * Maps active bookmark subdomains to origin directories on renewablevietnam.com:
- * - energy.renewablevietnam.com     -> /energy/
- * - wind.renewablevietnam.com       -> /energy/
- * - industrial.renewablevietnam.com -> /industrial/
- * - legal.renewablevietnam.com      -> /invm/
- * - project.renewablevietnam.com    -> /project/ (/dc/*, /garments/* subpaths preserved)
+ *  - energy.renewablevietnam.com     -> /energy/
+ *  - wind.renewablevietnam.com       -> /energy/
+ *  - industrial.renewablevietnam.com -> /industrial/
+ *  - legal.renewablevietnam.com      -> /invm/
+ *  - project.renewablevietnam.com    -> /project/ (/dc/*, /garments/* subpaths preserved)
  *
  * Legacy alias 301 direct-to-origin (single hop, zero bounce):
- * - invest.renewablevietnam.com     -> https://renewablevietnam.com/invm/...
- * - ev.renewablevietnam.com         -> https://renewablevietnam.com/evcharging/...
- * - ind.renewablevietnam.com        -> https://renewablevietnam.com/industrial/...
+ *  - invest.renewablevietnam.com     -> https://renewablevietnam.com/invm/...
+ *  - ev.renewablevietnam.com         -> https://renewablevietnam.com/evcharging/...
+ *  - ind.renewablevietnam.com        -> https://renewablevietnam.com/industrial/...
  */
 
 const HOST_PATH_MAP = {
@@ -26,11 +32,12 @@ const SHARED_PREFIXES = ['/assets/built/', '/assets/', '/data/', '/vendor/', '/_
 
 export default {
   async fetch(request, env, ctx) {
+    const startTime = Date.now();
     const url = new URL(request.url);
     const originHost = 'renewablevietnam.com';
     const hostname = url.hostname.toLowerCase();
 
-    // Direct 301 consolidation for deprecated alias subdomains
+    // 1. Direct 301 consolidation for deprecated alias subdomains
     if (hostname === 'invest.renewablevietnam.com') {
       const sub = url.pathname.replace(/^\/invm\/?/, '/');
       return Response.redirect(`https://${originHost}/invm${sub}${url.search}`, 301);
@@ -48,11 +55,12 @@ export default {
 
     const targetSubfolder = HOST_PATH_MAP[hostname];
 
-    // Fallback passthrough to originHost
+    // Fallback passthrough to originHost for apex or unmapped domains
     if (!targetSubfolder) {
       const originUrl = new URL(`https://${originHost}${url.pathname}${url.search}`);
       const headers = new Headers(request.headers);
       headers.set('Host', originHost);
+      headers.set('X-Edge-Gateway-Version', '3.0.0-expressive');
       return fetch(new Request(originUrl, { method: request.method, headers: headers, body: request.body }));
     }
 
@@ -97,7 +105,7 @@ export default {
     headers.set('Host', originHost);
     headers.set('X-Forwarded-Host', hostname);
     headers.set('X-Forwarded-Proto', 'https');
-    headers.set('X-From-Worker', 'subdomain-gateway');
+    headers.set('X-From-Worker', 'edge-gateway-v3');
 
     const isStaticAsset = isSharedAsset || /\.(json|gz|js|css|svg|png|jpg|jpeg|webp|woff2?|ico)(\?.*)?$/i.test(pathname);
 
@@ -108,9 +116,9 @@ export default {
       redirect: 'follow'
     };
 
-    if (isStaticAsset && request.method === 'GET') {
+    if (request.method === 'GET') {
       fetchOptions.cf = {
-        cacheTtl: 86400,
+        cacheTtl: isStaticAsset ? 86400 : 3600,
         cacheEverything: true
       };
     }
@@ -120,13 +128,21 @@ export default {
     try {
       const response = await fetch(originRequest);
       const responseHeaders = new Headers(response.headers);
-      responseHeaders.set('X-Proxy-By', 'Cloudflare-Worker-Subdomain-Gateway');
+      const edgeDur = Date.now() - startTime;
+
+      responseHeaders.set('X-Proxy-By', 'Cloudflare-Worker-Edge-Gateway-v3');
+      responseHeaders.set('X-Edge-Gateway-Version', '3.0.0-expressive');
+      responseHeaders.set('Server-Timing', `edge;dur=${edgeDur}`);
+      responseHeaders.set('X-Content-Type-Options', 'nosniff');
+      responseHeaders.set('Referrer-Policy', 'strict-origin-when-cross-origin');
       responseHeaders.delete('X-Frame-Options');
 
       if (isStaticAsset && response.status === 200) {
         responseHeaders.set('Cache-Control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800');
-      } else {
-        responseHeaders.append('Link', '<https://renewablevietnam.com>; rel=preconnect');
+      } else if (response.status === 200) {
+        responseHeaders.set('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800');
+        responseHeaders.append('Link', '<https://fonts.googleapis.com>; rel=preconnect; crossorigin');
+        responseHeaders.append('Link', '<https://nkkwegvplpozirrjcxsn.supabase.co>; rel=preconnect; crossorigin');
       }
 
       return new Response(response.body, {
@@ -135,7 +151,7 @@ export default {
         headers: responseHeaders
       });
     } catch (err) {
-      return new Response(`Subdomain Gateway Proxy Error: ${err.message}`, {
+      return new Response(`Edge Gateway Proxy Error: ${err.message}`, {
         status: 502,
         headers: { 'Content-Type': 'text/plain; charset=utf-8' }
       });

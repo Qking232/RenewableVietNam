@@ -1,13 +1,15 @@
 /**
  * ===========================================================================
  * Renewable Vietnam — Centralized Cloud Supabase Client & Telemetry Suite
- * Rev 2.1 (IndexedDB Engine + Native GZIP Streaming Decompression + Mutation Gateway)
+ * Rev.002 / Architecture v3.0 (SWR Engine + ETag Validation + Batch Prefetch)
  * ===========================================================================
  * Institutional-grade data ingestion featuring:
  *  - Zero-dependency Asynchronous IndexedDB Storage (bypasses 5MB localStorage limit)
  *  - Transparent Streaming GZIP Decompression via native DecompressionStream
- *  - Cache-First & Stale-While-Revalidate (SWR) with global event broadcasting
- *  - Unified REST mutations (upsert, delete) with declarative headers
+ *  - Cache-First & Stale-While-Revalidate (SWR) with ETag conditional validation
+ *  - Multi-table automated background prefetching (ev_stations, energy_projects, etc.)
+ *  - Network resilience & automatic online/offline status event broadcasting
+ *  - Unified PostgREST mutations (upsert, delete) with declarative headers
  *  - Microsecond latency telemetry & connection health diagnostics
  * ===========================================================================
  */
@@ -20,17 +22,20 @@
   var DEFAULT_TIMEOUT_MS = 6000;
   var DEFAULT_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
   var DB_NAME = 'RVN_Storage';
-  var DB_VERSION = 1;
+  var DB_VERSION = 2;
   var STORE_NAME = 'telemetry_cache';
+  var ETAG_STORE_NAME = 'etag_cache';
 
   var clientState = {
     connected: false,
+    online: (typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean') ? navigator.onLine : true,
     latencyMs: null,
     lastSource: null, // 'indexeddb' | 'supabase' | 'gzip_fallback' | 'json_fallback' | 'memory'
     errors: []
   };
 
   var memoryCache = {};
+  var etagMemoryCache = {};
 
   // -------------------------------------------------------------------------
   // 1. Asynchronous IndexedDB Key-Value Engine
@@ -50,6 +55,9 @@
           if (!db.objectStoreNames.contains(STORE_NAME)) {
             db.createObjectStore(STORE_NAME, { keyPath: 'key' });
           }
+          if (!db.objectStoreNames.contains(ETAG_STORE_NAME)) {
+            db.createObjectStore(ETAG_STORE_NAME, { keyPath: 'key' });
+          }
         };
         req.onsuccess = function (e) {
           resolve(e.target.result);
@@ -66,7 +74,6 @@
   }
 
   async function getCache(key) {
-    // 1. Check memory cache
     if (memoryCache[key]) {
       var mem = memoryCache[key];
       if (Date.now() - mem.timestamp < mem.ttl) {
@@ -75,7 +82,6 @@
       delete memoryCache[key];
     }
 
-    // 2. Check IndexedDB
     try {
       var db = await getDB();
       if (!db) return null;
@@ -87,15 +93,13 @@
           req.onsuccess = function () {
             var res = req.result;
             if (res && (Date.now() - res.timestamp < res.ttl)) {
-              memoryCache[key] = res; // Populate memory cache
+              memoryCache[key] = res;
               resolve(res.data);
             } else {
               resolve(null);
             }
           };
-          req.onerror = function () {
-            resolve(null);
-          };
+          req.onerror = function () { resolve(null); };
         } catch (e) {
           resolve(null);
         }
@@ -128,9 +132,56 @@
           resolve(false);
         }
       });
+    } catch (e) {}
+  }
+
+  async function getETag(key) {
+    if (etagMemoryCache[key]) return etagMemoryCache[key];
+    try {
+      var db = await getDB();
+      if (!db || !db.objectStoreNames.contains(ETAG_STORE_NAME)) return null;
+      return new Promise(function (resolve) {
+        try {
+          var tx = db.transaction(ETAG_STORE_NAME, 'readonly');
+          var store = tx.objectStore(ETAG_STORE_NAME);
+          var req = store.get(key);
+          req.onsuccess = function () {
+            var res = req.result;
+            if (res && res.etag) {
+              etagMemoryCache[key] = res.etag;
+              resolve(res.etag);
+            } else {
+              resolve(null);
+            }
+          };
+          req.onerror = function () { resolve(null); };
+        } catch (e) {
+          resolve(null);
+        }
+      });
     } catch (e) {
-      // Ignored
+      return null;
     }
+  }
+
+  async function setETag(key, etag) {
+    if (!etag) return;
+    etagMemoryCache[key] = etag;
+    try {
+      var db = await getDB();
+      if (!db || !db.objectStoreNames.contains(ETAG_STORE_NAME)) return;
+      new Promise(function (resolve) {
+        try {
+          var tx = db.transaction(ETAG_STORE_NAME, 'readwrite');
+          var store = tx.objectStore(ETAG_STORE_NAME);
+          store.put({ key: key, etag: etag, timestamp: Date.now() });
+          tx.oncomplete = function () { resolve(true); };
+          tx.onerror = function () { resolve(false); };
+        } catch (e) {
+          resolve(false);
+        }
+      });
+    } catch (e) {}
   }
 
   // -------------------------------------------------------------------------
@@ -148,7 +199,6 @@
       fallbackJsonUrl = url;
     }
 
-    // 1. If DecompressionStream is supported and not already .gz, attempt .json.gz first
     if (supportsDecompressionStream && !hasGzipExt) {
       try {
         var gzRes = await fetch(candidateGzUrl);
@@ -159,9 +209,7 @@
           clientState.lastSource = 'gzip_fallback';
           return JSON.parse(text);
         }
-      } catch (gzErr) {
-        // Fall through to uncompressed JSON
-      }
+      } catch (gzErr) {}
     } else if (supportsDecompressionStream && hasGzipExt) {
       try {
         var gzResDirect = await fetch(candidateGzUrl);
@@ -175,7 +223,6 @@
       } catch (e) {}
     }
 
-    // 2. Standard uncompressed JSON fetch
     var res = await fetch(fallbackJsonUrl);
     if (!res.ok) {
       throw new Error('Static dataset fetch failed (' + res.status + '): ' + fallbackJsonUrl);
@@ -187,13 +234,16 @@
   // -------------------------------------------------------------------------
   // 3. HTTP Headers Helper
   // -------------------------------------------------------------------------
-  function getHeaders(customHeaders) {
+  function getHeaders(customHeaders, etag) {
     var h = {
       'apikey': SUPABASE_KEY,
       'Content-Type': 'application/json'
     };
     if (SUPABASE_KEY.indexOf('sb_') !== 0) {
       h['Authorization'] = 'Bearer ' + SUPABASE_KEY;
+    }
+    if (etag) {
+      h['If-None-Match'] = etag;
     }
     if (customHeaders) {
       for (var k in customHeaders) {
@@ -206,14 +256,30 @@
   }
 
   // -------------------------------------------------------------------------
-  // 4. Main Supabase API Surface
+  // 4. Network Status Tracking
+  // -------------------------------------------------------------------------
+  if (typeof window !== 'undefined') {
+    window.addEventListener('online', function () {
+      clientState.online = true;
+      window.dispatchEvent(new CustomEvent('rvn:network:status', { detail: { online: true } }));
+      RV_Supabase.prefetchCoreDatasets({ background: true });
+    });
+    window.addEventListener('offline', function () {
+      clientState.online = false;
+      window.dispatchEvent(new CustomEvent('rvn:network:status', { detail: { online: false } }));
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // 5. Main Supabase API Surface
   // -------------------------------------------------------------------------
   var RV_Supabase = {
     url: SUPABASE_URL,
     key: SUPABASE_KEY,
+    version: '3.0.0-swr',
 
     /**
-     * Query a PostgREST table with structured options and automated retry
+     * Query a PostgREST table with structured options, ETag validation, and automated retry
      */
     query: async function (table, options) {
       options = options || {};
@@ -233,8 +299,10 @@
 
       var queryString = params.length ? '?' + params.join('&') : '';
       var requestUrl = SUPABASE_URL + '/rest/v1/' + table + queryString;
+      var cacheKey = options.cacheKey || (table + queryString);
 
-      var headers = getHeaders(options.headers);
+      var existingETag = options.useETag ? await getETag(cacheKey) : null;
+      var headers = getHeaders(options.headers, existingETag);
       if (options.range && Array.isArray(options.range)) {
         headers['Range'] = options.range[0] + '-' + options.range[1];
         headers['Range-Unit'] = 'items';
@@ -256,19 +324,35 @@
           });
           if (timeoutId) clearTimeout(timeoutId);
           clientState.latencyMs = Date.now() - startTime;
+
+          // HTTP 304 Not Modified
+          if (res.status === 304) {
+            clientState.connected = true;
+            clientState.lastSource = 'indexeddb-etag-valid';
+            var cached = await getCache(cacheKey);
+            if (cached) return cached;
+          }
+
           if (!res.ok) {
             throw new Error('Supabase query failed (' + res.status + '): ' + res.statusText);
           }
+
+          var serverETag = res.headers.get('ETag');
+          if (serverETag) {
+            setETag(cacheKey, serverETag);
+          }
+
           clientState.connected = true;
           clientState.lastSource = 'supabase';
-          return await res.json();
+          var jsonData = await res.json();
+          return jsonData;
         } catch (err) {
           if (timeoutId) clearTimeout(timeoutId);
           lastErr = err;
           clientState.connected = false;
           clientState.errors.push({ time: Date.now(), message: err.message });
           if (attempt < maxAttempts) {
-            await new Promise(function (r) { setTimeout(r, 400); });
+            await new Promise(function (r) { setTimeout(r, 400 * attempt); });
           }
         }
       }
@@ -322,7 +406,7 @@
     },
 
     /**
-     * Asynchronous Cache-First & Fallback Query Engine with GZIP acceleration
+     * Asynchronous Cache-First & Fallback Query Engine with GZIP acceleration & SWR
      */
     getWithFallback: async function (table, fallbackUrl, options) {
       options = options || {};
@@ -339,7 +423,8 @@
             // Background Stale-While-Revalidate if enabled
             if (options.swr) {
               setTimeout(function () {
-                RV_Supabase.query(table, options).then(function (fresh) {
+                var queryOpts = Object.assign({}, options, { useETag: true, cacheKey: cacheKey });
+                RV_Supabase.query(table, queryOpts).then(function (fresh) {
                   if (Array.isArray(fresh) && fresh.length > 0) {
                     setCache(cacheKey, fresh, ttl);
                     if (typeof window !== 'undefined' && window.dispatchEvent) {
@@ -349,7 +434,7 @@
                     }
                   }
                 }).catch(function () {});
-              }, 100);
+              }, 120);
             }
 
             return cached;
@@ -359,7 +444,8 @@
 
       // 2. Query live Supabase
       try {
-        var data = await RV_Supabase.query(table, options);
+        var queryOptsLive = Object.assign({}, options, { useETag: true, cacheKey: cacheKey });
+        var data = await RV_Supabase.query(table, queryOptsLive);
         if (Array.isArray(data) && data.length > 0) {
           setCache(cacheKey, data, ttl);
           return data;
@@ -402,12 +488,45 @@
     },
 
     /**
+     * Automated Batch Prefetcher for core domain tables
+     */
+    prefetchCoreDatasets: function (opts) {
+      opts = opts || {};
+      var tables = [
+        { table: 'ev_stations', fallback: '/data/ev_stations.json.gz', limit: 5000 },
+        { table: 'energy_projects', fallback: '/data/energy_projects.json', limit: 1000 },
+        { table: 'pdp8_fuel_targets', fallback: '/data/pdp8_targets.json', limit: 100 },
+        { table: 'industrial_hubs', fallback: '/data/industrial_hubs.json', limit: 500 }
+      ];
+
+      var runBatch = function () {
+        tables.forEach(function (t, idx) {
+          setTimeout(function () {
+            RV_Supabase.getWithFallback(t.table, t.fallback, {
+              limit: t.limit,
+              swr: true,
+              cacheKey: t.table
+            }).catch(function () {});
+          }, idx * 250);
+        });
+      };
+
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        window.requestIdleCallback(runBatch, { timeout: 3000 });
+      } else {
+        setTimeout(runBatch, opts.background ? 100 : 800);
+      }
+    },
+
+    /**
      * Retrieve live diagnostic telemetry
      */
     getTelemetry: function () {
       return {
         endpoint: SUPABASE_URL,
+        version: '3.0.0-swr',
         connected: clientState.connected,
+        online: clientState.online,
         latencyMs: clientState.latencyMs,
         lastSource: clientState.lastSource,
         supportsGzipStream: supportsDecompressionStream,
@@ -418,5 +537,10 @@
   };
 
   window.RV_Supabase = RV_Supabase;
+
+  // Auto-trigger idle prefetch on initial script evaluation
+  if (typeof window !== 'undefined') {
+    RV_Supabase.prefetchCoreDatasets({ background: true });
+  }
 
 })(typeof window !== 'undefined' ? window : this);

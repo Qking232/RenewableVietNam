@@ -1,0 +1,147 @@
+/* ==========================================================================
+   RenewableVietNam.com - Material Design 3 Expressive Unified Tokens
+   Architecture v3.0 | Revision 001
+   ========================================================================== */
+
+:root {
+  /* Tonal Surface Palette */
+  --rvn-color-bg: #070a12;
+  --rvn-color-surface: #0d1322;
+  --rvn-color-surface-container: #131b2e;
+  --rvn-color-surface-container-high: #1a243d;
+  --rvn-color-surface-container-highest: #233050;
+  --rvn-color-outline: rgba(255, 255, 255, 0.12);
+  --rvn-color-outline-variant: rgba(255, 255, 255, 0.06);
+
+  /* Primary Brand Accents */
+  --rvn-color-primary: #0d9488;         /* Deep Teal */
+  --rvn-color-primary-light: #2dd4bf;   /* Vibrant Mint */
+  --rvn-color-secondary: #0284c7;       /* Marine Blue */
+  --rvn-color-tertiary: #6366f1;        /* Indigo */
+  --rvn-color-success: #10b981;         /* Emerald */
+  --rvn-color-warning: #f59e0b;         /* Amber */
+  --rvn-color-error: #ef4444;           /* Coral */
+
+  /* Text Contrast Hierarchy */
+  --rvn-text-primary: #f1f5f9;
+  --rvn-text-muted: #94a3b8;
+  --rvn-text-subtle: #64748b;
+
+  /* Expressive Corner Radii */
+  --rvn-radius-sm: 8px;
+  --rvn-radius-md: 14px;
+  --rvn-radius-lg: 20px;
+  --rvn-radius-xl: 26px;
+  --rvn-radius-full: 9999px;
+
+  /* Physics-Driven Spring Motion */
+  --rvn-motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --rvn-motion-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --rvn-duration-quick: 180ms;
+  --rvn-duration-medium: 320ms;
+  --rvn-duration-long: 500ms;
+}
+
+/* Light Mode Overrides */
+html:not(.dark) {
+  --rvn-color-bg: #f8fafc;
+  --rvn-color-surface: #ffffff;
+  --rvn-color-surface-container: #f1f5f9;
+  --rvn-color-surface-container-high: #e2e8f0;
+  --rvn-color-surface-container-highest: #cbd5e1;
+  --rvn-color-outline: rgba(15, 23, 42, 0.12);
+  --rvn-color-outline-variant: rgba(15, 23, 42, 0.06);
+
+  --rvn-text-primary: #0f172a;
+  --rvn-text-muted: #64748b;
+  --rvn-text-subtle: #94a3b8;
+}
+
+/* Expressive Tactile Button Base */
+.rvn-m3-btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--rvn-radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  transition: transform var(--rvn-duration-quick) var(--rvn-motion-spring),
+              box-shadow var(--rvn-duration-quick) var(--rvn-motion-standard),
+              background-color var(--rvn-duration-quick) ease;
+  text-decoration: none;
+}
+
+.rvn-m3-btn:active {
+  transform: scale(0.95);
+}
+
+.rvn-m3-btn-primary {
+  background: linear-gradient(135deg, var(--rvn-color-primary), var(--rvn-color-secondary));
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+}
+
+.rvn-m3-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.5);
+}
+
+/* Expressive Card Baseline */
+.rvn-m3-card {
+  background-color: var(--rvn-color-surface);
+  border: 1px solid var(--rvn-color-outline);
+  border-radius: var(--rvn-radius-lg);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: transform var(--rvn-duration-medium) var(--rvn-motion-spring),
+              box-shadow var(--rvn-duration-medium) var(--rvn-motion-standard);
+}
+
+.rvn-m3-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Sinusoidal Wavy Progress Indicator */
+.rvn-wavy-track {
+  width: 100%;
+  height: 24px;
+  background-color: var(--rvn-color-surface-container);
+  border-radius: var(--rvn-radius-full);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--rvn-color-outline);
+}
+
+.rvn-wavy-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rvn-color-primary), var(--rvn-color-primary-light));
+  border-radius: var(--rvn-radius-full);
+  position: relative;
+  overflow: hidden;
+  transition: width var(--rvn-duration-medium) var(--rvn-motion-standard);
+}
+
+.rvn-sine-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  animation: rvn-wave-anim 2.5s linear infinite;
+}
+
+@keyframes rvn-wave-anim {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
