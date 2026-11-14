@@ -3080,6 +3080,16 @@
       legacyCategory: 'ma_legal_project'
     };
 
+    function isZombieBenchmarkSample(p) {
+      if (!p) return true;
+      const name = String(p.name || '').trim();
+      const id = String(p.id || '');
+      if (id === 'prj_benchmark_test' || id === 'proj_1793201813081') return true;
+      if (/^(Dự Án Mẫu 1|Benchmark Model Project 1|Dự án Mẫu Đô Thị & Nhà Ở Thí Điểm|Ninh Thuan Hybrid Wind)/i.test(name)) return true;
+      if (id.startsWith('proj_bm_') || id.startsWith('ma_proj_proj_bm_')) return true;
+      return false;
+    }
+
     const RVSupabaseEngine = {
       syncTimeout: null,
       isSyncing: false,
@@ -3157,7 +3167,7 @@
 
           if (Array.isArray(rows) && rows.length > 0) {
             for (const row of rows) {
-              if (row && row.id) {
+              if (row && row.id && !isZombieBenchmarkSample(row)) {
                 projects.push({
                   id: String(row.id),
                   name: row.name || 'Dự án Chưa Đặt Tên',
@@ -3168,24 +3178,6 @@
                   metadata: row.metadata || {},
                   updatedAt: row.updated_at
                 });
-              }
-            }
-            return projects;
-          }
-
-          // Fallback to legacy platapp_apps table if legal_projects returned empty
-          const fallbackUrl = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.legacyTable}?category=eq.${RV_SUPABASE_CONFIG.legacyCategory}&order=updated_at.desc`;
-          const fRes = await fetch(fallbackUrl, {
-            headers: { 'apikey': RV_SUPABASE_CONFIG.key }
-          });
-          if (fRes.ok) {
-            const fRows = await fRes.json();
-            for (const r of (fRows || [])) {
-              if (r.code) {
-                try {
-                  const p = typeof r.code === 'string' ? JSON.parse(r.code) : r.code;
-                  if (p && p.id) projects.push(p);
-                } catch(e) {}
               }
             }
           }
@@ -3232,15 +3224,23 @@
       async deleteProject(projId) {
         if (!projId) return false;
         try {
-          const url = `${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(String(projId))}`;
-          const res = await fetch(url, {
+          const cleanId = String(projId).replace(/^ma_proj_/, '');
+          const p1 = fetch(`${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.table}?id=eq.${encodeURIComponent(cleanId)}`, {
             method: 'DELETE',
             headers: {
               'apikey': RV_SUPABASE_CONFIG.key,
               'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`
             }
           });
-          return res.ok;
+          const p2 = fetch(`${RV_SUPABASE_CONFIG.url}/rest/v1/${RV_SUPABASE_CONFIG.legacyTable}?id=eq.ma_proj_${encodeURIComponent(cleanId)}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': RV_SUPABASE_CONFIG.key,
+              'Authorization': `Bearer ${RV_SUPABASE_CONFIG.key}`
+            }
+          });
+          const [res1, res2] = await Promise.all([p1, p2]);
+          return res1.ok || res2.ok;
         } catch (err) {
           console.warn('Lỗi xóa dự án trên Supabase:', err);
           return false;
@@ -3286,16 +3286,25 @@
             return;
           }
 
-          let mergedCount = 0;
-          let pushedCount = 0;
+          const validCloudProjects = cloudProjects.filter(cp => !isZombieBenchmarkSample(cp));
+          const cloudIdSet = new Set(validCloudProjects.map(cp => String(cp.id).replace(/^ma_proj_/, '')));
 
-          // 1. Đồng bộ dự án từ Cloud vào projectsList cục bộ
-          for (const cp of cloudProjects) {
+          // 1. Reconcile Cloud Deletions:
+          // Local projects that are zombie samples or were previously synced to Supabase but no longer exist in validCloudProjects get pruned.
+          projectsList = projectsList.filter(lp => {
+            if (isZombieBenchmarkSample(lp)) return false;
+            const cleanId = String(lp.id).replace(/^ma_proj_/, '');
+            if (cloudIdSet.has(cleanId)) return true;
+            // Retain unsaved user-created local drafts
+            if (lp.isLocalOnly || lp.isUserCreated) return true;
+            return false;
+          });
+
+          // 2. Merge Cloud Projects into Local projectsList
+          let mergedCount = 0;
+          for (const cp of validCloudProjects) {
             const cleanCpId = String(cp.id).replace(/^ma_proj_/, '');
-            const localIdx = projectsList.findIndex(p => {
-              const cleanPId = String(p.id).replace(/^ma_proj_/, '');
-              return cleanPId === cleanCpId;
-            });
+            const localIdx = projectsList.findIndex(p => String(p.id).replace(/^ma_proj_/, '') === cleanCpId);
 
             if (localIdx === -1) {
               projectsList.push(cp);
@@ -3311,33 +3320,19 @@
             }
           }
 
-          // 2. Đẩy các dự án mới tạo ở máy lên Cloud (chỉ dự án do người dùng tạo)
+          // 3. Push new user-created drafts to Cloud
+          let pushedCount = 0;
           for (const lp of projectsList) {
-            // Safeguard: Never auto-push unverified sample/benchmark models
-            const isSample = /Dự Án Mẫu 1|Benchmark Model Project 1/i.test(lp.name || '') || String(lp.id).startsWith('proj_bm_');
-            if (isSample && !lp.isUserCreated) {
-              continue;
-            }
-
+            if (isZombieBenchmarkSample(lp)) continue;
             const cleanLpId = String(lp.id).replace(/^ma_proj_/, '');
-            const cp = cloudProjects.find(c => {
-              const cleanCId = String(c.id).replace(/^ma_proj_/, '');
-              return cleanCId === cleanLpId;
-            });
-            if (!cp) {
+            if (!cloudIdSet.has(cleanLpId) && (lp.isLocalOnly || lp.isUserCreated)) {
               await this.upsertProject(lp);
+              delete lp.isLocalOnly;
               pushedCount++;
-            } else {
-              const localTime = new Date(lp.updatedAt || 0).getTime();
-              const cloudTime = new Date(cp.updatedAt || 0).getTime();
-              if (localTime > cloudTime) {
-                await this.upsertProject(lp);
-                pushedCount++;
-              }
             }
           }
 
-          // 3. Chuẩn hóa task và lưu cục bộ
+          // 4. Normalize tasks and persist locally
           projectsList = projectsList.map(p => ({
             ...p,
             tasks: normalizeTasks(p.tasks || [])
@@ -3347,10 +3342,15 @@
           const activeStillExists = projectsList.some(p => p.id === currentProjectId);
           if (!activeStillExists && projectsList.length > 0) {
             currentProjectId = projectsList[0].id;
+          } else if (projectsList.length === 0) {
+            currentProjectId = null;
+            taskList = [];
           }
           syncActiveProjectData();
           updateProjectSelectorUI();
-          render();
+          updateHomeHeaderStats();
+          if (currentAppView === 'launcher') renderProjectLauncherGrid();
+          else render();
 
           this.lastSyncTime = this.formatTime();
           this.setSyncStatus('synced', `Cloud: Đã lưu ${this.lastSyncTime}`);
@@ -3379,10 +3379,15 @@
         try {
           const parsed = JSON.parse(storedRegistry);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            projectsList = parsed.map(p => ({
-              ...p,
-              tasks: normalizeTasks(p.tasks || [])
-            }));
+            projectsList = parsed
+              .filter(p => !isZombieBenchmarkSample(p))
+              .map(p => ({
+                ...p,
+                tasks: normalizeTasks(p.tasks || [])
+              }));
+            if (projectsList.length !== parsed.length) {
+              localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projectsList));
+            }
           }
         } catch (e) {
           console.error("Lỗi đọc registry dự án:", e);
@@ -3404,6 +3409,7 @@
         taskList = [];
       }
       updateProjectSelectorUI();
+      updateHomeHeaderStats();
       if (typeof RVSupabaseEngine !== 'undefined') {
         setTimeout(() => {
           RVSupabaseEngine.bidirectionalSync(false);
@@ -7186,6 +7192,12 @@
       if (!confirm(`Are you sure you want to permanently delete project '${remoteId}' from Supabase?`)) return;
       const ok = await RVSupabaseEngine.deleteProject(remoteId);
       if (ok) {
+        const cleanId = String(remoteId).replace(/^ma_proj_/, '');
+        projectsList = projectsList.filter(p => String(p.id).replace(/^ma_proj_/, '') !== cleanId);
+        saveProjects();
+        updateProjectSelectorUI();
+        updateHomeHeaderStats();
+        if (currentAppView === 'launcher') renderProjectLauncherGrid();
         refreshAdminDatabaseView();
       } else {
         alert('Failed to delete project from Supabase. Check console.');
@@ -7399,9 +7411,11 @@
       if (!confirm('This will purge local project storage and re-fetch everything fresh from Supabase. Continue?')) return;
       localStorage.removeItem(PROJECTS_STORAGE_KEY);
       localStorage.removeItem(LEGACY_STORAGE_KEY);
+      localStorage.removeItem(ACTIVE_PROJ_KEY);
       projectsList = [];
-      await initProjects();
-      alert('Local storage purged and repopulated from Supabase!');
+      loadProjects();
+      await RVSupabaseEngine.bidirectionalSync(true);
+      alert('Local storage purged and repopulated fresh from Supabase!');
       closeAdminConsoleModal();
       if (currentAppView === 'launcher') renderProjectLauncherGrid();
       else render();
@@ -7458,11 +7472,6 @@
       const count = selectedHomeProjectIds.size;
       if (count === 0) return;
 
-      if (projectsList.length <= count) {
-        alert('You must keep at least 1 project in your workspace!');
-        return;
-      }
-
       const confirmMsg = `Are you sure you want to permanently delete ${count} selected project(s)? This will remove them locally and synchronize deletion to Supabase cloud.`;
       if (!confirm(confirmMsg)) return;
 
@@ -7473,7 +7482,7 @@
       for (const id of deleteIds) {
         if (id === currentProjectId) deletedActive = true;
         if (typeof RVSupabaseEngine !== 'undefined') {
-          RVSupabaseEngine.deleteProject(id);
+          await RVSupabaseEngine.deleteProject(id);
         }
       }
 
@@ -7482,10 +7491,15 @@
       selectedHomeProjectIds.clear();
 
       // 3. Fallback active project if needed
-      if (deletedActive && projectsList.length > 0) {
-        currentProjectId = projectsList[0].id;
-        currentProjectType = projectsList[0].projectType || 'URBAN_TOWN';
-        syncActiveProjectData();
+      if (deletedActive) {
+        if (projectsList.length > 0) {
+          currentProjectId = projectsList[0].id;
+          currentProjectType = projectsList[0].projectType || 'URBAN_TOWN';
+          syncActiveProjectData();
+        } else {
+          currentProjectId = null;
+          taskList = [];
+        }
       }
 
       saveProjects();
@@ -7548,12 +7562,14 @@
 
       for (const id of deleteIds) {
         await RVSupabaseEngine.deleteProject(id);
-        projectsList = projectsList.filter(p => p.id !== id);
+        const cleanId = String(id).replace(/^ma_proj_/, '');
+        projectsList = projectsList.filter(p => String(p.id).replace(/^ma_proj_/, '') !== cleanId);
       }
 
       selectedAdminDbProjectIds.clear();
       saveProjects();
       updateProjectSelectorUI();
+      updateHomeHeaderStats();
       if (currentAppView === 'launcher') renderProjectLauncherGrid();
       await refreshAdminDatabaseView();
       updateAdminDbSelectionState();
