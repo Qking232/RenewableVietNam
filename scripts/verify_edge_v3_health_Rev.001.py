@@ -18,7 +18,7 @@ ENDPOINTS = [
     },
     {
         "name": "M3 Expressive CSS Asset",
-        "url": "https://renewablevietnam.com/assets/css/rvn_m3_expressive.css",
+        "url": "https://renewablevietnam.com/assets/built/rvn_m3_expressive.css",
         "expected_status": [200],
         "allow_redirects": True
     },

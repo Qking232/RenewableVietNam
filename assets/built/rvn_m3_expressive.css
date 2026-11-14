@@ -1,0 +1,102 @@
+/**
+ * Renewable Viet Nam — Material Design 3 Expressive System Baseline
+ * Rev.001 (Unified Tokens, Physics Curves, Expressive Geometry)
+ * Location: assets/built/rvn_m3_expressive.css
+ */
+
+:root {
+  /* M3 Expressive Color System Baseline */
+  --md-sys-color-primary: #006a60;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #74f8e5;
+  --md-sys-color-on-primary-container: #00201c;
+  
+  --md-sys-color-secondary: #4a635f;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #cce8e2;
+  --md-sys-color-on-secondary-container: #05201c;
+  
+  --md-sys-color-tertiary: #456179;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #cce5ff;
+  --md-sys-color-on-tertiary-container: #001e31;
+
+  --md-sys-color-surface: #f4faf8;
+  --md-sys-color-on-surface: #161d1b;
+  --md-sys-color-surface-variant: #dae5e1;
+  --md-sys-color-on-surface-variant: #3f4946;
+  --md-sys-color-outline: #6f7976;
+  --md-sys-color-outline-variant: #bec9c5;
+
+  /* M3 Expressive Spring Motion Physics */
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --md-sys-motion-easing-expressive-spatial: cubic-bezier(0.38, 1.21, 0.22, 1.0);
+  --md-sys-motion-easing-expressive-effects: cubic-bezier(0.34, 1.45, 0.32, 1.0);
+  --md-sys-motion-duration-short: 180ms;
+  --md-sys-motion-duration-medium: 320ms;
+  --md-sys-motion-duration-long: 500ms;
+
+  /* M3 Expressive Shape Scale */
+  --md-sys-shape-corner-none: 0px;
+  --md-sys-shape-corner-xs: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-xl: 28px;
+  --md-sys-shape-corner-full: 9999px;
+}
+
+html.dark {
+  --md-sys-color-primary: #53dbc9;
+  --md-sys-color-on-primary: #003731;
+  --md-sys-color-primary-container: #005048;
+  --md-sys-color-on-primary-container: #74f8e5;
+
+  --md-sys-color-secondary: #b1ccc6;
+  --md-sys-color-on-secondary: #1c3531;
+  --md-sys-color-secondary-container: #324b47;
+  --md-sys-color-on-secondary-container: #cce8e2;
+
+  --md-sys-color-surface: #0e1514;
+  --md-sys-color-on-surface: #dde4e2;
+  --md-sys-color-surface-variant: #3f4946;
+  --md-sys-color-on-surface-variant: #bec9c5;
+  --md-sys-color-outline: #899390;
+  --md-sys-color-outline-variant: #3f4946;
+}
+
+/* Expressive Tactile Shape Morphing Button */
+.m3-btn-expressive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--md-sys-shape-corner-full);
+  transition: transform var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-expressive-spatial),
+              border-radius var(--md-sys-motion-duration-medium) var(--md-sys-motion-easing-expressive-effects),
+              box-shadow var(--md-sys-motion-duration-short) var(--md-sys-motion-easing-standard);
+}
+
+.m3-btn-expressive:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: 0 4px 14px rgba(0, 106, 96, 0.25);
+}
+
+.m3-btn-expressive:active {
+  transform: translateY(0px) scale(0.98);
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+/* Sinusoidal Wavy Progress Animation */
+@keyframes m3-wavy-cycle {
+  0% { stroke-dashoffset: 0; }
+  50% { stroke-dashoffset: -20; }
+  100% { stroke-dashoffset: -40; }
+}
+
+.m3-wavy-progress {
+  stroke-dasharray: 8 4;
+  animation: m3-wavy-cycle 1.8s linear infinite;
+}
